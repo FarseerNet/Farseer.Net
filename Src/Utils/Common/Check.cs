@@ -14,7 +14,7 @@ namespace FS.Utils.Common
         /// <param name="parameterName">参数名称</param>
         public static void IsTure(bool isTrue, string parameterName)
         {
-            if (isTrue) { throw new ArgumentNullException(parameterName); }
+            if (isTrue) { throw new Exception(parameterName); }
         }
 
         /// <summary>
