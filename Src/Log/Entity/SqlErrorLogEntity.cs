@@ -7,30 +7,28 @@ using FS.Component;
 using FS.Configs;
 using FS.Utils.Common;
 
-namespace FS.Log
+namespace FS.Log.Entity
 {
     /// <summary> SQL异常记录 </summary>
     [Serializable]
-    public class SqlExceptionLogEntity : AbsLogEntity
+    public class SqlErrorLogEntity : AbsLogEntity<SqlErrorLogEntity>
     {
-        /// <summary> SQL异常记录管理器 </summary>
-        private static readonly CommonLogManger<SqlExceptionLogEntity> LogManger = new CommonLogManger<SqlExceptionLogEntity>(SysMapPath.AppData + "log/SqlExceptionLog/", $"{DateTime.Now.ToString("yy-MM-dd")}.xml", 1);
-
-        public SqlExceptionLogEntity()
-        {
-        }
-
-        /// <summary> SQL异常记录写入~/App_Data/SqlExceptionLog.xml </summary>
+        public SqlErrorLogEntity() : base(eumLogType.Debug, null, null, 0) { }
+        /// <summary> SQL异常记录写入 </summary>
         /// <param name="name">表名称</param>
         /// <param name="cmdType">执行方式</param>
         /// <param name="sql">T-SQL</param>
         /// <param name="param">SQL参数</param>
-        /// <param name="ex">异常信息</param>
-        public static void Write(Exception ex, string name, CommandType cmdType, string sql, List<DbParameter> param)
+        /// <param name="exp">异常信息</param>
+        public SqlErrorLogEntity(Exception exp, string name, CommandType cmdType, string sql, List<DbParameter> param) : base(eumLogType.Error, SysMapPath.SqlErrorPath, $"{DateTime.Now.ToString("yy-MM-dd")}.xml", 1)
         {
-            var entity = new SqlExceptionLogEntity {ex = ex, Message = ex.Message.Replace("\r\n", ""), Name = name, CmdType = cmdType, SqlParamList = new List<SqlParam>(), Sql = sql,};
-            if (param != null && param.Count > 0) { param.ForEach(o => entity.SqlParamList.Add(new SqlParam {Name = o.ParameterName, Value = (o.Value ?? "null").ToString()})); }
-            entity.Write();
+            Exp = exp;
+            Message = exp.Message.Replace("\r\n", "");
+            Name = name;
+            CmdType = cmdType;
+            Sql = sql;
+            SqlParamList = new List<SqlParam>();
+            if (param != null && param.Count > 0) { param.ForEach(o => SqlParamList.Add(new SqlParam { Name = o.ParameterName, Value = (o.Value ?? "null").ToString() })); }
         }
 
         /// <summary> 执行对象 </summary>
@@ -45,22 +43,17 @@ namespace FS.Log
         /// <summary> 执行参数 </summary>
         public List<SqlParam> SqlParamList { get; set; }
 
-        /// <summary> 异常消息 </summary>
-        public string Message { get; set; }
-
-        /// <summary> 写入~/App_Data/SqlExceptionLog.xml </summary>
-        private void Write()
+        public override void AddToQueue()
         {
-            RecordExecuteMethod();
-
-            LogManger.Write(this);
+            //写入日志
+            AddToQueue(this);
 
             // 发送邮件
             if (SystemConfigs.ConfigEntity.IsSendExceptionEMail) { SendEmail(); }
         }
 
         /// <summary> 发送邮件 </summary>
-        private void SendEmail()
+        protected override void SendEmail()
         {
             var mail = ExceptionEmailConfigs.ConfigEntity;
             var smtp = new SmtpMail(mail.LoginName, mail.LoginPwd, mail.SendMail, "Farseer.Net SQL异常记录", mail.SmtpServer, 0, mail.SmtpPort);

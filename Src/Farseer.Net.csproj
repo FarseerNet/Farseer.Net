@@ -66,6 +66,7 @@
     <Compile Include="Cache\FieldSetCacheManger.cs" />
     <Compile Include="Cache\FieldGetCacheManger.cs" />
     <Compile Include="Cache\PropertyGetCacheManger.cs" />
+    <Compile Include="Cache\DataCacheManger.cs" />
     <Compile Include="Cache\PropertySetCacheManger.cs" />
     <Compile Include="Cache\InstanceCacheManger.cs" />
     <Compile Include="Cache\EnumNameCacheManger.cs" />
@@ -73,6 +74,10 @@
     <Compile Include="Infrastructure\IDataCache.cs" />
     <Compile Include="Infrastructure\IDbSet`1.cs" />
     <Compile Include="Infrastructure\IDbSet.cs" />
+    <Compile Include="Log\DefaultLog.cs" />
+    <Compile Include="Log\eumLogType.cs" />
+    <Compile Include="Log\LogManger.cs" />
+    <Compile Include="Log\Entity\LogEntity.cs" />
     <Compile Include="Map\EntityPhysicsMap.cs" />
     <Compile Include="Utils\Common\Check.cs" />
     <Compile Include="Utils\Common\ConvertHelper.cs" />
@@ -91,13 +96,12 @@
     <Compile Include="Infrastructure\ICate.cs" />
     <Compile Include="Infrastructure\IEntity.cs" />
     <Compile Include="Utils\Extends\IEnumerableExtend.cs" />
-    <Compile Include="Log\AbsLogEntity.cs" />
-    <Compile Include="Log\CommonLogManger.cs" />
+    <Compile Include="Log\Entity\AbsLogEntity.cs" />
     <Compile Include="Configs\ExceptionEmailConfigs.cs" />
     <Compile Include="Log\ILog.cs" />
-    <Compile Include="Log\RunExceptionLogEntity.cs" />
-    <Compile Include="Log\SqlExceptionLogEntity.cs" />
-    <Compile Include="Log\SqlLogEntity.cs" />
+    <Compile Include="Log\Entity\SqlErrorLogEntity.cs" />
+    <Compile Include="Log\Entity\SqlRunLogEntity.cs" />
+    <Compile Include="Utils\Extends\Extends.cs" />
     <Compile Include="Utils\Extends\ObjectExtend.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\Common\ExpressionVisitor\AbsExpressionVisitor.cs" />
@@ -108,6 +112,7 @@
     <Compile Include="Utils\Reflection\IFinder.cs" />
     <Compile Include="Utils\Reflection\ITypeFinder.cs" />
     <Compile Include="Utils\Reflection\TypeFinder.cs" />
+    <Compile Include="Utils\Common\Result.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

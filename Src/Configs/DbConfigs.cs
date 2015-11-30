@@ -24,10 +24,10 @@ namespace FS.Configs
         public string Server = ".";
 
         /// <summary> 数据库帐号 </summary>
-        public string UserID = "sa";
+        public string UserID = "";
 
         /// <summary> 数据库密码 </summary>
-        public string PassWord = "123456";
+        public string PassWord = "";
 
         /// <summary> 端口号 </summary>
         public string Port = "1433";
@@ -36,10 +36,10 @@ namespace FS.Configs
         public eumDbType DataType = eumDbType.SqlServer;
 
         /// <summary> 数据库版本 </summary>
-        public string DataVer = "2008";
+        public string DataVer = "";
 
         /// <summary> 数据库目录 </summary>
-        public string Catalog = "数据库名称";
+        public string Catalog = "";
 
         /// <summary> 最小连接池 </summary>
         public int PoolMinSize = 16;

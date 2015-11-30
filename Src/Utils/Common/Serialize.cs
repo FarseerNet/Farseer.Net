@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Xml.Serialization;
+using FS.Log;
 
 namespace FS.Utils.Common
 {
@@ -27,8 +28,9 @@ namespace FS.Utils.Common
                     return (T) serializer.Deserialize(fs);
                 }
             }
-            catch
+            catch(Exception ex)
             {
+                LogManger.Log.Error(ex);
                 if (!isErrorToMove) { return null; }
                 File.Move(filePath + fileName, filePath + fileName + ".bak_" + DateTime.Now.ToString("yyMMdd-HHmmss"));
                 return default(T);

@@ -89,10 +89,21 @@ namespace FS.Extends
         /// </summary>
         /// <param name="method"></param>
         /// <returns></returns>
-        public static IEnumerable<Type> GetParameterTypes(this MethodBase method)
+        public static IEnumerable<Type> GetParameterTypes(this MethodInfo method)
         {
             if (method == null) throw new ArgumentNullException(nameof(method));
             return from parameter in method.GetParameters() select parameter.ParameterType;
+        }
+
+        /// <summary>
+        /// 获取指定方法或构造方法的参数类型
+        /// </summary>
+        /// <param name="constructor"></param>
+        /// <returns></returns>
+        public static IEnumerable<Type> GetParameterTypes(this ConstructorInfo constructor)
+        {
+            if (constructor == null) throw new ArgumentNullException(nameof(constructor));
+            return from parameter in constructor.GetParameters() select parameter.ParameterType;
         }
     }
 }

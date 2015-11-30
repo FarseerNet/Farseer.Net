@@ -14,13 +14,13 @@ namespace FS.Configs
         /// <summary> 根据自己的需要来设置 </summary>
         public bool DeBug = false;
 
-        /// <summary> 开启记录数据库执行过程 </summary>
+        /// <summary> 开启记录Sql执行过程 </summary>
         public bool IsWriteDbLog = false;
 
-        /// <summary> 开启记录数据库错误记录 </summary>
+        /// <summary> 开启记录Sql错误记录 </summary>
         public bool IsWriteDbExceptionLog = false;
 
-        /// <summary> 开启运行时错误记录发送邮件 </summary>
+        /// <summary> 开启运行时错误记录 </summary>
         public bool IsWriteRunExceptionLog = false;
 
         /// <summary> 开启数据库错误记录发送邮件 </summary>

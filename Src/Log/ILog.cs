@@ -11,105 +11,65 @@ namespace FS.Log
         ///     调试信息
         /// </summary>
         /// <param name="message">信息内容</param>
-        void Debug(object message);
+        void Debug(string message);
 
         /// <summary>
         ///     调试信息
         /// </summary>
         /// <param name="message">信息内容</param>
         /// <param name="exception">异常类</param>
-        void Debug(object message, Exception exception);
-
-        /// <summary>
-        ///     调试信息
-        /// </summary>
-        /// <param name="format">信息内容</param>
-        /// <param name="args">参数</param>
-        void DebugFormat(string format, params object[] args);
+        void Debug(Exception exception, string message = null);
 
         /// <summary>
         ///     错误信息
         /// </summary>
         /// <param name="message">信息内容</param>
-        void Error(object message);
+        void Error(string message);
 
         /// <summary>
         ///     错误信息
         /// </summary>
         /// <param name="message">信息内容</param>
         /// <param name="exception">异常类</param>
-        void Error(object message, Exception exception);
-
-        /// <summary>
-        ///     错误信息
-        /// </summary>
-        /// <param name="format">信息内容</param>
-        /// <param name="args">参数</param>
-        void ErrorFormat(string format, params object[] args);
+        void Error(Exception exception, string message = null);
 
         /// <summary>
         ///     严重信息
         /// </summary>
         /// <param name="message">信息内容</param>
-        void Fatal(object message);
+        void Fatal(string message);
 
         /// <summary>
         ///     严重信息
         /// </summary>
         /// <param name="message">信息内容</param>
         /// <param name="exception">异常类</param>
-        void Fatal(object message, Exception exception);
-
-        /// <summary>
-        ///     严重信息
-        /// </summary>
-        /// <param name="format">信息内容</param>
-        /// <param name="args">参数</param>
-        void FatalFormat(string format, params object[] args);
+        void Fatal(Exception exception, string message = null);
 
         /// <summary>
         ///     一般信息
         /// </summary>
         /// <param name="message">信息内容</param>
-        void Info(object message);
+        void Info(string message);
 
         /// <summary>
         ///     一般信息
         /// </summary>
         /// <param name="message">信息内容</param>
         /// <param name="exception">异常类</param>
-        void Info(object message, Exception exception);
-
-        /// <summary>
-        ///     一般信息
-        /// </summary>
-        /// <param name="format">信息内容</param>
-        /// <param name="args">参数</param>
-        void InfoFormat(string format, params object[] args);
+        void Info(Exception exception, string message = null);
 
         /// <summary>
         ///     警告信息
         /// </summary>
         /// <param name="message">信息内容</param>
-        void Warn(object message);
+        void Warn(string message);
 
         /// <summary>
         ///     警告信息
         /// </summary>
         /// <param name="message">信息内容</param>
         /// <param name="exception">异常类</param>
-        void Warn(object message, Exception exception);
-
-        /// <summary>
-        ///     警告信息
-        /// </summary>
-        /// <param name="format">信息内容</param>
-        /// <param name="args">参数</param>
-        void WarnFormat(string format, params object[] args);
-
-        /// <summary>
-        ///     是否为调试状态
-        /// </summary>
-        bool IsDebugEnabled { get; }
+        void Warn(Exception exception, string message = null);
     }
 }
