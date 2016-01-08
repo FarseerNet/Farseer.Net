@@ -20,7 +20,7 @@ namespace FS.Configs
     /// <summary> 数据库连接配置 </summary>
     public class DbInfo
     {
-        /// <summary> 数据库连接串 </summary>
+        /// <summary> 服务器地址 </summary>
         public string Server = ".";
 
         /// <summary> 数据库帐号 </summary>
@@ -42,10 +42,10 @@ namespace FS.Configs
         public string Catalog = "";
 
         /// <summary> 最小连接池 </summary>
-        public int PoolMinSize = 16;
+        public int PoolMinSize = 0;
 
         /// <summary> 最大连接池 </summary>
-        public int PoolMaxSize = 100;
+        public int PoolMaxSize = 0;
 
         /// <summary> 数据库连接时间限制，单位秒 </summary>
         public int ConnectTimeout = 30;

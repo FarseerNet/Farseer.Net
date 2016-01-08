@@ -74,6 +74,7 @@
     <Compile Include="Infrastructure\IDataCache.cs" />
     <Compile Include="Infrastructure\IDbSet`1.cs" />
     <Compile Include="Infrastructure\IDbSet.cs" />
+    <Compile Include="Infrastructure\IVerification.cs" />
     <Compile Include="Log\DefaultLog.cs" />
     <Compile Include="Log\eumLogType.cs" />
     <Compile Include="Log\LogManger.cs" />
