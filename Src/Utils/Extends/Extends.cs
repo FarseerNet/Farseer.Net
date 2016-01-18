@@ -62,5 +62,15 @@ namespace FS.Extends
         {
             return sourceValue.PadRight(total, '0');
         }
+
+        /// <summary>
+        /// 获取非空类型的真实Type
+        /// </summary>
+        /// <param name="type">可空类型的Type</param>
+        public static Type GetNullableArguments(this Type type)
+        {
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof (Nullable<>)) { return Nullable.GetUnderlyingType(type); }
+            return type;
+        }
     }
 }

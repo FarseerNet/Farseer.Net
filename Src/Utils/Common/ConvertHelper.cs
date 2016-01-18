@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FS.Cache;
+using FS.Extends;
 
 namespace FS.Utils.Common
 {
@@ -21,13 +22,13 @@ namespace FS.Utils.Common
         public static T ConvertType<T>(object sourceValue, T defValue = default(T))
         {
             if (sourceValue == null) { return defValue; }
-            var returnType = typeof (T);
+            var returnType = typeof(T);
             var sourceType = sourceValue.GetType();
             // 相同类型，则直接返回原型
-            if (returnType == sourceType || Type.GetTypeCode(returnType) == Type.GetTypeCode(sourceType)) { return (T) sourceValue; }
+            if (returnType == sourceType || Type.GetTypeCode(returnType) == Type.GetTypeCode(sourceType)) { return (T)sourceValue; }
 
             var val = ConvertType(sourceValue, returnType, sourceType);
-            return val != null ? (T) val : defValue;
+            return val != null ? (T)val : defValue;
         }
 
         /// <summary>
@@ -49,71 +50,35 @@ namespace FS.Utils.Common
         public static object ConvertType(object sourceValue, Type returnType, Type sourceType)
         {
             if (sourceValue == null) { return null; }
-            if (returnType.IsGenericType && returnType.GetGenericTypeDefinition() == typeof (Nullable<>)) { returnType = returnType.GetGenericArguments()[0]; }
-
+            returnType = returnType.GetNullableArguments();
+            //if (returnType.IsGenericType && returnType.GetGenericTypeDefinition() == typeof (Nullable<>)) { returnType = returnType.GetGenericArguments()[0]; }
             if (sourceType == returnType) { return sourceValue; }
 
-            // 对   Nullable<> 类型处理
+            // 对  List 类型处理
             if (returnType.IsGenericType)
             {
-                var returnGenericType = returnType.GetGenericTypeDefinition();
-                var nullableType = typeof (Nullable<>);
-                // 对   List 类型处理
-                if (returnGenericType != nullableType)
-                {
-                    var sourceValueString = sourceValue.ToString();
-                    // List参数类型
-                    var returnArgumType = returnType.GetGenericArguments()[0];
+                var returnGenericType = returnType.GetGenericTypeDefinition().GetNullableArguments();
+                var sourceValueString = sourceValue.ToString();
+                // List参数类型
 
-                    switch (Type.GetTypeCode(returnArgumType))
-                    {
-                        case TypeCode.Boolean:
-                        {
-                            return ToList(sourceValueString, false);
-                        }
-                        case TypeCode.DateTime:
-                        {
-                            return ToList(sourceValueString, DateTime.MinValue);
-                        }
-                        case TypeCode.Decimal:
-                        case TypeCode.Double:
-                        case TypeCode.Single:
-                        {
-                            return ToList(sourceValueString, 0m);
-                        }
-                        case TypeCode.Byte:
-                        case TypeCode.SByte:
-                        case TypeCode.UInt16:
-                        {
-                            return ToList<ushort>(sourceValueString, 0);
-                        }
-                        case TypeCode.UInt32:
-                        {
-                            return ToList<uint>(sourceValueString, 0);
-                        }
-                        case TypeCode.UInt64:
-                        {
-                            return ToList<ulong>(sourceValueString, 0);
-                        }
-                        case TypeCode.Int16:
-                        {
-                            return ToList<short>(sourceValueString, 0);
-                        }
-                        case TypeCode.Int64:
-                        {
-                            return ToList<long>(sourceValueString, 0);
-                        }
-                        case TypeCode.Int32:
-                        {
-                            return ToList(sourceValueString, 0);
-                        }
-                        case TypeCode.Empty:
-                        case TypeCode.Char:
-                        case TypeCode.String:
-                        {
-                            return ToList(sourceValueString, "");
-                        }
-                    }
+                switch (Type.GetTypeCode(returnGenericType))
+                {
+                    case TypeCode.Boolean: { return ToList(sourceValueString, false); }
+                    case TypeCode.DateTime: { return ToList(sourceValueString, DateTime.MinValue); }
+                    case TypeCode.Decimal:
+                    case TypeCode.Double:
+                    case TypeCode.Single: { return ToList(sourceValueString, 0m); }
+                    case TypeCode.Byte:
+                    case TypeCode.SByte:
+                    case TypeCode.UInt16: { return ToList<ushort>(sourceValueString, 0); }
+                    case TypeCode.UInt32: { return ToList<uint>(sourceValueString, 0); }
+                    case TypeCode.UInt64: { return ToList<ulong>(sourceValueString, 0); }
+                    case TypeCode.Int16: { return ToList<short>(sourceValueString, 0); }
+                    case TypeCode.Int64: { return ToList<long>(sourceValueString, 0); }
+                    case TypeCode.Int32: { return ToList(sourceValueString, 0); }
+                    case TypeCode.Empty:
+                    case TypeCode.Char:
+                    case TypeCode.String: { return ToList(sourceValueString, ""); }
                 }
             }
 
@@ -142,107 +107,112 @@ namespace FS.Utils.Common
                     case TypeCode.SByte:
                     case TypeCode.UInt16:
                     case TypeCode.UInt32:
-                    case TypeCode.UInt64:
-                        return ConvertType(sourceValue, true) ? 1 : 0;
+                    case TypeCode.UInt64: return ConvertType(sourceValue, true) ? 1 : 0;
                 }
             }
             switch (returnTypeCode)
             {
                 case TypeCode.Boolean:
-                {
-                    return (object) (!string.IsNullOrWhiteSpace(objString) && (objString.Equals("on") || objString == "1" || objString.Equals("true")));
-                }
+                    {
+                        return (object)(!string.IsNullOrWhiteSpace(objString) && (objString.Equals("on") || objString == "1" || objString.Equals("true")));
+                    }
                 case TypeCode.Byte:
-                {
-                    Byte result;
-                    if (Byte.TryParse(objString, out result)) { return result; }
-                    return null;
-                }
+                    {
+                        byte result;
+                        if (byte.TryParse(objString, out result)) { return result; }
+                        return null;
+                    }
                 case TypeCode.Char:
-                {
-                    Char result;
-                    if (Char.TryParse(objString, out result)) { return result; }
-                    return null;
-                }
+                    {
+                        char result;
+                        if (char.TryParse(objString, out result)) { return result; }
+                        return null;
+                    }
                 case TypeCode.DateTime:
-                {
-                    DateTime result;
-                    if (DateTime.TryParse(objString, out result)) { return result; }
-                    return null;
-                }
+                    {
+                        DateTime result;
+                        if (DateTime.TryParse(objString, out result)) { return result; }
+                        return null;
+                    }
                 case TypeCode.Decimal:
-                {
-                    Decimal result;
-                    if (Decimal.TryParse(objString, out result)) { return result; }
-                    return null;
-                }
+                    {
+                        decimal result;
+                        if (decimal.TryParse(objString, out result)) { return result; }
+                        return null;
+                    }
                 case TypeCode.Double:
-                {
-                    Double result;
-                    if (Double.TryParse(objString, out result)) { return result; }
-                    return null;
-                }
+                    {
+                        double result;
+                        if (double.TryParse(objString, out result)) { return result; }
+                        return null;
+                    }
                 case TypeCode.Int16:
-                {
-                    Int16 result;
-                    if (Int16.TryParse(objString, out result)) { return result; }
-                    return null;
-                }
+                    {
+                        short result;
+                        if (short.TryParse(objString, out result)) { return result; }
+                        return null;
+                    }
                 case TypeCode.Int32:
-                {
-                    Int32 result;
-                    if (Int32.TryParse(objString, out result)) { return result; }
-                    return null;
-                }
+                    {
+                        int result;
+                        if (int.TryParse(objString, out result)) { return result; }
+                        return null;
+                    }
                 case TypeCode.Int64:
-                {
-                    Int64 result;
-                    if (Int64.TryParse(objString, out result)) { return result; }
-                    return null;
-                }
+                    {
+                        long result;
+                        if (long.TryParse(objString, out result)) { return result; }
+                        return null;
+                    }
                 case TypeCode.SByte:
-                {
-                    SByte result;
-                    if (SByte.TryParse(objString, out result)) { return result; }
-                    return null;
-                }
+                    {
+                        sbyte result;
+                        if (sbyte.TryParse(objString, out result)) { return result; }
+                        return null;
+                    }
                 case TypeCode.Single:
-                {
-                    Single result;
-                    if (Single.TryParse(objString, out result)) { return result; }
-                    return null;
-                }
+                    {
+                        float result;
+                        if (float.TryParse(objString, out result)) { return result; }
+                        return null;
+                    }
                 case TypeCode.UInt16:
-                {
-                    UInt16 result;
-                    if (UInt16.TryParse(objString, out result)) { return result; }
-                    return null;
-                }
+                    {
+                        ushort result;
+                        if (ushort.TryParse(objString, out result)) { return result; }
+                        return null;
+                    }
                 case TypeCode.UInt32:
-                {
-                    UInt32 result;
-                    if (UInt32.TryParse(objString, out result)) { return result; }
-                    return null;
-                }
+                    {
+                        uint result;
+                        if (uint.TryParse(objString, out result)) { return result; }
+                        return null;
+                    }
                 case TypeCode.UInt64:
-                {
-                    UInt64 result;
-                    if (UInt64.TryParse(objString, out result)) { return result; }
-                    return null;
-                }
+                    {
+                        ulong result;
+                        if (ulong.TryParse(objString, out result)) { return result; }
+                        return null;
+                    }
                 case TypeCode.Empty:
                 case TypeCode.String:
-                {
-                    return (object) objString;
-                }
+                    {
+                        return (object)objString;
+                    }
                 case TypeCode.Object:
-                {
-                    break;
-                }
+                    {
+                        if (returnType == typeof(Guid))
+                        {
+                            Guid guid;
+                            if (Guid.TryParse(objString, out guid)) { return guid; }
+                        }
+                        break;
+                    }
             }
 
             try { return Convert.ChangeType(sourceValue, returnType); }
-            catch {
+            catch
+            {
                 return null;
             }
         }
@@ -255,8 +225,9 @@ namespace FS.Utils.Common
         public static bool IsType<T>(object sourceValue)
         {
             if (sourceValue == null) { return false; }
-            var returnType = typeof (T);
-            if (returnType.IsGenericType && returnType.GetGenericTypeDefinition() == typeof (Nullable<>)) { returnType = returnType.GetGenericArguments()[0]; }
+            var returnType = typeof(T);
+            returnType = returnType.GetNullableArguments();
+            //if (returnType.IsGenericType && returnType.GetGenericTypeDefinition() == typeof(Nullable<>)) { returnType = returnType.GetGenericArguments()[0]; }
 
             var sourceType = sourceValue.GetType();
 
@@ -272,83 +243,83 @@ namespace FS.Utils.Common
             switch (returnTypeCode)
             {
                 case TypeCode.Boolean:
-                {
-                    return !string.IsNullOrWhiteSpace(objString) && (objString.Equals("on") || objString == "1" || objString.Equals("true"));
-                }
+                    {
+                        return !string.IsNullOrWhiteSpace(objString) && (objString.Equals("on") || objString == "1" || objString.Equals("true"));
+                    }
                 case TypeCode.Byte:
-                {
-                    Byte result;
-                    return Byte.TryParse(objString, out result);
-                }
+                    {
+                        byte result;
+                        return byte.TryParse(objString, out result);
+                    }
                 case TypeCode.Char:
-                {
-                    Char result;
-                    return Char.TryParse(objString, out result);
-                }
+                    {
+                        char result;
+                        return char.TryParse(objString, out result);
+                    }
                 case TypeCode.DateTime:
-                {
-                    DateTime result;
-                    return DateTime.TryParse(objString, out result);
-                }
+                    {
+                        DateTime result;
+                        return DateTime.TryParse(objString, out result);
+                    }
                 case TypeCode.Decimal:
-                {
-                    Decimal result;
-                    return Decimal.TryParse(objString, out result);
-                }
+                    {
+                        decimal result;
+                        return decimal.TryParse(objString, out result);
+                    }
                 case TypeCode.Double:
-                {
-                    Double result;
-                    return Double.TryParse(objString, out result);
-                }
+                    {
+                        double result;
+                        return double.TryParse(objString, out result);
+                    }
                 case TypeCode.Int16:
-                {
-                    Int16 result;
-                    return Int16.TryParse(objString, out result);
-                }
+                    {
+                        short result;
+                        return short.TryParse(objString, out result);
+                    }
                 case TypeCode.Int32:
-                {
-                    Int32 result;
-                    return Int32.TryParse(objString, out result);
-                }
+                    {
+                        int result;
+                        return int.TryParse(objString, out result);
+                    }
                 case TypeCode.Int64:
-                {
-                    Int64 result;
-                    return Int64.TryParse(objString, out result);
-                }
+                    {
+                        long result;
+                        return long.TryParse(objString, out result);
+                    }
                 case TypeCode.SByte:
-                {
-                    SByte result;
-                    return SByte.TryParse(objString, out result);
-                }
+                    {
+                        sbyte result;
+                        return sbyte.TryParse(objString, out result);
+                    }
                 case TypeCode.Single:
-                {
-                    Single result;
-                    return Single.TryParse(objString, out result);
-                }
+                    {
+                        float result;
+                        return float.TryParse(objString, out result);
+                    }
                 case TypeCode.UInt16:
-                {
-                    UInt16 result;
-                    return UInt16.TryParse(objString, out result);
-                }
+                    {
+                        UInt16 result;
+                        return ushort.TryParse(objString, out result);
+                    }
                 case TypeCode.UInt32:
-                {
-                    UInt32 result;
-                    return UInt32.TryParse(objString, out result);
-                }
+                    {
+                        uint result;
+                        return uint.TryParse(objString, out result);
+                    }
                 case TypeCode.UInt64:
-                {
-                    UInt64 result;
-                    return UInt64.TryParse(objString, out result);
-                }
+                    {
+                        ulong result;
+                        return ulong.TryParse(objString, out result);
+                    }
                 case TypeCode.Empty:
                 case TypeCode.String:
-                {
-                    return true;
-                }
+                    {
+                        return true;
+                    }
                 case TypeCode.Object:
-                {
-                    break;
-                }
+                    {
+                        break;
+                    }
             }
             return sourceType == returnType;
         }
@@ -369,7 +340,7 @@ namespace FS.Utils.Common
             if (string.IsNullOrWhiteSpace(splitString)) { for (var i = 0; i < str.Length; i++) { lst.Add(ConvertType(str.Substring(i, 1), defValue)); } }
             else
             {
-                var strArray = splitString.Length == 1 ? str.Split(splitString[0]) : str.Split(new string[1] {splitString}, StringSplitOptions.None);
+                var strArray = splitString.Length == 1 ? str.Split(splitString[0]) : str.Split(new string[1] { splitString }, StringSplitOptions.None);
                 lst.AddRange(strArray.Select(item => ConvertType(item, defValue)));
             }
             return lst;

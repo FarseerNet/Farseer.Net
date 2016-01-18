@@ -40,7 +40,7 @@ namespace FS.Utils.Common.ExpressionVisitor
                 case ExpressionType.Quote:
                 case ExpressionType.UnaryPlus:
                 case ExpressionType.TypeAs:
-                    return this.VisitUnary((UnaryExpression) exp);
+                    return this.VisitUnary((UnaryExpression)exp);
                 case ExpressionType.Add:
                 case ExpressionType.AddChecked:
                 case ExpressionType.Subtract:
@@ -83,36 +83,36 @@ namespace FS.Utils.Common.ExpressionVisitor
                 case ExpressionType.OrAssign:
                 case ExpressionType.Assign:
                 case ExpressionType.ExclusiveOr:
-                    return this.VisitBinary((BinaryExpression) exp);
+                    return this.VisitBinary((BinaryExpression)exp);
                 case ExpressionType.TypeIs:
-                    return this.VisitTypeIs((TypeBinaryExpression) exp);
+                    return this.VisitTypeIs((TypeBinaryExpression)exp);
                 case ExpressionType.Conditional:
-                    return this.VisitConditional((ConditionalExpression) exp);
+                    return this.VisitConditional((ConditionalExpression)exp);
                 case ExpressionType.Constant:
-                    return this.VisitConstant((ConstantExpression) exp);
+                    return this.VisitConstant((ConstantExpression)exp);
                 case ExpressionType.Parameter:
-                    return this.VisitParameter((ParameterExpression) exp);
+                    return this.VisitParameter((ParameterExpression)exp);
                 case ExpressionType.MemberAccess:
-                    return this.VisitMemberAccess((MemberExpression) exp);
+                    return this.VisitMemberAccess((MemberExpression)exp);
                 case ExpressionType.Call:
-                    return this.VisitMethodCall((MethodCallExpression) exp);
+                    return this.VisitMethodCall((MethodCallExpression)exp);
                 case ExpressionType.Lambda:
-                    return this.VisitLambda((LambdaExpression) exp);
+                    return this.VisitLambda((LambdaExpression)exp);
                 case ExpressionType.New:
-                    return this.VisitNew((NewExpression) exp);
+                    return this.VisitNew((NewExpression)exp);
                 case ExpressionType.NewArrayInit:
                 case ExpressionType.NewArrayBounds:
-                    return this.VisitNewArray((NewArrayExpression) exp);
+                    return this.VisitNewArray((NewArrayExpression)exp);
                 case ExpressionType.Invoke:
-                    return this.VisitInvocation((InvocationExpression) exp);
+                    return this.VisitInvocation((InvocationExpression)exp);
                 case ExpressionType.MemberInit:
-                    return this.VisitMemberInit((MemberInitExpression) exp);
+                    return this.VisitMemberInit((MemberInitExpression)exp);
                 case ExpressionType.ListInit:
-                    return this.VisitListInit((ListInitExpression) exp);
+                    return this.VisitListInit((ListInitExpression)exp);
                 case ExpressionType.Block:
-                    return this.VisitBlock((BlockExpression) exp);
+                    return this.VisitBlock((BlockExpression)exp);
             }
-            throw new Exception(string.Format("类型：(ExpressionType){0}，不存在。", exp.NodeType));
+            throw new Exception($"类型：(ExpressionType){exp.NodeType}，不存在。");
         }
 
         protected virtual Expression VisitBlock(BlockExpression block)
@@ -241,7 +241,11 @@ namespace FS.Utils.Common.ExpressionVisitor
             var u = exp as UnaryExpression;
             if (u != null && u.Operand is ConstantExpression) { return u.Operand; }
             if (exp is BinaryExpression || !IsFieldValue(exp)) { return exp; }
-            return Expression.Constant(Expression.Lambda(exp).Compile().DynamicInvoke(null), exp.Type);
+            try { return Expression.Constant(Expression.Lambda(exp).Compile().DynamicInvoke(null), exp.Type); }
+            catch
+            {
+                throw new Exception($"表达式树类型转换失败，对象({((MemberExpression)exp).Expression.Type})为不能为Null类型。");
+            }
         }
 
         /// <summary>
@@ -254,33 +258,33 @@ namespace FS.Utils.Common.ExpressionVisitor
             switch (exp.NodeType)
             {
                 case ExpressionType.Lambda:
-                    return ((LambdaExpression) exp).Parameters.Count == 0 && IsFieldValue(((LambdaExpression) exp).Body);
+                    return ((LambdaExpression)exp).Parameters.Count == 0 && IsFieldValue(((LambdaExpression)exp).Body);
                 case ExpressionType.Call:
-                {
-                    var callExp = (MethodCallExpression) exp;
-                    if (callExp.Object != null && !IsFieldValue(callExp.Object)) { return false; }
-                    return callExp.Arguments.All(IsFieldValue);
-                }
+                    {
+                        var callExp = (MethodCallExpression)exp;
+                        if (callExp.Object != null && !IsFieldValue(callExp.Object)) { return false; }
+                        return callExp.Arguments.All(IsFieldValue);
+                    }
                 case ExpressionType.MemberAccess:
-                {
-                    var memExp = (MemberExpression) exp;
-                    return memExp.Expression == null || IsFieldValue(memExp.Expression);
-                }
+                    {
+                        var memExp = (MemberExpression)exp;
+                        return memExp.Expression == null || IsFieldValue(memExp.Expression);
+                    }
                 case ExpressionType.Parameter:
                     return !exp.Type.IsClass && !exp.Type.IsAbstract && !exp.Type.IsInterface;
                 case ExpressionType.Convert:
-                    return IsFieldValue(((UnaryExpression) exp).Operand);
+                    return IsFieldValue(((UnaryExpression)exp).Operand);
                 case ExpressionType.Add:
                 case ExpressionType.Subtract:
                 case ExpressionType.Multiply:
                 case ExpressionType.Divide:
-                    return IsFieldValue(((BinaryExpression) exp).Left) && IsFieldValue(((BinaryExpression) exp).Right);
+                    return IsFieldValue(((BinaryExpression)exp).Left) && IsFieldValue(((BinaryExpression)exp).Right);
                 case ExpressionType.ArrayIndex:
                 case ExpressionType.ListInit:
                 case ExpressionType.Constant:
-                {
-                    return true;
-                }
+                    {
+                        return true;
+                    }
             }
             return false;
         }
@@ -314,11 +318,11 @@ namespace FS.Utils.Common.ExpressionVisitor
             switch (binding.BindingType)
             {
                 case MemberBindingType.Assignment:
-                    return this.VisitMemberAssignment((MemberAssignment) binding);
+                    return this.VisitMemberAssignment((MemberAssignment)binding);
                 case MemberBindingType.MemberBinding:
-                    return this.VisitMemberMemberBinding((MemberMemberBinding) binding);
+                    return this.VisitMemberMemberBinding((MemberMemberBinding)binding);
                 case MemberBindingType.ListBinding:
-                    return this.VisitMemberListBinding((MemberListBinding) binding);
+                    return this.VisitMemberListBinding((MemberListBinding)binding);
                 default:
                     throw new Exception(string.Format("Unhandled binding type '{0}'", binding.BindingType));
             }

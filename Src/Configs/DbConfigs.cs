@@ -53,6 +53,9 @@ namespace FS.Configs
         /// <summary> 数据库执行时间限制，单位秒 </summary>
         public int CommandTimeout = 60;
 
+        /// <summary> 自定义连接字符串 </summary>
+        public string Additional = "";
+
         /// <summary> 通过索引返回实体 </summary>
         public static implicit operator DbInfo(int index)
         {
