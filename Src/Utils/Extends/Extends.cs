@@ -69,7 +69,18 @@ namespace FS.Extends
         /// <param name="type">可空类型的Type</param>
         public static Type GetNullableArguments(this Type type)
         {
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof (Nullable<>)) { return Nullable.GetUnderlyingType(type); }
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>)) { return Nullable.GetUnderlyingType(type); }
+            return type;
+        }
+
+        /// <summary>
+        /// 获取List的元素类型
+        /// </summary>
+        /// <param name="type">可空类型的Type</param>
+        public static Type GetGenericType(this Type type)
+        {
+            var genericArguments = type.GetGenericArguments();
+            if (type.IsGenericType && genericArguments.Length > 0) { return genericArguments[0]; }
             return type;
         }
     }

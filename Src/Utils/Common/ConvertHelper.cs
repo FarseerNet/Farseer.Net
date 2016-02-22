@@ -51,13 +51,12 @@ namespace FS.Utils.Common
         {
             if (sourceValue == null) { return null; }
             returnType = returnType.GetNullableArguments();
-            //if (returnType.IsGenericType && returnType.GetGenericTypeDefinition() == typeof (Nullable<>)) { returnType = returnType.GetGenericArguments()[0]; }
             if (sourceType == returnType) { return sourceValue; }
 
             // 对  List 类型处理
             if (returnType.IsGenericType)
             {
-                var returnGenericType = returnType.GetGenericTypeDefinition().GetNullableArguments();
+                var returnGenericType = returnType.GetGenericType();
                 var sourceValueString = sourceValue.ToString();
                 // List参数类型
 
