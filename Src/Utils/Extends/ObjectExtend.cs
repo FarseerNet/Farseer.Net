@@ -4,7 +4,7 @@ using FS.Utils.Common;
 // ReSharper disable once CheckNamespace
 namespace FS.Extends
 {
-    public static class ObjectExtend
+    public static partial class Extend
     {
         /// <summary>
         ///     将值转换成类型对象的值

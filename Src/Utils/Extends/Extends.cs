@@ -4,7 +4,7 @@ using FS.Utils.Common;
 // ReSharper disable once CheckNamespace
 namespace FS.Extends
 {
-    public static class OtherExtend
+    public static partial class Extend
     {
         /// <summary>
         ///     不足total长度时，向左边补0

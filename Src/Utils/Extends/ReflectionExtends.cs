@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace FS.Extends
 {
-    public static class ReflectionExtends
+    public static partial class Extend
     {
         /// <summary>
         /// 获取当前Type实现或继承的所有接口

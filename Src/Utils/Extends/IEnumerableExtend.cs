@@ -7,7 +7,7 @@ using FS.Utils.Common;
 // ReSharper disable once CheckNamespace
 namespace FS.Extends
 {
-    public static class IEnumerableExtend
+    public static partial class Extend
     {
         /// <summary>
         ///     判断value是否存在于列表中
