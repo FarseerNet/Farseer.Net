@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // 与程序集关联的信息。
 
 [assembly: AssemblyTitle("Farseer.Net")]
-[assembly: AssemblyDescription("Farseer系列的基础库")]
+[assembly: AssemblyDescription("提供所有Farseer.Net解决方案的基础组件")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("http://www.fsgit.com")]
 [assembly: AssemblyProduct("Farseer.Net")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
+[assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
