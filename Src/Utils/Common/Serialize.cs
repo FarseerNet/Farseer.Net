@@ -24,13 +24,13 @@ namespace FS.Utils.Common
             {
                 using (var fs = new FileStream(filePath + fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    var serializer = new XmlSerializer(typeof (T));
-                    return (T) serializer.Deserialize(fs);
+                    var serializer = new XmlSerializer(typeof(T));
+                    return (T)serializer.Deserialize(fs);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                LogManger.Log.Error(ex);
+                if (fileName.ToLower() != "system.config") { LogManger.Log.Error(ex); } // 如果当前是system.config报错，则会导致当前死循环。}
                 if (!isErrorToMove) { return null; }
                 File.Move(filePath + fileName, filePath + fileName + ".bak_" + DateTime.Now.ToString("yyMMdd-HHmmss"));
                 return default(T);
