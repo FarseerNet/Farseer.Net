@@ -70,7 +70,7 @@ namespace FS.Configs
 
             lock (m_LockHelper)
             {
-                _configEntity = Serialize.Load<T>(FilePath, FileName);
+                _configEntity = Serialize.Load<T>(FilePath, FileName, true);
                 _loadTime = DateTime.Now;
             }
         }
