@@ -25,6 +25,7 @@ namespace FS.Utils.Common.ExpressionVisitor
                 case ExpressionType.Constant:
                 case ExpressionType.Convert:
                 case ExpressionType.MemberAccess:
+                case ExpressionType.NewArrayInit:
                     exp = VisitConvertExp(exp);
                     break;
             }
@@ -282,6 +283,7 @@ namespace FS.Utils.Common.ExpressionVisitor
                 case ExpressionType.ArrayIndex:
                 case ExpressionType.ListInit:
                 case ExpressionType.Constant:
+                case ExpressionType.NewArrayInit:
                     {
                         return true;
                     }
