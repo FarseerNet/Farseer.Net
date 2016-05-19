@@ -86,6 +86,10 @@ namespace FS.Utils.Common
             if (returnType.IsEnum)
             {
                 if (string.IsNullOrWhiteSpace(objString)) { return null; }
+                if (sourceValue is bool)
+                {
+                    return Enum.ToObject(returnType, ((bool)sourceValue) ? 1 : 0);
+                }
                 return IsType<int>(sourceValue) ? Enum.ToObject(returnType, int.Parse(objString)) : Enum.Parse(returnType, objString, true);
             }
 
