@@ -1,9 +1,9 @@
-namespace FS.Infrastructure
+ï»¿namespace FS.Infrastructure
 {
-    /// <summary> NoSqlÊı¾İ¿âÀàĞÍ </summary>
+    /// <summary> NoSqlæ•°æ®åº“ç±»å‹ </summary>
     public enum eumNoSqlDbType
     {
-        /// <summary> RedisÄÚ´æÊı¾İ¿â </summary>
+        /// <summary> Rediså†…å­˜æ•°æ®åº“ </summary>
         Redis
     }
 }
