@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using FS.Utils.Common;
 
 // ReSharper disable once CheckNamespace
@@ -31,6 +32,25 @@ namespace FS.Extends
         }
 
         /// <summary>
+        ///     对List，按splitCount大小进行分组
+        /// </summary>
+        /// <typeparam name="TEntity">实体类</typeparam>
+        /// <param name="lst">List列表</param>
+        /// <param name="splitCount">每组大小</param>
+        public static List<List<TEntity>> Split<TEntity>(this IEnumerable<TEntity> lst, int splitCount)
+        {
+            var lstGroup = new List<List<TEntity>>();
+            if (lst == null) { return lstGroup; }
+
+            var groupLength = (int)Math.Ceiling(((decimal)lst.Count() / splitCount));
+            for (var pageIndex = 0; pageIndex < groupLength; pageIndex++)
+            {
+                lstGroup.Add(lst.Skip(splitCount * pageIndex).Take(splitCount).ToList());
+            }
+            return lstGroup;
+        }
+
+        /// <summary>
         ///     对List进行分页
         /// </summary>
         /// <typeparam name="TEntity">实体类</typeparam>
@@ -54,15 +74,15 @@ namespace FS.Extends
 
             if (pageSize != 0)
             {
-                allCurrentPage = (recordCount/pageSize);
-                allCurrentPage = ((recordCount%pageSize) != 0 ? allCurrentPage + 1 : allCurrentPage);
+                allCurrentPage = (recordCount / pageSize);
+                allCurrentPage = ((recordCount % pageSize) != 0 ? allCurrentPage + 1 : allCurrentPage);
                 allCurrentPage = (allCurrentPage == 0 ? 1 : allCurrentPage);
             }
             if (pageIndex > allCurrentPage) { pageIndex = allCurrentPage; }
 
             #endregion
 
-            return lst.Skip(pageSize*(pageIndex - 1)).Take(pageSize).ToList();
+            return lst.Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
         }
 
         /// <summary>
