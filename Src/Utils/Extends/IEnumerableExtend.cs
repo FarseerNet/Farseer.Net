@@ -37,15 +37,15 @@ namespace FS.Extends
         /// <typeparam name="TEntity">实体类</typeparam>
         /// <param name="lst">List列表</param>
         /// <param name="splitCount">每组大小</param>
-        public static List<List<TEntity>> Split<TEntity>(this IEnumerable<TEntity> lst, int splitCount)
+        public static List<IEnumerable<TEntity>> Split<TEntity>(this IEnumerable<TEntity> lst, int splitCount)
         {
-            var lstGroup = new List<List<TEntity>>();
+            var lstGroup = new List<IEnumerable<TEntity>>();
             if (lst == null) { return lstGroup; }
 
             var groupLength = (int)Math.Ceiling(((decimal)lst.Count() / splitCount));
             for (var pageIndex = 0; pageIndex < groupLength; pageIndex++)
             {
-                lstGroup.Add(lst.Skip(splitCount * pageIndex).Take(splitCount).ToList());
+                lstGroup.Add(lst.Skip(splitCount * pageIndex).Take(splitCount));
             }
             return lstGroup;
         }
