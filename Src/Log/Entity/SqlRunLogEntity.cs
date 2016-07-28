@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Xml.Serialization;
 using FS.Utils.Common;
 
 namespace FS.Log.Entity
@@ -39,6 +40,7 @@ namespace FS.Log.Entity
         public string Sql { get; set; }
 
         /// <summary> 执行参数 </summary>
+        [XmlElement]
         public List<SqlParam> SqlParamList { get; set; }
 
         public override void AddToQueue()
