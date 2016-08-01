@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using FS.Utils.Common;
+using FS.Log.Entity;
 
 namespace FS.Log.Entity
 {
@@ -17,13 +18,17 @@ namespace FS.Log.Entity
         /// <param name="sql">T-SQL</param>
         /// <param name="param">SQL参数</param>
         /// <param name="elapsedMilliseconds">执行时间（单位：ms）</param>
-        public SqlRunLogEntity(string name, CommandType cmdType, string sql, List<DbParameter> param, long elapsedMilliseconds) : base(eumLogType.Info, SysMapPath.SqlRunPath, $"{DateTime.Now.ToString("yy-MM-dd")}.xml", 1)
+        public SqlRunLogEntity(string name, CommandType cmdType, string sql, IEnumerable<DbParameter> param, long elapsedMilliseconds) : base(eumLogType.Info, SysMapPath.SqlRunPath, $"{DateTime.Now.ToString("yy-MM-dd")}.xml", 1)
         {
             Name = name;
             CmdType = cmdType;
-            SqlParamList = new List<SqlParam>();
             Sql = sql ?? "";
             UserTime = elapsedMilliseconds;
+            SqlParamList = new List<SqlParam>();
+            foreach (var dbParameter in param)
+            {
+                SqlParamList.Add(new SqlParam { Name = dbParameter.ParameterName, Value = dbParameter.Value.ToString() });
+            }
         }
 
         /// <summary> 执行对象 </summary>
