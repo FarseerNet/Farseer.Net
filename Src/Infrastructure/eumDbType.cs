@@ -1,15 +1,15 @@
-using System.ComponentModel.DataAnnotations;
+ï»¿using System.ComponentModel.DataAnnotations;
 
 namespace FS.Infrastructure
 {
-    /// <summary> Êı¾İ¿âÀàĞÍ </summary>
+    /// <summary> æ•°æ®åº“ç±»å‹ </summary>
     public enum eumDbType
     {
-        /// <summary> SqlServerÊı¾İ¿â </summary>
+        /// <summary> SqlServeræ•°æ®åº“ </summary>
         [Display(Name = "System.Data.SqlClient")] SqlServer,
-        /// <summary> AccessÊı¾İ¿â </summary>
+        /// <summary> Accessæ•°æ®åº“ </summary>
         [Display(Name = "System.Data.OleDb")] OleDb,
-        /// <summary> MySqlÊı¾İ¿â </summary>
+        /// <summary> MySqlæ•°æ®åº“ </summary>
         [Display(Name = "MySql.Data.MySqlClient")] MySql,
         /// <summary> SQLite </summary>
         [Display(Name = "System.Data.SQLite")] SQLite,

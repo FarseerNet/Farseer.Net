@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 using FS.Component;
 using FS.Configs;
 using FS.Utils.Common;
@@ -27,20 +29,28 @@ namespace FS.Log.Entity
             Name = name;
             CmdType = cmdType;
             Sql = sql;
-            SqlParamList = new List<SqlParam>();
-            if (param != null && param.Count > 0) { param.ForEach(o => SqlParamList.Add(new SqlParam { Name = o.ParameterName, Value = (o.Value ?? "null").ToString() })); }
+            if (param != null && param.Count > 0)
+            {
+                SqlParamList = new List<SqlParam>();
+                foreach (var t in param) {
+                    SqlParamList.Add(new SqlParam { Name = t.ParameterName, Value = (t.Value ?? "null").ToString() });
+                }
+            }
         }
 
         /// <summary> 执行对象 </summary>
+        [XmlAttribute]
         public CommandType CmdType { get; set; }
 
         /// <summary> 执行表名称 </summary>
+        [XmlAttribute]
         public string Name { get; set; }
 
         /// <summary> 执行SQL </summary>
         public string Sql { get; set; }
 
         /// <summary> 执行参数 </summary>
+        [XmlElement]
         public List<SqlParam> SqlParamList { get; set; }
 
         public override void AddToQueue()
@@ -81,6 +91,7 @@ namespace FS.Log.Entity
 
     public class SqlParam
     {
+        [XmlAttribute]
         public string Name { get; set; }
         public string Value { get; set; }
     }

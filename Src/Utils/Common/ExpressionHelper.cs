@@ -250,7 +250,7 @@ namespace FS.Utils.Common
         /// </summary>
         /// <param name="type">类型</param>
         /// <param name="args">构造函数的参数列表</param>
-        public static T CreateInstance<T>(Type type, params object[] args) where T : class, new()
+        public static T CreateInstance<T>(Type type, params object[] args) where T : class
         {
             //根据参数列表返回参数类型数组
             var parameterTypes = args.Select(c => c.GetType()).ToArray();
