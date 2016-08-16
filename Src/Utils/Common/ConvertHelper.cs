@@ -230,8 +230,6 @@ namespace FS.Utils.Common
             if (sourceValue == null) { return false; }
             var returnType = typeof(T);
             returnType = returnType.GetNullableArguments();
-            //if (returnType.IsGenericType && returnType.GetGenericTypeDefinition() == typeof(Nullable<>)) { returnType = returnType.GetGenericArguments()[0]; }
-
             var sourceType = sourceValue.GetType();
 
             // 相同类型，则直接返回原型
