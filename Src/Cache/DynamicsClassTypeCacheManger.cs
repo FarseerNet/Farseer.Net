@@ -16,45 +16,45 @@ namespace FS.Cache
         /// </summary>
         private static readonly object LockObject = new object();
 
-        private readonly Dictionary<string, Type> _dicPropertys;
-        private readonly List<PropertyInfo> _lstPropertys;
-        private readonly Type[] _constructors = null;
-        private readonly Type _parentType = null;
+        private readonly Dictionary<string, Type> _dicAddPropertys;
+        private readonly List<PropertyInfo> _lstAddPropertys;
+        private readonly Type[] _constructors;
+        private readonly Type _baseType;
         private readonly bool _isListProperty;
 
         /// <summary>
         ///     创建动态类
         /// </summary>
-        /// <param name="propertys">Key：属性名称；Value：属性类型</param>
-        /// <param name="parentType">继承的父类类型</param>
+        /// <param name="addPropertys">Key：属性名称；Value：属性类型</param>
+        /// <param name="baseType">继承的父类类型</param>
         /// <param name="constructors">构造函数参数</param>
-        private DynamicsClassTypeCacheManger(List<PropertyInfo> propertys, Type[] constructors, Type parentType) : base(0)
+        private DynamicsClassTypeCacheManger(List<PropertyInfo> addPropertys, Type[] constructors, Type baseType) : base(0)
         {
-            this._lstPropertys = propertys;
+            this._lstAddPropertys = addPropertys;
             this._constructors = constructors;
-            this._parentType = parentType;
+            this._baseType = baseType;
             this._isListProperty = true;
 
-            if (propertys != null) { Key += propertys.Sum(propertyInfo => propertyInfo.GetHashCode()); }
-            if (_parentType != null) { Key += _parentType.GetHashCode(); }
+            if (addPropertys != null) { Key += addPropertys.Sum(propertyInfo => propertyInfo.GetHashCode()); }
+            if (_baseType != null) { Key += _baseType.GetHashCode(); }
             if (_constructors != null) { Key += _constructors.Sum(constructor => constructor.GetHashCode()); }
         }
 
         /// <summary>
         ///     创建动态类
         /// </summary>
-        /// <param name="propertys">Key：属性名称；Value：属性类型</param>
-        /// <param name="parentType">继承的父类类型</param>
-        private DynamicsClassTypeCacheManger(Dictionary<string, Type> propertys, Type parentType = null) : base(0)
+        /// <param name="addPropertys">Key：属性名称；Value：属性类型</param>
+        /// <param name="baseType">继承的父类类型</param>
+        private DynamicsClassTypeCacheManger(Dictionary<string, Type> addPropertys, Type baseType = null) : base(0)
         {
-            this._dicPropertys = propertys;
-            this._parentType = parentType;
+            this._dicAddPropertys = addPropertys;
+            this._baseType = baseType;
             this._isListProperty = false;
 
-            Check.IsTure(propertys == null, "propertys参数不能为空或为0");
+            Check.IsTure(addPropertys == null, "propertys参数不能为空或为0");
 
-            if (propertys != null) { Key += propertys.Sum(propertyInfo => propertyInfo.Value.GetHashCode()); }
-            if (parentType != null) { Key += parentType.GetHashCode(); }
+            if (addPropertys != null) { Key += addPropertys.Sum(propertyInfo => propertyInfo.Value.GetHashCode()); }
+            if (baseType != null) { Key += baseType.GetHashCode(); }
         }
 
         protected override Type SetCacheLock()
@@ -64,7 +64,7 @@ namespace FS.Cache
                 if (CacheList.ContainsKey(Key)) { return CacheList[Key]; }
 
                 //缓存中没有找到，新建一个构造函数的委托
-                var val = _isListProperty ? Dynamics.CreateClassType(_lstPropertys, _constructors, _parentType) : Dynamics.CreateClassType(_dicPropertys, _parentType);
+                var val = _isListProperty ? Dynamics.CreateClassType(_lstAddPropertys, _constructors, _baseType) : Dynamics.CreateClassType(_dicAddPropertys, _baseType);
                 return (CacheList[Key] = val);
             }
         }
@@ -72,22 +72,22 @@ namespace FS.Cache
         /// <summary>
         ///     获取缓存
         /// </summary>
-        /// <param name="propertys">Key：属性名称；Value：属性类型</param>
-        /// <param name="parentType">继承的父类类型</param>
+        /// <param name="addPropertys">Key：属性名称；Value：属性类型</param>
+        /// <param name="baseType">继承的父类类型</param>
         /// <param name="constructors">构造函数参数</param>
-        public static Type Cache(List<PropertyInfo> propertys, Type[] constructors = null, Type parentType = null)
+        public static Type Cache(List<PropertyInfo> addPropertys, Type[] constructors = null, Type baseType = null)
         {
-            return new DynamicsClassTypeCacheManger(propertys, constructors, parentType).GetValue();
+            return new DynamicsClassTypeCacheManger(addPropertys, constructors, baseType).GetValue();
         }
 
         /// <summary>
         ///     获取缓存
         /// </summary>
-        /// <param name="propertys">Key：属性名称；Value：属性类型</param>
-        /// <param name="parentType">继承的父类类型</param>
-        public static Type Cache(Dictionary<string, Type> propertys, Type parentType = null)
+        /// <param name="addPropertys">Key：属性名称；Value：属性类型</param>
+        /// <param name="baseType">继承的父类类型</param>
+        public static Type Cache(Dictionary<string, Type> addPropertys, Type baseType = null)
         {
-            return new DynamicsClassTypeCacheManger(propertys, parentType).GetValue();
+            return new DynamicsClassTypeCacheManger(addPropertys, baseType).GetValue();
         }
     }
 }

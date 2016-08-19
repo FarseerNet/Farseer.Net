@@ -28,20 +28,20 @@ namespace FS.Utils.Common
         /// <summary>
         ///     创建动态类
         /// </summary>
-        /// <param name="propertys">Key：属性名称；Value：属性类型</param>
+        /// <param name="addPropertys">Key：属性名称；Value：属性类型</param>
         /// <param name="constructors">构造函数参数</param>
-        /// <param name="parentType">继承的父类类型</param>
-        public static Type CreateClassType(List<PropertyInfo> propertys, Type[] constructors = null, Type parentType = null)
+        /// <param name="baseType">继承的父类类型</param>
+        public static Type CreateClassType(List<PropertyInfo> addPropertys, Type[] constructors = null, Type baseType = null)
         {
             //Check.IsTure(propertys == null || propertys.Count == 0, "propertys参数不能为空或为0");
 
             // 类名
             var className = Guid.NewGuid().ToString();
             // 类型生成器
-            var typeBuilder = ModuleBuilder.DefineType(className, TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Serializable, parentType);
+            var typeBuilder = ModuleBuilder.DefineType(className, TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Serializable, baseType);
 
             // 添加属性
-            if (propertys != null && propertys.Count > 0) { foreach (var property in propertys) { var fieldBuilder = typeBuilder.DefineField(property.Name, property.PropertyType, FieldAttributes.Public); } }
+            if (addPropertys != null && addPropertys.Count > 0) { foreach (var property in addPropertys) { var fieldBuilder = typeBuilder.DefineField(property.Name, property.PropertyType, FieldAttributes.Public); } }
             // 添加默认构造函数
             if (constructors != null && constructors.Length > 0)
             {
@@ -56,25 +56,28 @@ namespace FS.Utils.Common
         /// <summary>
         ///     创建动态类
         /// </summary>
-        /// <param name="propertys">Key：属性名称；Value：属性类型</param>
-        /// <param name="parentType">继承的父类类型</param>
-        public static Type CreateClassType(Dictionary<string, Type> propertys, Type parentType = null)
+        /// <param name="addPropertys">Key：属性名称；Value：属性类型</param>
+        /// <param name="baseType">继承的父类类型</param>
+        public static Type CreateClassType(Dictionary<string, Type> addPropertys, Type baseType = null)
         {
-            Check.IsTure(propertys == null || propertys.Count == 0, "propertys参数不能为空或为0");
+            Check.IsTure(addPropertys == null || addPropertys.Count == 0, $"{nameof(addPropertys)}参数不能为空或为0");
 
             // 类名
             var className = Guid.NewGuid().ToString();
             // 类型生成器
-            var typeBuilder = ModuleBuilder.DefineType(className, TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Serializable, parentType);
+            var typeBuilder = ModuleBuilder.DefineType(className, TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Serializable, baseType);
 
             // 添加属性
-            if (propertys != null && propertys.Count > 0) { foreach (var property in propertys) { var fieldBuilder = typeBuilder.DefineField(property.Key, property.Value, FieldAttributes.Public); } }
+            if (addPropertys != null && addPropertys.Count > 0)
+            {
+                foreach (var property in addPropertys) { typeBuilder.DefineField(property.Key, property.Value, FieldAttributes.Public); }
+            }
 
             // 生成类型
             return typeBuilder.CreateType(); //ExpandoObject
         }
 
-        // CodeDom生成
+        // CodeDom生成 
         //public void CreateClass(Type defineType, string className, Dictionary<string, Type> dicProperty)
         //{
         //    // 命名空间
@@ -107,6 +110,7 @@ namespace FS.Utils.Common
         //    var cpr = CodeDomProvider.CreateProvider("C#");
         //    cpr.CompileAssemblyFromDom();
         //}
+
         /// <summary>
         ///     定义方法体
         /// </summary>
