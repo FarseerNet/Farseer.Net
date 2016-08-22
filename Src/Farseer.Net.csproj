@@ -65,6 +65,7 @@
     <Compile Include="Cache\EntityPhysicsMapCacheManger.cs" />
     <Compile Include="Cache\FieldSetCacheManger.cs" />
     <Compile Include="Cache\FieldGetCacheManger.cs" />
+    <Compile Include="Cache\InstanceStaticCacheManger.cs" />
     <Compile Include="Cache\PropertyGetCacheManger.cs" />
     <Compile Include="Cache\DataCacheManger.cs" />
     <Compile Include="Cache\PropertySetCacheManger.cs" />

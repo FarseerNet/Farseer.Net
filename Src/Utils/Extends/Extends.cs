@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using FS.Utils.Common;
 
 // ReSharper disable once CheckNamespace
@@ -82,6 +83,15 @@ namespace FS.Extends
             var genericArguments = type.GetGenericArguments();
             if (type.IsGenericType && genericArguments.Length > 0) { return genericArguments[0]; }
             return type;
+        }
+
+        /// <summary>
+        ///     判断IDataReader是否存在某列
+        /// </summary>
+        public static bool HaveName(this IDataReader reader, string name)
+        {
+            for (var i = 0; i < reader.FieldCount; i++) { if (ConvertHelper.IsEquals(reader.GetName(i), name)) { return true; } }
+            return false;
         }
     }
 }
