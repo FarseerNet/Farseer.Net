@@ -30,7 +30,7 @@ namespace FS.Configs
         public string PassWord = "";
 
         /// <summary> 端口号 </summary>
-        public string Port = "1433";
+        public string Port = "";
 
         /// <summary> 数据库类型 </summary>
         public eumDbType DataType = eumDbType.SqlServer;
@@ -48,10 +48,10 @@ namespace FS.Configs
         public int PoolMaxSize = 0;
 
         /// <summary> 数据库连接时间限制，单位秒 </summary>
-        public int ConnectTimeout = 30;
+        public int ConnectTimeout = 0;
 
         /// <summary> 数据库执行时间限制，单位秒 </summary>
-        public int CommandTimeout = 60;
+        public int CommandTimeout = 0;
 
         /// <summary> 自定义连接字符串 </summary>
         public string Additional = "";
