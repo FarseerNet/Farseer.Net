@@ -361,6 +361,7 @@ namespace FS.Utils.Common
                     dicColumns[i].DataList.Add(arrVals[i]);
                 }
             }
+            reader.Close();
             return dicColumns;
         }
         public static MapingData[] DataTableToDictionary(DataTable dt)
