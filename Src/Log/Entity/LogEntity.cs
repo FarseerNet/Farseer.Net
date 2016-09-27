@@ -11,7 +11,7 @@ namespace FS.Log.Entity
     public class LogEntity : AbsLogEntity<LogEntity>
     {
         public LogEntity() : base(eumLogType.Debug, null, null, 0) { }
-        public LogEntity(eumLogType logType, string message, Exception exp) : base(logType, SysMapPath.ErrorPath, $"{DateTime.Now.ToString("yy-MM-dd")}.xml", 1)
+        public LogEntity(eumLogType logType, string message, Exception exp) : base(logType, SysMapPath.ErrorPath, $"{DateTime.Now:yy-MM-dd}.xml", 1)
         {
             Exp = exp;
             Message = message ?? exp.Message.Replace("\r\n", "");

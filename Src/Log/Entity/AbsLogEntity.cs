@@ -114,10 +114,10 @@ namespace FS.Log.Entity
             var mail = ExceptionEmailConfigs.ConfigEntity;
             var smtp = new SmtpMail(mail.LoginName, mail.LoginPwd, mail.SendMail, $"Farseer.Net {EnumNameCacheManger.Cache(logType)}记录", mail.SmtpServer, 0, mail.SmtpPort);
             var body = new StringBuilder();
-            body.AppendFormat("<b>发现时间：</b> {0}<br />", CreateAt.ToString("yyyy年MM月dd日 HH:mm:ss"));
-            body.AppendFormat("<b>程序文件：</b> <u>{0}</u> <b>第{1}行</b> <font color=red>{2}()</font><br />", FileName, LineNo, MethodName);
-            body.AppendFormat("<b>日志消息：</b><font color=red>{0}</font><br />", Message);
-            smtp.Send(mail.EmailAddress, $"{DateTime.Now.ToString("yyyy年MM月dd日 HH:mm:ss")}：{EnumNameCacheManger.Cache(logType)}消息：{Message}", body.ToString());
+            body.AppendFormat($"<b>发现时间：</b> {CreateAt:yyyy年MM月dd日 HH:mm:ss}<br />");
+            body.AppendFormat($"<b>程序文件：</b> <u>{FileName}</u> <b>第{LineNo}行</b> <font color=red>{MethodName}()</font><br />");
+            body.AppendFormat($"<b>日志消息：</b><font color=red>{0}</font><br />", Message);
+            smtp.Send(mail.EmailAddress, $"{DateTime.Now:yyyy年MM月dd日 HH:mm:ss}：{EnumNameCacheManger.Cache(logType)}消息：{Message}", body.ToString());
         }
 
         public abstract void AddToQueue();
