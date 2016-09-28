@@ -8,7 +8,7 @@ namespace FS.Log.Entity
 {
     /// <summary> 运行记录 </summary>
     [Serializable]
-    public class LogEntity : AbsLogEntity<LogEntity>
+    public class LogEntity : AbsLog<LogEntity>
     {
         public LogEntity() : base(eumLogType.Debug, null, null, 0) { }
         public LogEntity(eumLogType logType, string message, Exception exp) : base(logType, SysMapPath.ErrorPath, $"{DateTime.Now:yy-MM-dd}.xml", 1)
@@ -23,7 +23,7 @@ namespace FS.Log.Entity
             AddToQueue(this);
 
             // 发送邮件
-            if (logType == eumLogType.Error && SystemConfigs.ConfigEntity.IsSendExceptionEMail) { SendEmail(); }
+            if (LogType == eumLogType.Error && SystemConfigs.ConfigEntity.IsSendExceptionEMail) { SendEmail(); }
         }
     }
 }

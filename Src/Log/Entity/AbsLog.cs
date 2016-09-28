@@ -15,11 +15,11 @@ namespace FS.Log.Entity
     /// <summary>
     ///     日志记录
     /// </summary>
-    public abstract class AbsLogEntity<TEntity>
+    public abstract class AbsLog<TEntity>
     {
-        protected AbsLogEntity(eumLogType logType, string filePath, string fileName, int lazyTime)
+        protected AbsLog(eumLogType logType, string filePath, string fileName, int lazyTime)
         {
-            this.logType = logType;
+            this.LogType = logType;
             this._lazyTime = lazyTime;
             this._filePath = filePath;
             this._fileName = fileName;
@@ -27,7 +27,7 @@ namespace FS.Log.Entity
 
         private readonly string _filePath;
         private readonly string _fileName;
-        public readonly eumLogType logType;
+        protected readonly eumLogType LogType;
         private readonly int _lazyTime;
 
         /// <summary> SQL日志保存定时器/// </summary>
@@ -50,7 +50,7 @@ namespace FS.Log.Entity
         public DateTime CreateAt { get; set; }
 
         /// <summary> 执行时间 </summary>
-        protected Exception Exp { get; set; }
+        public Exception Exp { get; set; }
 
         /// <summary> 异常消息 </summary>
         public string Message { get; set; }
@@ -58,7 +58,7 @@ namespace FS.Log.Entity
         /// <summary>
         ///     记录执行时的方法及文件
         /// </summary>
-        protected void RecordExecuteMethod()
+        private void RecordExecuteMethod()
         {
             CreateAt = DateTime.Now;
 
@@ -90,18 +90,25 @@ namespace FS.Log.Entity
                 {
                     lock (LockObject)
                     {
-                        // 读取本地日志文件
-                        var lst = Serialize.Load<List<TEntity>>(_filePath, _fileName, true) ?? new List<TEntity>();
-                        var count = SqlLogList.Count;
-                        lst.AddRange(SqlLogList);
-                        SqlLogList.RemoveRange(0, count);
-                        Serialize.Save(lst, _filePath, _fileName);
-
-                        if (SqlLogList.Count == 0 && SaveSqlRecord.ContainsKey(typeof(TEntity)) && SaveSqlRecord[typeof(TEntity)] != null)
+                        try
                         {
-                            SaveSqlRecord[typeof(TEntity)].Dispose();
-                            SaveSqlRecord[typeof(TEntity)] = null;
-                            SaveSqlRecord.Remove(typeof(TEntity));
+                            // 读取本地日志文件
+                            var lst = Serialize.Load<List<TEntity>>(_filePath, _fileName, true) ?? new List<TEntity>();
+                            var count = SqlLogList.Count;
+                            lst.AddRange(SqlLogList);
+                            SqlLogList.RemoveRange(0, count);
+                            Serialize.Save(lst, _filePath, _fileName);
+
+                            if (SqlLogList.Count == 0 && SaveSqlRecord.ContainsKey(typeof(TEntity)) && SaveSqlRecord[typeof(TEntity)] != null)
+                            {
+                                SaveSqlRecord[typeof(TEntity)].Dispose();
+                                SaveSqlRecord[typeof(TEntity)] = null;
+                                SaveSqlRecord.Remove(typeof(TEntity));
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
                         }
                     }
                 }, null, 1000 * _lazyTime, 1000 * _lazyTime);
@@ -112,12 +119,12 @@ namespace FS.Log.Entity
         protected virtual void SendEmail()
         {
             var mail = ExceptionEmailConfigs.ConfigEntity;
-            var smtp = new SmtpMail(mail.LoginName, mail.LoginPwd, mail.SendMail, $"Farseer.Net {EnumNameCacheManger.Cache(logType)}记录", mail.SmtpServer, 0, mail.SmtpPort);
+            var smtp = new SmtpMail(mail.LoginName, mail.LoginPwd, mail.SendMail, $"Farseer.Net {EnumNameCacheManger.Cache(LogType)}记录", mail.SmtpServer, 0, mail.SmtpPort);
             var body = new StringBuilder();
             body.AppendFormat($"<b>发现时间：</b> {CreateAt:yyyy年MM月dd日 HH:mm:ss}<br />");
             body.AppendFormat($"<b>程序文件：</b> <u>{FileName}</u> <b>第{LineNo}行</b> <font color=red>{MethodName}()</font><br />");
             body.AppendFormat($"<b>日志消息：</b><font color=red>{0}</font><br />", Message);
-            smtp.Send(mail.EmailAddress, $"{DateTime.Now:yyyy年MM月dd日 HH:mm:ss}：{EnumNameCacheManger.Cache(logType)}消息：{Message}", body.ToString());
+            smtp.Send(mail.EmailAddress, $"{DateTime.Now:yyyy年MM月dd日 HH:mm:ss}：{EnumNameCacheManger.Cache(LogType)}消息：{Message}", body.ToString());
         }
 
         public abstract void AddToQueue();

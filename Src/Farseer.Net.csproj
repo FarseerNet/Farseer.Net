@@ -78,6 +78,7 @@
     <Compile Include="Infrastructure\IVerification.cs" />
     <Compile Include="Infrastructure\MapingData.cs" />
     <Compile Include="Log\DefaultLog.cs" />
+    <Compile Include="Log\Entity\SqlParam.cs" />
     <Compile Include="Log\eumLogType.cs" />
     <Compile Include="Log\LogManger.cs" />
     <Compile Include="Log\Entity\LogEntity.cs" />
@@ -99,11 +100,11 @@
     <Compile Include="Infrastructure\ICate.cs" />
     <Compile Include="Infrastructure\IEntity.cs" />
     <Compile Include="Utils\Extends\IEnumerableExtend.cs" />
-    <Compile Include="Log\Entity\AbsLogEntity.cs" />
+    <Compile Include="Log\Entity\AbsLog.cs" />
     <Compile Include="Configs\ExceptionEmailConfigs.cs" />
     <Compile Include="Log\ILog.cs" />
-    <Compile Include="Log\Entity\SqlErrorLogEntity.cs" />
-    <Compile Include="Log\Entity\SqlRunLogEntity.cs" />
+    <Compile Include="Log\Entity\SqlErrorLog.cs" />
+    <Compile Include="Log\Entity\SqlRunLog.cs" />
     <Compile Include="Utils\Extends\Extends.cs" />
     <Compile Include="Utils\Extends\ObjectExtend.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

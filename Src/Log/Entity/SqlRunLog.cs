@@ -10,27 +10,8 @@ namespace FS.Log.Entity
 {
     /// <summary> SQL执行记录 </summary>
     [Serializable]
-    public class SqlRunLogEntity : AbsLogEntity<SqlRunLogEntity>
+    public class SqlRunLog : AbsLog<SqlRunLog>
     {
-        public SqlRunLogEntity() : base(eumLogType.Debug, null, null, 0) { }
-        /// <summary> SQL执行记录写入~/App_Data/SqlLog.xml </summary>
-        /// <param name="name">表名称</param>
-        /// <param name="cmdType">执行方式</param>
-        /// <param name="sql">T-SQL</param>
-        /// <param name="param">SQL参数</param>
-        /// <param name="elapsedMilliseconds">执行时间（单位：ms）</param>
-        public SqlRunLogEntity(string name, CommandType cmdType, string sql, IEnumerable<DbParameter> param, long elapsedMilliseconds) : base(eumLogType.Info, SysMapPath.SqlRunPath, $"{DateTime.Now.ToString("yy-MM-dd")}.xml", 1)
-        {
-            Name = name;
-            CmdType = cmdType;
-            Sql = sql ?? "";
-            UserTime = elapsedMilliseconds;
-            SqlParamList = new List<SqlParam>();
-            foreach (var dbParameter in param)
-            {
-                SqlParamList.Add(new SqlParam { Name = dbParameter.ParameterName, Value = dbParameter.Value.ToString() });
-            }
-        }
 
         /// <summary> 执行对象 </summary>
         public CommandType CmdType { get; set; }
@@ -47,6 +28,27 @@ namespace FS.Log.Entity
         /// <summary> 执行参数 </summary>
         [XmlElement]
         public List<SqlParam> SqlParamList { get; set; }
+
+        /// <summary> SQL执行记录写入~/App_Data/SqlLog.xml </summary>
+        public SqlRunLog() : base(eumLogType.Debug, null, null, 0) { }
+        /// <summary> SQL执行记录写入~/App_Data/SqlLog.xml </summary>
+        /// <param name="name">表名称</param>
+        /// <param name="cmdType">执行方式</param>
+        /// <param name="sql">T-SQL</param>
+        /// <param name="param">SQL参数</param>
+        /// <param name="elapsedMilliseconds">执行时间（单位：ms）</param>
+        public SqlRunLog(string name, CommandType cmdType, string sql, IEnumerable<DbParameter> param, long elapsedMilliseconds) : base(eumLogType.Info, SysMapPath.SqlRunPath, $"{DateTime.Now.ToString("yy-MM-dd")}.xml", 1)
+        {
+            Name = name;
+            CmdType = cmdType;
+            Sql = sql ?? "";
+            UserTime = elapsedMilliseconds;
+            SqlParamList = new List<SqlParam>();
+            foreach (var dbParameter in param)
+            {
+                SqlParamList.Add(new SqlParam { Name = dbParameter.ParameterName, Value = dbParameter.Value.ToString() });
+            }
+        }
 
         public override void AddToQueue()
         {

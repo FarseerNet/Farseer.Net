@@ -9,7 +9,7 @@ namespace FS.Log
     /// <summary>
     /// 日志管理
     /// </summary>
-    public class LogManger
+    public static class LogManger
     {
         private static ILog _log;
         /// <summary>

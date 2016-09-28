@@ -13,31 +13,8 @@ namespace FS.Log.Entity
 {
     /// <summary> SQL异常记录 </summary>
     [Serializable]
-    public class SqlErrorLogEntity : AbsLogEntity<SqlErrorLogEntity>
+    public class SqlErrorLog : AbsLog<SqlErrorLog>
     {
-        public SqlErrorLogEntity() : base(eumLogType.Debug, null, null, 0) { }
-        /// <summary> SQL异常记录写入 </summary>
-        /// <param name="name">表名称</param>
-        /// <param name="cmdType">执行方式</param>
-        /// <param name="sql">T-SQL</param>
-        /// <param name="param">SQL参数</param>
-        /// <param name="exp">异常信息</param>
-        public SqlErrorLogEntity(Exception exp, string name, CommandType cmdType, string sql, List<DbParameter> param) : base(eumLogType.Error, SysMapPath.SqlErrorPath, $"{DateTime.Now.ToString("yy-MM-dd")}.xml", 1)
-        {
-            Exp = exp;
-            Message = exp.Message.Replace("\r\n", "");
-            Name = name;
-            CmdType = cmdType;
-            Sql = sql;
-            if (param != null && param.Count > 0)
-            {
-                SqlParamList = new List<SqlParam>();
-                foreach (var t in param) {
-                    SqlParamList.Add(new SqlParam { Name = t.ParameterName, Value = (t.Value ?? "null").ToString() });
-                }
-            }
-        }
-
         /// <summary> 执行对象 </summary>
         [XmlAttribute]
         public CommandType CmdType { get; set; }
@@ -52,6 +29,30 @@ namespace FS.Log.Entity
         /// <summary> 执行参数 </summary>
         [XmlElement]
         public List<SqlParam> SqlParamList { get; set; }
+
+        /// <summary> SQL异常记录写入 </summary>
+        public SqlErrorLog() : base(eumLogType.Debug, null, null, 0) { }
+        /// <summary> SQL异常记录写入 </summary>
+        /// <param name="name">表名称</param>
+        /// <param name="cmdType">执行方式</param>
+        /// <param name="sql">T-SQL</param>
+        /// <param name="param">SQL参数</param>
+        /// <param name="exp">异常信息</param>
+        public SqlErrorLog(Exception exp, string name, CommandType cmdType, string sql, List<DbParameter> param) : base(eumLogType.Error, SysMapPath.SqlErrorPath, $"{DateTime.Now.ToString("yy-MM-dd")}.xml", 1)
+        {
+            Exp = exp;
+            Message = exp.Message.Replace("\r\n", "");
+            Name = name;
+            CmdType = cmdType;
+            Sql = sql;
+            if (param != null && param.Count > 0)
+            {
+                SqlParamList = new List<SqlParam>();
+                foreach (var t in param) {
+                    SqlParamList.Add(new SqlParam { Name = t.ParameterName, Value = (t.Value ?? "null").ToString() });
+                }
+            }
+        }
 
         public override void AddToQueue()
         {
@@ -87,12 +88,5 @@ namespace FS.Log.Entity
             body.AppendFormat("<b>错误消息：</b><font color=red>{0}</font><br />", Message);
             smtp.Send(mail.EmailAddress, $"{DateTime.Now.ToString("yyyy年MM月dd日 HH:mm:ss")}：警告！数据库异常：{Message}", body.ToString());
         }
-    }
-
-    public class SqlParam
-    {
-        [XmlAttribute]
-        public string Name { get; set; }
-        public string Value { get; set; }
     }
 }
