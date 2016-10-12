@@ -76,7 +76,7 @@ namespace FS.Extends
             Type resultType;
             if (!DicNullableArguments.TryGetValue(type, out resultType))
             {
-                resultType = type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>) ? resultType = Nullable.GetUnderlyingType(type) : type;
+                resultType = type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>) ? Nullable.GetUnderlyingType(type) : type;
                 DicNullableArguments.TryAdd(type, resultType);
             }
             return resultType;
