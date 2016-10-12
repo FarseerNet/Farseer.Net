@@ -104,8 +104,8 @@
     <Compile Include="Log\Default\Entity\CommonLog.cs" />
     <Compile Include="Configs\ExceptionEmailConfigs.cs" />
     <Compile Include="Log\ILog.cs" />
-    <Compile Include="Log\Default\Entity\SqlErrorLog.cs" />
-    <Compile Include="Log\Default\Entity\SqlRunLog.cs" />
+    <Compile Include="Log\Default\SqlErrorLog.cs" />
+    <Compile Include="Log\Default\SqlRunLog.cs" />
     <Compile Include="Utils\Extends\Extends.cs" />
     <Compile Include="Utils\Extends\ObjectExtend.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

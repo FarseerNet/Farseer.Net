@@ -62,6 +62,7 @@ namespace FS.Log.Default
                 if (count == 0) { return; }
                 try
                 {
+                    System.IO.Directory.CreateDirectory(_filePath);
                     // 文件名
                     var fileName = $"{DateTime.Now:yy-MM-dd}.log";
                     // JSON序例化后保存的变量
@@ -78,9 +79,9 @@ namespace FS.Log.Default
                         }
                     }
                     // 写入到日志文件
-                    File.WriteAllLines(_filePath + fileName, json);
+                    File.AppendAllLines(_filePath + fileName, json);
                     // 移除待持久化队列
-                    _sqlLogList.RemoveRange(0, count - 1);
+                    _sqlLogList.RemoveRange(0, count);
                 }
                 catch (Exception)
                 {
@@ -101,6 +102,7 @@ namespace FS.Log.Default
         public void Write(string message, Exception exp) 
         {
             var log = new CommonLog { Exp = exp, Message = message ?? exp.Message.Replace("\r\n", "") };
+            log.RecordExecuteMethod();
             //写入日志
             Add(log);
             // 发送邮件

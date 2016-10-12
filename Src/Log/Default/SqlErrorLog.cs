@@ -2,16 +2,18 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Xml.Serialization;
 using FS.Component;
 using FS.Configs;
+using FS.Log.Default.Entity;
 using FS.Utils.Common;
 
-namespace FS.Log.Default.Entity
+namespace FS.Log.Default
 {
     /// <summary> SQL异常记录 </summary>
-    [Serializable]
+    [DataContract]
     public class SqlErrorLog : CommonLog
     {
         /// <summary>
@@ -20,18 +22,19 @@ namespace FS.Log.Default.Entity
         private static readonly LogWrite Writer = new LogWrite(EumLogType.Error, SysMapPath.SqlErrorPath, 5);
 
         /// <summary> 执行对象 </summary>
-        [XmlAttribute]
+        [DataMember]
         public CommandType CmdType { get; set; }
 
         /// <summary> 执行表名称 </summary>
-        [XmlAttribute]
+        [DataMember]
         public string Name { get; set; }
 
         /// <summary> 执行SQL </summary>
+        [DataMember]
         public string Sql { get; set; }
 
         /// <summary> 执行参数 </summary>
-        [XmlElement]
+        [DataMember]
         public List<SqlParam> SqlParamList { get; set; }
 
         /// <summary> SQL异常记录写入 </summary>
@@ -55,6 +58,7 @@ namespace FS.Log.Default.Entity
                     SqlParamList.Add(new SqlParam { Name = t.ParameterName, Value = (t.Value ?? "null").ToString() });
                 }
             }
+            RecordExecuteMethod();
         }
 
         /// <summary> 发送邮件 </summary>
@@ -63,7 +67,7 @@ namespace FS.Log.Default.Entity
             var mail = ExceptionEmailConfigs.ConfigEntity;
             var smtp = new SmtpMail(mail.LoginName, mail.LoginPwd, mail.SendMail, "Farseer.Net SQL异常记录", mail.SmtpServer, 0, mail.SmtpPort);
             var body = new StringBuilder();
-            body.AppendFormat("<b>发现时间：</b> {0}<br />", CreateAt.ToString("yyyy年MM月dd日 HH:mm:ss"));
+            body.AppendFormat("<b>发现时间：</b> {0}<br />", CreateAt);
             body.AppendFormat("<b>程序文件：</b> <u>{0}</u> <b>第{1}行</b> <font color=red>{2}()</font><br />", FileName, LineNo, MethodName);
 
             switch (CmdType)
