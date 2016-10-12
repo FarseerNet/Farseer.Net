@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace FS.Log.Entity
+namespace FS.Log.Default.Entity
 {
     public class SqlParam
     {

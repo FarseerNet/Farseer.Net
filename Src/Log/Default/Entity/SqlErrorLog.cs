@@ -2,19 +2,23 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using FS.Component;
 using FS.Configs;
 using FS.Utils.Common;
 
-namespace FS.Log.Entity
+namespace FS.Log.Default.Entity
 {
     /// <summary> SQL异常记录 </summary>
     [Serializable]
-    public class SqlErrorLog : AbsLog<SqlErrorLog>
+    public class SqlErrorLog : CommonLog
     {
+        /// <summary>
+        /// 日志写入器
+        /// </summary>
+        private static readonly LogWrite Writer = new LogWrite(EumLogType.Error, SysMapPath.SqlErrorPath, 5);
+
         /// <summary> 执行对象 </summary>
         [XmlAttribute]
         public CommandType CmdType { get; set; }
@@ -31,14 +35,12 @@ namespace FS.Log.Entity
         public List<SqlParam> SqlParamList { get; set; }
 
         /// <summary> SQL异常记录写入 </summary>
-        public SqlErrorLog() : base(eumLogType.Debug, null, null, 0) { }
-        /// <summary> SQL异常记录写入 </summary>
         /// <param name="name">表名称</param>
         /// <param name="cmdType">执行方式</param>
         /// <param name="sql">T-SQL</param>
         /// <param name="param">SQL参数</param>
         /// <param name="exp">异常信息</param>
-        public SqlErrorLog(Exception exp, string name, CommandType cmdType, string sql, List<DbParameter> param) : base(eumLogType.Error, SysMapPath.SqlErrorPath, $"{DateTime.Now.ToString("yy-MM-dd")}.xml", 1)
+        public SqlErrorLog(Exception exp, string name, CommandType cmdType, string sql, List<DbParameter> param)
         {
             Exp = exp;
             Message = exp.Message.Replace("\r\n", "");
@@ -48,23 +50,15 @@ namespace FS.Log.Entity
             if (param != null && param.Count > 0)
             {
                 SqlParamList = new List<SqlParam>();
-                foreach (var t in param) {
+                foreach (var t in param)
+                {
                     SqlParamList.Add(new SqlParam { Name = t.ParameterName, Value = (t.Value ?? "null").ToString() });
                 }
             }
         }
 
-        public override void AddToQueue()
-        {
-            //写入日志
-            AddToQueue(this);
-
-            // 发送邮件
-            if (SystemConfigs.ConfigEntity.IsSendExceptionEMail) { SendEmail(); }
-        }
-
         /// <summary> 发送邮件 </summary>
-        protected override void SendEmail()
+        private void SendEmail()
         {
             var mail = ExceptionEmailConfigs.ConfigEntity;
             var smtp = new SmtpMail(mail.LoginName, mail.LoginPwd, mail.SendMail, "Farseer.Net SQL异常记录", mail.SmtpServer, 0, mail.SmtpPort);
@@ -87,6 +81,13 @@ namespace FS.Log.Entity
             SqlParamList.ForEach(o => body.AppendFormat("{0} = {1}<br />", o.Name, o.Value));
             body.AppendFormat("<b>错误消息：</b><font color=red>{0}</font><br />", Message);
             smtp.Send(mail.EmailAddress, $"{DateTime.Now.ToString("yyyy年MM月dd日 HH:mm:ss")}：警告！数据库异常：{Message}", body.ToString());
+        }
+
+        public void Write()
+        {
+            Writer.Add(this);
+            // 发送邮件
+            if (SystemConfigs.ConfigEntity.IsSendErrorEmail) { SendEmail(); }
         }
     }
 }

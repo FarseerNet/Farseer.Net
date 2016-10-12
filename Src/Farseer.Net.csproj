@@ -54,6 +54,7 @@
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -77,11 +78,11 @@
     <Compile Include="Infrastructure\IDbSet.cs" />
     <Compile Include="Infrastructure\IVerification.cs" />
     <Compile Include="Infrastructure\MapingData.cs" />
-    <Compile Include="Log\DefaultLog.cs" />
-    <Compile Include="Log\Entity\SqlParam.cs" />
+    <Compile Include="Log\Default\DefaultLog.cs" />
+    <Compile Include="Log\Default\LogWrite.cs" />
+    <Compile Include="Log\Default\Entity\SqlParam.cs" />
     <Compile Include="Log\eumLogType.cs" />
     <Compile Include="Log\LogManger.cs" />
-    <Compile Include="Log\Entity\LogEntity.cs" />
     <Compile Include="Map\EntityPhysicsMap.cs" />
     <Compile Include="Utils\Common\Check.cs" />
     <Compile Include="Utils\Common\ConvertHelper.cs" />
@@ -100,11 +101,11 @@
     <Compile Include="Infrastructure\ICate.cs" />
     <Compile Include="Infrastructure\IEntity.cs" />
     <Compile Include="Utils\Extends\IEnumerableExtend.cs" />
-    <Compile Include="Log\Entity\AbsLog.cs" />
+    <Compile Include="Log\Default\Entity\CommonLog.cs" />
     <Compile Include="Configs\ExceptionEmailConfigs.cs" />
     <Compile Include="Log\ILog.cs" />
-    <Compile Include="Log\Entity\SqlErrorLog.cs" />
-    <Compile Include="Log\Entity\SqlRunLog.cs" />
+    <Compile Include="Log\Default\Entity\SqlErrorLog.cs" />
+    <Compile Include="Log\Default\Entity\SqlRunLog.cs" />
     <Compile Include="Utils\Extends\Extends.cs" />
     <Compile Include="Utils\Extends\ObjectExtend.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

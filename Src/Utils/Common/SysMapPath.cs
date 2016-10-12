@@ -13,6 +13,11 @@ namespace FS.Utils.Common
         public static string AppData { get; set; } = AppDomain.CurrentDomain.BaseDirectory + "\\App_Data\\";
 
         /// <summary>
+        /// 日志的路径保存位置
+        /// </summary>
+        public static string LogPath { get; private set; } = SysMapPath.AppData + "log/";
+
+        /// <summary>
         /// Debug的路径保存位置
         /// </summary>
         public static string DebugPath { get; private set; } = SysMapPath.AppData + "log/Debug/";

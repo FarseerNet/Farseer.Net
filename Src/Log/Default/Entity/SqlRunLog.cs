@@ -4,15 +4,17 @@ using System.Data;
 using System.Data.Common;
 using System.Xml.Serialization;
 using FS.Utils.Common;
-using FS.Log.Entity;
 
-namespace FS.Log.Entity
+namespace FS.Log.Default.Entity
 {
     /// <summary> SQL执行记录 </summary>
     [Serializable]
-    public class SqlRunLog : AbsLog<SqlRunLog>
+    public class SqlRunLog : CommonLog
     {
-
+        /// <summary>
+        /// 日志写入器
+        /// </summary>
+        private static readonly LogWrite Writer = new LogWrite(EumLogType.Info, SysMapPath.SqlRunPath, 30);
         /// <summary> 执行对象 </summary>
         public CommandType CmdType { get; set; }
 
@@ -29,15 +31,13 @@ namespace FS.Log.Entity
         [XmlElement]
         public List<SqlParam> SqlParamList { get; set; }
 
-        /// <summary> SQL执行记录写入~/App_Data/SqlLog.xml </summary>
-        public SqlRunLog() : base(eumLogType.Debug, null, null, 0) { }
-        /// <summary> SQL执行记录写入~/App_Data/SqlLog.xml </summary>
+        /// <summary> SQL执行记录</summary>
         /// <param name="name">表名称</param>
         /// <param name="cmdType">执行方式</param>
         /// <param name="sql">T-SQL</param>
         /// <param name="param">SQL参数</param>
         /// <param name="elapsedMilliseconds">执行时间（单位：ms）</param>
-        public SqlRunLog(string name, CommandType cmdType, string sql, IEnumerable<DbParameter> param, long elapsedMilliseconds) : base(eumLogType.Info, SysMapPath.SqlRunPath, $"{DateTime.Now.ToString("yy-MM-dd")}.xml", 1)
+        public SqlRunLog(string name, CommandType cmdType, string sql, IEnumerable<DbParameter> param, long elapsedMilliseconds)
         {
             Name = name;
             CmdType = cmdType;
@@ -50,10 +50,6 @@ namespace FS.Log.Entity
             }
         }
 
-        public override void AddToQueue()
-        {
-            //写入日志
-            AddToQueue(this);
-        }
+        public void Write() => Writer.Add(this);
     }
 }
