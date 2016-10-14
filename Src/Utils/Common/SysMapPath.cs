@@ -15,41 +15,41 @@ namespace FS.Utils.Common
         /// <summary>
         /// 日志的路径保存位置
         /// </summary>
-        public static string LogPath { get; private set; } = SysMapPath.AppData + "log/";
+        public static string LogPath => SysMapPath.AppData + "log/";
 
         /// <summary>
         /// Debug的路径保存位置
         /// </summary>
-        public static string DebugPath { get; private set; } = SysMapPath.AppData + "log/Debug/";
+        public static string DebugPath => SysMapPath.AppData + "log/Debug/";
 
         /// <summary>
         /// Error的路径保存位置
         /// </summary>
-        public static string ErrorPath { get; private set; } = SysMapPath.AppData + "log/Error/";
+        public static string ErrorPath => SysMapPath.AppData + "log/Error/";
 
         /// <summary>
         /// Fatal的路径保存位置
         /// </summary>
-        public static string FatalPath { get; private set; } = SysMapPath.AppData + "log/Fatal/";
+        public static string FatalPath => SysMapPath.AppData + "log/Fatal/";
 
         /// <summary>
         /// Info的路径保存位置
         /// </summary>
-        public static string InfoPath { get; private set; } = SysMapPath.AppData + "log/Info/";
+        public static string InfoPath => SysMapPath.AppData + "log/Info/";
 
         /// <summary>
         /// Warn的路径保存位置
         /// </summary>
-        public static string WarnPath { get; private set; } = SysMapPath.AppData + "log/Warn/";
+        public static string WarnPath => SysMapPath.AppData + "log/Warn/";
 
         /// <summary>
         /// Sql错误的路径保存位置
         /// </summary>
-        public static string SqlErrorPath { get; private set; } = SysMapPath.AppData + "log/SqlError/";
+        public static string SqlErrorPath => SysMapPath.AppData + "log/SqlError/";
 
         /// <summary>
         /// Sql运行的路径保存位置
         /// </summary>
-        public static string SqlRunPath { get; private set; } = SysMapPath.AppData + "log/SqlRun/";
+        public static string SqlRunPath => SysMapPath.AppData + "log/SqlRun/";
     }
 }
