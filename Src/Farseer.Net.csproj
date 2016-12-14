@@ -54,6 +54,7 @@
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -76,10 +77,12 @@
     <Compile Include="Infrastructure\IDbSet`1.cs" />
     <Compile Include="Infrastructure\IDbSet.cs" />
     <Compile Include="Infrastructure\IVerification.cs" />
-    <Compile Include="Log\DefaultLog.cs" />
+    <Compile Include="Infrastructure\MapingData.cs" />
+    <Compile Include="Log\Default\DefaultLog.cs" />
+    <Compile Include="Log\Default\LogWrite.cs" />
+    <Compile Include="Log\Default\Entity\SqlParam.cs" />
     <Compile Include="Log\eumLogType.cs" />
     <Compile Include="Log\LogManger.cs" />
-    <Compile Include="Log\Entity\LogEntity.cs" />
     <Compile Include="Map\EntityPhysicsMap.cs" />
     <Compile Include="Utils\Common\Check.cs" />
     <Compile Include="Utils\Common\ConvertHelper.cs" />
@@ -98,11 +101,11 @@
     <Compile Include="Infrastructure\ICate.cs" />
     <Compile Include="Infrastructure\IEntity.cs" />
     <Compile Include="Utils\Extends\IEnumerableExtend.cs" />
-    <Compile Include="Log\Entity\AbsLogEntity.cs" />
+    <Compile Include="Log\Default\Entity\CommonLog.cs" />
     <Compile Include="Configs\ExceptionEmailConfigs.cs" />
     <Compile Include="Log\ILog.cs" />
-    <Compile Include="Log\Entity\SqlErrorLogEntity.cs" />
-    <Compile Include="Log\Entity\SqlRunLogEntity.cs" />
+    <Compile Include="Log\Default\SqlErrorLog.cs" />
+    <Compile Include="Log\Default\SqlRunLog.cs" />
     <Compile Include="Utils\Extends\Extends.cs" />
     <Compile Include="Utils\Extends\ObjectExtend.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -119,8 +122,8 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if Exist $(ProjectDir)bin\Release\$(ProjectName).dll copy /V $(ProjectDir)bin\Release\$(ProjectName).dll  $(ProjectDir)..\lib\$(ProjectName).dll
-if Exist $(ProjectDir)bin\Release\$(ProjectName).pdb copy /V $(ProjectDir)bin\Release\$(ProjectName).pdb  $(ProjectDir)..\lib\$(ProjectName).pdb</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

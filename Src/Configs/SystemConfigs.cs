@@ -14,16 +14,28 @@ namespace FS.Configs
         /// <summary> 根据自己的需要来设置 </summary>
         public bool DeBug = false;
 
-        /// <summary> 开启记录Sql执行过程 </summary>
-        public bool IsWriteDbLog = false;
+        /// <summary> 开启调试日志记录 </summary>
+        public bool IsWriteDebugLog = true;
 
-        /// <summary> 开启记录Sql错误记录 </summary>
-        public bool IsWriteDbExceptionLog = false;
+        /// <summary> 开启异常日志记录 </summary>
+        public bool IsWriteErrorLog = true;
 
-        /// <summary> 开启运行时错误记录 </summary>
-        public bool IsWriteRunExceptionLog = false;
+        /// <summary> 开启错误日志记录 </summary>
+        public bool IsWriteFatalLog = true;
 
-        /// <summary> 开启数据库错误记录发送邮件 </summary>
-        public bool IsSendExceptionEMail = false;
+        /// <summary> 开启信息日志记录 </summary>
+        public bool IsWriteInfoLog = true;
+
+        /// <summary> 开启警告日志记录 </summary>
+        public bool IsWriteWarnLog = true;
+
+        /// <summary> 开启SQL运行日志记录 </summary>
+        public bool IsWriteSqlRunLog = false;
+
+        /// <summary> 开启SQL异常日志记录 </summary>
+        public bool IsWriteSqlErrorLog = false;
+
+        /// <summary> 开启异常错误记录发送邮件 </summary>
+        public bool IsSendErrorEmail = false;
     }
 }

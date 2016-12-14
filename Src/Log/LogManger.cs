@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FS.Log.Default;
 using FS.Utils.Common;
 
 namespace FS.Log
@@ -9,17 +10,20 @@ namespace FS.Log
     /// <summary>
     /// 日志管理
     /// </summary>
-    public class LogManger
+    public static class LogManger
     {
-        private static ILog _log;
         /// <summary>
         /// 日志管理
         /// </summary>
-        public static ILog Log => _log ?? (_log = new DefaultLog());
+        public static ILog Log { get; private set; } = new DefaultLog();
 
+        /// <summary>
+        /// 使用外部实现方式
+        /// </summary>
+        /// <param name="log"></param>
         public static void Set(ILog log)
         {
-            _log = log;
+            Log = log;
         }
     }
 }
