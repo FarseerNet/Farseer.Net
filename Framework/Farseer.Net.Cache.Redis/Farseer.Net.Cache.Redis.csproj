@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
+    <Company>steden</Company>
+    <Copyright>http://www.fsgit.com</Copyright>
+    <Authors>steden</Authors>
+    <Product>缓存管理组件</Product>
+    <Description>包括：Redis缓存、运行时缓存、多级缓存</Description>
+    <PackageTags>Redis缓存、运行时缓存、多级缓存</PackageTags>
+    <AssemblyVersion>2.0.0</AssemblyVersion>
+    <FileVersion>2.0.0</FileVersion>
+    <Version>2.0.0</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <DefineConstants>$(DefineConstants);CORE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CacheManager.Core" Version="1.1.1" />
+    <PackageReference Include="StackExchange.Redis" Version="1.2.6" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Runtime.Caching" />
+    <Compile Remove="CachingMemory\**" />
+    <EmbeddedResource Remove="CachingMemory\**" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Farseer.Net.Cache\Farseer.Net.Cache.csproj" />
+    <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />
+  </ItemGroup>
+</Project>

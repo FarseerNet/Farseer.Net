@@ -1,0 +1,39 @@
+﻿// ********************************************
+// 作者：何达贤（steden） QQ：11042427
+// 时间：2017-01-17 10:37
+// ********************************************
+
+using System;
+using System.Runtime.Serialization;
+
+namespace Farseer.Net
+{
+	/// <summary>
+	/// 配置文件不正确
+	/// </summary>
+	public class FarseerConfigException : FarseerException
+    {
+		/// <summary>
+		///     构造函数
+		/// </summary>
+		public FarseerConfigException() { }
+#if !CORE
+        /// <summary>
+        ///     构造函数
+        /// </summary>
+        public FarseerConfigException(SerializationInfo serializationInfo, StreamingContext context) : base(serializationInfo, context) { }
+#endif
+		/// <summary>
+		///     构造函数
+		/// </summary>
+		/// <param name="message">Exception message</param>
+		public FarseerConfigException(string message) : base(message) { }
+
+		/// <summary>
+		///     构造函数
+		/// </summary>
+		/// <param name="message">Exception message</param>
+		/// <param name="innerException">Inner exception</param>
+		public FarseerConfigException(string message, Exception innerException) : base(message, innerException) { }
+	}
+}

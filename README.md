@@ -1,24 +1,14 @@
 ##Farseer.net是什么?
-        由一批兴趣爱好者针对.Net平台下进行开发的一系列解决方案。
+        针对.Net平台下进行开发的一系列解决方案。
 
         并且它完全开源在GitHub中托管。
 
-Farseer.Net是所有项目的基础组件，以FS命名空间开头
+        Farseer.Net以FS命名空间开头
 
 
 ##Farseer.net有哪些功能？
-* Farseer.Net.Sql：数据库ORM
+* Farseer.Net.Data：数据库ORM
   *  支持：Sqlserver/Oledb（Access/Execl）/Sqlite/MySql/Oracle 数据库。
-  *  导出为一个html格式的文件，样式一点也不会丢失
-    
-* Farseer.Net.DI：IOC、DI
-    * 支持无配置化
-    * 支持MVC
-    
-* Farseer.Net.Redis：NoSql数据库
-    * 支持对象映射
-    
-* Farseer.Net.Log：日志
 
 ##申明与呼吁
  * Farseer.net 的初衷不是为了推广其知名度及祈求大家在自己项目上使用它，而是希望大家都参与到这个项目（哪怕仅仅是提供意见也是我非常需要的）。
@@ -38,5 +28,4 @@ Farseer.Net是所有项目的基础组件，以FS命名空间开头
 * 教程：http://www.cnblogs.com/steden/
 
 ##关于作者
-[steden](http://www.cnblogs.com/steden/)
 [Leandro](http://www.cnblogs.com/lhyEmpty/)

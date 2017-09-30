@@ -1,0 +1,53 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
+    <Company>steden</Company>
+    <Copyright>http://www.fsgit.com</Copyright>
+    <Product>ORM组件</Product>
+    <Description>包括：Farseer.NetORM组件</Description>
+    <Authors>steden</Authors>
+    <AssemblyVersion>2.0.0</AssemblyVersion>
+    <FileVersion>2.0.0</FileVersion>
+    <Version>2.0.0</Version>
+    <PackageTags>ORM</PackageTags>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <DefineConstants>$(DefineConstants);CORE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Map\**" />
+    <EmbeddedResource Remove="Map\**" />
+    <None Remove="Map\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Map\ContextDataMap.cs" />
+    <Compile Include="Map\ContextPhysicsMap.cs" />
+    <Compile Include="Map\SetDataMap.cs" />
+    <Compile Include="Map\SetPhysicsMap.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Farseer.Net.Core\Farseer.Net.Core.csproj" />
+    <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting">
+      <Version>2.3.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.Data.Common" Version="4.3.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.4.0" />
+    <Compile Remove="Client\OleDb\**" />
+    <Compile Remove="Client\Oracle\**" />
+  </ItemGroup>
+</Project>
