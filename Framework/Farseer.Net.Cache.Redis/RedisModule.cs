@@ -11,6 +11,7 @@ namespace Farseer.Net.Cache.Redis
     /// <summary>
     ///     Redis模块
     /// </summary>
+    [DependsOn(typeof(CacheManagerModule))]
     public class RedisModule : FarseerModule
     {
         /// <summary>

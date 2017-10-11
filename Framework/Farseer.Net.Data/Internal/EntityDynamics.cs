@@ -227,7 +227,7 @@ namespace Farseer.Net.Data.Internal
                     }
                     else   // List集合
                     {
-                        sb.Append($"{propertyAssign} = ConvertHelper.ToList<{propertyType.GetGenericArguments()[0].FullName}>(col.ToString()); ");
+                        sb.Append($"{propertyAssign} = StringHelper.ToList<{propertyType.GetGenericArguments()[0].FullName}>(col.ToString()); ");
                     }
                 }
                 else
