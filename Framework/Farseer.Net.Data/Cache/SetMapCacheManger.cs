@@ -1,6 +1,5 @@
 ﻿using System;
 using Farseer.Net.Cache;
-using Farseer.Net.Core.Mapping;
 using Farseer.Net.Data.Map;
 
 namespace Farseer.Net.Data.Cache

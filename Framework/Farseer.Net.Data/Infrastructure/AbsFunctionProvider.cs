@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Farseer.Net.Extends;
 using Farseer.Net.Utils.Common;
 
 namespace Farseer.Net.Data.Infrastructure
@@ -66,5 +65,7 @@ namespace Farseer.Net.Data.Infrastructure
         /// </summary>
         /// <param name="fieldName">字段名称或值</param>
         public virtual string ToDate(string fieldName) => $"CONVERT(varchar(100), {fieldName}, 20)";
+
+        public virtual string GetColumns(string tableName) => "";
     }
 }

@@ -213,11 +213,11 @@ namespace Farseer.Net.Data.ExpressionVisitor
             if (CurrentFieldName != null && CurrentField.Value != null && CurrentField.Value.Field.DbType != DbType.Object)
             {
                 // 手动指定字段类型
-                CurrentDbParameter = DbProvider.CreateDbParam($"p{ParamList.Count}_{CurrentField.Key.Name}", cexp.Value, CurrentField.Value.Field.DbType, false, CurrentField.Value.Field.DbSize);
+                CurrentDbParameter = DbProvider.CreateDbParam($"p{ParamList.Count}_{CurrentField.Key.Name}", cexp.Value, CurrentField.Value.Field.DbType, false, CurrentField.Value.Field.FieldLength);
             }
             else
             {
-                CurrentDbParameter = DbProvider.CreateDbParam($"p{ParamList.Count}_{ (CurrentField.Key != null ? CurrentField.Key.Name : CurrentFieldName)}", cexp.Value, cexp.Type, false, CurrentField.Value?.Field.DbSize ?? 0);
+                CurrentDbParameter = DbProvider.CreateDbParam($"p{ParamList.Count}_{ (CurrentField.Key != null ? CurrentField.Key.Name : CurrentFieldName)}", cexp.Value, cexp.Type, false, CurrentField.Value?.Field.FieldLength ?? 0);
             }
 
             ParamList.Add(CurrentDbParameter);

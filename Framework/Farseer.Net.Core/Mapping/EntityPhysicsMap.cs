@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
-using Farseer.Net.Core.Mapping.Attribute;
 
 namespace Farseer.Net.Core.Mapping
 {

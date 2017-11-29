@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Farseer.Net.Cache;
-using Farseer.Net.Core.Mapping;
 using Farseer.Net.Data.Map;
 
 namespace Farseer.Net.Data.Cache

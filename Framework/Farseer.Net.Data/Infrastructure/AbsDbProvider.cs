@@ -8,8 +8,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Farseer.Net.Cache;
 using Farseer.Net.Configuration;
-using Farseer.Net.Core.Mapping;
 using Farseer.Net.Data.Client.MySql;
+using Farseer.Net.Data.Client.OleDb;
+using Farseer.Net.Data.Client.Oracle;
 using Farseer.Net.Data.Client.PostgreSql;
 using Farseer.Net.Data.Client.SqlServer;
 using Farseer.Net.Data.Client.SqLite;
@@ -17,9 +18,9 @@ using Farseer.Net.Data.Internal;
 using Farseer.Net.Data.Map;
 using Farseer.Net.Extends;
 using Farseer.Net.Utils.Common;
+
 #if !CORE
-using Farseer.Net.Data.Client.OleDb;
-using Farseer.Net.Data.Client.Oracle;
+
 #endif
 
 namespace Farseer.Net.Data.Infrastructure
@@ -183,16 +184,6 @@ namespace Farseer.Net.Data.Infrastructure
 #endregion
 
 #region 返回数据库连接字符串
-
-        ///// <summary>
-        /////     创建数据库连接字符串
-        ///// </summary>
-        ///// <param name="dbIndex">数据库配置</param>
-        //public string CreateDbConnstring(int dbIndex = 0)
-        //{
-        //    DbInfo dbInfo = dbIndex;
-        //    return CreateDbConnstring(dbInfo.Server, dbInfo.Port, dbInfo.UserID, dbInfo.PassWord, dbInfo.Catalog, dbInfo.DataVer, dbInfo.Additional, dbInfo.ConnectTimeout, dbInfo.PoolMinSize, dbInfo.PoolMaxSize);
-        //}
 
         /// <summary>
         ///     创建数据库连接字符串

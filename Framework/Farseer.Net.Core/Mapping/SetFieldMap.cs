@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Farseer.Net.Core.Mapping.Attribute;
+﻿using Farseer.Net.Core.Mapping.Attribute;
 
 namespace Farseer.Net.Core.Mapping
 {

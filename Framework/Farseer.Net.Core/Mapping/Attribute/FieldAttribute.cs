@@ -42,7 +42,12 @@ namespace Farseer.Net.Core.Mapping.Attribute
         /// <summary>
         ///     指定对应的数据库字段长度
         /// </summary>
-        public int DbSize { get; set; }
+        public int FieldLength { get; set; }
+
+        /// <summary>
+        /// 字段在数据库的位置（SqlBulkCopy时用到）
+        /// </summary>
+        public int FieldIndex { get; set; }
 
         /// <summary>
         ///     是否映射到数据库字段中(默认为true)
@@ -65,10 +70,5 @@ namespace Farseer.Net.Core.Mapping.Attribute
         ///     （默认为false)
         /// </summary>
         public bool IsInParam { get; set; }
-
-        /// <summary>
-        /// 字段在数据库的位置（SqlBulkCopy时用到）
-        /// </summary>
-        public int FieldIndex { get; set; }
     }
 }

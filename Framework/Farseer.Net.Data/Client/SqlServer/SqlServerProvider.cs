@@ -1,8 +1,10 @@
-﻿using System.Data.Common;
+﻿using System.Data;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Text;
+using Farseer.Net.Data.Data;
 using Farseer.Net.Data.Infrastructure;
 using Farseer.Net.Data.Internal;
-using System.Data.SqlClient;
 
 namespace Farseer.Net.Data.Client.SqlServer
 {
@@ -30,5 +32,19 @@ namespace Farseer.Net.Data.Client.SqlServer
             sb.Append(additional);
             return sb.ToString();
         }
+
+        internal string[] GetCloumns(DbExecutor db,string tableName)
+        {
+            // 获取表结构
+            var cols = db.GetDataTable(CommandType.Text, $"sp_columns [{tableName}]");
+            return new string[0];
+        }
+    }
+
+    public class TableStructure
+    {
+        public string FieldName { get; set; }
+        public string FieldType { get; set; }
+        public string FieldLength { get; set; }
     }
 }

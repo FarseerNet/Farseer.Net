@@ -27,9 +27,7 @@ namespace Farseer.Net.Data.Client.Oracle
             if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
             if (!string.IsNullOrWhiteSpace(strOrderBySql)) { strOrderBySql = "ORDER BY " + strOrderBySql; }
 
-            var strTopSql = (string.IsNullOrWhiteSpace(strWhereSql) ? "WHERE" : "AND") + " rownum <=1";
-
-            Sql.Append($"SELECT {strSelectSql} FROM {DbProvider.KeywordAegis(Name)} {strWhereSql} {strTopSql} {strOrderBySql}");
+            Sql.Append(BuilderTop(1, $"SELECT {strSelectSql} FROM {DbProvider.KeywordAegis(Name)} {strWhereSql} {strOrderBySql}"));
             return this;
         }
 
@@ -39,23 +37,15 @@ namespace Farseer.Net.Data.Client.Oracle
             var strWhereSql = WhereVisitor.Visit(ExpBuilder.ExpWhere);
             var strOrderBySql = OrderByVisitor.Visit(ExpBuilder.ExpOrderBy);
 
-            var strTopSql = string.Empty;
-            if (top > 0) { strTopSql = (string.IsNullOrWhiteSpace(strWhereSql) ? "WHERE" : "AND") + $" rownum <={top}"; }
             var strDistinctSql = isDistinct ? "Distinct " : string.Empty;
             var randField = ",dbms_random.value as newid";
 
             if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
             if (!string.IsNullOrWhiteSpace(strOrderBySql)) { strOrderBySql = "ORDER BY " + strOrderBySql; }
 
-            if (!isRand) { Sql.Append($"SELECT {strDistinctSql}{strSelectSql} FROM {DbProvider.KeywordAegis(Name)} {strWhereSql} {strTopSql} {strOrderBySql}"); }
-            else if (!isDistinct && string.IsNullOrWhiteSpace(strOrderBySql))
-            {
-                Sql.Append($"SELECT {strSelectSql}{randField} FROM {DbProvider.KeywordAegis(Name)} {strWhereSql} ORDER BY dbms_random.value {strTopSql}");
-            }
-            else
-            {
-                Sql.Append($"SELECT * {randField} FROM (SELECT {strDistinctSql} {strSelectSql} FROM {DbProvider.KeywordAegis(Name)} {strWhereSql} {strOrderBySql}) s ORDER BY dbms_random.value {strTopSql}");
-            }
+            if (!isRand) Sql.Append(BuilderTop(top, $"SELECT {strDistinctSql}{strSelectSql} FROM {DbProvider.KeywordAegis(Name)} {strWhereSql} {strOrderBySql}"));
+            else if (!isDistinct && string.IsNullOrWhiteSpace(strOrderBySql)) Sql.Append(BuilderTop(top, $"SELECT {strSelectSql}{randField} FROM {DbProvider.KeywordAegis(Name)} {strWhereSql} ORDER BY dbms_random.value"));
+            else Sql.Append(BuilderTop(top, $"SELECT * {randField} FROM (SELECT {strDistinctSql} {strSelectSql} FROM {DbProvider.KeywordAegis(Name)} {strWhereSql} {strOrderBySql}) s ORDER BY dbms_random.value"));
             return this;
         }
 
@@ -100,6 +90,12 @@ namespace Farseer.Net.Data.Client.Oracle
             base.InsertIdentity();
             Sql.Append(";SELECT @@IDENTITY ");
             return this;
+        }
+
+        private string BuilderTop(int top, string sql)
+        {
+            if (top > 0) return $"SELECT * FROM ({sql}) WHERE rownum <={top}";
+            return sql;
         }
     }
 }
