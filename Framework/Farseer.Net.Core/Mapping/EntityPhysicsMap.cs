@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace Farseer.Net.Core.Mapping
         /// <summary>
         /// 缓存类型
         /// </summary>
-        private static readonly Dictionary<Type, EntityPhysicsMap> Cache = new Dictionary<Type, EntityPhysicsMap>();
+        private static readonly ConcurrentDictionary<Type, EntityPhysicsMap> Cache = new ConcurrentDictionary<Type, EntityPhysicsMap>();
 
         /// <summary>
         ///     获取所有Set属性
@@ -106,7 +107,7 @@ namespace Farseer.Net.Core.Mapping
         public static EntityPhysicsMap Map(Type type)
         {
             // 不存在缓存，则加入
-            if (!Cache.ContainsKey(type)) { Cache.Add(type, new EntityPhysicsMap(type)); }
+            if (!Cache.ContainsKey(type)) { Cache.TryAdd(type, new EntityPhysicsMap(type)); }
             return Cache[type];
         }
     }

@@ -42,7 +42,7 @@ namespace Farseer.Net.Core
             var entityType = entity.GetType();
 
             // 单个对象类型
-            if (!entityType.IsGenericType || entityType.GetGenericTypeDefinition() == typeof(Nullable<>)) { return CheckEntity(entity, out dicError);}
+            if (!entityType.IsGenericType || entityType.GetGenericTypeDefinition() == typeof(Nullable<>)) { return CheckEntity(entity, out dicError); }
 
             // 集合类型
             var lst = entity as IEnumerable;
@@ -71,13 +71,14 @@ namespace Farseer.Net.Core
             foreach (var kic in map.MapList)
             {
                 var propertyType = kic.Key.GetType();
-                
-                // 集合类型
-                if (propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) { return Check(entity, out dicError); }
                 if (!kic.Key.CanRead) { continue; }
 
-                var lstError = new List<string>();
                 var value = kic.Key.GetValue(entity);
+
+                // 集合类型
+                if (propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) return Check(value, out dicError);
+
+                var lstError = new List<string>();
                 foreach (var validationAttribute in kic.Value.ValidationList)
                 {
                     if (!validationAttribute.IsValid(value)) { lstError.Add(validationAttribute.ErrorMessage); }

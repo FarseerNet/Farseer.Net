@@ -22,7 +22,7 @@ namespace Farseer.Net.Extends
         public static List<TEntity> ToList<TEntity>(this DbDataReader reader)
         {
             var mapData = DataReaderHelper.DataReaderToDictionary(reader);
-            var type = new EntityDynamics().BuildType<TEntity>();
+            var type = new EntityDynamics().BuildType(typeof(TEntity));
             return (List<TEntity>)InstanceStaticCacheManger.Cache(type, "ToList", (object)mapData);
         }
 
@@ -34,7 +34,7 @@ namespace Farseer.Net.Extends
         public static TEntity ToEntity<TEntity>(this IDataReader reader)
         {
             var mapData = DataReaderHelper.DataReaderToDictionary(reader);
-            var type = new EntityDynamics().BuildType<TEntity>();
+            var type = new EntityDynamics().BuildType(typeof(TEntity));
             return (TEntity)InstanceStaticCacheManger.Cache(type, "ToEntity", (object)mapData, 0);
         }
 
@@ -46,7 +46,7 @@ namespace Farseer.Net.Extends
         public static List<TEntity> ToList<TEntity>(this DataTable dt)
         {
             var mapData = DataReaderHelper.DataTableToDictionary(dt);
-            var type = new EntityDynamics().BuildType<TEntity>();
+            var type = new EntityDynamics().BuildType(typeof(TEntity));
             return (List<TEntity>)InstanceStaticCacheManger.Cache(type, "ToList", (object)mapData);
         }
 
@@ -58,7 +58,7 @@ namespace Farseer.Net.Extends
         public static TEntity[] ToArray<TEntity>(this DataTable dt)
         {
             var mapData = DataReaderHelper.DataTableToDictionary(dt);
-            var type = new EntityDynamics().BuildType<TEntity>();
+            var type = new EntityDynamics().BuildType(typeof(TEntity));
             return ((List<TEntity>)InstanceStaticCacheManger.Cache(type, "ToList", (object)mapData)).ToArray();
         }
 

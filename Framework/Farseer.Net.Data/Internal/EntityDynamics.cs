@@ -31,23 +31,22 @@ namespace Farseer.Net.Data.Internal
         /// <summary>
         /// 生成的派生类dll缓存起来
         /// </summary>
-        private static readonly ConcurrentDictionary<Type, Type> DicEntityType = new ConcurrentDictionary<Type, Type>();
+        private static readonly ConcurrentDictionary<Type, Type> Cache = new ConcurrentDictionary<Type, Type>();
 
-        public Type BuildType<TEntity>()
+        public Type BuildType(Type entityType)
         {
-            var type = typeof(TEntity);
-            if (DicEntityType.ContainsKey(type)) { return DicEntityType[type]; }
-            var newType = BuildEntity<TEntity>();
-            DicEntityType.TryAdd(type, newType);
+            if (Cache.ContainsKey(entityType)) return Cache[entityType];
+
+            var newType = BuildEntity(entityType);
+            Cache.TryAdd(entityType, newType);
             return newType;
         }
 
         /// <summary>
         /// 根据TEntity实体，动态生成派生类
         /// </summary>
-        private Type BuildEntity<TEntity>()
+        private Type BuildEntity(Type entityType)
         {
-            var entityType = typeof(TEntity);
             var setPhysicsMap = new SetPhysicsMap(entityType);
             var clsName = entityType.Name + "ByDataRow";       // 类名
 
