@@ -49,6 +49,7 @@ namespace Farseer.Net.Data.Internal
         /// <param name="select"></param>
         internal void AddSelect(Expression select)
         {
+            if (select == null) return;
             ExpSelect = ExpressionHelper.MergeBlockExpression(ExpSelect, select);
         }
 
@@ -58,6 +59,7 @@ namespace Farseer.Net.Data.Internal
         /// <param name="where">查询条件</param>
         private void AddWhere(Expression where)
         {
+            if (where == null) return;
             ExpWhere = ExpressionHelper.MergeBlockExpression(ExpWhere, where);
         }
 
@@ -67,7 +69,8 @@ namespace Farseer.Net.Data.Internal
         /// <param name="where">查询条件</param>
         internal void AddWhere<TEntity>(Expression<Func<TEntity, bool>> where) where TEntity : class
         {
-            ExpWhere = ExpWhere == null ? where : ExpressionHelper.MergeAndAlsoExpression((Expression<Func<TEntity, bool>>) ExpWhere, where);
+            if (where == null) return;
+            ExpWhere = ExpWhere == null ? where : ExpressionHelper.MergeAndAlsoExpression((Expression<Func<TEntity, bool>>)ExpWhere, where);
         }
 
         /// <summary>
@@ -76,7 +79,8 @@ namespace Farseer.Net.Data.Internal
         /// <param name="where">查询条件</param>
         internal void AddWhereOr<TEntity>(Expression<Func<TEntity, bool>> where) where TEntity : class
         {
-            ExpWhere = ExpWhere == null ? where : ExpressionHelper.MergeOrElseExpression((Expression<Func<TEntity, bool>>) ExpWhere, where);
+            if (where == null) return;
+            ExpWhere = ExpWhere == null ? where : ExpressionHelper.MergeOrElseExpression((Expression<Func<TEntity, bool>>)ExpWhere, where);
         }
 
         /// <summary>
@@ -108,7 +112,7 @@ namespace Farseer.Net.Data.Internal
         /// <param name="fieldName">字段选择器</param>
         internal void AddAssign(Expression fieldName)
         {
-            if (fieldName == null) { return; }
+            if (fieldName == null) return;
             ExpAssign = ExpressionHelper.MergeBlockExpression(ExpAssign, fieldName);
         }
 

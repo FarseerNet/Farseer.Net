@@ -13,7 +13,7 @@ namespace Farseer.Net.Data.Data
     /// <summary>
     ///     数据库操作
     /// </summary>
-    internal sealed class DbExecutor : IDisposable
+    public sealed class DbExecutor : IDisposable
     {
         /// <summary>
         ///     构造函数
@@ -79,7 +79,11 @@ namespace Farseer.Net.Data.Data
         /// </summary>
         public void CloseTran()
         {
-            if (IsTransaction) { _comm?.Transaction?.Dispose(); }
+            if (IsTransaction)
+            {
+                //_comm.Transaction.Rollback();
+                _comm?.Transaction?.Dispose();
+            }
             IsTransaction = false;
         }
 
