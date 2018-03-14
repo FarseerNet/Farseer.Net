@@ -4,9 +4,10 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using Farseer.Net.Extends;
-using Farseer.Net.Configuration;
+using FS.Configuration;
+using FS.Extends;
 
-namespace Farseer.Net.Utils.Component
+namespace FS.Utils.Component
 {
     /// <summary>
     ///     纯真数据库操作类

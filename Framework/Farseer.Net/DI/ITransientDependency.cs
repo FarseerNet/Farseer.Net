@@ -1,4 +1,4 @@
-﻿namespace Farseer.Net.DI
+﻿namespace FS.DI
 {
     /// <summary>
     ///     临时对象注册标识

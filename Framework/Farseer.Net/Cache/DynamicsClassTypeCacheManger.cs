@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Farseer.Net.Utils.Common;
+using FS.Utils.Common;
 
-namespace Farseer.Net.Cache
+namespace FS.Cache
 {
     /// <summary>
     ///     创建动态类缓存

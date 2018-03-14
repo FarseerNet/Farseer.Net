@@ -1,6 +1,6 @@
-﻿using Farseer.Net.MQ.RocketMQ.SDK;
+﻿using FS.MQ.RocketMQ.SDK;
 
-namespace Farseer.Net.MQ.RocketMQ.Configuration
+namespace FS.MQ.RocketMQ.Configuration
 {
     /// <summary>
     ///     RocketMQ配置信息

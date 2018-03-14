@@ -1,9 +1,9 @@
 ﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using Farseer.Net.Configuration.Format;
+using FS.Configuration.Format;
 
-namespace Farseer.Net.Configuration
+namespace FS.Configuration
 {
     /// <summary>
     ///     系统核心组件注册类

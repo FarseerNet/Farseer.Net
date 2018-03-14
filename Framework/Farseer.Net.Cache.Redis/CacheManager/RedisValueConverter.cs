@@ -3,7 +3,7 @@ using CacheManager.Core.Internal;
 using CacheManager.Core.Utility;
 using StackExchange.Redis;
 
-namespace Farseer.Net.Cache.Manager.Redis
+namespace FS.Cache.Redis.CacheManager
 {
     internal interface IRedisValueConverter
     {

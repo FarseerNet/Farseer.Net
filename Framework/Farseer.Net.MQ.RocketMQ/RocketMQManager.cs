@@ -3,11 +3,11 @@
 // 时间：2017-03-23 22:50
 // ********************************************
 
-using Farseer.Net.Configuration;
-using Farseer.Net.MQ.RocketMQ.Configuration;
-using Farseer.Net.MQ.RocketMQ.SDK;
+using FS.Configuration;
+using FS.MQ.RocketMQ.Configuration;
+using FS.MQ.RocketMQ.SDK;
 
-namespace Farseer.Net.MQ.RocketMQ
+namespace FS.MQ.RocketMQ
 {
     /// <summary>
     ///     RocketMQ管理器

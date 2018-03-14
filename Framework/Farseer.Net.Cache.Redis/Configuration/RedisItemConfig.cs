@@ -2,7 +2,7 @@
 // 作者：何达贤（steden） QQ：11042427
 // 时间：2016-12-26 16:16
 // ********************************************
-namespace Farseer.Net.Cache.Redis.Configuration
+namespace FS.Cache.Redis.Configuration
 {
     /// <summary>
     /// Redis配置

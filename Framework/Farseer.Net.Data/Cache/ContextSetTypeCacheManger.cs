@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
-using Farseer.Net.Cache;
-using Farseer.Net.Data.Internal;
+using FS.Cache;
+using FS.Data.Internal;
 
-namespace Farseer.Net.Data.Cache
+namespace FS.Data.Cache
 {
     /// <summary>
     ///     保存派生Context的Set类型

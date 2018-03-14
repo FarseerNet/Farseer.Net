@@ -4,16 +4,13 @@
 // ********************************************
 
 using System;
-using System.Linq;
-using System.Reflection;
-using Castle.Core.Logging;
 using Castle.MicroKernel.Registration;
-using Farseer.Net.Configuration.Startup;
-using Farseer.Net.DI;
-using Farseer.Net.DI.Installers;
-using Farseer.Net.Modules;
+using FS.Configuration.Startup;
+using FS.DI;
+using FS.DI.Installers;
+using FS.Modules;
 
-namespace Farseer.Net
+namespace FS
 {
     /// <summary>
     ///     模块启动器

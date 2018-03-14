@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Farseer.Net.Cache;
-using Farseer.Net.Utils.Common.ExpressionVisitor;
+using FS.Cache;
+using FS.Utils.Common.ExpressionVisitor;
 
-namespace Farseer.Net.Utils.Common
+namespace FS.Utils.Common
 {
     /// <summary>
     ///     表达式树扩展

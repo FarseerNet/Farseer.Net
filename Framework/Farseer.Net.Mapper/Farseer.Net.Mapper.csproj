@@ -12,6 +12,7 @@
     <Description>包括：AutoMapper</Description>
     <PackageTags>AutoMapper</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <RootNamespace>FS.Mapper</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

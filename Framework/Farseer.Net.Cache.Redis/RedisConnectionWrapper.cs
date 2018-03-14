@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Net;
+using FS.Cache.Redis.Configuration;
 using StackExchange.Redis;
-using Farseer.Net.Cache.Redis.Configuration;
 
-namespace Farseer.Net.Cache.Redis
+namespace FS.Cache.Redis
 {
     /// <summary>
     ///     Redis连接包装器

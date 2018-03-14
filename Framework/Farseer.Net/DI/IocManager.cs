@@ -8,7 +8,7 @@ using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Castle.Windsor.Installer;
 
-namespace Farseer.Net.DI
+namespace FS.DI
 {
     /// <summary>
     ///     依赖注入管理器，用来执行依赖注入和获取的任务

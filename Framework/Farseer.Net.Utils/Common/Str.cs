@@ -4,8 +4,9 @@ using System.Drawing;
 using System.Text;
 using System.Text.RegularExpressions;
 using Farseer.Net.Extends;
+using FS.Extends;
 
-namespace Farseer.Net.Utils.Common
+namespace FS.Utils.Common
 {
     /// <summary>
     ///     解释字符串

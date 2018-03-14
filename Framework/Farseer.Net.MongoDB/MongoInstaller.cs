@@ -1,11 +1,11 @@
 ﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using Farseer.Net.Configuration;
-using Farseer.Net.DI;
-using Farseer.Net.MongoDB.Configuration;
+using FS.Configuration;
+using FS.DI;
+using FS.MongoDB.Configuration;
 
-namespace Farseer.Net.MongoDB
+namespace FS.MongoDB
 {
     public class MongoInstaller : IWindsorInstaller
     {

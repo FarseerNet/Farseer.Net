@@ -5,9 +5,9 @@
 
 using System.Collections.Generic;
 using System.Data;
-using Farseer.Net.Core;
+using FS.Core;
 
-namespace Farseer.Net.Utils.Common
+namespace FS.Utils.Common
 {
     /// <summary>
     /// DataReader帮助器

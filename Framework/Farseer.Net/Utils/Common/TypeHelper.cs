@@ -6,7 +6,7 @@
 using System;
 using System.Collections.Concurrent;
 
-namespace Farseer.Net.Utils.Common
+namespace FS.Utils.Common
 {
     /// <summary>
     /// 类型帮助器

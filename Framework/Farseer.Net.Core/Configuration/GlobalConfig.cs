@@ -3,9 +3,9 @@
 // 时间：2017-04-07 15:59
 // ********************************************
 
-using Farseer.Net.Configuration;
+using FS.Configuration;
 
-namespace Farseer.Net.Core.Configuration
+namespace FS.Core.Configuration
 {
     /// <summary>
     /// 全局配置

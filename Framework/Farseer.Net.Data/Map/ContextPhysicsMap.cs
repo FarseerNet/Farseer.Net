@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Farseer.Net.Data.Cache;
+using FS.Data.Cache;
 
-namespace Farseer.Net.Data.Map
+namespace FS.Data.Map
 {
     /// <summary>
     ///     上下文结构映射

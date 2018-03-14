@@ -3,9 +3,9 @@
 // 时间：2017-03-01 13:10
 // ********************************************
 
-using Farseer.Net.Core.Net.Gateway;
+using FS.Core.Net.Gateway;
 
-namespace Farseer.Net.Core.Fabric
+namespace FS.Core.Fabric
 {
     /// <summary>
     /// Fabric注册信息

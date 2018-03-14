@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Farseer.Net.Configuration;
+﻿using System.Collections.Generic;
+using FS.Configuration;
 
-namespace Farseer.Net.ElasticSearch.Configuration
+namespace FS.ElasticSearch.Configuration
 {
     /// <summary>
     /// ES配置类，支持多个集群配置

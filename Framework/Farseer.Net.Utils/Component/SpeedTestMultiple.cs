@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Farseer.Net.Utils.Component
+namespace FS.Utils.Component
 {
     /// <summary>
     ///     测试效率的工具

@@ -5,7 +5,7 @@
 
 using System;
 
-namespace Farseer.Net.Configuration
+namespace FS.Configuration
 {
 	/// <summary>
 	///     获取系统路径

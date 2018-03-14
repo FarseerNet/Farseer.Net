@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Farseer.Net.Modules;
-using Farseer.Net.Reflection;
+﻿using System.Reflection;
+using FS.Modules;
+using FS.Reflection;
 
-namespace Farseer.Net.Mapper
+namespace FS.Mapper
 {
     /// <summary>
     /// AutoMap初始化模块

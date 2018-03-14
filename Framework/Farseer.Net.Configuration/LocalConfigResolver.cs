@@ -7,9 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Farseer.Net.Configuration.Format;
+using FS.Configuration.Format;
 
-namespace Farseer.Net.Configuration
+namespace FS.Configuration
 {
     /// <summary>
     ///     本地配置文件的解析

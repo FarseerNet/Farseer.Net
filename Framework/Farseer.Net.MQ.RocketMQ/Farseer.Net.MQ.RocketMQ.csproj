@@ -12,6 +12,7 @@
     <Authors>steden</Authors>
     <PackageTags>RocketMQ组件</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <RootNamespace>FS.MQ.RocketMQ</RootNamespace>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

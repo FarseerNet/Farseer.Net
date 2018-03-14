@@ -7,8 +7,10 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using Farseer.Net.DI;
-using Farseer.Net.MQ.RocketMQ.SDK;
+using FS.DI;
+using FS.MQ.RocketMQ;
+using FS.MQ.RocketMQ.SDK;
+using Action = FS.MQ.RocketMQ.SDK.Action;
 
 namespace Farseer.Net.MQ.RocketMQ.Console
 {
@@ -65,11 +67,11 @@ namespace Farseer.Net.MQ.RocketMQ.Console
         private SaveDbListener() { }
         public static readonly SaveDbListener Instance = new SaveDbListener();
 
-        public override SDK.Action consume(Message message, ConsumeContext context)
+        public override Action consume(Message message, ConsumeContext context)
         {
             System.Console.Write("开始：");
             System.Console.WriteLine(message.getMsgBody());
-            return SDK.Action.CommitMessage;
+            return Action.CommitMessage;
         }
     }
 }

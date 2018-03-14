@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using Farseer.Net.Cache;
-using Farseer.Net.Core.Mapping.Attribute;
-using Farseer.Net.Data.Map;
-using Farseer.Net.Utils.Common;
-using Farseer.Net.Utils.Common.ExpressionVisitor;
+using FS.Cache;
+using FS.Core.Mapping.Attribute;
+using FS.Data.Map;
+using FS.Utils.Common;
+using FS.Utils.Common.ExpressionVisitor;
 
-namespace Farseer.Net.Data.Internal
+namespace FS.Data.Internal
 {
     /// <summary> 表达式创建者 </summary>
     internal class ExpressionBuilder
@@ -70,7 +70,7 @@ namespace Farseer.Net.Data.Internal
         internal void AddWhere<TEntity>(Expression<Func<TEntity, bool>> where) where TEntity : class
         {
             if (where == null) return;
-            ExpWhere = ExpWhere == null ? where : ExpressionHelper.MergeAndAlsoExpression((Expression<Func<TEntity, bool>>)ExpWhere, where);
+            ExpWhere = ExpWhere == null ? where : ExpressionHelper.MergeAndAlsoExpression((Expression<Func<TEntity, bool>>) ExpWhere, where);
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace Farseer.Net.Data.Internal
         internal void AddWhereOr<TEntity>(Expression<Func<TEntity, bool>> where) where TEntity : class
         {
             if (where == null) return;
-            ExpWhere = ExpWhere == null ? where : ExpressionHelper.MergeOrElseExpression((Expression<Func<TEntity, bool>>)ExpWhere, where);
+            ExpWhere = ExpWhere == null ? where : ExpressionHelper.MergeOrElseExpression((Expression<Func<TEntity, bool>>) ExpWhere, where);
         }
 
         /// <summary>

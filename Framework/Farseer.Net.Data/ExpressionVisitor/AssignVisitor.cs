@@ -4,10 +4,10 @@ using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using Farseer.Net.Data.Infrastructure;
-using Farseer.Net.Data.Map;
+using FS.Data.Infrastructure;
+using FS.Data.Map;
 
-namespace Farseer.Net.Data.ExpressionVisitor
+namespace FS.Data.ExpressionVisitor
 {
     /// <summary>
     ///     提供字段赋值时表达式树的解析

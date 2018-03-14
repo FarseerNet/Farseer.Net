@@ -4,12 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Farseer.Net.Context;
 using Farseer.Net.Extends;
 
-namespace Farseer.Net.Utils.Common
+namespace FS.Utils.Common
 {
     /// <summary>
     ///     下载文件

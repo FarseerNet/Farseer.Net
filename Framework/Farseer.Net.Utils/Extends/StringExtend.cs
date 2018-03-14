@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using Farseer.Net.Extends;
-using Farseer.Net.Utils.Common;
+using FS.Extends;
+using FS.Utils.Common;
 
 // ReSharper disable once CheckNamespace
 

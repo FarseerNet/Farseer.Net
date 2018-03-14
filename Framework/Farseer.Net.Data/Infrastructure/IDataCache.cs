@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Farseer.Net.Data.Infrastructure
+namespace FS.Data.Infrastructure
 {
     /// <summary>
     /// 数据缓存操作接口

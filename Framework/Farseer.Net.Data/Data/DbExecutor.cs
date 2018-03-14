@@ -3,12 +3,11 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading;
 using System.Threading.Tasks;
-using Farseer.Net.Data.Infrastructure;
-using Farseer.Net.DI;
+using FS.Data.Infrastructure;
+using FS.DI;
 
-namespace Farseer.Net.Data.Data
+namespace FS.Data.Data
 {
     /// <summary>
     ///     数据库操作

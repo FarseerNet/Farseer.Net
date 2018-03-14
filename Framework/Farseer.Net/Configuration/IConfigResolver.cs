@@ -4,9 +4,8 @@
 // ********************************************
 
 using System;
-using System.Collections.Generic;
 
-namespace Farseer.Net.Configuration
+namespace FS.Configuration
 {
     /// <summary>
     /// 本地配置文件的解析

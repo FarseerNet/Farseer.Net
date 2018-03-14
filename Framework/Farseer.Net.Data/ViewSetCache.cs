@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
-using Farseer.Net.Data.Infrastructure;
-using Farseer.Net.Data.Internal;
+using FS.Data.Infrastructure;
+using FS.Data.Internal;
 
-namespace Farseer.Net.Data
+namespace FS.Data
 {
     /// <summary>
     ///     整表数据缓存Set

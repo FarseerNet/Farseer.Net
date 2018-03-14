@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Farseer.Net.Configuration;
+using FS.Configuration;
 
-namespace Farseer.Net.MQ.Kafka.Configuration
+namespace FS.MQ.Kafka.Configuration
 {
     /// <summary>
     /// Kafka配置,支持多个集群配置

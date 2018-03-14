@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
-using Farseer.Net.Configuration;
-using Farseer.Net.DI;
-using Farseer.Net.Modules;
-using Farseer.Net.MongoDB.Configuration;
+using FS.Configuration;
+using FS.DI;
+using FS.Modules;
+using FS.MongoDB.Configuration;
 
-namespace Farseer.Net.MongoDB
+namespace FS.MongoDB
 {
     public class MongoModule : FarseerModule
     {

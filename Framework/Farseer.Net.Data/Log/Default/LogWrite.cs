@@ -9,9 +9,9 @@ using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading;
-using Farseer.Net.Data.Log.Default.Entity;
+using FS.Data.Log.Default.Entity;
 
-namespace Farseer.Net.Data.Log.Default
+namespace FS.Data.Log.Default
 {
     /// <summary>
     /// 日志持久化工具

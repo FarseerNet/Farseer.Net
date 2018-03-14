@@ -12,6 +12,7 @@
     <Authors>steden</Authors>
     <PackageTags>Kafka</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <RootNamespace>FS.MQ.Kafka</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

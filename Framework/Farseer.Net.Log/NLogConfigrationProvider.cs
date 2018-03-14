@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using NLog;
+using FS.Context;
+using FS.Log.Configuration;
 using NLog.Config;
 using NLog.LayoutRenderers;
 using NLog.Targets;
 using NLog.Targets.Wrappers;
-using Farseer.Net.Context;
-using Farseer.Net.Log.Configuration;
 using LogLevel = NLog.LogLevel;
 
-namespace Farseer.Net.Log
+namespace FS.Log
 {
     internal class NLogConfigrationProvider
     {

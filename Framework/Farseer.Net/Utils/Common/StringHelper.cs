@@ -6,7 +6,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Farseer.Net.Utils.Common
+namespace FS.Utils.Common
 {
     public class StringHelper
     {

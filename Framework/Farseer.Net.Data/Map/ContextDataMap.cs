@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Farseer.Net.Core.Mapping;
-using Farseer.Net.Data.Cache;
+using FS.Data.Cache;
 
-namespace Farseer.Net.Data.Map
+namespace FS.Data.Map
 {
     /// <summary>
     ///     上下文数据映射

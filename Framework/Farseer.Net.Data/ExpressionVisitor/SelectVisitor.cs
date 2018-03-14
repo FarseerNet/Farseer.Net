@@ -2,12 +2,12 @@
 using System.Data.Common;
 using System.Linq;
 using System.Reflection;
-using Farseer.Net.Core.Mapping;
-using Farseer.Net.Data.Infrastructure;
-using Farseer.Net.Data.Map;
-using Farseer.Net.Utils.Common;
+using FS.Core.Mapping;
+using FS.Data.Infrastructure;
+using FS.Data.Map;
+using FS.Utils.Common;
 
-namespace Farseer.Net.Data.ExpressionVisitor
+namespace FS.Data.ExpressionVisitor
 {
     /// <summary>
     ///     提供Select筛选字段时表达式树的解析

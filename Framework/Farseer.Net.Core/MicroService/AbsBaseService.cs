@@ -4,11 +4,11 @@
 // ********************************************
 
 using System;
+using FS.Core.Net;
+using FS.Core.Net.Gateway;
 using Newtonsoft.Json;
-using Farseer.Net.Core.Net;
-using Farseer.Net.Core.Net.Gateway;
 
-namespace Farseer.Net.Core.MicroService
+namespace FS.Core.MicroService
 {
     /// <summary>
     /// 所有微服务的基类

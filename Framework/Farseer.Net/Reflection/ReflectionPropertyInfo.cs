@@ -8,7 +8,7 @@ using System.Collections.Concurrent;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Farseer.Net.Reflection
+namespace FS.Reflection
 {
     /// <summary>
     /// 使用表达式树的方式来赋值/读取对象的属性

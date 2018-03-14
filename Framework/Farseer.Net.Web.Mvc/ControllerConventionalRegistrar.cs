@@ -1,6 +1,6 @@
 ﻿using Castle.MicroKernel.Registration;
 using System.Web.Mvc;
-using Farseer.Net.DI;
+using FS.DI;
 
 namespace Farseer.Net.Web.Mvc
 {

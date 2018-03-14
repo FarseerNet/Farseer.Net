@@ -1,10 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using FS.MongoDB.Configuration;
 using MongoDB.Driver;
-using MongoDB.Driver.Core.Configuration;
-using Farseer.Net.MongoDB.Configuration;
 
-namespace Farseer.Net.MongoDB
+namespace FS.MongoDB
 {
     /// <summary>
     /// ES管理类

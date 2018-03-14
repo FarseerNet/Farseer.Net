@@ -1,6 +1,6 @@
 using System;
 
-namespace Farseer.Net.Configuration
+namespace FS.Configuration
 {
     /// <summary>
     /// 配置接口，用来进行自定义配置

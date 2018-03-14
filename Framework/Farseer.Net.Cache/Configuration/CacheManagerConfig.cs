@@ -4,9 +4,9 @@
 // ********************************************
 
 using System.Collections.Generic;
-using Farseer.Net.Configuration;
+using FS.Configuration;
 
-namespace Farseer.Net.Cache.Configuration
+namespace FS.Cache.Configuration
 {
     /// <summary>
     /// CacheManager配置

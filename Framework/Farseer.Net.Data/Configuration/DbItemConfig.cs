@@ -1,6 +1,6 @@
-﻿using Farseer.Net.Data.Infrastructure;
+﻿using FS.Data.Infrastructure;
 
-namespace Farseer.Net.Data.Configuration {
+namespace FS.Data.Configuration {
     /// <summary> 数据库连接配置 </summary>
     public class DbItemConfig
     {

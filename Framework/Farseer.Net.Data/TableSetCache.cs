@@ -4,12 +4,12 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
-using Farseer.Net.Cache;
-using Farseer.Net.Data.Infrastructure;
-using Farseer.Net.Data.Internal;
-using Farseer.Net.Utils.Common.ExpressionVisitor;
+using FS.Cache;
+using FS.Data.Infrastructure;
+using FS.Data.Internal;
+using FS.Utils.Common.ExpressionVisitor;
 
-namespace Farseer.Net.Data
+namespace FS.Data
 {
     /// <summary>
     ///     整表数据缓存Set，自动同步更新

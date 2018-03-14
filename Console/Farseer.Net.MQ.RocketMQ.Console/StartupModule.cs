@@ -1,5 +1,6 @@
-﻿using Farseer.Net.Configuration;
-using Farseer.Net.Modules;
+﻿using FS.Configuration;
+using FS.Modules;
+using FS.MQ.RocketMQ;
 
 namespace Farseer.Net.MQ.RocketMQ.Console
 {

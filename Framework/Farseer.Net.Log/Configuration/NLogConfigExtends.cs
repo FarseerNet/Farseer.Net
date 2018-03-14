@@ -1,6 +1,6 @@
-﻿using Farseer.Net.Configuration;
+﻿using FS.Configuration;
 
-namespace Farseer.Net.Log.Configuration
+namespace FS.Log.Configuration
 {
     public static class NLogConfigExtends
     {

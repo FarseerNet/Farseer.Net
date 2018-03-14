@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Farseer.Net.Data.Map;
+using FS.Data.Map;
 
-namespace Farseer.Net.Data.Internal
+namespace FS.Data.Internal
 {
     /// <summary>
     ///     队列管理模块

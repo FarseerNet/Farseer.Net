@@ -4,13 +4,14 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Xml.Linq;
-using Farseer.Net.Cache;
-using Farseer.Net.Data.Cache;
-using Farseer.Net.Data.Internal;
-using Farseer.Net.Utils.Common;
+using FS.Cache;
+using FS.Data.Cache;
+using FS.Data.Internal;
+using FS.Extends;
+using FS.Utils.Common;
 
 // ReSharper disable once CheckNamespace
-namespace Farseer.Net.Extends
+namespace FS.Extends
 {
     public static partial class SqlExtend
     {

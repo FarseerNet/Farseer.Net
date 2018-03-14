@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using Farseer.Net.Cache;
+using FS.Cache;
 
 // ReSharper disable once CheckNamespace
 

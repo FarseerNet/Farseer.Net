@@ -2,10 +2,10 @@
 using System.Data;
 using System.Data.Common;
 using System.Runtime.Serialization;
-using Farseer.Net.Configuration;
-using Farseer.Net.Data.Log.Default.Entity;
+using FS.Configuration;
+using FS.Data.Log.Default.Entity;
 
-namespace Farseer.Net.Data.Log.Default
+namespace FS.Data.Log.Default
 {
     /// <summary> SQL执行记录 </summary>
     [DataContract]

@@ -6,7 +6,7 @@
 using System;
 using Confluent.Kafka;
 
-namespace Farseer.Net.MQ.Kafka
+namespace FS.MQ.Kafka
 {
     /// <summary>
     /// 

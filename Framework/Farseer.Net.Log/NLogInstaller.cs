@@ -3,11 +3,11 @@ using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Services.Logging.NLogIntegration;
 using Castle.Windsor;
-using Farseer.Net.Configuration;
-using Farseer.Net.DI;
-using Farseer.Net.Log.Configuration;
+using FS.Configuration;
+using FS.DI;
+using FS.Log.Configuration;
 
-namespace Farseer.Net.Log
+namespace FS.Log
 {
     public class NLogInstaller : IWindsorInstaller
     {

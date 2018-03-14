@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
 using System.Reflection;
-using System.Text;
-using Farseer.Net.Extends;
+using FS.Extends;
 
-namespace Farseer.Net.Utils.Common
+namespace FS.Utils.Common
 {
     /// <summary>
     ///     类型转换器

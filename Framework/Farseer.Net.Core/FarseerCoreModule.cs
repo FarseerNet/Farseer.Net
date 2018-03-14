@@ -1,11 +1,11 @@
 ﻿using System.Reflection;
-using Farseer.Net.Configuration;
-using Farseer.Net.Configuration.Startup;
-using Farseer.Net.Core.Configuration;
-using Farseer.Net.DI;
-using Farseer.Net.Modules;
+using FS.Configuration;
+using FS.Configuration.Startup;
+using FS.Core.Configuration;
+using FS.DI;
+using FS.Modules;
 
-namespace Farseer.Net.Core
+namespace FS.Core
 {
     /// <summary>
     ///     系统核心模块

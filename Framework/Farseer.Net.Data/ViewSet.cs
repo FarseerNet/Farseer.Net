@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
-using Farseer.Net.Data.Infrastructure;
+using FS.Data.Infrastructure;
 
-namespace Farseer.Net.Data
+namespace FS.Data
 {
     /// <summary>
     ///     视图操作

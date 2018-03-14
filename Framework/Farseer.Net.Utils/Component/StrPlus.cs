@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace Farseer.Net.Utils.Component
+namespace FS.Utils.Component
 {
     /// <summary>
     ///     对StringBuilder再封装

@@ -2,16 +2,12 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
-using Farseer.Net.Data.Data;
-using Farseer.Net.Data.Infrastructure;
-using Farseer.Net.Data.Log.Default;
-using Farseer.Net.DI;
-using Farseer.Net.Utils.Common;
+using FS.Data.Data;
+using FS.Data.Infrastructure;
+using FS.Data.Log.Default;
 
-namespace Farseer.Net.Data.Internal
+namespace FS.Data.Internal
 {
     /// <summary>
     ///     数据库操作（支持异常SQL日志记录）

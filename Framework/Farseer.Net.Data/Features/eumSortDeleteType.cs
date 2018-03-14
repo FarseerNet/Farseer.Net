@@ -1,4 +1,4 @@
-﻿namespace Farseer.Net.Data.Features {
+﻿namespace FS.Data.Features {
     /// <summary>
     ///     逻辑删除的字段类型
     /// </summary>

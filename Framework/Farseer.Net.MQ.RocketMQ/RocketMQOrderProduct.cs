@@ -1,7 +1,7 @@
 using System;
-using Farseer.Net.MQ.RocketMQ.SDK;
+using FS.MQ.RocketMQ.SDK;
 
-namespace Farseer.Net.MQ.RocketMQ
+namespace FS.MQ.RocketMQ
 {
     /// <summary>
     ///     生产消息

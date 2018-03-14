@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 
-namespace Farseer.Net.MQ.Kafka
+namespace FS.MQ.Kafka
 {
     /// <summary>
     /// Kafka管理器接口

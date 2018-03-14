@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Farseer.Net.Utils.Common
+namespace FS.Utils.Common
 {
     /// <summary>
     ///     随机数工具

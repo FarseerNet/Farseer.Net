@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Castle.MicroKernel.Registration;
-using Farseer.Net.DI;
-using Farseer.Net.Modules;
+using FS.DI;
+using FS.Modules;
 
 namespace Farseer.Net.Web.Mvc
 {

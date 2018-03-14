@@ -1,6 +1,6 @@
-using Farseer.Net.Data.Infrastructure;
+using FS.Data.Infrastructure;
 
-namespace Farseer.Net.Data.Internal {
+namespace FS.Data.Internal {
     public interface IContextConnection {
         /// <summary>
         ///     Á¬½Ó×Ö·û´®

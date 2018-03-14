@@ -3,7 +3,6 @@
 // 时间：2017-09-15 9:32
 // ********************************************
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -11,10 +10,10 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Farseer.Net.Context;
-using Farseer.Net.Extends;
+using FS.Extends;
+using FS.Context;
 
-namespace Farseer.Net.Http
+namespace FS.Http
 {
     public class Net
     {

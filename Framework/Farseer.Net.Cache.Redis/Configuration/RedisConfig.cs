@@ -4,9 +4,9 @@
 // ********************************************
 
 using System.Collections.Generic;
-using Farseer.Net.Configuration;
+using FS.Configuration;
 
-namespace Farseer.Net.Cache.Redis.Configuration
+namespace FS.Cache.Redis.Configuration
 {
     /// <summary>
     /// Redis配置

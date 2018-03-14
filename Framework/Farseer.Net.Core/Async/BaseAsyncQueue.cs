@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Farseer.Net.Core.Async
+namespace FS.Core.Async
 {
     /// <summary>
     /// 进程内异步队列

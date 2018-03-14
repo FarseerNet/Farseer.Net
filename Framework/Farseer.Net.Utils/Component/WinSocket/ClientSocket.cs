@@ -4,7 +4,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
-namespace Farseer.Net.Utils.Component.WinSocket
+namespace FS.Utils.Component.WinSocket
 {
     /// <summary>
     ///     客户端套接字

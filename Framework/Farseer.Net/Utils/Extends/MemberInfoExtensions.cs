@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Reflection;
+using FS;
 
 // ReSharper disable once CheckNamespace
-namespace Farseer.Net.Extends
+namespace FS.Extends
 {
     /// <summary>
     ///     MemberInfo扩展

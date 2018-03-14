@@ -7,7 +7,7 @@ using System;
 using System.Collections;
 using System.Text;
 
-namespace Farseer.Net.Utils.Common
+namespace FS.Utils.Common
 {
     // ReSharper disable once InconsistentNaming
     public class IEnumerableHelper

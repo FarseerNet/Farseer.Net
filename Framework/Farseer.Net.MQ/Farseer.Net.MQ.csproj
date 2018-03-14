@@ -12,6 +12,7 @@
     <Authors>steden</Authors>
     <PackageTags>MQ</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <RootNamespace>FS.MQ</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Farseer.Net.Modules
+namespace FS.Modules
 {
     /// <summary>
     ///     模块信息类

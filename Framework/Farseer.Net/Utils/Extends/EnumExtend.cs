@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Farseer.Net.Utils.Component;
+using FS.Utils.Component;
 
 // ReSharper disable once CheckNamespace
-namespace Farseer.Net.Extends
+namespace FS.Extends
 {
     /// <summary>
     ///     其它扩展，夫归类的扩展

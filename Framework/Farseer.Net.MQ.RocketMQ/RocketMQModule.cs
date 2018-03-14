@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using Farseer.Net.Configuration;
-using Farseer.Net.DI;
-using Farseer.Net.Modules;
-using Farseer.Net.MQ.RocketMQ.Configuration;
-using Farseer.Net.MQ.RocketMQ.SDK;
+using FS.Configuration;
+using FS.DI;
+using FS.Modules;
+using FS.MQ.RocketMQ.Configuration;
+using FS.MQ.RocketMQ.SDK;
 
-namespace Farseer.Net.MQ.RocketMQ
+namespace FS.MQ.RocketMQ
 {
     /// <summary>
     ///     RocketMQ模块

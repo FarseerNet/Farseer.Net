@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Farseer.Net.Configuration;
+using FS.Configuration;
 
-namespace Farseer.Net.MQ.RocketMQ.Configuration
+namespace FS.MQ.RocketMQ.Configuration
 {
     /// <summary>
     ///     RocketMQ配置,支持多个集群配置

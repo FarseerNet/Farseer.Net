@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
-using Farseer.Net.MQ.RocketMQ.Configuration;
+using FS.Configuration;
+using FS.MQ.RocketMQ.Configuration;
 
 // ReSharper disable once CheckNamespace
 

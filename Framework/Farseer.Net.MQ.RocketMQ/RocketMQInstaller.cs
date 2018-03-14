@@ -2,9 +2,10 @@
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using Farseer.Net.Configuration;
-using Farseer.Net.MQ.RocketMQ.Configuration;
+using FS.Configuration;
+using FS.MQ.RocketMQ.Configuration;
 
-namespace Farseer.Net.MQ.RocketMQ
+namespace FS.MQ.RocketMQ
 {
     /// <summary>
     ///     RocketMQ的IOC注册

@@ -2,7 +2,7 @@
 using System.Net.Sockets;
 using System.Text;
 
-namespace Farseer.Net.Utils.Component.WinSocket
+namespace FS.Utils.Component.WinSocket
 {
     /// <summary>
     /// 

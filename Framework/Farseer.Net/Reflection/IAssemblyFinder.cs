@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 
-namespace Farseer.Net.Reflection
+namespace FS.Reflection
 {
     /// <summary>
     /// 程序集查找器接口

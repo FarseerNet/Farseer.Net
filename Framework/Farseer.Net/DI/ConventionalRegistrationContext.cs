@@ -1,7 +1,7 @@
 ﻿
 using System.Reflection;
 
-namespace Farseer.Net.DI
+namespace FS.DI
 {
     /// <summary>
     ///     约定注册上下文

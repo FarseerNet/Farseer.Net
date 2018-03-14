@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
 
-namespace Farseer.Net.Core.Mapping.Attribute
+namespace FS.Core.Mapping.Attribute
 {
     /// <summary>
     ///     设置字段在数据库中的映射关系

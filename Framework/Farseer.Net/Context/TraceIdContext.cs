@@ -6,7 +6,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Threading;
 #endif
 
-namespace Farseer.Net.Context
+namespace FS.Context
 {
     /// <summary>
     /// Trace上下文,仅限.net4.5及以上

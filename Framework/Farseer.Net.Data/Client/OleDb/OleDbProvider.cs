@@ -1,9 +1,9 @@
 ﻿using System.Data.Common;
 using System.Text;
-using Farseer.Net.Data.Infrastructure;
-using Farseer.Net.Data.Internal;
+using FS.Data.Infrastructure;
+using FS.Data.Internal;
 
-namespace Farseer.Net.Data.Client.OleDb
+namespace FS.Data.Client.OleDb
 {
     /// <summary>
     ///     OleDb 数据库提供者（不同数据库的特性）

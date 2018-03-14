@@ -1,6 +1,6 @@
 ﻿using Nest;
 
-namespace Farseer.Net.ElasticSearch
+namespace FS.ElasticSearch
 {
     public interface IElasticSearchManager
     {

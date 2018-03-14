@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Farseer.Net.Modules
+namespace FS.Modules
 {
     /// <summary>
     ///     模块集合

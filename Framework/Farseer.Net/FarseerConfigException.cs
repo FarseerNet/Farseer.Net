@@ -6,7 +6,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Farseer.Net
+namespace FS
 {
 	/// <summary>
 	/// 配置文件不正确

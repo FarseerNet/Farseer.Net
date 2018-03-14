@@ -1,11 +1,11 @@
 ﻿using System.Linq;
 using System.Reflection;
-using Farseer.Net.Data.Infrastructure;
-using Farseer.Net.Data.Internal;
-using Farseer.Net.Utils.Common;
-using Farseer.Net.Utils.Common.ExpressionVisitor;
+using FS.Data.Infrastructure;
+using FS.Data.Internal;
+using FS.Utils.Common;
+using FS.Utils.Common.ExpressionVisitor;
 
-namespace Farseer.Net.Data.Client.SqlServer
+namespace FS.Data.Client.SqlServer
 {
     /// <summary>
     ///     针对SqlServer 2005+ 数据库 SQL生成器

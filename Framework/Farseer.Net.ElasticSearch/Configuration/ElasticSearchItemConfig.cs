@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Farseer.Net.ElasticSearch.Configuration
+﻿namespace FS.ElasticSearch.Configuration
 {
     /// <summary>
     /// ES配置项类

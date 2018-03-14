@@ -1,10 +1,9 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Farseer.Net.Reflection
+namespace FS.Reflection
 {
     /// <summary>
     ///     反射帮助类

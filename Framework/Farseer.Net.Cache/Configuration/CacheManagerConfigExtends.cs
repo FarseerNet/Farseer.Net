@@ -3,7 +3,8 @@
 // 时间：2016-12-29 13:58
 // ********************************************
 
-using Farseer.Net.Cache.Configuration;
+using FS.Cache.Configuration;
+using FS.Configuration;
 
 // ReSharper disable once CheckNamespace
 namespace Farseer.Net.Configuration

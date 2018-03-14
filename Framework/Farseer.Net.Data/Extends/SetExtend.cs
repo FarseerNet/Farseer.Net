@@ -1,8 +1,8 @@
-﻿using Farseer.Net.Core;
-using Farseer.Net.Data;
+﻿using FS.Core;
+using FS.Data;
 
 // ReSharper disable once CheckNamespace
-namespace Farseer.Net.Extends
+namespace FS.Extends
 {
     public static partial class SqlExtend
     {

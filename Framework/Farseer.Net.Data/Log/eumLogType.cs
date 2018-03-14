@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Farseer.Net.Data.Log
+namespace FS.Data.Log
 {
     /// <summary>
     /// 日志信息等级

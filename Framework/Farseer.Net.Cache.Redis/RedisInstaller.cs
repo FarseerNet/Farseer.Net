@@ -1,15 +1,16 @@
-﻿using CacheManager.Core;
+﻿using System;
+using CacheManager.Core;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using System;
-using Farseer.Net.Cache.Configuration;
-using Farseer.Net.Cache.Manager.Redis;
-using Farseer.Net.Cache.Redis.Configuration;
+using Farseer.Net.Cache;
 using Farseer.Net.Configuration;
-using Farseer.Net.DI;
+using FS.Cache.Configuration;
+using FS.Cache.Redis.CacheManager;
+using FS.Configuration;
+using FS.DI;
 
-namespace Farseer.Net.Cache.Redis
+namespace FS.Cache.Redis
 {
     /// <summary>
     /// Redis依赖注册
@@ -66,7 +67,7 @@ namespace Farseer.Net.Cache.Redis
                 }
 
                 // 注册
-                container.Register(Component.For<ICacheManager>().Named(m.Name).ImplementedBy<CacheManager>().DependsOn(Dependency.OnValue(settings.GetType(), settings)).LifestyleSingleton());
+                container.Register(Component.For<ICacheManager>().Named(m.Name).ImplementedBy<Cache.CacheManager>().DependsOn(Dependency.OnValue(settings.GetType(), settings)).LifestyleSingleton());
             });
         }
 

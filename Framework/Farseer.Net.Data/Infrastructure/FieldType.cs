@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Farseer.Net.Data.Infrastructure {
+namespace FS.Data.Infrastructure {
     /// <summary> 字段类型 </summary>
     public enum FieldType
     {

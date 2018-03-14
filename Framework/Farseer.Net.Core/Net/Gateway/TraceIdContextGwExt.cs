@@ -1,6 +1,6 @@
-﻿using Farseer.Net.Context;
+﻿using FS.Context;
 
-namespace Farseer.Net.Core.Net.Gateway
+namespace FS.Core.Net.Gateway
 {
     public static class TraceIdContextGwExt
     {

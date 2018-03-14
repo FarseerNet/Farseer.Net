@@ -6,9 +6,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
-namespace Farseer.Net.Utils.Component
+namespace FS.Utils.Component
 {
     /// <summary>
     /// 枚举帮助器

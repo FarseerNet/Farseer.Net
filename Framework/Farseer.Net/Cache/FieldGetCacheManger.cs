@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Reflection;
-using Farseer.Net.Utils.Common;
+using FS.Utils.Common;
 
-namespace Farseer.Net.Cache
+namespace FS.Cache
 {
     /// <summary>
     ///     表达式树委托Get缓存

@@ -6,24 +6,23 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Farseer.Net.Cache;
-using Farseer.Net.Configuration;
-using Farseer.Net.Data.Client.MySql;
-using Farseer.Net.Data.Client.OleDb;
-using Farseer.Net.Data.Client.Oracle;
-using Farseer.Net.Data.Client.PostgreSql;
-using Farseer.Net.Data.Client.SqlServer;
-using Farseer.Net.Data.Client.SqLite;
-using Farseer.Net.Data.Internal;
-using Farseer.Net.Data.Map;
-using Farseer.Net.Extends;
-using Farseer.Net.Utils.Common;
+using FS.Data.Client.MySql;
+using FS.Data.Client.PostgreSql;
+using FS.Data.Client.SqlServer;
+using FS.Data.Client.SqLite;
+using FS.Data.Internal;
+using FS.Data.Map;
+using FS.Extends;
+using FS.Cache;
+using FS.Utils.Common;
+using FS.Configuration;
 
 #if !CORE
-
+using FS.Data.Client.OleDb;
+using FS.Data.Client.Oracle;
 #endif
 
-namespace Farseer.Net.Data.Infrastructure
+namespace FS.Data.Infrastructure
 {
     /// <summary>
     ///     数据库提供者（不同数据库的特性）

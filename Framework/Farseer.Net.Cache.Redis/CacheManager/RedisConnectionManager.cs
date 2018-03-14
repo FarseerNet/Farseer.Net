@@ -8,7 +8,7 @@ using CacheManager.Core.Logging;
 using CacheManager.Core.Utility;
 using StackExchange.Redis;
 
-namespace Farseer.Net.Cache.Manager.Redis
+namespace FS.Cache.Redis.CacheManager
 {
     internal class RedisConnectionManager
     {

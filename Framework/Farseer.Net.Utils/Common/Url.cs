@@ -1,8 +1,9 @@
 ﻿using System.Linq;
 using System.Text.RegularExpressions;
 using Farseer.Net.Extends;
+using FS.Extends;
 
-namespace Farseer.Net.Utils.Common
+namespace FS.Utils.Common
 {
     /// <summary>
     ///     解释Url

@@ -1,6 +1,6 @@
-﻿using Farseer.Net.Core;
+﻿using FS.Core;
 
-namespace Farseer.Net.Data.Infrastructure
+namespace FS.Data.Infrastructure
 {
     /// <summary>
     ///     支持递归树节点的实体类

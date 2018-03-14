@@ -1,7 +1,7 @@
 ﻿using System;
-using Farseer.Net.Cache;
-using Farseer.Net.Extends;
-using Farseer.Net.Utils.Common;
+using FS.Cache;
+using FS.Extends;
+using FS.Utils.Common;
 
 // ReSharper disable once CheckNamespace
 namespace Farseer.Net.Extends

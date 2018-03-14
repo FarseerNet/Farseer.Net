@@ -1,4 +1,4 @@
-﻿namespace Farseer.Net.DI
+﻿namespace FS.DI
 {
     /// <summary>
     ///     约定注册配置

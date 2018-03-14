@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
-using Farseer.Net.Cache;
-using Farseer.Net.Data.Infrastructure;
-using Farseer.Net.Extends;
-using Farseer.Net.Utils.Common;
+using FS.Cache;
+using FS.Data.Infrastructure;
+using FS.Utils.Common;
+using FS.Extends;
 
-namespace Farseer.Net.Data
+namespace FS.Data
 {
     /// <summary>
     ///     表操作

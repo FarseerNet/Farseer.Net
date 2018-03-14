@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Data.Common;
-using Farseer.Net.Data.Infrastructure;
-using Farseer.Net.Data.Map;
+using FS.Data.Infrastructure;
+using FS.Data.Map;
 
-namespace Farseer.Net.Data.Internal
+namespace FS.Data.Internal
 {
     /// <summary>
     ///     存储过程生成器

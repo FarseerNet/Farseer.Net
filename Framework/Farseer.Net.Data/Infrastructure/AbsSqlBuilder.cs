@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
-using Farseer.Net.Data.ExpressionVisitor;
-using Farseer.Net.Data.Internal;
-using Farseer.Net.Utils.Common;
+using FS.Data.ExpressionVisitor;
+using FS.Data.Internal;
+using FS.Utils.Common;
 
-namespace Farseer.Net.Data.Infrastructure
+namespace FS.Data.Infrastructure
 {
     /// <summary>
     ///     通用SQL生成器

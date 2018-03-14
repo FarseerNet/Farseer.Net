@@ -2,10 +2,10 @@
 using System.Collections.Concurrent;
 using System.Data;
 using System.Reflection;
-using Farseer.Net.Utils.Common;
+using FS.Utils.Common;
 
 // ReSharper disable once CheckNamespace
-namespace Farseer.Net.Extends
+namespace FS.Extends
 {
     /// <summary>
     /// 扩展方法类

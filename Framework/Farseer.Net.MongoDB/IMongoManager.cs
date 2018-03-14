@@ -1,6 +1,6 @@
 ﻿using MongoDB.Driver;
 
-namespace Farseer.Net.MongoDB
+namespace FS.MongoDB
 {
     public interface IMongoManager
     {

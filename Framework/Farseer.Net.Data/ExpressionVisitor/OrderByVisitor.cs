@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Data.Common;
-using Farseer.Net.Data.Infrastructure;
-using Farseer.Net.Data.Map;
-using Farseer.Net.Utils.Common;
+using FS.Data.Infrastructure;
+using FS.Data.Map;
+using FS.Utils.Common;
 
-namespace Farseer.Net.Data.ExpressionVisitor
+namespace FS.Data.ExpressionVisitor
 {
     /// <summary>
     ///     提供字段排序时表达式树的解析

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Farseer.Net.Modules
+namespace FS.Modules
 {
     /// <summary>
     ///     模块管理器接口

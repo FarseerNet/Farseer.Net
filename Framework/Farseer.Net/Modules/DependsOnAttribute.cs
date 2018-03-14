@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Farseer.Net.Modules
+namespace FS.Modules
 {
     /// <summary>
     ///     依赖其他模块的标识

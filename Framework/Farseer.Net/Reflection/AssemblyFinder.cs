@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using FS.Modules;
 #if CORE
 using System.Runtime.Loader;
 #endif
-using Castle.Core.Internal;
-using Farseer.Net.Modules;
 
-namespace Farseer.Net.Reflection
+namespace FS.Reflection
 {
     /// <summary>
     /// 默认程序集查找器

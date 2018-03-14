@@ -4,7 +4,7 @@
 // ********************************************
 
 using System.Data;
-using Farseer.Net.Core.Mapping.Attribute;
+using FS.Core.Mapping.Attribute;
 
 namespace Farseer.Net.Data.Console
 {

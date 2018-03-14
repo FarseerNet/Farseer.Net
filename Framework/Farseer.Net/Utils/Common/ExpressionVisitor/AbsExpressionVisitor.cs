@@ -5,7 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Farseer.Net.Utils.Common.ExpressionVisitor
+namespace FS.Utils.Common.ExpressionVisitor
 {
     /// <summary>
     ///     对表达式树的解析

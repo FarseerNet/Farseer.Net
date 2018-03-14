@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data.Common;
 
-namespace Farseer.Net.Data.Infrastructure
+namespace FS.Data.Infrastructure
 {
     /// <summary>
     ///     SQL参数

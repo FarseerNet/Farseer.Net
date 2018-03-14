@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Farseer.Net.Data.Data;
-using Farseer.Net.Data.Infrastructure;
-using Farseer.Net.Data.Log.Default;
+using FS.Data.Data;
+using FS.Data.Infrastructure;
+using FS.Data.Log.Default;
 
-namespace Farseer.Net.Data.Internal
+namespace FS.Data.Internal
 {
     /// <summary> 将SQL发送到数据库（代理类、记录SQL、执行时间） </summary>
     internal sealed class ExecuteSqlLogProxy : IExecuteSql

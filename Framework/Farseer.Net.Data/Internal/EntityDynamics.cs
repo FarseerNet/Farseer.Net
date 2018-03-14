@@ -4,24 +4,24 @@
 // ********************************************
 
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
-using Farseer.Net.Core;
+using FS.Core;
+using FS.Data.Cache;
+using FS.Data.Map;
+using FS.DI;
+using FS.Extends;
+using FS.Utils.Common;
 #if !CORE
-using System.CodeDom.Compiler;
-using Farseer.Net.DI;
 #else
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 #endif
-using Farseer.Net.Data.Map;
-using Farseer.Net.Extends;
-using Farseer.Net.Utils.Common;
 
-namespace Farseer.Net.Data.Internal
+namespace FS.Data.Internal
 {
     /// <summary>
     /// 实体类动态生成DataRow、IDataReader类型转换构造函数
@@ -47,16 +47,17 @@ namespace Farseer.Net.Data.Internal
         /// </summary>
         private Type BuildEntity(Type entityType)
         {
-            var setPhysicsMap = new SetPhysicsMap(entityType);
+            //var entityType = typeof(TEntity);
+            var setPhysicsMap = SetMapCacheManger.Cache(entityType);// new SetPhysicsMap(entityType); 
             var clsName = entityType.Name + "ByDataRow";       // 类名
 
             var sb = new StringBuilder();
 #if !CORE
             sb.AppendLine("using System;");
             sb.AppendLine("using System.Collections.Generic;");
-            sb.AppendLine("using Farseer.Net.Core;");
-            sb.AppendLine("using Farseer.Net.Utils.Common;");
-            sb.AppendLine("using Farseer.Net.Data.Infrastructure;");
+            sb.AppendLine("using FS.Core;");
+            sb.AppendLine("using FS.Utils.Common;");
+            sb.AppendLine("using FS.Data.Infrastructure;");
             sb.AppendLine($"namespace {entityType.Namespace}\r\n{{");
 #endif
             sb.AppendLine($"public class {clsName} : {entityType.FullName}\r\n{{");
@@ -134,9 +135,9 @@ namespace Farseer.Net.Data.Internal
             var scriptOptions = ScriptOptions.Default;
             scriptOptions = scriptOptions.AddReferences(typeof(List<>).Assembly, typeof(ConvertHelper).Assembly, typeof(MapingData).Assembly, entityType.Assembly);
             scriptOptions = scriptOptions.AddImports("System.Collections.Generic");
-            scriptOptions = scriptOptions.AddImports("Farseer.Net.Core");
-            scriptOptions = scriptOptions.AddImports("Farseer.Net.Utils.Common");
-            scriptOptions = scriptOptions.AddImports("Farseer.Net.Data.Infrastructure");
+            scriptOptions = scriptOptions.AddImports("FS.Core");
+            scriptOptions = scriptOptions.AddImports("FS.Utils.Common");
+            scriptOptions = scriptOptions.AddImports("FS.Data.Infrastructure");
 
             // 加载成员依赖的类型所在的程序集
             var properties = entityType.GetProperties();

@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Farseer.Net.Extends;
 
-namespace Farseer.Net.Utils.Common
+namespace FS.Utils.Common
 {
     /// <summary>
     ///     º”√‹π§æﬂ

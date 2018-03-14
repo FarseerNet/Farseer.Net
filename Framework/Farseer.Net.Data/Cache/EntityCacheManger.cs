@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Farseer.Net.Cache;
-using Farseer.Net.Data.Map;
+using FS.Cache;
+using FS.Data.Map;
 
-namespace Farseer.Net.Data.Cache
+namespace FS.Data.Cache
 {
     /// <summary>
     ///     实体类整表缓存

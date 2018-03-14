@@ -3,9 +3,9 @@
 // 时间：2017-08-17 11:08
 // ********************************************
 
-using Farseer.Net.Cache;
+using FS.Cache;
 
-namespace Farseer.Net.Utils.Common
+namespace FS.Utils.Common
 {
     public class EntityHelper
     {

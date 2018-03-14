@@ -1,12 +1,14 @@
 ﻿//------------------------------------------------------------------------------
+
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+
 #if CORE
 using System.Runtime.Loader;
 #endif
-namespace Farseer.Net.Reflection
+namespace FS.Reflection
 {
 	/// <summary>
 	/// 程序集帮助类

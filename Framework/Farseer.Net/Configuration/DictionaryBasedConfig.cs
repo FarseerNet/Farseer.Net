@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Farseer.Net.Configuration
+namespace FS.Configuration
 {
     /// <summary>
     ///     配置基类，用来进行自定义配置

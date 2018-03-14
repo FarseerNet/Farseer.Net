@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
-using Farseer.Net.Data.Infrastructure;
+using FS.Data.Infrastructure;
 
-namespace Farseer.Net.Data.Internal
+namespace FS.Data.Internal
 {
     /// <summary>
     ///     存储SQL及SQL参数

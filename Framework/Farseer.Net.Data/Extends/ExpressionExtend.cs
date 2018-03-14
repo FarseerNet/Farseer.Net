@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq.Expressions;
-using Farseer.Net.Data.Cache;
+using FS.Data.Cache;
 
 // ReSharper disable once CheckNamespace
-namespace Farseer.Net.Extends
+namespace FS.Extends
 {
     /// <summary>
     ///     Expression表达式树扩展

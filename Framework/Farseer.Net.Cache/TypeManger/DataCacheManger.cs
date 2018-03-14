@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 
-namespace Farseer.Net.Cache.TypeManger
+namespace FS.Cache.TypeManger
 {
     /// <summary>
     /// </summary>

@@ -11,7 +11,7 @@
 
 #pragma warning disable 1591
 
-namespace Farseer.Net.MQ.RocketMQ.SDK
+namespace FS.MQ.RocketMQ.SDK
 {
     public enum Action
     {

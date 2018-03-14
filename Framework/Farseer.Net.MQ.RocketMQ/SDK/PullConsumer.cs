@@ -12,7 +12,7 @@ using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-namespace Farseer.Net.MQ.RocketMQ.SDK
+namespace FS.MQ.RocketMQ.SDK
 {
     public class PullConsumer : IDisposable
     {

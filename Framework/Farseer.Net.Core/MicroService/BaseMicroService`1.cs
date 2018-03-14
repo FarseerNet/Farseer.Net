@@ -4,15 +4,13 @@
 // ********************************************
 
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.ServiceModel;
 using System.Threading.Tasks;
-using Farseer.Net.Core.Exception;
-using Farseer.Net.Core.Net;
-using Farseer.Net.Core.Net.Gateway;
-using Farseer.Net.Extends;
+using FS.Extends;
+using FS.Core.Net;
+using FS.Core.Net.Gateway;
 
-namespace Farseer.Net.Core.MicroService
+namespace FS.Core.MicroService
 {
     /// <summary>
     /// 微服务基类（带DTO参数的检查）

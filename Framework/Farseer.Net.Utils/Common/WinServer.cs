@@ -8,11 +8,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Farseer.Net.Utils.Component;
-
 using System.ServiceProcess;
+using FS.Utils.Component;
 
-namespace Farseer.Net.Utils.Common
+namespace FS.Utils.Common
 {
     /// <summary>
     /// Windows服务工具

@@ -5,12 +5,12 @@ using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Farseer.Net.Core.Mapping;
-using Farseer.Net.Data.Infrastructure;
-using Farseer.Net.Data.Map;
-using Farseer.Net.Utils.Common.ExpressionVisitor;
+using FS.Core.Mapping;
+using FS.Data.Infrastructure;
+using FS.Data.Map;
+using FS.Utils.Common.ExpressionVisitor;
 
-namespace Farseer.Net.Data.ExpressionVisitor
+namespace FS.Data.ExpressionVisitor
 {
     /// <summary>
     ///     提供ExpressionBinary表达式树的解析

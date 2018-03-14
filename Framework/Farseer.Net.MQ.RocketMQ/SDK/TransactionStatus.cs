@@ -8,7 +8,7 @@
 // the SWIG interface file instead.
 //------------------------------------------------------------------------------
 
-namespace Farseer.Net.MQ.RocketMQ.SDK
+namespace FS.MQ.RocketMQ.SDK
 {
     public enum TransactionStatus
     {

@@ -1,4 +1,4 @@
-﻿namespace Farseer.Net.DI
+﻿namespace FS.DI
 {
     /// <summary>
     ///     类型生命周期

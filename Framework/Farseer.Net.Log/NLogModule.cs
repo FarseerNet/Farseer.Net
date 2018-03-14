@@ -1,13 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using Castle.Facilities.Logging;
-using Castle.Services.Logging.NLogIntegration;
-using Farseer.Net.Configuration;
-using Farseer.Net.DI;
-using Farseer.Net.Log.Configuration;
-using Farseer.Net.Modules;
+﻿using System.Reflection;
+using FS.Configuration;
+using FS.DI;
+using FS.Log.Configuration;
+using FS.Modules;
 
-namespace Farseer.Net.Log
+namespace FS.Log
 {
     public class NLogModule : FarseerModule
     {

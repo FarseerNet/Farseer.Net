@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Farseer.Net.Core.Async
+namespace FS.Core.Async
 {
     /// <summary>
     /// 本地进程内的hash数据缓存

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Farseer.Net.Utils.Component
+namespace FS.Utils.Component
 {
     /// <summary>
     ///     定义任务

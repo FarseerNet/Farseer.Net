@@ -1,4 +1,4 @@
-﻿namespace Farseer.Net.DI
+﻿namespace FS.DI
 {
     /// <summary>
     ///     每个Http请求创建一个对象

@@ -1,7 +1,7 @@
 ﻿using Castle.DynamicProxy;
 using Castle.MicroKernel.Registration;
 
-namespace Farseer.Net.DI
+namespace FS.DI
 {
 	/// <summary>
 	///     约定注册器

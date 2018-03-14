@@ -1,4 +1,4 @@
-﻿namespace Farseer.Net.Configuration.Startup
+﻿namespace FS.Configuration.Startup
 {
     /// <summary>
     /// 模块配置

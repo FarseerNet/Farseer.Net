@@ -1,6 +1,6 @@
-﻿using Farseer.Net.Data.Log.Default;
+﻿using FS.Data.Log.Default;
 
-namespace Farseer.Net.Data.Log
+namespace FS.Data.Log
 {
     /// <summary>
     /// 日志管理

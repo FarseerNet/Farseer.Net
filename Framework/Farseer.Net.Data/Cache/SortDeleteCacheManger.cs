@@ -1,8 +1,8 @@
 ﻿using System;
-using Farseer.Net.Cache;
-using Farseer.Net.Data.Features;
+using FS.Cache;
+using FS.Data.Features;
 
-namespace Farseer.Net.Data.Cache
+namespace FS.Data.Cache
 {
     /// <summary>
     ///     创建逻辑删除功能

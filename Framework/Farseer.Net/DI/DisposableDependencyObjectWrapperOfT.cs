@@ -1,4 +1,4 @@
-namespace Farseer.Net.DI
+namespace FS.DI
 {
     /// <summary>
     ///     包装一个从Ioc容器中获取的对象的类

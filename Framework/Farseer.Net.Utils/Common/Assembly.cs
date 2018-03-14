@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Farseer.Net.Utils.Common
+namespace FS.Utils.Common
 {
     /// <summary>
     ///     获取版本信息

@@ -3,7 +3,7 @@ using System.Reflection;
 using Castle.Core.Logging;
 using Castle.Windsor;
 
-namespace Farseer.Net.DI
+namespace FS.DI
 {
     /// <summary>
     ///     依赖注入管理器，用来执行依赖注入任务

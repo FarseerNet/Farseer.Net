@@ -5,11 +5,9 @@
 
 using System.Runtime.Serialization;
 using System.ServiceModel;
-using System.ServiceModel.Channels;
-using Farseer.Net.Core.Fabric;
-using Farseer.Net.Core.Net.Gateway;
+using FS.Core.Fabric;
 
-namespace Farseer.Net.Core.Exception
+namespace FS.Core.Exception
 {
     /// <summary>
     /// 用指定的错误消息初始化，并指定错误码

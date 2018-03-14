@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using Microsoft.Win32;
 
-namespace Farseer.Net.Utils.Common
+namespace FS.Utils.Common
 {
     /// <summary>
     ///     Process管理

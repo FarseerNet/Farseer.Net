@@ -1,7 +1,7 @@
 using System.IO;
 using System.Xml.Serialization;
 
-namespace Farseer.Net.Utils.Common
+namespace FS.Utils.Common
 {
     /// <summary>
     ///     SerializationHelper 的摘要说明。

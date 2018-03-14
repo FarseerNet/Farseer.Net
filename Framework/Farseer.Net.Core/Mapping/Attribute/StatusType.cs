@@ -1,4 +1,4 @@
-﻿namespace Farseer.Net.Core.Mapping.Attribute {
+﻿namespace FS.Core.Mapping.Attribute {
     /// <summary> 字段状态 </summary>
     public enum StatusType
     {

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Text;
+using FS.Cache.Redis.Configuration;
 using Newtonsoft.Json;
 using StackExchange.Redis;
-using Farseer.Net.Cache.Redis.Configuration;
 
-namespace Farseer.Net.Cache.Redis
+namespace FS.Cache.Redis
 {
     /// <summary>
     ///     Redis缓存管理器

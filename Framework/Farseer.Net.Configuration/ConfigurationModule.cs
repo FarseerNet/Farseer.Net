@@ -3,10 +3,10 @@
 // 时间：2016-12-26 11:01
 // ********************************************
 
-using Farseer.Net.Modules;
-using Farseer.Net.Reflection;
+using FS.Modules;
+using FS.Reflection;
 
-namespace Farseer.Net.Configuration
+namespace FS.Configuration
 {
     /// <summary>
     /// 配置文件模块管理

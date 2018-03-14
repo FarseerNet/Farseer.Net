@@ -6,7 +6,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Farseer.Net.Configuration.Format
+namespace FS.Configuration.Format
 {
     /// <summary>
     /// 配置文件的格式

@@ -13,6 +13,8 @@
     <PackageTags>ORM</PackageTags>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <AssemblyName>Farseer.Net.Data</AssemblyName>
+    <RootNamespace>FS.Data</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

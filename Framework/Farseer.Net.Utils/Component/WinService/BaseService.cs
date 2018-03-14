@@ -10,8 +10,11 @@ using System.Linq;
 using System.ServiceProcess;
 using Farseer.Net.Extends;
 using Farseer.Net.Utils.Common;
+using FS.Extends;
+using FS.Utils.Common;
+using FS.Utils.Component;
 
-namespace Farseer.Net.Utils.Component.WinService
+namespace FS.Utils.Component.WinService
 {
     /// <summary>服务程序基类</summary>
     public abstract class BaseService<TService> : ServiceBase where TService : BaseService<TService>, new()

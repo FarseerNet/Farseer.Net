@@ -1,8 +1,8 @@
 ﻿using System;
-using Farseer.Net.Data.Infrastructure;
-using Farseer.Net.Data.Map;
+using FS.Data.Infrastructure;
+using FS.Data.Map;
 
-namespace Farseer.Net.Data.Internal
+namespace FS.Data.Internal
 {
     /// <summary>
     ///     队列，每一次的查询将生成一个新的实例

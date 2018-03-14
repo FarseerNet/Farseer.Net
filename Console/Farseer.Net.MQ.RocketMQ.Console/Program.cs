@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using System.Threading;
-using Farseer.Net.Utils.Common;
+using FS;
 
 namespace Farseer.Net.MQ.RocketMQ.Console
 {

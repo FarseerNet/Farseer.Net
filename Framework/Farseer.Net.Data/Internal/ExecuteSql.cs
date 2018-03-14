@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
-using Farseer.Net.Data.Data;
-using Farseer.Net.Data.Infrastructure;
-using Farseer.Net.Extends;
-using Farseer.Net.Utils.Common;
+using FS.Data.Data;
+using FS.Data.Infrastructure;
+using FS.Utils.Common;
+using FS.Extends;
 
-namespace Farseer.Net.Data.Internal
+namespace FS.Data.Internal
 {
     /// <summary> 将SQL发送到数据库 </summary>
     internal sealed class ExecuteSql : IExecuteSql
@@ -41,6 +41,7 @@ namespace Farseer.Net.Data.Internal
             var param = sqlParam.Param?.ToArray();
             return sqlParam.Sql.Length < 1 ? 0 : DataBase.ExecuteNonQuery(CommandType.Text, sqlParam.Sql.ToString(), param);
         }
+
         /// <summary>
         ///     返回影响行数
         /// </summary>

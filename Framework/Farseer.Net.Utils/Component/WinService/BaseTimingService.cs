@@ -9,8 +9,11 @@ using System.Linq;
 using System.Text;
 using Farseer.Net.Extends;
 using Farseer.Net.Utils.Common;
+using FS.Extends;
+using FS.Utils.Common;
+using FS.Utils.Component;
 
-namespace Farseer.Net.Utils.Component.WinService
+namespace FS.Utils.Component.WinService
 {
     /// <summary>服务程序基类（带定时、间隔控制的任务）</summary>
     public abstract class BaseTimingService<TService> : BaseService<TService> where TService : BaseService<TService>, new()

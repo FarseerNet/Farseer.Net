@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
 
-namespace Farseer.Net.Context
+namespace FS.Context
 {
     public static class HttpWebRequestCatExt
     {

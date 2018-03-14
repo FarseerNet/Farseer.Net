@@ -5,9 +5,9 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Farseer.Net.Extends;
-using Farseer.Net.Configuration;
+using FS.Configuration;
 
-namespace Farseer.Net.Utils.Common
+namespace FS.Utils.Common
 {
     /// <summary>
     ///     文件工具

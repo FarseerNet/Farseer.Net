@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using Farseer.Net.Configuration;
-using Farseer.Net.DI;
-using Farseer.Net.Modules;
-using Farseer.Net.MQ.Kafka.Configuration;
+using FS.Configuration;
+using FS.DI;
+using FS.Modules;
+using FS.MQ.Kafka.Configuration;
 
-namespace Farseer.Net.MQ.Kafka
+namespace FS.MQ.Kafka
 {
     /// <summary>
     /// Kafka 模块

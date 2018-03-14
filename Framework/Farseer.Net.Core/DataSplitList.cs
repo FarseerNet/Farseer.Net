@@ -6,7 +6,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace Farseer.Net.Core
+namespace FS.Core
 {
     /// <summary>
     /// 数据分页列表及总数

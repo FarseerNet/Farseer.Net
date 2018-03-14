@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Farseer.Net.Configuration;
-using Farseer.Net.MQ.Kafka.Configuration;
+using FS.Configuration;
+using FS.MQ.Kafka.Configuration;
 
 // ReSharper disable once CheckNamespace
 namespace Farseer.Net.Configuration

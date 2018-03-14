@@ -4,9 +4,8 @@
 // ********************************************
 
 using System;
-using Farseer.Net.Configuration.Format;
 
-namespace Farseer.Net.Configuration
+namespace FS.Configuration
 {
     /// <summary>
     /// 配置中心的解析

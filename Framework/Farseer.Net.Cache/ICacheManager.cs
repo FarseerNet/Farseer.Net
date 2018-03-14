@@ -1,6 +1,6 @@
 ﻿using CacheManager.Core;
 
-namespace Farseer.Net.Cache
+namespace FS.Cache
 {
     public interface ICacheManager
     {

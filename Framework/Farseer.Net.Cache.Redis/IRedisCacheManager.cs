@@ -1,7 +1,7 @@
 ﻿using System;
 using StackExchange.Redis;
 
-namespace Farseer.Net.Cache.Redis
+namespace FS.Cache.Redis
 {
     /// <summary>
     /// 缓存管理接口

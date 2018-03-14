@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Farseer.Net.Data.Log.Default.Entity
+namespace FS.Data.Log.Default.Entity
 {
     [DataContract]
     public class SqlParam

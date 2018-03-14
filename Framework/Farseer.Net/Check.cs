@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace Farseer.Net
+namespace FS
 {
     /// <summary>
     ///     检测

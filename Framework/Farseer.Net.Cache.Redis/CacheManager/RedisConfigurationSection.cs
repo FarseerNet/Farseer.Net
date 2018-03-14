@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 
-namespace Farseer.Net.Cache.Manager.Redis
+namespace FS.Cache.Redis.CacheManager
 {
     /// <summary>
     /// Configuration section for the CacheManager.

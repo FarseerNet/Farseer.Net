@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace Farseer.Net.Utils.Common.ExpressionVisitor
+namespace FS.Utils.Common.ExpressionVisitor
 {
     /// <summary>
     ///     获取表达式中Block的Expression

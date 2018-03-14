@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Castle.Core.Logging;
-using Farseer.Net.Configuration.Startup;
-using Farseer.Net.DI;
+using FS.Configuration.Startup;
+using FS.DI;
 
-namespace Farseer.Net.Modules
+namespace FS.Modules
 {
     /// <summary>
     ///     模块基类

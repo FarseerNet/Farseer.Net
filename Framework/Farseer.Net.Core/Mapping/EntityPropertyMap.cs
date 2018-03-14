@@ -6,7 +6,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Farseer.Net.Core.Mapping
+namespace FS.Core.Mapping
 {
     /// <summary>
     /// 保存普通实体属性映射的信息

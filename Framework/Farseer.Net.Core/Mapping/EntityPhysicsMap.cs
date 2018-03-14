@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 
-namespace Farseer.Net.Core.Mapping
+namespace FS.Core.Mapping
 {
     /// <summary>
     ///     普通实体类的 映射关系

@@ -1,4 +1,4 @@
-﻿namespace Farseer.Net.Core.Mapping
+﻿namespace FS.Core.Mapping
 {
     /// <summary> 字段状态 </summary>
     public enum SetFieldStatus

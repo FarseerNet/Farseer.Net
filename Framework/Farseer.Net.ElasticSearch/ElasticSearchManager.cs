@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using Elasticsearch.Net;
-using Nest;
-using Farseer.Net.ElasticSearch.Configuration;
 using System.Linq;
+using Elasticsearch.Net;
+using FS.ElasticSearch.Configuration;
+using Nest;
 
-namespace Farseer.Net.ElasticSearch
+namespace FS.ElasticSearch
 {
     /// <summary>
     /// ES管理类

@@ -1,7 +1,6 @@
-﻿using Farseer.Net.Data.Configuration;
-using Farseer.Net.Data.Infrastructure;
+﻿using FS.Data.Infrastructure;
 
-namespace Farseer.Net.Data.Internal
+namespace FS.Data.Internal
 {
     /// <summary>
     ///     上下文数据库连接信息

@@ -1,6 +1,6 @@
-﻿using Farseer.Net.Data.Infrastructure;
+﻿using FS.Data.Infrastructure;
 
-namespace Farseer.Net.Data
+namespace FS.Data
 {
     /// <summary>
     ///     多张表带静态实例化的上下文

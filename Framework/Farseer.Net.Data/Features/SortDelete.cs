@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using Farseer.Net.Cache;
+using FS.Cache;
 
-namespace Farseer.Net.Data.Features
+namespace FS.Data.Features
 {
     /// <summary>
     ///     设置表、视图的软删除标记

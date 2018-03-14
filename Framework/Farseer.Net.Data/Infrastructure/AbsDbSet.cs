@@ -1,10 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Reflection;
-using Farseer.Net.Data.Internal;
-using Farseer.Net.Data.Map;
+using FS.Data.Internal;
+using FS.Data.Map;
 
-namespace Farseer.Net.Data.Infrastructure
+namespace FS.Data.Infrastructure
 {
     /// <summary>
     ///     Set基类

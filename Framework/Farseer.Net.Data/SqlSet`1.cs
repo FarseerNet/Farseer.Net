@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
-using Farseer.Net.Data.Infrastructure;
+using FS.Data.Infrastructure;
 
-namespace Farseer.Net.Data
+namespace FS.Data
 {
     public class SqlSet<TEntity> : SqlSet, IDbSet<TEntity> where TEntity : class, new()
     {

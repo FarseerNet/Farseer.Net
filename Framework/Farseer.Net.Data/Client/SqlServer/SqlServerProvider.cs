@@ -2,11 +2,11 @@
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Text;
-using Farseer.Net.Data.Data;
-using Farseer.Net.Data.Infrastructure;
-using Farseer.Net.Data.Internal;
+using FS.Data.Data;
+using FS.Data.Infrastructure;
+using FS.Data.Internal;
 
-namespace Farseer.Net.Data.Client.SqlServer
+namespace FS.Data.Client.SqlServer
 {
     /// <summary>
     ///     SqlServer 数据库提供者（不同数据库的特性）

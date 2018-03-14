@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Farseer.Net.Cache.TypeManger
+namespace FS.Cache.TypeManger
 {
     /// <summary>
     ///     缓存管理基类

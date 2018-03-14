@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Web.Mvc;
 using System.Web.Routing;
-using Farseer.Net.DI;
+using FS.DI;
 
 #if CORE
 using Microsoft.AspNetCore.Mvc;

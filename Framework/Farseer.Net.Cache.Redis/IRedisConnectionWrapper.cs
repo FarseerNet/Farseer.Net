@@ -2,7 +2,7 @@
 using System.Net;
 using StackExchange.Redis;
 
-namespace Farseer.Net.Cache.Redis
+namespace FS.Cache.Redis
 {
     /// <summary>
     /// Redis连接包装器接口

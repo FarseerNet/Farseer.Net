@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
-using Farseer.Net.Utils.Common;
+using FS.Utils.Common;
 
-namespace Farseer.Net.Data.Log.Default.Entity
+namespace FS.Data.Log.Default.Entity
 {
     /// <summary>
     ///     日志记录

@@ -6,7 +6,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Farseer.Net.Core.Net.Gateway
+namespace FS.Core.Net.Gateway
 {
     /// <summary>
     ///     网关转发过来的头部包

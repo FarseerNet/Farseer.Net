@@ -1,12 +1,13 @@
 ﻿using System.Data.Common;
 using System.Reflection;
 using System.Threading.Tasks;
-using Farseer.Net.Configuration;
-using Farseer.Net.Data.Configuration;
-using Farseer.Net.Data.Infrastructure;
-using Farseer.Net.DI;
+using FS.Configuration;
+using FS.Data.Configuration;
+using FS.Data.Infrastructure;
+using FS.DI;
+using FS.Configuration;
 
-namespace Farseer.Net.Data
+namespace FS.Data
 {
     public class SqlSet : AbsDbSet
     {

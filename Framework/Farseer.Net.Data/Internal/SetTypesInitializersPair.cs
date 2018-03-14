@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Farseer.Net.Data.Internal
+namespace FS.Data.Internal
 {
     // <summary>
     // 保存一个DbContext对象下的所有Set实体类型

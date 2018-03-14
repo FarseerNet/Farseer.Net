@@ -1,0 +1,25 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using FS.Core;
+using FS.Data.Log.Default;
+
+namespace FS.Data.Internal
+{
+    /// <summary>
+    ///     将SQL发送到数据库（代理类、记录SQL、执行时间）
+    /// </summary>
+    internal class MonitorSqlLog : ISqlMonitor
+    {
+        public void ExecuteException(string methodName, string name, CommandType cmdType, string sql, IEnumerable<DbParameter> param, long elapsedMilliseconds, Exception exp)
+        {
+        }
+
+        public void PreExecute(string methodName, string name, CommandType cmdType, string sql, IEnumerable<DbParameter> param)
+        {
+        }
+
+        public void Executed<TReturn>(string methodName, string name, CommandType cmdType, string sql, IEnumerable<DbParameter> param, long elapsedMilliseconds, TReturn result) => new SqlRunLog(name, cmdType, sql, param, elapsedMilliseconds).Write();
+    }
+}

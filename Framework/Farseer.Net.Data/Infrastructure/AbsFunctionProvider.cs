@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Farseer.Net.Utils.Common;
+using FS.Utils.Common;
 
-namespace Farseer.Net.Data.Infrastructure
+namespace FS.Data.Infrastructure
 {
     /// <summary>
     /// 数据库函数提供者（不同数据库的函数）

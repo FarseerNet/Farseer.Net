@@ -8,7 +8,7 @@ using CacheManager.Core.Internal;
 using CacheManager.Core.Logging;
 using CacheManager.Core.Utility;
 
-namespace Farseer.Net.Cache.Runtime
+namespace FS.Cache.Runtime
 {
     /// <summary>
     /// Simple implementation for the <see cref="MemoryCache"/>.

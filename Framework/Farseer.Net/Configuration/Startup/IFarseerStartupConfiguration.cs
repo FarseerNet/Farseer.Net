@@ -1,7 +1,7 @@
 ﻿using System;
-using Farseer.Net.DI;
+using FS.DI;
 
-namespace Farseer.Net.Configuration.Startup
+namespace FS.Configuration.Startup
 {
     /// <summary>
     /// 系统启动配置接口

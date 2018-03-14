@@ -12,6 +12,7 @@
     <Authors>steden</Authors>
     <PackageTags>ElasticSearch客户端</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <RootNamespace>FS.ElasticSearch</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Farseer.Net.Data.Cache;
-using Farseer.Net.Data.Infrastructure;
+using FS.Data.Cache;
+using FS.Data.Infrastructure;
 
-namespace Farseer.Net.Data.Internal
+namespace FS.Data.Internal
 {
     /// <summary>
     /// 默认的表、视图数据缓存处理方式（不支持分布式）

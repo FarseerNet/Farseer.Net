@@ -11,7 +11,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Farseer.Net.MQ.RocketMQ.SDK
+namespace FS.MQ.RocketMQ.SDK
 {
     public class SWIGTYPE_p_ons__OrderConsumer
     {

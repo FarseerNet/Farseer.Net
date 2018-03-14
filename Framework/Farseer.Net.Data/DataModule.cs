@@ -1,11 +1,25 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using Farseer.Net.Configuration;
-using Farseer.Net.Data.Configuration;
-using Farseer.Net.DI;
-using Farseer.Net.Modules;
+﻿//------------------------------------------------------------------------------
+// <copyright file="DbModule.cs" company="ZTO">
+//     Copyright (c) Shanghai Zhongtongji Network Technology Co., Ltd.  All rights reserved.
+// </copyright>                                                                
+//------------------------------------------------------------------------------
 
-namespace Farseer.Net.Data
+/*
+ * DbModule.cs
+ * 
+ * Copyright (c) 2016-2030, ZTO Corporation
+ * 
+ */
+
+using System.Collections.Generic;
+using System.Reflection;
+using FS.Configuration;
+using FS.Data.Configuration;
+using FS.DI;
+using FS.Modules;
+using FS.Configuration;
+
+namespace FS.Data
 {
     /// <summary>
     ///     Db模块
@@ -27,7 +41,7 @@ namespace Farseer.Net.Data
             var config = configResolver.DbConfig();
             if (config == null)
             {
-                configResolver.Set(new DbConfig { Items = new List<DbItemConfig> { new DbItemConfig { Name = "testDb", Server = "127.0.0.1" } } });
+                configResolver.Set(config = new DbConfig { Items = new List<DbItemConfig> { new DbItemConfig { Name = "testDb", Server = "127.0.0.1" } } });
                 configResolver.Save();
             }
         }

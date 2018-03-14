@@ -4,13 +4,13 @@ using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Reflection;
-using Farseer.Net.Data.Cache;
-using Farseer.Net.Data.Infrastructure;
-using Farseer.Net.Data.Internal;
-using Farseer.Net.Data.Map;
-using Farseer.Net.DI;
+using FS.Data.Cache;
+using FS.Data.Infrastructure;
+using FS.Data.Internal;
+using FS.Data.Map;
+using FS.DI;
 
-namespace Farseer.Net.Data
+namespace FS.Data
 {
     /// <summary>
     ///     数据库上下文（使用实例化方式时，必须末尾，执行Commit()方法，否则会产生事务死锁）
@@ -92,6 +92,11 @@ namespace Farseer.Net.Data
         ///     手动编写SQL
         /// </summary>
         public ManualSql ManualSql => InternalContext.ManualSql;
+
+        /// <summary>
+        ///     上下文数据库连接信息
+        /// </summary>
+        public IContextConnection ContextConnection => InternalContext.ContextConnection;
 
         /// <summary>
         ///     保存修改

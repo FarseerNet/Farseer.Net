@@ -5,7 +5,7 @@
 
 using System;
 
-namespace Farseer.Net.Utils.Component
+namespace FS.Utils.Component
 {
     /// <summary>
     /// Math的扩展补充

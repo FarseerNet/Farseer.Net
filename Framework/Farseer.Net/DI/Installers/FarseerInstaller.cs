@@ -1,12 +1,11 @@
 ﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using Farseer.Net.Configuration;
-using Farseer.Net.Configuration.Startup;
-using Farseer.Net.Modules;
-using Farseer.Net.Reflection;
+using FS.Configuration.Startup;
+using FS.Modules;
+using FS.Reflection;
 
-namespace Farseer.Net.DI.Installers
+namespace FS.DI.Installers
 {
     /// <summary>
     ///     系统核心组件注册类

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Farseer.Net
+namespace FS
 {
     /// <summary>
     ///     系统初始化异常

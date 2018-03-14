@@ -2,10 +2,10 @@
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using Farseer.Net.Configuration;
-using Farseer.Net.DI;
-using Farseer.Net.ElasticSearch.Configuration;
+using FS.Configuration;
+using FS.DI;
 
-namespace Farseer.Net.ElasticSearch
+namespace FS.ElasticSearch
 {
     public class ElasticSearchInstaller : IWindsorInstaller
     {

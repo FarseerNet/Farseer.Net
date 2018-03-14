@@ -1,13 +1,15 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Data;
-using Farseer.Net.Configuration;
-using Farseer.Net.Data.Data;
-using Farseer.Net.Data.Infrastructure;
-using Farseer.Net.Data.Map;
-using Farseer.Net.DI;
+using FS.Configuration;
+using FS.Core;
+using FS.Data.Data;
+using FS.Data.Infrastructure;
+using FS.Data.Map;
+using FS.DI;
+using FS.Configuration;
 
-namespace Farseer.Net.Data.Internal
+namespace FS.Data.Internal
 {
     /// <summary>
     ///     数据库上下文初始化程序
@@ -115,12 +117,12 @@ namespace Farseer.Net.Data.Internal
             DbProvider = AbsDbProvider.CreateInstance(ContextConnection.DbType, ContextConnection.DataVer);
 
             var dbconfig = IocManager.Instance.Resolve<IConfigResolver>().DbConfig();
+            
             // 默认SQL执行者
             Executeor = new ExecuteSql(new DbExecutor(ContextConnection.ConnectionString, ContextConnection.DbType, ContextConnection.CommandTimeout, !IsUnitOfWork && DbProvider.IsSupportTransaction ? IsolationLevel.RepeatableRead : IsolationLevel.Unspecified), this);
-            // 代理SQL记录
-            if (dbconfig.IsWriteSqlRunLog) { Executeor = new ExecuteSqlLogProxy(Executeor); }
-            // 代理异常记录
-            if (dbconfig.IsWriteSqlErrorLog) { Executeor = new ExecuteSqlExceptionLogProxy(Executeor); }
+
+            // 代理SQL监控
+            if (IocManager.Instance.IsRegistered<ISqlMonitor>()) Executeor = new ExecuteSqlMonitorProxy(Executeor);
 
             // 队列管理者
             QueueManger = new QueueManger(this);

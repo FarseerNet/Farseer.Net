@@ -7,7 +7,7 @@ using CacheManager.Core.Utility;
 #if !CORE
 #endif
 
-namespace Farseer.Net.Cache.Manager.Redis
+namespace FS.Cache.Redis.CacheManager
 {
     /// <summary>
     /// Manages redis client configurations for the cache handle.

@@ -12,6 +12,7 @@
     <FileVersion>2.0.2</FileVersion>
     <Version>2.0.2</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <RootNamespace>FS</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

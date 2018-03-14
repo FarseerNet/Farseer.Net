@@ -1,4 +1,4 @@
-﻿namespace Farseer.Net.Cache.Manager.Redis
+﻿namespace FS.Cache.Redis.CacheManager
 {
     internal enum ScriptType
     {

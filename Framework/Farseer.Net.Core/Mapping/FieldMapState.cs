@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Farseer.Net.Core.Mapping.Attribute;
+using FS.Core.Mapping.Attribute;
 
-namespace Farseer.Net.Core.Mapping
+namespace FS.Core.Mapping
 {
     /// <summary>
     ///     保存字段映射的信息

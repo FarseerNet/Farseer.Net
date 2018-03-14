@@ -1,6 +1,6 @@
-﻿using Farseer.Net.Data.Infrastructure;
+﻿using FS.Data.Infrastructure;
 
-namespace Farseer.Net.Data.Client.SqLite
+namespace FS.Data.Client.SqLite
 {
     public class SqLiteFunctionProvider : AbsFunctionProvider
     {

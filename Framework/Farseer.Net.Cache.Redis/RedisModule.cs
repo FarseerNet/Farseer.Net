@@ -1,12 +1,12 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
-using Farseer.Net.Cache.Redis.Configuration;
 using Farseer.Net.Configuration;
-using Farseer.Net.DI;
-using Farseer.Net.Modules;
+using FS.Cache.Redis.Configuration;
+using FS.Configuration;
+using FS.DI;
+using FS.Modules;
 
-namespace Farseer.Net.Cache.Redis
+namespace FS.Cache.Redis
 {
     /// <summary>
     ///     Redis模块

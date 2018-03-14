@@ -1,9 +1,9 @@
 ﻿using System.Net;
 using System.Reflection;
-using Farseer.Net.Configuration.Startup;
-using Farseer.Net.DI;
+using FS.Configuration.Startup;
+using FS.DI;
 
-namespace Farseer.Net.Modules
+namespace FS.Modules
 {
     /// <summary>
     ///     系统核心模块

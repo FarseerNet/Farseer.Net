@@ -10,7 +10,7 @@ using CacheManager.Core.Logging;
 using CacheManager.Core.Utility;
 using StackExchange.Redis;
 
-namespace Farseer.Net.Cache.Manager.Redis
+namespace FS.Cache.Redis.CacheManager
 {
     /// <summary>
     /// Implementation of the cache backplane using a Redis Pub/Sub channel.

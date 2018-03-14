@@ -6,10 +6,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Farseer.Net.Core.Mapping;
-using Farseer.Net.Core.Net;
+using FS.Core.Mapping;
+using FS.Core.Net;
 
-namespace Farseer.Net.Core
+namespace FS.Core
 {
     /// <summary>
     /// 对实体类的验证

@@ -12,7 +12,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace Farseer.Net.MQ.RocketMQ.SDK
+namespace FS.MQ.RocketMQ.SDK
 {
     internal class ONSClient4CPPPINVOKE
     {

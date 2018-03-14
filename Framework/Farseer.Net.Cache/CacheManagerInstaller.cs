@@ -3,12 +3,13 @@ using CacheManager.Core;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using Farseer.Net.Cache.Configuration;
-using Farseer.Net.Configuration;
-using Farseer.Net.DI;
 using Farseer.Net.Cache;
+using Farseer.Net.Configuration;
+using FS.Cache.Configuration;
+using FS.Configuration;
+using FS.DI;
 
-namespace Farseer.Net.Cache
+namespace FS.Cache
 {
     /// <summary>
     /// Redis依赖注册

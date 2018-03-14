@@ -1,6 +1,6 @@
-﻿using Farseer.Net.Data.Infrastructure;
+﻿using FS.Data.Infrastructure;
 
-namespace Farseer.Net.Data.Client.MySql
+namespace FS.Data.Client.MySql
 {
     public class MySqlFunctionProvider : AbsFunctionProvider
     {

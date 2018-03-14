@@ -12,6 +12,7 @@
     <Version>2.0.1</Version>
     <PackageTags>MVC组件</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <RootNamespace>FS.Web.Mvc</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

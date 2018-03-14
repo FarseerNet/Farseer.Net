@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using Farseer.Net.Configuration;
-using Farseer.Net.DI;
-using Farseer.Net.ElasticSearch.Configuration;
-using Farseer.Net.Modules;
+using FS.Configuration;
+using FS.DI;
+using FS.ElasticSearch.Configuration;
+using FS.Modules;
 
-namespace Farseer.Net.ElasticSearch
+namespace FS.ElasticSearch
 {
     public class ElasticSearchModule : FarseerModule
     {

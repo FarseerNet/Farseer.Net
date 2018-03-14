@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Farseer.Net.Cache
+namespace FS.Cache
 {
     /// <summary>
     ///     缓存管理基类

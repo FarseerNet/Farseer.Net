@@ -8,8 +8,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using Farseer.Net.Extends;
+using FS.Extends;
 
-namespace Farseer.Net.Utils.Component
+namespace FS.Utils.Component
 {
     /// <summary>
     /// 命令行

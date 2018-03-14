@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using Microsoft.VisualBasic;
 
-namespace Farseer.Net.Utils.Component
+namespace FS.Utils.Component
 {
     /// <summary>
     ///     语言工具

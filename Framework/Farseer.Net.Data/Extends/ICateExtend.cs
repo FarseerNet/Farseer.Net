@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Farseer.Net.Data.Infrastructure;
-using Farseer.Net.Utils.Common;
+using FS.Data.Infrastructure;
+using FS.Utils.Common;
 
 // ReSharper disable once CheckNamespace
-namespace Farseer.Net.Extends
+namespace FS.Extends
 {
     public static partial class SqlExtend
     {

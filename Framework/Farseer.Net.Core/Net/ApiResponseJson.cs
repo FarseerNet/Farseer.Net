@@ -5,10 +5,10 @@
 
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
+using FS.Core.Fabric;
 using Newtonsoft.Json;
-using Farseer.Net.Core.Fabric;
 
-namespace Farseer.Net.Core.Net
+namespace FS.Core.Net
 {
     /// <summary>
     ///     API请求返回结果

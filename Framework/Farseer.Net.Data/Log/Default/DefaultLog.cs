@@ -1,7 +1,7 @@
 ﻿using System;
-using Farseer.Net.Configuration;
+using FS.Configuration;
 
-namespace Farseer.Net.Data.Log.Default
+namespace FS.Data.Log.Default
 {
     public class DefaultLog : ILog
     {

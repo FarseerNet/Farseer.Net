@@ -1,4 +1,4 @@
-﻿namespace Farseer.Net.MQ.RocketMQ
+﻿namespace FS.MQ.RocketMQ
 {
     /// <summary>
     ///     RocketMQ管理器

@@ -5,7 +5,7 @@
 
 using Newtonsoft.Json;
 
-namespace Farseer.Net.Core
+namespace FS.Core
 {
     /// <summary>
     /// Json帮助类

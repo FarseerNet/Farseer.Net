@@ -1,7 +1,7 @@
-﻿using Farseer.Net.Data.Infrastructure;
-using Farseer.Net.Data.Internal;
+﻿using FS.Data.Infrastructure;
+using FS.Data.Internal;
 
-namespace Farseer.Net.Data.Client.SqLite
+namespace FS.Data.Client.SqLite
 {
     /// <summary>
     ///     针对SqLite 数据库 SQL生成器

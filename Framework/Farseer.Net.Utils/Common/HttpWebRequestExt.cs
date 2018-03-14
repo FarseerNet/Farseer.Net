@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using Farseer.Net.Context;
+﻿using System.Net;
+using FS.Context;
 
-namespace Farseer.Net.Utils.Common
+namespace FS.Utils.Common
 {
     public static class HttpWebRequestCatExt
     {

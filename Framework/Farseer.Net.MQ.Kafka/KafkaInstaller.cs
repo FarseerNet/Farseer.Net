@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Castle.MicroKernel.Registration;
+﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using Farseer.Net.Configuration;
-using Farseer.Net.DI;
-using Farseer.Net.MQ.Kafka.Configuration;
+using FS.Configuration;
+using FS.MQ.Kafka.Configuration;
 
-namespace Farseer.Net.MQ.Kafka
+namespace FS.MQ.Kafka
 {
     /// <summary>
     /// Kafka IOC初始化

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Farseer.Net.DI
+namespace FS.DI
 {
     /// <summary>
     ///     单例依赖

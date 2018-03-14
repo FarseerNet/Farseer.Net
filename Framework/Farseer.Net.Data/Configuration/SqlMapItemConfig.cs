@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Farseer.Net.Data.Configuration {
+namespace FS.Data.Configuration {
     /// <summary> SQL语句配置 </summary>
     [Serializable]
     public class SqlMapItemConfig

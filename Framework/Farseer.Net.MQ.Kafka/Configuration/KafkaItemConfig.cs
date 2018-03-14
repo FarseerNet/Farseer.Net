@@ -1,4 +1,4 @@
-﻿namespace Farseer.Net.MQ.Kafka.Configuration
+﻿namespace FS.MQ.Kafka.Configuration
 {
     /// <summary>
     /// Kafka集群配置信息

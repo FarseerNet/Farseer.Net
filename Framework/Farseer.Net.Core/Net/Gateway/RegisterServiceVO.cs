@@ -2,7 +2,7 @@
 // 作者：何达贤（steden） QQ：11042427
 // 时间：2017-02-23 14:29
 // ********************************************
-namespace Farseer.Net.Core.Net.Gateway
+namespace FS.Core.Net.Gateway
 {
     /// <summary>
     /// 注册服务包

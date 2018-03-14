@@ -2,7 +2,7 @@
 using System;
 using System.Runtime.Caching;
 using CacheManager.Core;
-using Farseer.Net.Cache.Runtime;
+using FS.Cache.Runtime;
 
 // ReSharper disable once CheckNamespace
 namespace Farseer.Net.Cache

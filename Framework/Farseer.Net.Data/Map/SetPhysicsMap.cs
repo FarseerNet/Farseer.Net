@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
-using Farseer.Net.Core.Mapping;
-using Farseer.Net.Core.Mapping.Attribute;
-using Farseer.Net.Data.Cache;
+using FS.Core.Mapping;
+using FS.Core.Mapping.Attribute;
+using FS.Data.Cache;
 
-namespace Farseer.Net.Data.Map
+namespace FS.Data.Map
 {
     /// <summary>
     ///     字段 映射关系

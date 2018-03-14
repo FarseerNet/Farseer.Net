@@ -3,12 +3,12 @@ using System.Data;
 using System.Data.Common;
 using System.Reflection;
 using System.Text;
-using Farseer.Net.Cache;
-using Farseer.Net.Data.Infrastructure;
-using Farseer.Net.Data.Internal;
-using Farseer.Net.Extends;
+using FS.Cache;
+using FS.Data.Infrastructure;
+using FS.Data.Internal;
+using FS.Extends;
 
-namespace Farseer.Net.Data.Client.Oracle
+namespace FS.Data.Client.Oracle
 {
     /// <summary>
     ///     Oracle 数据库提供者（不同数据库的特性）
@@ -46,7 +46,8 @@ namespace Farseer.Net.Data.Client.Oracle
             type = type.GetNullableArguments();
             switch (type.Name)
             {
-                case "DateTime": len = 8; return DbType.Date;
+                //case "DateTime": len = 8; return DbType.Date;
+                case "DateTime": len = 6; return DbType.DateTime;
             }
             return base.GetDbType(type, out len);
         }

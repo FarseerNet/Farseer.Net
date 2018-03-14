@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
-using Farseer.Net.Data.Data;
-using Farseer.Net.Data.Internal;
+using FS.Data.Data;
+using FS.Data.Internal;
 
-namespace Farseer.Net.Data.Infrastructure
+namespace FS.Data.Infrastructure
 {
     /// <summary> 将SQL发送到数据库 </summary>
     internal interface IExecuteSql

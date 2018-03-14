@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Farseer.Net.Core;
+using FS.Core;
 
 // ReSharper disable once CheckNamespace
 namespace Farseer.Net.Extends

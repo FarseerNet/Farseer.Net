@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Farseer.Net.Cache.TypeManger
+namespace FS.Cache.TypeManger
 {
     /// <summary>
     ///     枚举显示中文名称缓存

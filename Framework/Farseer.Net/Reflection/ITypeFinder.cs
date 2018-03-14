@@ -1,7 +1,7 @@
 ﻿
 using System;
 
-namespace Farseer.Net.Reflection
+namespace FS.Reflection
 {
     /// <summary>
     /// 类型查找器

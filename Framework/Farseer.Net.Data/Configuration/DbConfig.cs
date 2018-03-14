@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Farseer.Net.Configuration;
+using FS.Configuration;
 
-namespace Farseer.Net.Data.Configuration
+namespace FS.Data.Configuration
 {
     /// <summary> 数据库连接配置 </summary>
     [Serializable]

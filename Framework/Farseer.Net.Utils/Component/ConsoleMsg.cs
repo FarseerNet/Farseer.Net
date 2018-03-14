@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace Farseer.Net.Utils.Component
+namespace FS.Utils.Component
 {
     /// <summary>
     ///     用于Console的输出

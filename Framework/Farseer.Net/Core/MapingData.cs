@@ -5,7 +5,7 @@
 
 using System.Collections.Generic;
 
-namespace Farseer.Net.Core
+namespace FS.Core
 {
     /// <summary>
     /// 数据映射

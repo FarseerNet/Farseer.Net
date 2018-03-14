@@ -2,13 +2,13 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Confluent.Kafka.Serialization;
-using Farseer.Net.MQ.Kafka.Configuration;
-using System.Threading;
+using FS.MQ.Kafka.Configuration;
 
-namespace Farseer.Net.MQ.Kafka
+namespace FS.MQ.Kafka
 {
     /// <summary>
     /// Kafka管理器接口

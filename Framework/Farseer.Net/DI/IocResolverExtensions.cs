@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Farseer.Net.DI
+namespace FS.DI
 {
     /// <summary>
     ///     IIocResolver接口扩展方法

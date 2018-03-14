@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Farseer.Net.Data.Infrastructure;
-using Farseer.Net.Data.Internal;
+using FS.Data.Infrastructure;
 
-namespace Farseer.Net.Data
+namespace FS.Data
 {
     /// <summary>
     ///     存储过程操作

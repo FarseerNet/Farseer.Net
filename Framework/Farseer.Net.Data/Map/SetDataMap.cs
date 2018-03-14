@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
-using Farseer.Net.Core.Mapping;
-using Farseer.Net.Data.Cache;
-using Farseer.Net.Data.Features;
+using FS.Data.Cache;
+using FS.Data.Features;
 
-namespace Farseer.Net.Data.Map
+namespace FS.Data.Map
 {
     /// <summary>
     ///     实体类结构映射
@@ -47,17 +46,6 @@ namespace Farseer.Net.Data.Map
             Name = name;
             return this;
         }
-
-        ///// <summary>
-        ///// 设置外键关系
-        ///// </summary>
-        ///// <param name="propertyName">实体类属性名称</param>
-        ///// <param name="foreignSet">外键Set属性名称</param>
-        ///// <param name="foreignProperty">外键字段属性名称</param>
-        //public EntityDataMap SetForeignKey(string propertyName, string foreignSet, string foreignProperty)
-        //{
-        //    return this;
-        //}
 
         /// <summary>
         ///     设置逻辑删除方案

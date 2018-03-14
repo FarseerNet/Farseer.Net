@@ -3,10 +3,11 @@
 // 时间：2016-12-29 13:58
 // ********************************************
 
-using Farseer.Net.Data.Configuration;
+using FS.Configuration;
+using FS.Data.Configuration;
 
 // ReSharper disable once CheckNamespace
-namespace Farseer.Net.Configuration
+namespace FS.Configuration
 {
     /// <summary>
     /// Db配置扩展

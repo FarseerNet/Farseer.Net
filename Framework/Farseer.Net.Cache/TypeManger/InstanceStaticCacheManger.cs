@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace Farseer.Net.Cache.TypeManger
+namespace FS.Cache.TypeManger
 {
     /// <summary>
     ///     表达式树委托实例化缓存
