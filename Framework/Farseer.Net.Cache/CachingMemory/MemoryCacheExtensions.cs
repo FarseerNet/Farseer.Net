@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace Farseer.Net.Cache.CachingMemory
+namespace FS.Cache.CachingMemory
 {
     /// <summary>
     /// Extensions for the configuration builder specific to Microsoft.Extensions.Caching.Memory cache handle.

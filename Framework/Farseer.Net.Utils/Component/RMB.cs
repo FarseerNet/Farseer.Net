@@ -1,5 +1,5 @@
 ﻿using System;
-using Farseer.Net.Extends;
+using FS.Extends;
 
 namespace FS.Utils.Component
 {

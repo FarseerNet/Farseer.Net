@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using FS.Core;
-using FS.Extends;
 
 // ReSharper disable once CheckNamespace
 namespace FS.Extends

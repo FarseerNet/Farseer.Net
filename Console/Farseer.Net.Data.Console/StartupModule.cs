@@ -1,4 +1,5 @@
 ﻿using FS.Configuration;
+using FS.Data;
 using FS.Modules;
 
 namespace Farseer.Net.Data.Console

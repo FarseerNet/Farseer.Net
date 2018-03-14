@@ -7,7 +7,6 @@ using FS.Data.Data;
 using FS.Data.Infrastructure;
 using FS.Data.Map;
 using FS.DI;
-using FS.Configuration;
 
 namespace FS.Data.Internal
 {

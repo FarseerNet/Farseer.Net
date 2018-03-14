@@ -12,11 +12,10 @@ using FS.Data.Client.SqlServer;
 using FS.Data.Client.SqLite;
 using FS.Data.Internal;
 using FS.Data.Map;
-using FS.Extends;
 using FS.Cache;
 using FS.Utils.Common;
 using FS.Configuration;
-
+using FS.Extends;
 #if !CORE
 using FS.Data.Client.OleDb;
 using FS.Data.Client.Oracle;

@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using FS.Configuration;
 using FS.MQ.RocketMQ.Configuration;
 
 // ReSharper disable once CheckNamespace
 
-namespace Farseer.Net.Configuration
+namespace FS.Configuration
 {
     /// <summary>
     ///     RocketMQ配置扩展

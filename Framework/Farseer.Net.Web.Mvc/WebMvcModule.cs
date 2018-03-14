@@ -6,7 +6,7 @@ using Castle.MicroKernel.Registration;
 using FS.DI;
 using FS.Modules;
 
-namespace Farseer.Net.Web.Mvc
+namespace FS.Web.Mvc
 {
     /// <summary>
     /// This module is used to build ASP.NET MVC web sites using Abp.

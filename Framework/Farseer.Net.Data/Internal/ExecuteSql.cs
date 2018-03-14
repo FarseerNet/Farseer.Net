@@ -3,8 +3,8 @@ using System.Data;
 using System.Threading.Tasks;
 using FS.Data.Data;
 using FS.Data.Infrastructure;
-using FS.Utils.Common;
 using FS.Extends;
+using FS.Utils.Common;
 
 namespace FS.Data.Internal
 {

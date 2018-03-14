@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using Farseer.Net.Extends;
 using FS.Extends;
 
 namespace FS.Utils.Component

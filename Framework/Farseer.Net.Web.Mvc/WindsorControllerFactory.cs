@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 #endif
 
-namespace Farseer.Net.Web.Mvc
+namespace FS.Web.Mvc
 {
     /// <summary>
     /// This class is used to allow MVC to use dependency injection system while creating MVC controllers.

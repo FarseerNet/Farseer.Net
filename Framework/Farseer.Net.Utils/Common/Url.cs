@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Text.RegularExpressions;
-using Farseer.Net.Extends;
 using FS.Extends;
 
 namespace FS.Utils.Common

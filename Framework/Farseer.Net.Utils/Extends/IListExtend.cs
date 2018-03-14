@@ -6,7 +6,7 @@ using FS.Cache;
 
 // ReSharper disable once CheckNamespace
 
-namespace Farseer.Net.Extends
+namespace FS.Extends
 {
     public static partial class UtilsExtend
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using FS.Core;
 
 // ReSharper disable once CheckNamespace
-namespace Farseer.Net.Extends
+namespace FS.Extends
 {
     public static partial class UtilsExtend
     {

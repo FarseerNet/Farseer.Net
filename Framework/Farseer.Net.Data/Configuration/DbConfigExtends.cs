@@ -3,7 +3,6 @@
 // 时间：2016-12-29 13:58
 // ********************************************
 
-using FS.Configuration;
 using FS.Data.Configuration;
 
 // ReSharper disable once CheckNamespace

@@ -3,6 +3,7 @@
 // 时间：2017-09-15 9:32
 // ********************************************
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -10,8 +11,8 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using FS.Extends;
 using FS.Context;
+using FS.Extends;
 
 namespace FS.Http
 {
@@ -108,7 +109,7 @@ namespace FS.Http
         /// <param name="requestTimeout">超时时间</param>
         /// <param name="encoding">编码格式</param>
         /// <param name="cookie">是否需要cookie</param>
-        public static async Task<string> PostAsync(string url, Dictionary<string, string> postData, Encoding encoding = null, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, CookieContainer cookie = null) => await PostAsync(url, postData.Select(keyVal => $"{keyVal.Key}={keyVal.Value}").ToString("&"), null, encoding, contentType, requestTimeout, cookie);
+        public static Task<string> PostAsync(string url, Dictionary<string, string> postData, Encoding encoding = null, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, CookieContainer cookie = null) => PostAsync(url, postData.Select(keyVal => $"{keyVal.Key}={keyVal.Value}").ToString("&"), null, encoding, contentType, requestTimeout, cookie);
 
         /// <summary>
         ///     以Post方式请求远程URL
@@ -120,7 +121,7 @@ namespace FS.Http
         /// <param name="requestTimeout">超时时间</param>
         /// <param name="encoding">编码格式</param>
         /// <param name="cookie">是否需要cookie</param>
-        public static async Task<string> PostAsync(string url, Dictionary<string, string> postData, Dictionary<string, string> headerData, Encoding encoding = null, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, CookieContainer cookie = null) => await PostAsync(url, postData.Select(keyVal => $"{keyVal.Key}={keyVal.Value}").ToString("&"), headerData, encoding, contentType, requestTimeout, cookie);
+        public static Task<string> PostAsync(string url, Dictionary<string, string> postData, Dictionary<string, string> headerData, Encoding encoding = null, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, CookieContainer cookie = null) => PostAsync(url, postData.Select(keyVal => $"{keyVal.Key}={keyVal.Value}").ToString("&"), headerData, encoding, contentType, requestTimeout, cookie);
 
         /// <summary>
         ///     获取网络IP

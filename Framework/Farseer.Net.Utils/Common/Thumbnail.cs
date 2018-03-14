@@ -5,7 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 
-namespace Farseer.Net.Utils.Common
+namespace FS.Utils.Common
 {
     /// <summary>
     ///     Thumbnail 的摘要说明。

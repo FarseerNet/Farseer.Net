@@ -4,7 +4,8 @@
 // ********************************************
 
 using System.Collections.Generic;
-using Farseer.Net.Data.Map;
+using FS.Data;
+using FS.Data.Map;
 
 namespace Farseer.Net.Data.Console
 {

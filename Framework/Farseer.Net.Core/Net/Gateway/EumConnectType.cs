@@ -24,7 +24,7 @@
     }
 }
 
-//namespace Farseer.Net.Core.Net.Gateway
+//namespace FS.Core.Net.Gateway
 //{
 //    /// <summary>
 //    /// 网关到微服务的通讯方式

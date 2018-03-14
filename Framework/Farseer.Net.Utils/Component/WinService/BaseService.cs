@@ -8,8 +8,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.ServiceProcess;
-using Farseer.Net.Extends;
-using Farseer.Net.Utils.Common;
 using FS.Extends;
 using FS.Utils.Common;
 using FS.Utils.Component;

@@ -4,10 +4,9 @@
 // ********************************************
 
 using FS.Cache.Configuration;
-using FS.Configuration;
 
 // ReSharper disable once CheckNamespace
-namespace Farseer.Net.Configuration
+namespace FS.Configuration
 {
     /// <summary>
     /// CacheManager配置扩展

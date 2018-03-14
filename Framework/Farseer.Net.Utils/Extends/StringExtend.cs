@@ -3,12 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using FS.Extends;
 using FS.Utils.Common;
 
 // ReSharper disable once CheckNamespace
 
-namespace Farseer.Net.Extends
+namespace FS.Extends
 {
     /// <summary>
     ///     String扩展工具

@@ -7,8 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Farseer.Net.Extends;
-using Farseer.Net.Utils.Common;
 using FS.Extends;
 using FS.Utils.Common;
 using FS.Utils.Component;

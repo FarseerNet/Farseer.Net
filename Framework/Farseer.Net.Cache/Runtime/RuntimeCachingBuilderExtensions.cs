@@ -5,7 +5,7 @@ using CacheManager.Core;
 using FS.Cache.Runtime;
 
 // ReSharper disable once CheckNamespace
-namespace Farseer.Net.Cache
+namespace FS.Cache
 {
     /// <summary>
     /// Extensions for the configuration builder specific to System.Runtime.Caching cache handle.

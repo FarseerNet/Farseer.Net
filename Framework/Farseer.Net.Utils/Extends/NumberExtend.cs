@@ -3,7 +3,7 @@ using System.Text;
 
 // ReSharper disable once CheckNamespace
 
-namespace Farseer.Net.Extends
+namespace FS.Extends
 {
     /// <summary>
     ///     格式化变量

@@ -1,8 +1,7 @@
-﻿using FS.Configuration;
-using FS.ElasticSearch.Configuration;
+﻿using FS.ElasticSearch.Configuration;
 
 // ReSharper disable once CheckNamespace
-namespace Farseer.Net.Configuration
+namespace FS.Configuration
 {
     public static class ElasticSearchConfigExtends
     {

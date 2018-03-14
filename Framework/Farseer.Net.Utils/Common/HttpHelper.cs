@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using Farseer.Net.Extends;
+using FS.Extends;
 
 namespace FS.Utils.Common
 {

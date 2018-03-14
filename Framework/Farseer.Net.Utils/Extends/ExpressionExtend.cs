@@ -6,7 +6,7 @@ using FS.Utils.Common;
 
 // ReSharper disable once CheckNamespace
 
-namespace Farseer.Net.Extends
+namespace FS.Extends
 {
     /// <summary>
     ///     Expression表达式树扩展

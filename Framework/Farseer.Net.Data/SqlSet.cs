@@ -5,7 +5,6 @@ using FS.Configuration;
 using FS.Data.Configuration;
 using FS.Data.Infrastructure;
 using FS.DI;
-using FS.Configuration;
 
 namespace FS.Data
 {

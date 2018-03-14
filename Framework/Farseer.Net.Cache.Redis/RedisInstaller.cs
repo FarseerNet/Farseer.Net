@@ -3,11 +3,10 @@ using CacheManager.Core;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using Farseer.Net.Cache;
-using Farseer.Net.Configuration;
+using FS.Cache;
+using FS.Configuration;
 using FS.Cache.Configuration;
 using FS.Cache.Redis.CacheManager;
-using FS.Configuration;
 using FS.DI;
 
 namespace FS.Cache.Redis

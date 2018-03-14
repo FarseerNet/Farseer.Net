@@ -7,7 +7,6 @@ using System.Xml.Linq;
 using FS.Cache;
 using FS.Data.Cache;
 using FS.Data.Internal;
-using FS.Extends;
 using FS.Utils.Common;
 
 // ReSharper disable once CheckNamespace

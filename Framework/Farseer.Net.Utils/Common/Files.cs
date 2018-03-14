@@ -4,8 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using Farseer.Net.Extends;
 using FS.Configuration;
+using FS.Extends;
 
 namespace FS.Utils.Common
 {

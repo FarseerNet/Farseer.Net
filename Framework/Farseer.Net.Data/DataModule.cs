@@ -17,7 +17,6 @@ using FS.Configuration;
 using FS.Data.Configuration;
 using FS.DI;
 using FS.Modules;
-using FS.Configuration;
 
 namespace FS.Data
 {

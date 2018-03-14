@@ -3,7 +3,7 @@ using System.Linq;
 
 using System.Management;
 
-namespace Farseer.Net.Utils.Common
+namespace FS.Utils.Common
 {
     /// <summary>
     ///     机器硬件信息

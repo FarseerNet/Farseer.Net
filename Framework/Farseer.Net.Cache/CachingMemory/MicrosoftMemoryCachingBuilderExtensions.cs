@@ -2,9 +2,9 @@
 using System;
 using CacheManager.Core;
 using Microsoft.Extensions.Caching.Memory;
-using Farseer.Net.Cache.CachingMemory;
+using FS.Cache.CachingMemory;
 
-namespace Farseer.Net.Cache
+namespace FS.Cache
 {
     /// <summary>
     /// Extensions for the configuration builder specific to <see cref="Microsoft.Extensions.Caching.Memory"/> based caching.

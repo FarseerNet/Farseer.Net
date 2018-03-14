@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
-using Farseer.Net.Configuration;
-using FS.Cache.Configuration;
 using FS.Configuration;
+using FS.Cache.Configuration;
 using FS.DI;
 using FS.Modules;
 

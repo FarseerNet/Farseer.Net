@@ -2,7 +2,7 @@
 using System.Web.Mvc;
 using FS.DI;
 
-namespace Farseer.Net.Web.Mvc
+namespace FS.Web.Mvc
 {
     /// <summary>
     ///     Registers all MVC Controllers derived from <see cref="Controller" />.

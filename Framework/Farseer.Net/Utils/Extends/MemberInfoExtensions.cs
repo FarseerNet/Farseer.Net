@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using FS;
 
 // ReSharper disable once CheckNamespace
 namespace FS.Extends

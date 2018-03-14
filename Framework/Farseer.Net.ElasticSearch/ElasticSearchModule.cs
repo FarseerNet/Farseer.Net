@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
-using Farseer.Net.Configuration;
 using FS.Configuration;
 using FS.DI;
 using FS.ElasticSearch.Configuration;

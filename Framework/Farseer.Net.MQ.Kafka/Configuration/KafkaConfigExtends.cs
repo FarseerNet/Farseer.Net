@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using FS.Configuration;
 using FS.MQ.Kafka.Configuration;
 
 // ReSharper disable once CheckNamespace
-namespace Farseer.Net.Configuration
+namespace FS.Configuration
 {
     /// <summary>
     /// Kafka配置

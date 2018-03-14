@@ -1,7 +1,6 @@
 ﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using Farseer.Net.Configuration;
 using FS.Configuration;
 using FS.MQ.Kafka.Configuration;
 

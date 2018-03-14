@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using Farseer.Net.Extends;
+using FS.Extends;
 
 namespace FS.Utils.Common
 {

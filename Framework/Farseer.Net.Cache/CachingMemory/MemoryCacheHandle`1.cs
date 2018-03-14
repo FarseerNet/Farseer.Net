@@ -7,7 +7,7 @@ using CacheManager.Core.Logging;
 using CacheManager.Core.Utility;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace Farseer.Net.Cache.CachingMemory
+namespace FS.Cache.CachingMemory
 {
     /// <summary>
     /// Implementation of a cache handle using <see cref="Microsoft.Extensions.Caching.Memory"/>.

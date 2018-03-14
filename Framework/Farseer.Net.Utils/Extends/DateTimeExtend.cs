@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 // ReSharper disable once CheckNamespace
 
-namespace Farseer.Net.Extends
+namespace FS.Extends
 {
     /// <summary>
     ///     其它扩展，夫归类的扩展

@@ -1,10 +1,9 @@
 ﻿using System;
 using FS.Cache;
-using FS.Extends;
 using FS.Utils.Common;
 
 // ReSharper disable once CheckNamespace
-namespace Farseer.Net.Extends
+namespace FS.Extends
 {
     public static partial class UtilsExtend
     {
