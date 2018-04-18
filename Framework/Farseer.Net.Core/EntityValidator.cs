@@ -12,7 +12,7 @@ using FS.Core.Net;
 namespace FS.Core
 {
     /// <summary>
-    /// 对实体类的验证
+    ///     对实体类的验证
     /// </summary>
     public class EntityValidator
     {
@@ -25,8 +25,29 @@ namespace FS.Core
             Dictionary<string, List<string>> dicError;
             var result = Check(info, out dicError);
 
-            if (!result) { tip(dicError); }
+            if (!result) tip(dicError);
             return result;
+        }
+
+        /// <summary>
+        ///     检测实体类值状况
+        /// </summary>
+        public static ApiResponseJson Check<TEntity>(TEntity info)
+        {
+            // 返回错误
+            Dictionary<string, List<string>> dicError;
+            var json = Check(info, out dicError)
+                ? ApiResponseJson.Success("实体类检测通过")
+                : ApiResponseJson.Error("实体类检测失败");
+
+            if (!json.Status)
+                foreach (var errs in dicError)
+                {
+                    json.StatusMessage += $"属性：{errs.Key}，出错了：";
+                    for (var i = 0; i < errs.Value.Count; i++) json.StatusMessage += $"{i + 1}、{errs.Value[i]}；";
+                    json.StatusMessage += $" ";
+                }
+            return json;
         }
 
         /// <summary>
@@ -37,23 +58,25 @@ namespace FS.Core
         public static bool Check(object entity, out Dictionary<string, List<string>> dicError)
         {
             dicError = new Dictionary<string, List<string>>();
-            if (entity == null) { dicError["传入的对象不能为null"] = new List<string> { "传入的实体对象entity，为null。" }; return false; }
+            if (entity == null)
+            {
+                dicError["传入的对象不能为null"] = new List<string> { "传入的实体对象entity，为null。" };
+                return false;
+            }
 
             var entityType = entity.GetType();
 
             // 单个对象类型
-            if (!entityType.IsGenericType || entityType.GetGenericTypeDefinition() == typeof(Nullable<>)) { return CheckEntity(entity, out dicError); }
+            if (!entityType.IsGenericType || entityType.GetGenericTypeDefinition() == typeof(Nullable<>)) return CheckEntity(entity, out dicError);
 
             // 集合类型
             var lst = entity as IEnumerable;
             if (lst == null)
             {
-                dicError["该对象类型不支持"] = new List<string> { "暂不支持该对象类型的判断，需要添加对该对象的支持" }; return false;
+                dicError["该对象类型不支持"] = new List<string> { "暂不支持该对象类型的判断，需要添加对该对象的支持" };
+                return false;
             }
-            foreach (var obj in lst)
-            {
-                if (!Check(obj, out dicError)) { return false; }
-            }
+            foreach (var obj in lst) if (!Check(obj, out dicError)) return false;
             return true;
         }
 
@@ -70,44 +93,20 @@ namespace FS.Core
             var map = EntityPhysicsMap.Map(entity.GetType());
             foreach (var kic in map.MapList)
             {
-                var propertyType = kic.Key.GetType();
-                if (!kic.Key.CanRead) { continue; }
-
+                if (!kic.Key.CanRead) continue;
                 var value = kic.Key.GetValue(entity);
 
                 // 集合类型
-                if (propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) return Check(value, out dicError);
+                if (kic.Key.PropertyType.IsGenericType && kic.Key.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) return Check(value, out dicError);
 
                 var lstError = new List<string>();
                 foreach (var validationAttribute in kic.Value.ValidationList)
                 {
-                    if (!validationAttribute.IsValid(value)) { lstError.Add(validationAttribute.ErrorMessage); }
+                    if (!validationAttribute.IsValid(value)) lstError.Add(validationAttribute.ErrorMessage);
                 }
-
-                if (lstError.Count > 0) { dicError.Add(kic.Key.Name, lstError); }
+                if (lstError.Count > 0) dicError.Add(kic.Key.Name, lstError);
             }
             return dicError.Count == 0;
-        }
-
-        /// <summary>
-        ///     检测实体类值状况
-        /// </summary>
-        public static ApiResponseJson Check<TEntity>(TEntity info)
-        {
-            // 返回错误
-            Dictionary<string, List<string>> dicError;
-            var json = Check(info, out dicError) ? ApiResponseJson.Success("实体类检测通过") : ApiResponseJson.Error("实体类检测失败");
-
-            if (!json.Status)
-            {
-                foreach (var errs in dicError)
-                {
-                    json.StatusMessage += $"属性：{errs.Key}，出错了：";
-                    for (var i = 0; i < errs.Value.Count; i++) { json.StatusMessage += $"{i + 1}、{errs.Value[i]}；"; }
-                    json.StatusMessage += $" ";
-                }
-            }
-            return json;
         }
     }
 }
