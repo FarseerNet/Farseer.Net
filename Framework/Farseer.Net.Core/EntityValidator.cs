@@ -70,13 +70,10 @@ namespace FS.Core
             if (!entityType.IsGenericType || entityType.GetGenericTypeDefinition() == typeof(Nullable<>)) return CheckEntity(entity, out dicError);
 
             // 集合类型
-            var lst = entity as IEnumerable;
-            if (lst == null)
+            if (entity is IEnumerable lst)
             {
-                dicError["该对象类型不支持"] = new List<string> { "暂不支持该对象类型的判断，需要添加对该对象的支持" };
-                return false;
+                foreach (var obj in lst) if (!Check(obj, out dicError)) return false;
             }
-            foreach (var obj in lst) if (!Check(obj, out dicError)) return false;
             return true;
         }
 

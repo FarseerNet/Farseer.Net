@@ -120,12 +120,9 @@ namespace FS.Data.Infrastructure
         /// <returns></returns>
         public virtual DataTable ToTable(int pageSize, int pageIndex, bool isDistinct = false)
         {
-            #region 计算总页数
-
-            if (pageIndex < 1) { pageIndex = 1; }
-            if (pageSize < 0) { pageSize = 20; }
-
-            #endregion
+            // 计算总页数
+            Check.IsTure(pageIndex < 1, $"参数{nameof(pageSize)}，不能小于1");
+            Check.IsTure(pageSize < 1, $"参数{nameof(pageSize)}，不能小于1");
 
             return QueueManger.Commit(SetMap, (queue) => Context.Executeor.ToTable(queue.SqlBuilder.ToList(pageSize, pageIndex, isDistinct)), true);
         }
@@ -137,12 +134,9 @@ namespace FS.Data.Infrastructure
         /// <returns></returns>
         public virtual Task<DataTable> ToTableAsync(int pageSize, int pageIndex, bool isDistinct = false)
         {
-            #region 计算总页数
-
-            if (pageIndex < 1) { pageIndex = 1; }
-            if (pageSize < 0) { pageSize = 20; }
-
-            #endregion
+            // 计算总页数
+            Check.IsTure(pageIndex < 1, $"参数{nameof(pageSize)}，不能小于1");
+            Check.IsTure(pageSize < 1, $"参数{nameof(pageSize)}，不能小于1");
 
             return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ToTableAsync(queue.SqlBuilder.ToList(pageSize, pageIndex, isDistinct)), true);
         }
@@ -154,25 +148,13 @@ namespace FS.Data.Infrastructure
         /// <param name="isDistinct">返回当前条件下非重复数据</param>
         public virtual DataTable ToTable(int pageSize, int pageIndex, out int recordCount, bool isDistinct = false)
         {
+            // 计算总页数
+            Check.IsTure(pageIndex < 1, $"参数{nameof(pageSize)}，不能小于1");
+            Check.IsTure(pageSize < 1, $"参数{nameof(pageSize)}，不能小于1");
+
             var queue = Queue;
             recordCount = Count();
             Queue.Copy(queue);
-
-            #region 计算总页数
-
-            var allCurrentPage = 1;
-
-            if (pageIndex < 1) { pageIndex = 1; }
-            if (pageSize < 0) { pageSize = 0; }
-            if (pageSize != 0)
-            {
-                allCurrentPage = (recordCount / pageSize);
-                allCurrentPage = ((recordCount % pageSize) != 0 ? allCurrentPage + 1 : allCurrentPage);
-                allCurrentPage = (allCurrentPage == 0 ? 1 : allCurrentPage);
-            }
-            if (pageIndex > allCurrentPage) { pageIndex = allCurrentPage; }
-
-            #endregion
 
             return ToTable(pageSize, pageIndex, isDistinct);
         }
@@ -184,25 +166,13 @@ namespace FS.Data.Infrastructure
         /// <param name="isDistinct">返回当前条件下非重复数据</param>
         public virtual Task<DataTable> ToTableAsync(int pageSize, int pageIndex, out int recordCount, bool isDistinct = false)
         {
+            // 计算总页数
+            Check.IsTure(pageIndex < 1, $"参数{nameof(pageSize)}，不能小于1");
+            Check.IsTure(pageSize < 1, $"参数{nameof(pageSize)}，不能小于1");
+
             var queue = Queue;
             recordCount = Count();
             Queue.Copy(queue);
-
-            #region 计算总页数
-
-            var allCurrentPage = 1;
-
-            if (pageIndex < 1) { pageIndex = 1; }
-            if (pageSize < 0) { pageSize = 0; }
-            if (pageSize != 0)
-            {
-                allCurrentPage = (recordCount / pageSize);
-                allCurrentPage = ((recordCount % pageSize) != 0 ? allCurrentPage + 1 : allCurrentPage);
-                allCurrentPage = (allCurrentPage == 0 ? 1 : allCurrentPage);
-            }
-            if (pageIndex > allCurrentPage) { pageIndex = allCurrentPage; }
-
-            #endregion
 
             return ToTableAsync(pageSize, pageIndex, isDistinct);
         }
@@ -232,12 +202,9 @@ namespace FS.Data.Infrastructure
         /// <returns></returns>
         public virtual List<TEntity> ToList(int pageSize, int pageIndex, bool isDistinct = false)
         {
-            #region 计算总页数
-
-            if (pageIndex < 1) { pageIndex = 1; }
-            if (pageSize < 0) { pageSize = 20; }
-
-            #endregion
+            // 计算总页数
+            Check.IsTure(pageIndex < 1, $"参数{nameof(pageSize)}，不能小于1");
+            Check.IsTure(pageSize < 1, $"参数{nameof(pageSize)}，不能小于1");
 
             return QueueManger.Commit(SetMap, (queue) => Context.Executeor.ToList<TEntity>(queue.SqlBuilder.ToList(pageSize, pageIndex, isDistinct)), true);
 
@@ -252,8 +219,8 @@ namespace FS.Data.Infrastructure
         public virtual Task<List<TEntity>> ToListAsync(int pageSize, int pageIndex, bool isDistinct = false)
         {
             // 计算总页数
-            if (pageIndex < 1) { pageIndex = 1; }
-            if (pageSize < 0) { pageSize = 20; }
+            Check.IsTure(pageIndex < 1, $"参数{nameof(pageSize)}，不能小于1");
+            Check.IsTure(pageSize < 1, $"参数{nameof(pageSize)}，不能小于1");
 
             return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ToListAsync<TEntity>(queue.SqlBuilder.ToList(pageSize, pageIndex, isDistinct)), true);
         }
@@ -267,25 +234,13 @@ namespace FS.Data.Infrastructure
         /// <param name="isDistinct">返回当前条件下非重复数据</param>
         public virtual List<TEntity> ToList(int pageSize, int pageIndex, out int recordCount, bool isDistinct = false)
         {
+            // 计算总页数
+            Check.IsTure(pageIndex < 1, $"参数{nameof(pageSize)}，不能小于1");
+            Check.IsTure(pageSize < 1, $"参数{nameof(pageSize)}，不能小于1");
+
             var queue = Queue;
             recordCount = Count();
             Queue.Copy(queue);
-
-            #region 计算总页数
-
-            var allCurrentPage = 1;
-
-            if (pageIndex < 1) { pageIndex = 1; }
-            if (pageSize < 0) { pageSize = 0; }
-            if (pageSize != 0)
-            {
-                allCurrentPage = (recordCount / pageSize);
-                allCurrentPage = ((recordCount % pageSize) != 0 ? allCurrentPage + 1 : allCurrentPage);
-                allCurrentPage = (allCurrentPage == 0 ? 1 : allCurrentPage);
-            }
-            if (pageIndex > allCurrentPage) { pageIndex = allCurrentPage; }
-
-            #endregion
 
             return ToList(pageSize, pageIndex, isDistinct);
         }
@@ -299,25 +254,13 @@ namespace FS.Data.Infrastructure
         /// <param name="isDistinct">返回当前条件下非重复数据</param>
         public virtual Task<List<TEntity>> ToListAsync(int pageSize, int pageIndex, out int recordCount, bool isDistinct = false)
         {
+            // 计算总页数
+            Check.IsTure(pageIndex < 1, $"参数{nameof(pageSize)}，不能小于1");
+            Check.IsTure(pageSize < 1, $"参数{nameof(pageSize)}，不能小于1");
+
             var queue = Queue;
             recordCount = Count();
             Queue.Copy(queue);
-
-            #region 计算总页数
-
-            var allCurrentPage = 1;
-
-            if (pageIndex < 1) { pageIndex = 1; }
-            if (pageSize < 0) { pageSize = 0; }
-            if (pageSize != 0)
-            {
-                allCurrentPage = (recordCount / pageSize);
-                allCurrentPage = ((recordCount % pageSize) != 0 ? allCurrentPage + 1 : allCurrentPage);
-                allCurrentPage = (allCurrentPage == 0 ? 1 : allCurrentPage);
-            }
-            if (pageIndex > allCurrentPage) { pageIndex = allCurrentPage; }
-
-            #endregion
 
             return ToListAsync(pageSize, pageIndex, isDistinct);
         }
