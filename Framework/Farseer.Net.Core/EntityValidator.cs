@@ -90,11 +90,11 @@ namespace FS.Core
             var map = EntityPhysicsMap.Map(entity.GetType());
             foreach (var kic in map.MapList)
             {
-                if (!kic.Key.CanRead) continue;
+                if (!kic.Key.CanRead || !kic.Key.CanWrite) continue;
                 var value = kic.Key.GetValue(entity);
 
                 // 集合类型
-                if (kic.Key.PropertyType.IsGenericType && kic.Key.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) return Check(value, out dicError);
+                if (value != null && kic.Key.PropertyType.IsGenericType && kic.Key.PropertyType.GetGenericTypeDefinition() != typeof(Nullable<>)) return Check(value, out dicError);
 
                 var lstError = new List<string>();
                 foreach (var validationAttribute in kic.Value.ValidationList)
