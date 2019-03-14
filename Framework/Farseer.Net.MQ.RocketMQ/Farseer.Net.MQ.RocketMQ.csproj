@@ -6,17 +6,20 @@
     <Copyright>http://www.fsgit.com</Copyright>
     <Product>RocketMQ组件</Product>
     <Description>包括：RocketMQ组件</Description>
-    <AssemblyVersion>2.2.0</AssemblyVersion>
-    <FileVersion>2.2.0</FileVersion>
-    <Version>2.2.0</Version>
+    <AssemblyVersion>2.3.0</AssemblyVersion>
+    <FileVersion>2.3.0</FileVersion>
+    <Version>2.3.0</Version>
     <Authors>steden</Authors>
     <PackageTags>RocketMQ组件</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RootNamespace>FS.MQ.RocketMQ</RootNamespace>
   </PropertyGroup>
-  
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net45'">
+    <DefineConstants>net45</DefineConstants>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <DefineConstants>$(DefineConstants);CORE</DefineConstants>
+    <DefineConstants>CORE</DefineConstants>
   </PropertyGroup>
   
   <ItemGroup>

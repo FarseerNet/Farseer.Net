@@ -5,9 +5,9 @@
     <Company>steden</Company>
     <Copyright>http://www.fsgit.com</Copyright>
     <Authors>steden</Authors>
-    <AssemblyVersion>2.2.0</AssemblyVersion>
-    <FileVersion>2.2.0</FileVersion>
-    <Version>2.2.0</Version>
+    <AssemblyVersion>2.3.0</AssemblyVersion>
+    <FileVersion>2.3.0</FileVersion>
+    <Version>2.3.0</Version>
     <Product>对象类型转换组件</Product>
     <Description>包括：AutoMapper</Description>
     <PackageTags>AutoMapper</PackageTags>
@@ -15,8 +15,11 @@
     <RootNamespace>FS.Mapper</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net45'">
+    <DefineConstants>net45</DefineConstants>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <DefineConstants>$(DefineConstants);CORE</DefineConstants>
+    <DefineConstants>CORE</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

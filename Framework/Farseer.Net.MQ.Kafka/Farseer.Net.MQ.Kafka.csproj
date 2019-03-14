@@ -6,17 +6,20 @@
     <Copyright>http://www.fsgit.com</Copyright>
     <Product>消息中间件Kafka组件</Product>
     <Description>包括：Kafka</Description>
-    <AssemblyVersion>2.2.0</AssemblyVersion>
-    <FileVersion>2.2.0</FileVersion>
-    <Version>2.2.0</Version>
+    <AssemblyVersion>2.3.0</AssemblyVersion>
+    <FileVersion>2.3.0</FileVersion>
+    <Version>2.3.0</Version>
     <Authors>steden</Authors>
     <PackageTags>Kafka</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RootNamespace>FS.MQ.Kafka</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net45'">
+    <DefineConstants>net45</DefineConstants>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <DefineConstants>$(DefineConstants);CORE</DefineConstants>
+    <DefineConstants>CORE</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

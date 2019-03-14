@@ -7,15 +7,18 @@
     <Product>缓存管理组件</Product>
     <Description>包括：Redis缓存、运行时缓存、多级缓存</Description>
     <PackageTags>Redis缓存、运行时缓存、多级缓存</PackageTags>
-    <AssemblyVersion>2.2.0</AssemblyVersion>
-    <FileVersion>2.2.0</FileVersion>
-    <Version>2.2.0</Version>
+    <AssemblyVersion>2.3.0</AssemblyVersion>
+    <FileVersion>2.3.0</FileVersion>
+    <Version>2.3.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RootNamespace>FS.Cache.Redis</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net45'">
+    <DefineConstants>net45</DefineConstants>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <DefineConstants>$(DefineConstants);CORE</DefineConstants>
+    <DefineConstants>CORE</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

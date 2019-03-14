@@ -1,5 +1,6 @@
 ﻿using FS.Configuration;
 using FS.Data;
+using FS.Data.Internal;
 using FS.Modules;
 
 namespace Farseer.Net.Data.Console
@@ -12,6 +13,7 @@ namespace Farseer.Net.Data.Console
     {
         public override void PreInitialize()
         {
+            new EntityDynamics().BuildType(typeof(SpAccountPO));
         }
     }
 }
