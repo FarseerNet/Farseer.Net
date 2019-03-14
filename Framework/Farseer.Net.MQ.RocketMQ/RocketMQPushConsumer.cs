@@ -11,7 +11,11 @@ namespace FS.MQ.RocketMQ
     {
         private readonly ONSFactoryProperty _factoryInfo;
         private PushConsumer _consumer;
-        public RocketMQPushConsumer(ONSFactoryProperty factoryInfo) { _factoryInfo = factoryInfo; }
+
+        public RocketMQPushConsumer(ONSFactoryProperty factoryInfo)
+        {
+            _factoryInfo = factoryInfo;
+        }
 
         /// <summary>
         ///     消费订阅

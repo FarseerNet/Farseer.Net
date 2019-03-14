@@ -11,7 +11,11 @@ namespace FS.MQ.RocketMQ
     {
         private readonly ONSFactoryProperty _factoryInfo;
         private OrderConsumer _consumer;
-        public RocketMQOrderConsumer(ONSFactoryProperty factoryInfo) { _factoryInfo = factoryInfo; }
+
+        public RocketMQOrderConsumer(ONSFactoryProperty factoryInfo)
+        {
+            _factoryInfo = factoryInfo;
+        }
 
         /// <summary>
         ///     消费订阅
@@ -28,6 +32,9 @@ namespace FS.MQ.RocketMQ
         /// <summary>
         ///     关闭消费
         /// </summary>
-        public void Close() => _consumer.shutdown();
+        public void Close()
+        {
+            _consumer.shutdown();
+        }
     }
 }

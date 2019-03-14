@@ -14,5 +14,16 @@ namespace FS.Cache.Redis.Configuration
 
         /// <summary> 集群IP:Port地址 </summary>
         public string Server = "";
+
+        /// <summary> 命令类型（默认集群模式） </summary>
+        public EumCommandType CommandType = 0;
+
+        /// <summary> 密码 </summary>
+        public string Password = "";
+
+        /// <summary> 哨兵模式下需要填写 </summary>
+        public string ServiceName = "";
+
+        public string TieBreaker = "";
     }
 }

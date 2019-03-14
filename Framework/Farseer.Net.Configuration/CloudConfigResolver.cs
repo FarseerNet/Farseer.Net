@@ -4,6 +4,7 @@
 // ********************************************
 
 using System;
+using FS.Configuration.Format;
 
 namespace FS.Configuration
 {

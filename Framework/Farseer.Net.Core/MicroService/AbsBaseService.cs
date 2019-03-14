@@ -4,9 +4,9 @@
 // ********************************************
 
 using System;
+using Newtonsoft.Json;
 using FS.Core.Net;
 using FS.Core.Net.Gateway;
-using Newtonsoft.Json;
 
 namespace FS.Core.MicroService
 {

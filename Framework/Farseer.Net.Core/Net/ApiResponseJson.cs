@@ -5,8 +5,8 @@
 
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
-using FS.Core.Fabric;
 using Newtonsoft.Json;
+using FS.Core.Fabric;
 
 namespace FS.Core.Net
 {
@@ -52,6 +52,11 @@ namespace FS.Core.Net
         public string StatusMessage { get; set; }
 
         /// <summary>
+        /// 服务版本
+        /// </summary>
+        [DataMember]
+        public string ServiceVer { get; set; }
+        /// <summary>
         ///     不同接口返回的值
         /// </summary>
         [DataMember]
@@ -65,6 +70,7 @@ namespace FS.Core.Net
         {
             Data = data;
         }
+        
 
         /// <summary>
         ///     接口调用成功后返回的Json

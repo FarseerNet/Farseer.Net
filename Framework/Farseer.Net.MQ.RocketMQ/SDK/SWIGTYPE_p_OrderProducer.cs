@@ -8,6 +8,7 @@
 // the SWIG interface file instead.
 //------------------------------------------------------------------------------
 
+
 using System;
 using System.Runtime.InteropServices;
 
@@ -17,10 +18,19 @@ namespace FS.MQ.RocketMQ.SDK
     {
         private readonly HandleRef swigCPtr;
 
-        internal SWIGTYPE_p_OrderProducer(IntPtr cPtr, bool futureUse) { swigCPtr = new HandleRef(this, cPtr); }
+        internal SWIGTYPE_p_OrderProducer(IntPtr cPtr, bool futureUse)
+        {
+            swigCPtr = new HandleRef(this, cPtr);
+        }
 
-        protected SWIGTYPE_p_OrderProducer() { swigCPtr = new HandleRef(null, IntPtr.Zero); }
+        protected SWIGTYPE_p_OrderProducer()
+        {
+            swigCPtr = new HandleRef(null, IntPtr.Zero);
+        }
 
-        internal static HandleRef getCPtr(SWIGTYPE_p_OrderProducer obj) { return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr; }
+        internal static HandleRef getCPtr(SWIGTYPE_p_OrderProducer obj)
+        {
+            return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr;
+        }
     }
 }

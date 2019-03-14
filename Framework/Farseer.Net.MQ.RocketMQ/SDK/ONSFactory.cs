@@ -15,18 +15,14 @@ namespace FS.MQ.RocketMQ.SDK
 {
     public class ONSFactory : IDisposable
     {
-        private HandleRef swigCPtr;
         protected bool swigCMemOwn;
+        private HandleRef swigCPtr;
 
         internal ONSFactory(IntPtr cPtr, bool cMemoryOwn)
         {
             swigCMemOwn = cMemoryOwn;
             swigCPtr = new HandleRef(this, cPtr);
         }
-
-        internal static HandleRef getCPtr(ONSFactory obj) { return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr; }
-
-        ~ONSFactory() { Dispose(); }
 
         public virtual void Dispose()
         {
@@ -43,6 +39,16 @@ namespace FS.MQ.RocketMQ.SDK
                 }
                 GC.SuppressFinalize(this);
             }
+        }
+
+        internal static HandleRef getCPtr(ONSFactory obj)
+        {
+            return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr;
+        }
+
+        ~ONSFactory()
+        {
+            Dispose();
         }
 
         public static ONSFactoryAPI getInstance()

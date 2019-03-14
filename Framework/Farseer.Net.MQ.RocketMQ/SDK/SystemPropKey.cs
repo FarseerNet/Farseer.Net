@@ -15,8 +15,8 @@ namespace FS.MQ.RocketMQ.SDK
 {
     public class SystemPropKey : IDisposable
     {
-        private HandleRef swigCPtr;
         protected bool swigCMemOwn;
+        private HandleRef swigCPtr;
 
         internal SystemPropKey(IntPtr cPtr, bool cMemoryOwn)
         {
@@ -24,28 +24,9 @@ namespace FS.MQ.RocketMQ.SDK
             swigCPtr = new HandleRef(this, cPtr);
         }
 
-        internal static HandleRef getCPtr(SystemPropKey obj) { return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr; }
-
-        ~SystemPropKey() { Dispose(); }
-
-        public virtual void Dispose()
+        public SystemPropKey() : this(ONSClient4CPPPINVOKE.new_SystemPropKey(), true)
         {
-            lock (this)
-            {
-                if (swigCPtr.Handle != IntPtr.Zero)
-                {
-                    if (swigCMemOwn)
-                    {
-                        swigCMemOwn = false;
-                        ONSClient4CPPPINVOKE.delete_SystemPropKey(swigCPtr);
-                    }
-                    swigCPtr = new HandleRef(null, IntPtr.Zero);
-                }
-                GC.SuppressFinalize(this);
-            }
         }
-
-        public SystemPropKey() : this(ONSClient4CPPPINVOKE.new_SystemPropKey(), true) { }
 
         public static string TAG
         {
@@ -95,6 +76,33 @@ namespace FS.MQ.RocketMQ.SDK
                 var ret = ONSClient4CPPPINVOKE.SystemPropKey_STARTDELIVERTIME_get();
                 return ret;
             }
+        }
+
+        public virtual void Dispose()
+        {
+            lock (this)
+            {
+                if (swigCPtr.Handle != IntPtr.Zero)
+                {
+                    if (swigCMemOwn)
+                    {
+                        swigCMemOwn = false;
+                        ONSClient4CPPPINVOKE.delete_SystemPropKey(swigCPtr);
+                    }
+                    swigCPtr = new HandleRef(null, IntPtr.Zero);
+                }
+                GC.SuppressFinalize(this);
+            }
+        }
+
+        internal static HandleRef getCPtr(SystemPropKey obj)
+        {
+            return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr;
+        }
+
+        ~SystemPropKey()
+        {
+            Dispose();
         }
     }
 }

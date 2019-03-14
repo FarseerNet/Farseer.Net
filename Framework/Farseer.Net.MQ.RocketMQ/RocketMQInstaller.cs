@@ -18,7 +18,9 @@ namespace FS.MQ.RocketMQ
             if (localConfigResolver.RocketMQConfig().Items.Count == 0) return;
 
             //注册所有的消息队列的Topic消费者
-            localConfigResolver.RocketMQConfig().Items.ForEach(c => container.Register(Component.For<IRocketMQManager>().Named(c.Name).ImplementedBy<RocketMQManager>().DependsOn(Dependency.OnValue<RocketMQItemConfig>(c)).LifestyleSingleton()));
+            localConfigResolver.RocketMQConfig().Items.ForEach(c =>
+                container.Register(Component.For<IRocketMQManager>().Named(c.Name).ImplementedBy<RocketMQManager>()
+                    .DependsOn(Dependency.OnValue<RocketMQItemConfig>(c)).LifestyleSingleton()));
         }
     }
 }

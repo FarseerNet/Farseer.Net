@@ -15,8 +15,8 @@ namespace FS.MQ.RocketMQ.SDK
 {
     public class Message : IDisposable
     {
-        private HandleRef swigCPtr;
         protected bool swigCMemOwn;
+        private HandleRef swigCPtr;
 
         internal Message(IntPtr cPtr, bool cMemoryOwn)
         {
@@ -24,9 +24,32 @@ namespace FS.MQ.RocketMQ.SDK
             swigCPtr = new HandleRef(this, cPtr);
         }
 
-        internal static HandleRef getCPtr(Message obj) { return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr; }
+        public Message() : this(ONSClient4CPPPINVOKE.new_Message__SWIG_0(), true)
+        {
+        }
 
-        ~Message() { Dispose(); }
+        public Message(string topic, string tags, string byte_body) : this(
+            ONSClient4CPPPINVOKE.new_Message__SWIG_1(topic, tags, byte_body), true)
+        {
+            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
+                throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+        }
+
+        public Message(string topic, uint topic_size, string tags, uint tags_size, string body, uint body_size) : this(
+            ONSClient4CPPPINVOKE.new_Message__SWIG_3(topic, topic_size, tags, tags_size, body, body_size), true)
+        {
+        }
+
+        public Message(string topic, string tags, string keys, string body) : this(
+            ONSClient4CPPPINVOKE.new_Message__SWIG_4(topic, tags, keys, body), true)
+        {
+        }
+
+        public Message(Message other) : this(ONSClient4CPPPINVOKE.new_Message__SWIG_5(getCPtr(other)), true)
+        {
+            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
+                throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+        }
 
         public virtual void Dispose()
         {
@@ -45,23 +68,20 @@ namespace FS.MQ.RocketMQ.SDK
             }
         }
 
-        public Message() : this(ONSClient4CPPPINVOKE.new_Message__SWIG_0(), true) { }
-
-        public Message(string topic, string tags, string body) : this(ONSClient4CPPPINVOKE.new_Message__SWIG_1(topic, tags, body), true)
+        internal static HandleRef getCPtr(Message obj)
         {
-            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending) throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+            return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr;
         }
 
-        public Message(string topic, uint topic_size, string tags, uint tags_size, string body, uint body_size) : this(ONSClient4CPPPINVOKE.new_Message__SWIG_3(topic, topic_size, tags, tags_size, body, body_size), true) { }
-
-        public Message(string topic, string tags, string keys, string body) : this(ONSClient4CPPPINVOKE.new_Message__SWIG_4(topic, tags, keys, body), true) { }
-
-        public Message(Message other) : this(ONSClient4CPPPINVOKE.new_Message__SWIG_5(getCPtr(other)), true)
+        ~Message()
         {
-            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending) throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+            Dispose();
         }
 
-        public void putUserProperties(string key, string value) { ONSClient4CPPPINVOKE.Message_putUserProperties(swigCPtr, key, value); }
+        public void putUserProperties(string key, string value)
+        {
+            ONSClient4CPPPINVOKE.Message_putUserProperties(swigCPtr, key, value);
+        }
 
         public string getUserProperties(string key)
         {
@@ -71,17 +91,23 @@ namespace FS.MQ.RocketMQ.SDK
 
         public void setUserProperties(SWIGTYPE_p_std__mapT_std__string_std__string_t userProperty)
         {
-            ONSClient4CPPPINVOKE.Message_setUserProperties(swigCPtr, SWIGTYPE_p_std__mapT_std__string_std__string_t.getCPtr(userProperty));
-            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending) throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+            ONSClient4CPPPINVOKE.Message_setUserProperties(swigCPtr,
+                SWIGTYPE_p_std__mapT_std__string_std__string_t.getCPtr(userProperty));
+            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
+                throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
         }
 
         public SWIGTYPE_p_std__mapT_std__string_std__string_t getUserProperties()
         {
-            var ret = new SWIGTYPE_p_std__mapT_std__string_std__string_t(ONSClient4CPPPINVOKE.Message_getUserProperties__SWIG_1(swigCPtr), true);
+            var ret = new SWIGTYPE_p_std__mapT_std__string_std__string_t(
+                ONSClient4CPPPINVOKE.Message_getUserProperties__SWIG_1(swigCPtr), true);
             return ret;
         }
 
-        public void putSystemProperties(string key, string value) { ONSClient4CPPPINVOKE.Message_putSystemProperties(swigCPtr, key, value); }
+        public void putSystemProperties(string key, string value)
+        {
+            ONSClient4CPPPINVOKE.Message_putSystemProperties(swigCPtr, key, value);
+        }
 
         public string getSystemProperties(string key)
         {
@@ -91,13 +117,16 @@ namespace FS.MQ.RocketMQ.SDK
 
         public void setSystemProperties(SWIGTYPE_p_std__mapT_std__string_std__string_t systemProperty)
         {
-            ONSClient4CPPPINVOKE.Message_setSystemProperties(swigCPtr, SWIGTYPE_p_std__mapT_std__string_std__string_t.getCPtr(systemProperty));
-            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending) throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+            ONSClient4CPPPINVOKE.Message_setSystemProperties(swigCPtr,
+                SWIGTYPE_p_std__mapT_std__string_std__string_t.getCPtr(systemProperty));
+            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
+                throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
         }
 
         public SWIGTYPE_p_std__mapT_std__string_std__string_t getSystemProperties()
         {
-            var ret = new SWIGTYPE_p_std__mapT_std__string_std__string_t(ONSClient4CPPPINVOKE.Message_getSystemProperties__SWIG_1(swigCPtr), true);
+            var ret = new SWIGTYPE_p_std__mapT_std__string_std__string_t(
+                ONSClient4CPPPINVOKE.Message_getSystemProperties__SWIG_1(swigCPtr), true);
             return ret;
         }
 
@@ -107,7 +136,10 @@ namespace FS.MQ.RocketMQ.SDK
             return ret;
         }
 
-        public void setTopic(string topic) { ONSClient4CPPPINVOKE.Message_setTopic(swigCPtr, topic); }
+        public void setTopic(string topic)
+        {
+            ONSClient4CPPPINVOKE.Message_setTopic(swigCPtr, topic);
+        }
 
         public string getTag()
         {
@@ -115,7 +147,10 @@ namespace FS.MQ.RocketMQ.SDK
             return ret;
         }
 
-        public void setTag(string tags) { ONSClient4CPPPINVOKE.Message_setTag(swigCPtr, tags); }
+        public void setTag(string tags)
+        {
+            ONSClient4CPPPINVOKE.Message_setTag(swigCPtr, tags);
+        }
 
         public string getKey()
         {
@@ -123,7 +158,10 @@ namespace FS.MQ.RocketMQ.SDK
             return ret;
         }
 
-        public void setKey(string keys) { ONSClient4CPPPINVOKE.Message_setKey(swigCPtr, keys); }
+        public void setKey(string keys)
+        {
+            ONSClient4CPPPINVOKE.Message_setKey(swigCPtr, keys);
+        }
 
         public string getMsgID()
         {
@@ -131,7 +169,10 @@ namespace FS.MQ.RocketMQ.SDK
             return ret;
         }
 
-        public void setMsgID(string msgId) { ONSClient4CPPPINVOKE.Message_setMsgID(swigCPtr, msgId); }
+        public void setMsgID(string msgId)
+        {
+            ONSClient4CPPPINVOKE.Message_setMsgID(swigCPtr, msgId);
+        }
 
         public long getStartDeliverTime()
         {
@@ -139,7 +180,10 @@ namespace FS.MQ.RocketMQ.SDK
             return ret;
         }
 
-        public void setStartDeliverTime(long level) { ONSClient4CPPPINVOKE.Message_setStartDeliverTime(swigCPtr, level); }
+        public void setStartDeliverTime(long level)
+        {
+            ONSClient4CPPPINVOKE.Message_setStartDeliverTime(swigCPtr, level);
+        }
 
         public string getBody()
         {
@@ -156,10 +200,14 @@ namespace FS.MQ.RocketMQ.SDK
         public void setMsgBody(string msgbody)
         {
             ONSClient4CPPPINVOKE.Message_setMsgBody(swigCPtr, msgbody);
-            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending) throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
+                throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
         }
 
-        public void setBody(string msgbody, int len) { ONSClient4CPPPINVOKE.Message_setBody(swigCPtr, msgbody, len); }
+        public void setBody(byte[] byte_msgbody, int len)
+        {
+            ONSClient4CPPPINVOKE.Message_setBody(swigCPtr, byte_msgbody, len);
+        }
 
         public int getReconsumeTimes()
         {
@@ -167,7 +215,10 @@ namespace FS.MQ.RocketMQ.SDK
             return ret;
         }
 
-        public void setReconsumeTimes(int reconsumeTimes) { ONSClient4CPPPINVOKE.Message_setReconsumeTimes(swigCPtr, reconsumeTimes); }
+        public void setReconsumeTimes(int reconsumeTimes)
+        {
+            ONSClient4CPPPINVOKE.Message_setReconsumeTimes(swigCPtr, reconsumeTimes);
+        }
 
         public long getStoreTimestamp()
         {
@@ -175,7 +226,10 @@ namespace FS.MQ.RocketMQ.SDK
             return ret;
         }
 
-        public void setStoreTimestamp(long storeTimestamp) { ONSClient4CPPPINVOKE.Message_setStoreTimestamp(swigCPtr, storeTimestamp); }
+        public void setStoreTimestamp(long storeTimestamp)
+        {
+            ONSClient4CPPPINVOKE.Message_setStoreTimestamp(swigCPtr, storeTimestamp);
+        }
 
         public string toString()
         {
@@ -201,6 +255,9 @@ namespace FS.MQ.RocketMQ.SDK
             return ret;
         }
 
-        public void setQueueOffset(long queueOffset) { ONSClient4CPPPINVOKE.Message_setQueueOffset(swigCPtr, queueOffset); }
+        public void setQueueOffset(long queueOffset)
+        {
+            ONSClient4CPPPINVOKE.Message_setQueueOffset(swigCPtr, queueOffset);
+        }
     }
 }

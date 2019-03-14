@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using CacheManager.Core.Logging;
 using StackExchange.Redis;
 
-namespace FS.Cache.Redis.CacheManager
+namespace FS.Cache.Manager.Redis
 {
     internal static class RetryHelper
     {

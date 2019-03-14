@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 
-namespace FS.Cache.Redis.CacheManager
+namespace FS.Cache.Manager.Redis
 {
     /// <summary>
     /// Configuration section for the CacheManager.

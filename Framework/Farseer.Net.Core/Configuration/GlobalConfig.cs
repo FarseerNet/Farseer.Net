@@ -14,5 +14,8 @@ namespace FS.Core.Configuration
     {
         /// <summary> 应用名称 </summary>
         public string AppName { get; set; }
+
+        /// <summary> Api网关环境 </summary>
+        public EumApiGatewayType ApiGatewayType { get; set; }
     }
 }

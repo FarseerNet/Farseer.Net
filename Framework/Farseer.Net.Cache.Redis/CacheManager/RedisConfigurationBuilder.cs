@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CacheManager.Core.Utility;
 
 #pragma warning disable CS3021 // 由于程序集没有 CLSCompliant 特性，因此类型或成员不需要 CLSCompliant 特性
-namespace FS.Cache.Redis.CacheManager
+namespace FS.Cache.Manager.Redis
 {
     /// <summary>
     /// <see cref="RedisConfigurationBuilder"/> helps creating the <see cref="RedisConfiguration"/>

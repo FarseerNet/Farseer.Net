@@ -1,4 +1,5 @@
-﻿using FS.Core.Mapping.Attribute;
+﻿using System.ComponentModel.DataAnnotations;
+using FS.Core.Mapping.Attribute;
 
 namespace FS.Core.Mapping
 {

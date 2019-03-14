@@ -15,8 +15,8 @@ namespace FS.MQ.RocketMQ.SDK
 {
     public class PullResultONS : IDisposable
     {
-        private HandleRef swigCPtr;
         protected bool swigCMemOwn;
+        private HandleRef swigCPtr;
 
         internal PullResultONS(IntPtr cPtr, bool cMemoryOwn)
         {
@@ -24,37 +24,23 @@ namespace FS.MQ.RocketMQ.SDK
             swigCPtr = new HandleRef(this, cPtr);
         }
 
-        internal static HandleRef getCPtr(PullResultONS obj) { return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr; }
-
-        ~PullResultONS() { Dispose(); }
-
-        public virtual void Dispose()
+        public PullResultONS(ONSPullStatus status) : this(ONSClient4CPPPINVOKE.new_PullResultONS__SWIG_0((int) status),
+            true)
         {
-            lock (this)
-            {
-                if (swigCPtr.Handle != IntPtr.Zero)
-                {
-                    if (swigCMemOwn)
-                    {
-                        swigCMemOwn = false;
-                        ONSClient4CPPPINVOKE.delete_PullResultONS(swigCPtr);
-                    }
-                    swigCPtr = new HandleRef(null, IntPtr.Zero);
-                }
-                GC.SuppressFinalize(this);
-            }
         }
 
-        public PullResultONS(ONSPullStatus status) : this(ONSClient4CPPPINVOKE.new_PullResultONS__SWIG_0((int)status), true) { }
-
-        public PullResultONS(ONSPullStatus pullStatus, long nextBeginOffset, long minOffset, long maxOffset) : this(ONSClient4CPPPINVOKE.new_PullResultONS__SWIG_1((int)pullStatus, nextBeginOffset, minOffset, maxOffset), true) { }
+        public PullResultONS(ONSPullStatus pullStatus, long nextBeginOffset, long minOffset, long maxOffset) : this(
+            ONSClient4CPPPINVOKE.new_PullResultONS__SWIG_1((int) pullStatus, nextBeginOffset, minOffset, maxOffset),
+            true)
+        {
+        }
 
         public ONSPullStatus pullStatus
         {
-            set => ONSClient4CPPPINVOKE.PullResultONS_pullStatus_set(swigCPtr, (int)value);
+            set => ONSClient4CPPPINVOKE.PullResultONS_pullStatus_set(swigCPtr, (int) value);
             get
             {
-                var ret = (ONSPullStatus)ONSClient4CPPPINVOKE.PullResultONS_pullStatus_get(swigCPtr);
+                var ret = (ONSPullStatus) ONSClient4CPPPINVOKE.PullResultONS_pullStatus_get(swigCPtr);
                 return ret;
             }
         }
@@ -91,13 +77,41 @@ namespace FS.MQ.RocketMQ.SDK
 
         public SWIGTYPE_p_std__vectorT_ons__Message_t msgFoundList
         {
-            set => ONSClient4CPPPINVOKE.PullResultONS_msgFoundList_set(swigCPtr, SWIGTYPE_p_std__vectorT_ons__Message_t.getCPtr(value));
+            set => ONSClient4CPPPINVOKE.PullResultONS_msgFoundList_set(swigCPtr,
+                SWIGTYPE_p_std__vectorT_ons__Message_t.getCPtr(value));
             get
             {
                 var cPtr = ONSClient4CPPPINVOKE.PullResultONS_msgFoundList_get(swigCPtr);
                 var ret = cPtr == IntPtr.Zero ? null : new SWIGTYPE_p_std__vectorT_ons__Message_t(cPtr, false);
                 return ret;
             }
+        }
+
+        public virtual void Dispose()
+        {
+            lock (this)
+            {
+                if (swigCPtr.Handle != IntPtr.Zero)
+                {
+                    if (swigCMemOwn)
+                    {
+                        swigCMemOwn = false;
+                        ONSClient4CPPPINVOKE.delete_PullResultONS(swigCPtr);
+                    }
+                    swigCPtr = new HandleRef(null, IntPtr.Zero);
+                }
+                GC.SuppressFinalize(this);
+            }
+        }
+
+        internal static HandleRef getCPtr(PullResultONS obj)
+        {
+            return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr;
+        }
+
+        ~PullResultONS()
+        {
+            Dispose();
         }
     }
 }

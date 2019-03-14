@@ -15,8 +15,8 @@ namespace FS.MQ.RocketMQ.SDK
 {
     public class ONSFactoryAPI : IDisposable
     {
-        private HandleRef swigCPtr;
         protected bool swigCMemOwn;
+        private HandleRef swigCPtr;
 
         internal ONSFactoryAPI(IntPtr cPtr, bool cMemoryOwn)
         {
@@ -24,9 +24,9 @@ namespace FS.MQ.RocketMQ.SDK
             swigCPtr = new HandleRef(this, cPtr);
         }
 
-        internal static HandleRef getCPtr(ONSFactoryAPI obj) { return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr; }
-
-        ~ONSFactoryAPI() { Dispose(); }
+        public ONSFactoryAPI() : this(ONSClient4CPPPINVOKE.new_ONSFactoryAPI(), true)
+        {
+        }
 
         public virtual void Dispose()
         {
@@ -45,53 +45,74 @@ namespace FS.MQ.RocketMQ.SDK
             }
         }
 
-        public ONSFactoryAPI() : this(ONSClient4CPPPINVOKE.new_ONSFactoryAPI(), true) { }
+        internal static HandleRef getCPtr(ONSFactoryAPI obj)
+        {
+            return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr;
+        }
+
+        ~ONSFactoryAPI()
+        {
+            Dispose();
+        }
 
         public virtual Producer createProducer(ONSFactoryProperty factoryProperty)
         {
-            var cPtr = ONSClient4CPPPINVOKE.ONSFactoryAPI_createProducer(swigCPtr, ONSFactoryProperty.getCPtr(factoryProperty));
+            var cPtr = ONSClient4CPPPINVOKE.ONSFactoryAPI_createProducer(swigCPtr,
+                ONSFactoryProperty.getCPtr(factoryProperty));
             var ret = cPtr == IntPtr.Zero ? null : new Producer(cPtr, false);
-            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending) throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
+                throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
             return ret;
         }
 
         public virtual OrderProducer createOrderProducer(ONSFactoryProperty factoryProperty)
         {
-            var cPtr = ONSClient4CPPPINVOKE.ONSFactoryAPI_createOrderProducer(swigCPtr, ONSFactoryProperty.getCPtr(factoryProperty));
+            var cPtr = ONSClient4CPPPINVOKE.ONSFactoryAPI_createOrderProducer(swigCPtr,
+                ONSFactoryProperty.getCPtr(factoryProperty));
             var ret = cPtr == IntPtr.Zero ? null : new OrderProducer(cPtr, false);
-            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending) throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
+                throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
             return ret;
         }
 
         public virtual OrderConsumer createOrderConsumer(ONSFactoryProperty factoryProperty)
         {
-            var cPtr = ONSClient4CPPPINVOKE.ONSFactoryAPI_createOrderConsumer(swigCPtr, ONSFactoryProperty.getCPtr(factoryProperty));
+            var cPtr = ONSClient4CPPPINVOKE.ONSFactoryAPI_createOrderConsumer(swigCPtr,
+                ONSFactoryProperty.getCPtr(factoryProperty));
             var ret = cPtr == IntPtr.Zero ? null : new OrderConsumer(cPtr, false);
-            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending) throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
+                throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
             return ret;
         }
 
-        public virtual TransactionProducer createTransactionProducer(ONSFactoryProperty factoryProperty, LocalTransactionChecker checker)
+        public virtual TransactionProducer createTransactionProducer(ONSFactoryProperty factoryProperty,
+            LocalTransactionChecker checker)
         {
-            var cPtr = ONSClient4CPPPINVOKE.ONSFactoryAPI_createTransactionProducer(swigCPtr, ONSFactoryProperty.getCPtr(factoryProperty), LocalTransactionChecker.getCPtr(checker));
+            var cPtr = ONSClient4CPPPINVOKE.ONSFactoryAPI_createTransactionProducer(swigCPtr,
+                ONSFactoryProperty.getCPtr(factoryProperty), LocalTransactionChecker.getCPtr(checker));
             var ret = cPtr == IntPtr.Zero ? null : new TransactionProducer(cPtr, false);
-            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending) throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
+                throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
             return ret;
         }
 
         public virtual PullConsumer createPullConsumer(ONSFactoryProperty factoryProperty)
         {
-            var cPtr = ONSClient4CPPPINVOKE.ONSFactoryAPI_createPullConsumer(swigCPtr, ONSFactoryProperty.getCPtr(factoryProperty));
+            var cPtr = ONSClient4CPPPINVOKE.ONSFactoryAPI_createPullConsumer(swigCPtr,
+                ONSFactoryProperty.getCPtr(factoryProperty));
             var ret = cPtr == IntPtr.Zero ? null : new PullConsumer(cPtr, false);
-            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending) throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
+                throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
             return ret;
         }
 
         public virtual PushConsumer createPushConsumer(ONSFactoryProperty factoryProperty)
         {
-            var cPtr = ONSClient4CPPPINVOKE.ONSFactoryAPI_createPushConsumer(swigCPtr, ONSFactoryProperty.getCPtr(factoryProperty));
+            var cPtr = ONSClient4CPPPINVOKE.ONSFactoryAPI_createPushConsumer(swigCPtr,
+                ONSFactoryProperty.getCPtr(factoryProperty));
             var ret = cPtr == IntPtr.Zero ? null : new PushConsumer(cPtr, false);
-            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending) throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
+                throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
             return ret;
         }
     }

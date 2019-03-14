@@ -1,5 +1,4 @@
-﻿#if !CORE
-using System;
+﻿using System;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Runtime.Caching;
@@ -399,5 +398,3 @@ namespace FS.Cache.Runtime
         }
     }
 }
-
-#endif

@@ -8,7 +8,7 @@ using CacheManager.Core.Logging;
 using CacheManager.Core.Utility;
 using StackExchange.Redis;
 
-namespace FS.Cache.Redis.CacheManager
+namespace FS.Cache.Manager.Redis
 {
     /// <summary>
     /// Cache handle implementation for Redis.

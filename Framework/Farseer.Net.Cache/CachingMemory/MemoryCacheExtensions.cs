@@ -1,5 +1,4 @@
-﻿#if CORE
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace FS.Cache.CachingMemory
@@ -45,4 +44,3 @@ namespace FS.Cache.CachingMemory
         }
     }
 }
-#endif

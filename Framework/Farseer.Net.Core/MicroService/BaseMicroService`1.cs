@@ -4,8 +4,10 @@
 // ********************************************
 
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.ServiceModel;
 using System.Threading.Tasks;
+using FS.Core.Exception;
 using FS.Core.Net;
 using FS.Core.Net.Gateway;
 using FS.Extends;

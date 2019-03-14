@@ -16,8 +16,13 @@ namespace FS.MQ.RocketMQ.SDK
 {
     public class LocalTransactionExecuter : IDisposable
     {
-        private HandleRef swigCPtr;
+        public delegate int SwigDelegateLocalTransactionExecuter_0(IntPtr msg);
+
+        private static readonly Type[] swigMethodTypes0 = {typeof(Message)};
         protected bool swigCMemOwn;
+        private HandleRef swigCPtr;
+
+        private SwigDelegateLocalTransactionExecuter_0 swigDelegate0;
 
         internal LocalTransactionExecuter(IntPtr cPtr, bool cMemoryOwn)
         {
@@ -25,9 +30,10 @@ namespace FS.MQ.RocketMQ.SDK
             swigCPtr = new HandleRef(this, cPtr);
         }
 
-        internal static HandleRef getCPtr(LocalTransactionExecuter obj) { return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr; }
-
-        ~LocalTransactionExecuter() { Dispose(); }
+        public LocalTransactionExecuter() : this(ONSClient4CPPPINVOKE.new_LocalTransactionExecuter(), true)
+        {
+            SwigDirectorConnect();
+        }
 
         public virtual void Dispose()
         {
@@ -46,34 +52,43 @@ namespace FS.MQ.RocketMQ.SDK
             }
         }
 
+        internal static HandleRef getCPtr(LocalTransactionExecuter obj)
+        {
+            return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr;
+        }
+
+        ~LocalTransactionExecuter()
+        {
+            Dispose();
+        }
+
         public virtual TransactionStatus execute(Message msg)
         {
-            var ret = (TransactionStatus)ONSClient4CPPPINVOKE.LocalTransactionExecuter_execute(swigCPtr, Message.getCPtr(msg));
-            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending) throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+            var ret = (TransactionStatus) ONSClient4CPPPINVOKE.LocalTransactionExecuter_execute(swigCPtr,
+                Message.getCPtr(msg));
+            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
+                throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
             return ret;
         }
 
-        public LocalTransactionExecuter() : this(ONSClient4CPPPINVOKE.new_LocalTransactionExecuter(), true) { SwigDirectorConnect(); }
-
         private void SwigDirectorConnect()
         {
-            if (SwigDerivedClassHasMethod("execute", swigMethodTypes0)) swigDelegate0 = SwigDirectorexecute;
+            if (SwigDerivedClassHasMethod("execute", swigMethodTypes0))
+                swigDelegate0 = SwigDirectorexecute;
             ONSClient4CPPPINVOKE.LocalTransactionExecuter_director_connect(swigCPtr, swigDelegate0);
         }
 
         private bool SwigDerivedClassHasMethod(string methodName, Type[] methodTypes)
         {
-            var methodInfo = GetType().GetMethod(methodName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, methodTypes, null);
+            var methodInfo = GetType().GetMethod(methodName,
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, methodTypes, null);
             var hasDerivedMethod = methodInfo.DeclaringType.IsSubclassOf(typeof(LocalTransactionExecuter));
             return hasDerivedMethod;
         }
 
-        private int SwigDirectorexecute(IntPtr msg) { return (int)execute(new Message(msg, false)); }
-
-        public delegate int SwigDelegateLocalTransactionExecuter_0(IntPtr msg);
-
-        private SwigDelegateLocalTransactionExecuter_0 swigDelegate0;
-
-        private static readonly Type[] swigMethodTypes0 = {typeof(Message)};
+        private int SwigDirectorexecute(IntPtr msg)
+        {
+            return (int) execute(new Message(msg, false));
+        }
     }
 }

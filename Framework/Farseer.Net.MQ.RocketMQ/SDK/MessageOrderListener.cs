@@ -16,8 +16,13 @@ namespace FS.MQ.RocketMQ.SDK
 {
     public class MessageOrderListener : IDisposable
     {
-        private HandleRef swigCPtr;
+        public delegate int SwigDelegateMessageOrderListener_0(IntPtr message, IntPtr context);
+
+        private static readonly Type[] swigMethodTypes0 = {typeof(Message), typeof(ConsumeOrderContext)};
         protected bool swigCMemOwn;
+        private HandleRef swigCPtr;
+
+        private SwigDelegateMessageOrderListener_0 swigDelegate0;
 
         internal MessageOrderListener(IntPtr cPtr, bool cMemoryOwn)
         {
@@ -25,9 +30,10 @@ namespace FS.MQ.RocketMQ.SDK
             swigCPtr = new HandleRef(this, cPtr);
         }
 
-        internal static HandleRef getCPtr(MessageOrderListener obj) { return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr; }
-
-        ~MessageOrderListener() { Dispose(); }
+        public MessageOrderListener() : this(ONSClient4CPPPINVOKE.new_MessageOrderListener(), true)
+        {
+            SwigDirectorConnect();
+        }
 
         public virtual void Dispose()
         {
@@ -46,34 +52,43 @@ namespace FS.MQ.RocketMQ.SDK
             }
         }
 
-        public MessageOrderListener() : this(ONSClient4CPPPINVOKE.new_MessageOrderListener(), true) { SwigDirectorConnect(); }
+        internal static HandleRef getCPtr(MessageOrderListener obj)
+        {
+            return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr;
+        }
+
+        ~MessageOrderListener()
+        {
+            Dispose();
+        }
 
         public virtual OrderAction consume(Message message, ConsumeOrderContext context)
         {
-            var ret = (OrderAction)ONSClient4CPPPINVOKE.MessageOrderListener_consume(swigCPtr, Message.getCPtr(message), ConsumeOrderContext.getCPtr(context));
-            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending) throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+            var ret = (OrderAction) ONSClient4CPPPINVOKE.MessageOrderListener_consume(swigCPtr,
+                Message.getCPtr(message), ConsumeOrderContext.getCPtr(context));
+            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
+                throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
             return ret;
         }
 
         private void SwigDirectorConnect()
         {
-            if (SwigDerivedClassHasMethod("consume", swigMethodTypes0)) swigDelegate0 = SwigDirectorconsume;
+            if (SwigDerivedClassHasMethod("consume", swigMethodTypes0))
+                swigDelegate0 = SwigDirectorconsume;
             ONSClient4CPPPINVOKE.MessageOrderListener_director_connect(swigCPtr, swigDelegate0);
         }
 
         private bool SwigDerivedClassHasMethod(string methodName, Type[] methodTypes)
         {
-            var methodInfo = GetType().GetMethod(methodName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, methodTypes, null);
+            var methodInfo = GetType().GetMethod(methodName,
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, methodTypes, null);
             var hasDerivedMethod = methodInfo.DeclaringType.IsSubclassOf(typeof(MessageOrderListener));
             return hasDerivedMethod;
         }
 
-        private int SwigDirectorconsume(IntPtr message, IntPtr context) { return (int)consume(new Message(message, false), new ConsumeOrderContext(context, false)); }
-
-        public delegate int SwigDelegateMessageOrderListener_0(IntPtr message, IntPtr context);
-
-        private SwigDelegateMessageOrderListener_0 swigDelegate0;
-
-        private static readonly Type[] swigMethodTypes0 = {typeof(Message), typeof(ConsumeOrderContext)};
+        private int SwigDirectorconsume(IntPtr message, IntPtr context)
+        {
+            return (int) consume(new Message(message, false), new ConsumeOrderContext(context, false));
+        }
     }
 }

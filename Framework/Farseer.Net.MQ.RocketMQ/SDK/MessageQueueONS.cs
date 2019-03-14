@@ -15,8 +15,8 @@ namespace FS.MQ.RocketMQ.SDK
 {
     public class MessageQueueONS : IDisposable
     {
-        private HandleRef swigCPtr;
         protected bool swigCMemOwn;
+        private HandleRef swigCPtr;
 
         internal MessageQueueONS(IntPtr cPtr, bool cMemoryOwn)
         {
@@ -24,9 +24,23 @@ namespace FS.MQ.RocketMQ.SDK
             swigCPtr = new HandleRef(this, cPtr);
         }
 
-        internal static HandleRef getCPtr(MessageQueueONS obj) { return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr; }
+        public MessageQueueONS() : this(ONSClient4CPPPINVOKE.new_MessageQueueONS__SWIG_0(), true)
+        {
+        }
 
-        ~MessageQueueONS() { Dispose(); }
+        public MessageQueueONS(string topic, string brokerName, int queueId) : this(
+            ONSClient4CPPPINVOKE.new_MessageQueueONS__SWIG_1(topic, brokerName, queueId), true)
+        {
+            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
+                throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+        }
+
+        public MessageQueueONS(MessageQueueONS other) : this(
+            ONSClient4CPPPINVOKE.new_MessageQueueONS__SWIG_2(getCPtr(other)), true)
+        {
+            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
+                throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+        }
 
         public virtual void Dispose()
         {
@@ -45,16 +59,14 @@ namespace FS.MQ.RocketMQ.SDK
             }
         }
 
-        public MessageQueueONS() : this(ONSClient4CPPPINVOKE.new_MessageQueueONS__SWIG_0(), true) { }
-
-        public MessageQueueONS(string topic, string brokerName, int queueId) : this(ONSClient4CPPPINVOKE.new_MessageQueueONS__SWIG_1(topic, brokerName, queueId), true)
+        internal static HandleRef getCPtr(MessageQueueONS obj)
         {
-            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending) throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+            return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr;
         }
 
-        public MessageQueueONS(MessageQueueONS other) : this(ONSClient4CPPPINVOKE.new_MessageQueueONS__SWIG_2(getCPtr(other)), true)
+        ~MessageQueueONS()
         {
-            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending) throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+            Dispose();
         }
 
         public string getTopic()
@@ -66,7 +78,8 @@ namespace FS.MQ.RocketMQ.SDK
         public void setTopic(string topic)
         {
             ONSClient4CPPPINVOKE.MessageQueueONS_setTopic(swigCPtr, topic);
-            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending) throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
+                throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
         }
 
         public string getBrokerName()
@@ -78,7 +91,8 @@ namespace FS.MQ.RocketMQ.SDK
         public void setBrokerName(string brokerName)
         {
             ONSClient4CPPPINVOKE.MessageQueueONS_setBrokerName(swigCPtr, brokerName);
-            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending) throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
+                throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
         }
 
         public int getQueueId()
@@ -87,12 +101,16 @@ namespace FS.MQ.RocketMQ.SDK
             return ret;
         }
 
-        public void setQueueId(int queueId) { ONSClient4CPPPINVOKE.MessageQueueONS_setQueueId(swigCPtr, queueId); }
+        public void setQueueId(int queueId)
+        {
+            ONSClient4CPPPINVOKE.MessageQueueONS_setQueueId(swigCPtr, queueId);
+        }
 
         public int compareTo(MessageQueueONS mq)
         {
             var ret = ONSClient4CPPPINVOKE.MessageQueueONS_compareTo(swigCPtr, getCPtr(mq));
-            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending) throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
+                throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
             return ret;
         }
     }

@@ -9,14 +9,20 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace FS.MQ.RocketMQ.SDK
 {
     public class LocalTransactionChecker : IDisposable
     {
-        private HandleRef swigCPtr;
+        public delegate int SwigDelegateLocalTransactionChecker_0(IntPtr msg);
+
+        private static readonly Type[] swigMethodTypes0 = {typeof(Message)};
         protected bool swigCMemOwn;
+        private HandleRef swigCPtr;
+
+        private SwigDelegateLocalTransactionChecker_0 swigDelegate0;
 
         internal LocalTransactionChecker(IntPtr cPtr, bool cMemoryOwn)
         {
@@ -24,9 +30,10 @@ namespace FS.MQ.RocketMQ.SDK
             swigCPtr = new HandleRef(this, cPtr);
         }
 
-        internal static HandleRef getCPtr(LocalTransactionChecker obj) { return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr; }
-
-        ~LocalTransactionChecker() { Dispose(); }
+        public LocalTransactionChecker() : this(ONSClient4CPPPINVOKE.new_LocalTransactionChecker(), true)
+        {
+            SwigDirectorConnect();
+        }
 
         public virtual void Dispose()
         {
@@ -45,11 +52,43 @@ namespace FS.MQ.RocketMQ.SDK
             }
         }
 
+        internal static HandleRef getCPtr(LocalTransactionChecker obj)
+        {
+            return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr;
+        }
+
+        ~LocalTransactionChecker()
+        {
+            Dispose();
+        }
+
         public virtual TransactionStatus check(Message msg)
         {
-            var ret = (TransactionStatus)ONSClient4CPPPINVOKE.LocalTransactionChecker_check(swigCPtr, Message.getCPtr(msg));
-            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending) throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+            var ret = (TransactionStatus) ONSClient4CPPPINVOKE.LocalTransactionChecker_check(swigCPtr,
+                Message.getCPtr(msg));
+            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
+                throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
             return ret;
+        }
+
+        private void SwigDirectorConnect()
+        {
+            if (SwigDerivedClassHasMethod("check", swigMethodTypes0))
+                swigDelegate0 = SwigDirectorcheck;
+            ONSClient4CPPPINVOKE.LocalTransactionChecker_director_connect(swigCPtr, swigDelegate0);
+        }
+
+        private bool SwigDerivedClassHasMethod(string methodName, Type[] methodTypes)
+        {
+            var methodInfo = GetType().GetMethod(methodName,
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, methodTypes, null);
+            var hasDerivedMethod = methodInfo.DeclaringType.IsSubclassOf(typeof(LocalTransactionChecker));
+            return hasDerivedMethod;
+        }
+
+        private int SwigDirectorcheck(IntPtr msg)
+        {
+            return (int) check(new Message(msg, false));
         }
     }
 }

@@ -7,7 +7,7 @@ using CacheManager.Core.Utility;
 #if !CORE
 #endif
 
-namespace FS.Cache.Redis.CacheManager
+namespace FS.Cache.Manager.Redis
 {
     /// <summary>
     /// Manages redis client configurations for the cache handle.

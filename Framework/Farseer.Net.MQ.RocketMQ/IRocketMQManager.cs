@@ -9,6 +9,7 @@
         ///     生产消息
         /// </summary>
         IRocketMQProduct Product { get; }
+
         ///// <summary>
         ///// 生产消息
         ///// </summary>
@@ -17,6 +18,7 @@
         ///     订阅消费
         /// </summary>
         IRocketMQConsumer Consumer { get; }
+
         ///// <summary>
         ///// 消费
         ///// </summary>

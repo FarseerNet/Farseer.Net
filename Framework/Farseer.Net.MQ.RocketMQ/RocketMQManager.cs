@@ -14,26 +14,54 @@ namespace FS.MQ.RocketMQ
     /// </summary>
     public class RocketMQManager : IRocketMQManager
     {
+        private static readonly object ObjLock = new object();
+
         /// <summary>
         ///     创建消息队列属性
         /// </summary>
         private readonly ONSFactoryProperty _factoryInfo;
-        private static readonly object ObjLock = new object();
+
+        /// <summary>
+        ///     生产消息
+        /// </summary>
+        private IRocketMQOrderConsumer _orderConsumer;
+
+        /// <summary>
+        ///     生产消息
+        /// </summary>
+        private IRocketMQOrderProduct _orderProduct;
+
+        /// <summary>
+        ///     生产消息
+        /// </summary>
+        private IRocketMQProduct _product;
+
+        /// <summary>
+        ///     生产消息
+        /// </summary>
+        private IRocketMQConsumer _pushConsumer;
 
         /// <summary> RocketMQ管理器 </summary>
         public RocketMQManager(RocketMQItemConfig config)
         {
             _factoryInfo = new ONSFactoryProperty();
-            if (config.AccessKey != null) _factoryInfo.setFactoryProperty(ONSFactoryProperty.AccessKey, config.AccessKey);
-            if (config.SecretKey != null) _factoryInfo.setFactoryProperty(ONSFactoryProperty.SecretKey, config.SecretKey);
-            if (config.ConsumerID != null) _factoryInfo.setFactoryProperty(ONSFactoryProperty.ConsumerId, config.ConsumerID);
-            if (config.ProducerID != null) _factoryInfo.setFactoryProperty(ONSFactoryProperty.ProducerId, config.ProducerID);
+            if (config.AccessKey != null)
+                _factoryInfo.setFactoryProperty(ONSFactoryProperty.AccessKey, config.AccessKey);
+            if (config.SecretKey != null)
+                _factoryInfo.setFactoryProperty(ONSFactoryProperty.SecretKey, config.SecretKey);
+            if (config.ConsumerID != null)
+                _factoryInfo.setFactoryProperty(ONSFactoryProperty.ConsumerId, config.ConsumerID);
+            if (config.ProducerID != null)
+                _factoryInfo.setFactoryProperty(ONSFactoryProperty.ProducerId, config.ProducerID);
             if (config.Topic != null) _factoryInfo.setFactoryProperty(ONSFactoryProperty.PublishTopics, config.Topic);
             if (config.Server != null)
-            {
                 _factoryInfo.setFactoryProperty(ONSFactoryProperty.NAMESRV_ADDR, config.Server);
-                //_factoryInfo.setFactoryProperty(ONSFactoryProperty.ONSAddr, config.Server);
-            }
+
+            // 集群订阅方式设置（不设置的情况下，默认为集群订阅方式）
+            //_factoryInfo.setFactoryProperty(ONSFactoryProperty.MessageModel, ONSFactoryProperty.CLUSTERING);
+
+            // 广播订阅方式设置
+            //_factoryInfo.setFactoryProperty(ONSFactoryProperty.MessageModel, ONSFactoryProperty.BROADCASTING);
 
             // 设置线程数
             if (config.ConsumeThreadNums < 1) config.ConsumeThreadNums = 1;
@@ -48,55 +76,18 @@ namespace FS.MQ.RocketMQ
         /// <summary>
         ///     生产消息
         /// </summary>
-        private IRocketMQProduct _product;
-        /// <summary>
-        ///     生产消息
-        /// </summary>
-        public IRocketMQProduct Product
-        {
-            get
-            {
-                if (_product != null) return _product;
-                lock (ObjLock) { return _product ?? (_product = new RocketMQProduct(_factoryInfo)); }
-            }
-        }
-
-        /// <summary>
-        ///     生产消息
-        /// </summary>
-        private IRocketMQOrderProduct _orderProduct;
-        /// <summary>
-        ///     生产消息
-        /// </summary>
         public IRocketMQOrderProduct OrderProduct
         {
             get
             {
                 if (_orderProduct != null) return _orderProduct;
-                lock (ObjLock) { return _orderProduct ?? (_orderProduct = new RocketMQOrderProduct(_factoryInfo)); }
+                lock (ObjLock)
+                {
+                    return _orderProduct ?? (_orderProduct = new RocketMQOrderProduct(_factoryInfo));
+                }
             }
         }
 
-        /// <summary>
-        ///     生产消息
-        /// </summary>
-        private IRocketMQConsumer _pushConsumer;
-        /// <summary>
-        ///     订阅消费
-        /// </summary>
-        public IRocketMQConsumer Consumer
-        {
-            get
-            {
-                if (_pushConsumer != null) return _pushConsumer;
-                lock (ObjLock) { return _pushConsumer ?? (_pushConsumer = new RocketMQPushConsumer(_factoryInfo)); }
-            }
-        }
-
-        /// <summary>
-        ///     生产消息
-        /// </summary>
-        private IRocketMQOrderConsumer _orderConsumer;
         /// <summary>
         ///     消费
         /// </summary>
@@ -105,7 +96,40 @@ namespace FS.MQ.RocketMQ
             get
             {
                 if (_orderConsumer != null) return _orderConsumer;
-                lock (ObjLock) { return _orderConsumer ?? (_orderConsumer = new RocketMQOrderConsumer(_factoryInfo)); }
+                lock (ObjLock)
+                {
+                    return _orderConsumer ?? (_orderConsumer = new RocketMQOrderConsumer(_factoryInfo));
+                }
+            }
+        }
+
+        /// <summary>
+        ///     生产消息
+        /// </summary>
+        public IRocketMQProduct Product
+        {
+            get
+            {
+                if (_product != null) return _product;
+                lock (ObjLock)
+                {
+                    return _product ?? (_product = new RocketMQProduct(_factoryInfo));
+                }
+            }
+        }
+
+        /// <summary>
+        ///     订阅消费
+        /// </summary>
+        public IRocketMQConsumer Consumer
+        {
+            get
+            {
+                if (_pushConsumer != null) return _pushConsumer;
+                lock (ObjLock)
+                {
+                    return _pushConsumer ?? (_pushConsumer = new RocketMQPushConsumer(_factoryInfo));
+                }
             }
         }
     }

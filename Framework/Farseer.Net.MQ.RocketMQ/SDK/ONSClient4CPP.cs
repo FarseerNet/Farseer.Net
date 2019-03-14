@@ -10,5 +10,7 @@
 
 namespace FS.MQ.RocketMQ.SDK
 {
-    public class ONSClient4CPP { }
+    public class ONSClient4CPP
+    {
+    }
 }

@@ -1,17 +1,4 @@
-﻿//------------------------------------------------------------------------------
-// <copyright file="DbModule.cs" company="ZTO">
-//     Copyright (c) Shanghai Zhongtongji Network Technology Co., Ltd.  All rights reserved.
-// </copyright>                                                                
-//------------------------------------------------------------------------------
-
-/*
- * DbModule.cs
- * 
- * Copyright (c) 2016-2030, ZTO Corporation
- * 
- */
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
 using FS.Configuration;
 using FS.Data.Configuration;

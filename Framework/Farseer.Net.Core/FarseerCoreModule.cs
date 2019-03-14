@@ -1,4 +1,17 @@
-﻿using System.Reflection;
+﻿//------------------------------------------------------------------------------
+// <copyright file="FarseerKernelModule.cs" company="Farseer">
+//     Copyright (c) Shanghai Zhongtongji Network Technology Co., Ltd.  All rights reserved.
+// </copyright>                                                                
+//------------------------------------------------------------------------------
+
+/*
+ * FarseerKernelModule.cs
+ * 
+ * Copyright (c) 2016-2030, Farseer Corporation
+ * 
+ */
+
+using System.Reflection;
 using FS.Configuration;
 using FS.Configuration.Startup;
 using FS.Core.Configuration;
@@ -30,7 +43,7 @@ namespace FS.Core
             var globalConfig = configResolver.Get<GlobalConfig>();
             if (globalConfig == null)
             {
-                configResolver.Set(new GlobalConfig { AppName = "" });
+                configResolver.Set(new GlobalConfig { AppName = "", ApiGatewayType = EumApiGatewayType.External });
                 configResolver.Save();
             }
         }

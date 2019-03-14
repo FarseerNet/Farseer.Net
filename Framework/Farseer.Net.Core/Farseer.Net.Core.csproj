@@ -8,9 +8,9 @@
     <Description>包括：公共对象类型、对象映射、微服务客户端</Description>
     <Authors>steden</Authors>
     <PackageTags>公共对象类型、对象映射、微服务客户端</PackageTags>
-    <AssemblyVersion>2.1.1</AssemblyVersion>
-    <FileVersion>2.1.1</FileVersion>
-    <Version>2.1.1</Version>
+    <AssemblyVersion>2.2.0</AssemblyVersion>
+    <FileVersion>2.2.0</FileVersion>
+    <Version>2.2.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RootNamespace>FS.Core</RootNamespace>
   </PropertyGroup>
@@ -32,6 +32,10 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="System.ServiceModel.Primitives" Version="4.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Interface\" />
   </ItemGroup>
 
 </Project>  

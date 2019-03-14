@@ -5,7 +5,9 @@
 
 using System.Runtime.Serialization;
 using System.ServiceModel;
+using System.ServiceModel.Channels;
 using FS.Core.Fabric;
+using FS.Core.Net.Gateway;
 
 namespace FS.Core.Exception
 {

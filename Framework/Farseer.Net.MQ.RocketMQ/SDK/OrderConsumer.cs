@@ -16,8 +16,24 @@ namespace FS.MQ.RocketMQ.SDK
 {
     public class OrderConsumer : IDisposable
     {
-        private HandleRef swigCPtr;
+        public delegate void SwigDelegateOrderConsumer_0();
+
+        public delegate void SwigDelegateOrderConsumer_1();
+
+        public delegate void SwigDelegateOrderConsumer_2(string topic, string subExpression, IntPtr listener);
+
+        private static readonly Type[] swigMethodTypes0 = { };
+        private static readonly Type[] swigMethodTypes1 = { };
+
+        private static readonly Type[] swigMethodTypes2 =
+            {typeof(string), typeof(string), typeof(MessageOrderListener)};
+
         protected bool swigCMemOwn;
+        private HandleRef swigCPtr;
+
+        private SwigDelegateOrderConsumer_0 swigDelegate0;
+        private SwigDelegateOrderConsumer_1 swigDelegate1;
+        private SwigDelegateOrderConsumer_2 swigDelegate2;
 
         internal OrderConsumer(IntPtr cPtr, bool cMemoryOwn)
         {
@@ -25,9 +41,10 @@ namespace FS.MQ.RocketMQ.SDK
             swigCPtr = new HandleRef(this, cPtr);
         }
 
-        internal static HandleRef getCPtr(OrderConsumer obj) { return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr; }
-
-        ~OrderConsumer() { Dispose(); }
+        public OrderConsumer() : this(ONSClient4CPPPINVOKE.new_OrderConsumer(), true)
+        {
+            SwigDirectorConnect();
+        }
 
         public virtual void Dispose()
         {
@@ -46,47 +63,64 @@ namespace FS.MQ.RocketMQ.SDK
             }
         }
 
-        public OrderConsumer() : this(ONSClient4CPPPINVOKE.new_OrderConsumer(), true) { SwigDirectorConnect(); }
+        internal static HandleRef getCPtr(OrderConsumer obj)
+        {
+            return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr;
+        }
 
-        public virtual void start() { ONSClient4CPPPINVOKE.OrderConsumer_start(swigCPtr); }
+        ~OrderConsumer()
+        {
+            Dispose();
+        }
 
-        public virtual void shutdown() { ONSClient4CPPPINVOKE.OrderConsumer_shutdown(swigCPtr); }
+        public virtual void start()
+        {
+            ONSClient4CPPPINVOKE.OrderConsumer_start(swigCPtr);
+        }
 
-        public virtual void subscribe(string topic, string subExpression, MessageOrderListener listener) { ONSClient4CPPPINVOKE.OrderConsumer_subscribe(swigCPtr, topic, subExpression, MessageOrderListener.getCPtr(listener)); }
+        public virtual void shutdown()
+        {
+            ONSClient4CPPPINVOKE.OrderConsumer_shutdown(swigCPtr);
+        }
+
+        public virtual void subscribe(string topic, string subExpression, MessageOrderListener listener)
+        {
+            ONSClient4CPPPINVOKE.OrderConsumer_subscribe(swigCPtr, topic, subExpression,
+                MessageOrderListener.getCPtr(listener));
+        }
 
         private void SwigDirectorConnect()
         {
-            if (SwigDerivedClassHasMethod("start", swigMethodTypes0)) swigDelegate0 = SwigDirectorstart;
-            if (SwigDerivedClassHasMethod("shutdown", swigMethodTypes1)) swigDelegate1 = SwigDirectorshutdown;
-            if (SwigDerivedClassHasMethod("subscribe", swigMethodTypes2)) swigDelegate2 = SwigDirectorsubscribe;
+            if (SwigDerivedClassHasMethod("start", swigMethodTypes0))
+                swigDelegate0 = SwigDirectorstart;
+            if (SwigDerivedClassHasMethod("shutdown", swigMethodTypes1))
+                swigDelegate1 = SwigDirectorshutdown;
+            if (SwigDerivedClassHasMethod("subscribe", swigMethodTypes2))
+                swigDelegate2 = SwigDirectorsubscribe;
             ONSClient4CPPPINVOKE.OrderConsumer_director_connect(swigCPtr, swigDelegate0, swigDelegate1, swigDelegate2);
         }
 
         private bool SwigDerivedClassHasMethod(string methodName, Type[] methodTypes)
         {
-            var methodInfo = GetType().GetMethod(methodName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, methodTypes, null);
+            var methodInfo = GetType().GetMethod(methodName,
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, methodTypes, null);
             var hasDerivedMethod = methodInfo.DeclaringType.IsSubclassOf(typeof(OrderConsumer));
             return hasDerivedMethod;
         }
 
-        private void SwigDirectorstart() { start(); }
+        private void SwigDirectorstart()
+        {
+            start();
+        }
 
-        private void SwigDirectorshutdown() { shutdown(); }
+        private void SwigDirectorshutdown()
+        {
+            shutdown();
+        }
 
-        private void SwigDirectorsubscribe(string topic, string subExpression, IntPtr listener) { subscribe(topic, subExpression, listener == IntPtr.Zero ? null : new MessageOrderListener(listener, false)); }
-
-        public delegate void SwigDelegateOrderConsumer_0();
-
-        public delegate void SwigDelegateOrderConsumer_1();
-
-        public delegate void SwigDelegateOrderConsumer_2(string topic, string subExpression, IntPtr listener);
-
-        private SwigDelegateOrderConsumer_0 swigDelegate0;
-        private SwigDelegateOrderConsumer_1 swigDelegate1;
-        private SwigDelegateOrderConsumer_2 swigDelegate2;
-
-        private static readonly Type[] swigMethodTypes0 = { };
-        private static readonly Type[] swigMethodTypes1 = { };
-        private static readonly Type[] swigMethodTypes2 = {typeof(string), typeof(string), typeof(MessageOrderListener)};
+        private void SwigDirectorsubscribe(string topic, string subExpression, IntPtr listener)
+        {
+            subscribe(topic, subExpression, listener == IntPtr.Zero ? null : new MessageOrderListener(listener, false));
+        }
     }
 }

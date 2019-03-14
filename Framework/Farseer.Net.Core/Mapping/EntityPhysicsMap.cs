@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
+using FS.Core.Mapping.Attribute;
 
 namespace FS.Core.Mapping
 {
@@ -107,7 +108,7 @@ namespace FS.Core.Mapping
         public static EntityPhysicsMap Map(Type type)
         {
             // 不存在缓存，则加入
-            if (!Cache.ContainsKey(type)) { Cache.TryAdd(type, new EntityPhysicsMap(type)); }
+            if (!Cache.ContainsKey(type)) Cache.TryAdd(type, new EntityPhysicsMap(type));
             return Cache[type];
         }
     }

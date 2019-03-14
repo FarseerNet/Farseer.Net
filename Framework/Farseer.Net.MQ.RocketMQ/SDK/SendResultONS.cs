@@ -15,8 +15,8 @@ namespace FS.MQ.RocketMQ.SDK
 {
     public class SendResultONS : IDisposable
     {
-        private HandleRef swigCPtr;
         protected bool swigCMemOwn;
+        private HandleRef swigCPtr;
 
         internal SendResultONS(IntPtr cPtr, bool cMemoryOwn)
         {
@@ -24,9 +24,9 @@ namespace FS.MQ.RocketMQ.SDK
             swigCPtr = new HandleRef(this, cPtr);
         }
 
-        internal static HandleRef getCPtr(SendResultONS obj) { return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr; }
-
-        ~SendResultONS() { Dispose(); }
+        public SendResultONS() : this(ONSClient4CPPPINVOKE.new_SendResultONS(), true)
+        {
+        }
 
         public virtual void Dispose()
         {
@@ -45,12 +45,21 @@ namespace FS.MQ.RocketMQ.SDK
             }
         }
 
-        public SendResultONS() : this(ONSClient4CPPPINVOKE.new_SendResultONS(), true) { }
+        internal static HandleRef getCPtr(SendResultONS obj)
+        {
+            return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr;
+        }
+
+        ~SendResultONS()
+        {
+            Dispose();
+        }
 
         public void setMessageId(string msgId)
         {
             ONSClient4CPPPINVOKE.SendResultONS_setMessageId(swigCPtr, msgId);
-            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending) throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
+                throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
         }
 
         public string getMessageId()

@@ -1,4 +1,4 @@
-﻿namespace FS.Cache.Redis.CacheManager
+﻿namespace FS.Cache.Manager.Redis
 {
     internal enum ScriptType
     {

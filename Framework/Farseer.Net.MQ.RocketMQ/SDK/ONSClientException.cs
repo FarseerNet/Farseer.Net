@@ -15,8 +15,8 @@ namespace FS.MQ.RocketMQ.SDK
 {
     public class ONSClientException : IDisposable
     {
-        private HandleRef swigCPtr;
         protected bool swigCMemOwn;
+        private HandleRef swigCPtr;
 
         internal ONSClientException(IntPtr cPtr, bool cMemoryOwn)
         {
@@ -24,9 +24,16 @@ namespace FS.MQ.RocketMQ.SDK
             swigCPtr = new HandleRef(this, cPtr);
         }
 
-        internal static HandleRef getCPtr(ONSClientException obj) { return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr; }
+        public ONSClientException() : this(ONSClient4CPPPINVOKE.new_ONSClientException__SWIG_0(), true)
+        {
+        }
 
-        ~ONSClientException() { Dispose(); }
+        public ONSClientException(string msg, int error) : this(
+            ONSClient4CPPPINVOKE.new_ONSClientException__SWIG_1(msg, error), true)
+        {
+            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
+                throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+        }
 
         public virtual void Dispose()
         {
@@ -45,11 +52,14 @@ namespace FS.MQ.RocketMQ.SDK
             }
         }
 
-        public ONSClientException() : this(ONSClient4CPPPINVOKE.new_ONSClientException__SWIG_0(), true) { }
-
-        public ONSClientException(string msg, int error) : this(ONSClient4CPPPINVOKE.new_ONSClientException__SWIG_1(msg, error), true)
+        internal static HandleRef getCPtr(ONSClientException obj)
         {
-            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending) throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+            return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr;
+        }
+
+        ~ONSClientException()
+        {
+            Dispose();
         }
 
         public string GetMsg()

@@ -26,6 +26,7 @@ namespace FS.Http
         static Net()
         {
             httpClient.DefaultRequestHeaders.ExpectContinue = false;
+            //httpClient.DefaultRequestHeaders.Add("Connection", "keep-alive");
         }
 
         /// <summary>
@@ -122,6 +123,49 @@ namespace FS.Http
         /// <param name="encoding">编码格式</param>
         /// <param name="cookie">是否需要cookie</param>
         public static Task<string> PostAsync(string url, Dictionary<string, string> postData, Dictionary<string, string> headerData, Encoding encoding = null, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, CookieContainer cookie = null) => PostAsync(url, postData.Select(keyVal => $"{keyVal.Key}={keyVal.Value}").ToString("&"), headerData, encoding, contentType, requestTimeout, cookie);
+
+        /// <summary>
+        /// http request请求
+        /// </summary>
+        /// <param name="url">资源地址</param>
+        /// <param name="headerData">头部</param>
+        /// <param name="postData">查询条件</param>
+        /// <param name="contentType">获取或设置 Content-type HTTP 标头的值。</param>
+        /// <param name="requestTimeout">超时时间</param>
+        /// <param name="encoding">编码格式</param>
+        /// <param name="cookie">是否需要cookie</param>
+        public static async Task<string> PutAsync(string url, string postData, Dictionary<string, string> headerData, Encoding encoding = null, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, CookieContainer cookie = null)
+        {
+            if (encoding == null) { encoding = Encoding.UTF8; }
+            var httpContent = new StringContent(postData, encoding, contentType);// 内容体
+            httpContent.Headers.AddTraceInfoToHeader(); // 添加头部
+            if (headerData != null)
+            {
+                foreach (var header in headerData)
+                {
+                    if (httpContent.Headers.Contains(header.Key)) continue;
+                    httpContent.Headers.Add(header.Key, header.Value);
+                }
+            }
+            //httpContent.Headers.Add("Cookie", "bid=\"YObnALe98pw\"");
+            var cancellationTokenSource = new CancellationTokenSource();
+            if (requestTimeout > 0) cancellationTokenSource.CancelAfter(requestTimeout);
+            var httpRspMessage = httpClient.PutAsync(url, httpContent, cancellationTokenSource.Token);
+
+            var bytes = await (await httpRspMessage.ConfigureAwait(false)).Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+            return encoding.GetString(bytes);
+        }
+
+        /// <summary>
+        ///     以Post方式请求远程URL
+        /// </summary>
+        /// <param name="url">请求地址</param>
+        /// <param name="postData">字典类型</param>
+        /// <param name="contentType">获取或设置 Content-type HTTP 标头的值。</param>
+        /// <param name="requestTimeout">超时时间</param>
+        /// <param name="encoding">编码格式</param>
+        /// <param name="cookie">是否需要cookie</param>
+        public static Task<string> PutAsync(string url, Dictionary<string, string> postData, Encoding encoding = null, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, CookieContainer cookie = null) => PutAsync(url, postData.Select(keyVal => $"{keyVal.Key}={keyVal.Value}").ToString("&"), null, encoding, contentType, requestTimeout, cookie);
 
         /// <summary>
         ///     获取网络IP

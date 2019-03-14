@@ -15,7 +15,10 @@ namespace FS.MQ.RocketMQ
         ///     生产消息
         /// </summary>
         /// <param name="factoryInfo">消息队列属性</param>
-        public RocketMQOrderProduct(ONSFactoryProperty factoryInfo) { _factoryInfo = factoryInfo; }
+        public RocketMQOrderProduct(ONSFactoryProperty factoryInfo)
+        {
+            _factoryInfo = factoryInfo;
+        }
 
         /// <summary>
         ///     开启生产消息

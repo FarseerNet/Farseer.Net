@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Net;
-using FS.Cache.Redis.Configuration;
 using StackExchange.Redis;
+using FS.Cache.Redis.Configuration;
+using FS.Extends;
 
 namespace FS.Cache.Redis
 {
@@ -11,7 +12,6 @@ namespace FS.Cache.Redis
     public class RedisConnectionWrapper : IRedisConnectionWrapper
     {
         private readonly RedisItemConfig _config;
-        private readonly Lazy<string> _connectionString;
         private volatile ConnectionMultiplexer _connection;
         private readonly object _lock = new object();
 
@@ -22,14 +22,7 @@ namespace FS.Cache.Redis
         public RedisConnectionWrapper(RedisItemConfig config)
         {
             _config = config;
-            _connectionString = new Lazy<string>(GetConnectionString);
         }
-
-        /// <summary>
-        ///     获取数据库连接字符串
-        /// </summary>
-        /// <returns>数据库连接字符串</returns>
-        private string GetConnectionString() => _config.Server;
 
         /// <summary>
         ///     获取连接
@@ -44,9 +37,62 @@ namespace FS.Cache.Redis
                 if ((_connection != null) && _connection.IsConnected) return _connection;
 
                 _connection?.Dispose();
-                _connection = ConnectionMultiplexer.Connect(_connectionString.Value);
+
+                var option = new ConfigurationOptions();
+                // 模式选择
+                switch (_config.CommandType)
+                {
+                    case EumCommandType.Default:
+                        option.CommandMap = CommandMap.Default;
+                        break;
+                    case EumCommandType.Sentinel:
+                        option.ServiceName = _config.ServiceName;
+                        option.CommandMap = CommandMap.Sentinel;
+                        option.TieBreaker = _config.TieBreaker;
+                        option.DefaultVersion = new Version(3, 0, 6);
+                        option.AllowAdmin = true;
+                        ConfigurationOptions masterConfig = new ConfigurationOptions();
+                        // 
+
+                        if (string.IsNullOrWhiteSpace(_config.ServiceName)) throw new FarseerException($"Redis哨兵模式下，需要为{_config.Name}配置ServiceName");
+                        break;
+                    case EumCommandType.Twemproxy:
+                        option.CommandMap = CommandMap.Twemproxy;
+                        option.Proxy = Proxy.Twemproxy;
+                        break;
+                    case EumCommandType.SSDB:
+                        option.CommandMap = CommandMap.SSDB;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+                option.Password = _config.Password;
+                foreach (var endPoints in _config.Server.Split(','))
+                {
+                    if (endPoints.Contains(":")) option.EndPoints.Add(endPoints.Split(':')[0], endPoints.Split(':')[1].ConvertType(0));
+                    else
+                    {
+                        var timeout = endPoints.ToLower().Split('=');
+                        if (timeout.Length != 2) continue;
+                        var time = timeout[1].ConvertType(0);
+                        switch (timeout[0])
+                        {
+                            case "synctimeout": option.SyncTimeout = time; break;
+                            //case "asynctimeout": option.AsyncTimeout = time; break;
+                            case "connecttimeout": option.ConnectTimeout = time; break;
+                            case "responsetimeout": option.ResponseTimeout = time; break;
+                        }
+                    }
+                }
+                _connection = ConnectionMultiplexer.Connect(option);
             }
 
+            var isConnected = _connection.GetSubscriber().IsConnected();
+            _connection.GetSubscriber().Subscribe("+switch-master", (channel, message) =>
+            {
+                Console.WriteLine((string)message);
+            });
             return _connection;
         }
 
@@ -55,7 +101,9 @@ namespace FS.Cache.Redis
         /// </summary>
         /// <param name="db">数据库编号</param>
         /// <returns>IDatabase</returns>
-        public IDatabase Database(int? db = null) { return GetConnection().GetDatabase(db ?? -1); //_settings.DefaultDb);
+        public IDatabase Database(int? db = null)
+        {
+            return GetConnection().GetDatabase(db ?? -1);
         }
 
         /// <summary>
@@ -79,7 +127,7 @@ namespace FS.Cache.Redis
         {
             var endPoints = GetEndpoints();
 
-            foreach (var endPoint in endPoints) Server(endPoint).FlushDatabase(db ?? -1); //_settings.DefaultDb);
+            foreach (var endPoint in endPoints) Server(endPoint).FlushDatabase(db ?? -1);
         }
 
         /// <summary>

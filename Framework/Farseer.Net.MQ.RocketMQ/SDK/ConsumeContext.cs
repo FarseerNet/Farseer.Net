@@ -15,8 +15,8 @@ namespace FS.MQ.RocketMQ.SDK
 {
     public class ConsumeContext : IDisposable
     {
-        private HandleRef swigCPtr;
         protected bool swigCMemOwn;
+        private HandleRef swigCPtr;
 
         internal ConsumeContext(IntPtr cPtr, bool cMemoryOwn)
         {
@@ -24,9 +24,9 @@ namespace FS.MQ.RocketMQ.SDK
             swigCPtr = new HandleRef(this, cPtr);
         }
 
-        internal static HandleRef getCPtr(ConsumeContext obj) { return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr; }
-
-        ~ConsumeContext() { Dispose(); }
+        public ConsumeContext() : this(ONSClient4CPPPINVOKE.new_ConsumeContext(), true)
+        {
+        }
 
         public virtual void Dispose()
         {
@@ -45,6 +45,14 @@ namespace FS.MQ.RocketMQ.SDK
             }
         }
 
-        public ConsumeContext() : this(ONSClient4CPPPINVOKE.new_ConsumeContext(), true) { }
+        internal static HandleRef getCPtr(ConsumeContext obj)
+        {
+            return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr;
+        }
+
+        ~ConsumeContext()
+        {
+            Dispose();
+        }
     }
 }

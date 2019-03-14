@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using CacheManager.Core.Utility;
 using StackExchange.Redis;
 
-namespace FS.Cache.Redis.CacheManager
+namespace FS.Cache.Manager.Redis
 {
     /// <summary>
     /// <see cref="RedisConfiguration"/> will be used for configuring e.g. StackExchange.Redis by

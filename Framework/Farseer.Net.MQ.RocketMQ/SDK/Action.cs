@@ -8,20 +8,11 @@
 // the SWIG interface file instead.
 //------------------------------------------------------------------------------
 
-
-#pragma warning disable 1591
-
 namespace FS.MQ.RocketMQ.SDK
 {
     public enum Action
     {
-        /// <summary>
-        ///     确认消费
-        /// </summary>
         CommitMessage,
-        /// <summary>
-        ///     过后重试
-        /// </summary>
         ReconsumeLater
     }
 }

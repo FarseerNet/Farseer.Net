@@ -16,8 +16,21 @@ namespace FS.MQ.RocketMQ.SDK
 {
     public class PushConsumer : IDisposable
     {
-        private HandleRef swigCPtr;
+        public delegate void SwigDelegatePushConsumer_0();
+
+        public delegate void SwigDelegatePushConsumer_1();
+
+        public delegate void SwigDelegatePushConsumer_2(string topic, string subExpression, IntPtr listener);
+
+        private static readonly Type[] swigMethodTypes0 = { };
+        private static readonly Type[] swigMethodTypes1 = { };
+        private static readonly Type[] swigMethodTypes2 = {typeof(string), typeof(string), typeof(MessageListener)};
         protected bool swigCMemOwn;
+        private HandleRef swigCPtr;
+
+        private SwigDelegatePushConsumer_0 swigDelegate0;
+        private SwigDelegatePushConsumer_1 swigDelegate1;
+        private SwigDelegatePushConsumer_2 swigDelegate2;
 
         internal PushConsumer(IntPtr cPtr, bool cMemoryOwn)
         {
@@ -25,9 +38,10 @@ namespace FS.MQ.RocketMQ.SDK
             swigCPtr = new HandleRef(this, cPtr);
         }
 
-        internal static HandleRef getCPtr(PushConsumer obj) { return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr; }
-
-        ~PushConsumer() { Dispose(); }
+        public PushConsumer() : this(ONSClient4CPPPINVOKE.new_PushConsumer(), true)
+        {
+            SwigDirectorConnect();
+        }
 
         public virtual void Dispose()
         {
@@ -46,47 +60,64 @@ namespace FS.MQ.RocketMQ.SDK
             }
         }
 
-        public PushConsumer() : this(ONSClient4CPPPINVOKE.new_PushConsumer(), true) { SwigDirectorConnect(); }
+        internal static HandleRef getCPtr(PushConsumer obj)
+        {
+            return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr;
+        }
 
-        public virtual void start() { ONSClient4CPPPINVOKE.PushConsumer_start(swigCPtr); }
+        ~PushConsumer()
+        {
+            Dispose();
+        }
 
-        public virtual void shutdown() { ONSClient4CPPPINVOKE.PushConsumer_shutdown(swigCPtr); }
+        public virtual void start()
+        {
+            ONSClient4CPPPINVOKE.PushConsumer_start(swigCPtr);
+        }
 
-        public virtual void subscribe(string topic, string subExpression, MessageListener listener) { ONSClient4CPPPINVOKE.PushConsumer_subscribe(swigCPtr, topic, subExpression, MessageListener.getCPtr(listener)); }
+        public virtual void shutdown()
+        {
+            ONSClient4CPPPINVOKE.PushConsumer_shutdown(swigCPtr);
+        }
+
+        public virtual void subscribe(string topic, string subExpression, MessageListener listener)
+        {
+            ONSClient4CPPPINVOKE.PushConsumer_subscribe(swigCPtr, topic, subExpression,
+                MessageListener.getCPtr(listener));
+        }
 
         private void SwigDirectorConnect()
         {
-            if (SwigDerivedClassHasMethod("start", swigMethodTypes0)) swigDelegate0 = SwigDirectorstart;
-            if (SwigDerivedClassHasMethod("shutdown", swigMethodTypes1)) swigDelegate1 = SwigDirectorshutdown;
-            if (SwigDerivedClassHasMethod("subscribe", swigMethodTypes2)) swigDelegate2 = SwigDirectorsubscribe;
+            if (SwigDerivedClassHasMethod("start", swigMethodTypes0))
+                swigDelegate0 = SwigDirectorstart;
+            if (SwigDerivedClassHasMethod("shutdown", swigMethodTypes1))
+                swigDelegate1 = SwigDirectorshutdown;
+            if (SwigDerivedClassHasMethod("subscribe", swigMethodTypes2))
+                swigDelegate2 = SwigDirectorsubscribe;
             ONSClient4CPPPINVOKE.PushConsumer_director_connect(swigCPtr, swigDelegate0, swigDelegate1, swigDelegate2);
         }
 
         private bool SwigDerivedClassHasMethod(string methodName, Type[] methodTypes)
         {
-            var methodInfo = GetType().GetMethod(methodName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, methodTypes, null);
+            var methodInfo = GetType().GetMethod(methodName,
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, methodTypes, null);
             var hasDerivedMethod = methodInfo.DeclaringType.IsSubclassOf(typeof(PushConsumer));
             return hasDerivedMethod;
         }
 
-        private void SwigDirectorstart() { start(); }
+        private void SwigDirectorstart()
+        {
+            start();
+        }
 
-        private void SwigDirectorshutdown() { shutdown(); }
+        private void SwigDirectorshutdown()
+        {
+            shutdown();
+        }
 
-        private void SwigDirectorsubscribe(string topic, string subExpression, IntPtr listener) { subscribe(topic, subExpression, listener == IntPtr.Zero ? null : new MessageListener(listener, false)); }
-
-        public delegate void SwigDelegatePushConsumer_0();
-
-        public delegate void SwigDelegatePushConsumer_1();
-
-        public delegate void SwigDelegatePushConsumer_2(string topic, string subExpression, IntPtr listener);
-
-        private SwigDelegatePushConsumer_0 swigDelegate0;
-        private SwigDelegatePushConsumer_1 swigDelegate1;
-        private SwigDelegatePushConsumer_2 swigDelegate2;
-
-        private static readonly Type[] swigMethodTypes0 = { };
-        private static readonly Type[] swigMethodTypes1 = { };
-        private static readonly Type[] swigMethodTypes2 = {typeof(string), typeof(string), typeof(MessageListener)};
+        private void SwigDirectorsubscribe(string topic, string subExpression, IntPtr listener)
+        {
+            subscribe(topic, subExpression, listener == IntPtr.Zero ? null : new MessageListener(listener, false));
+        }
     }
 }

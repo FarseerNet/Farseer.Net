@@ -3,7 +3,7 @@ using CacheManager.Core;
 using CacheManager.Core.Utility;
 using StackExchange.Redis;
 
-namespace FS.Cache.Redis.CacheManager
+namespace FS.Cache.Manager.Redis
 {
     /// <summary>
     /// Extensions for the configuration builder specific to the redis cache handle.

@@ -27,7 +27,24 @@ namespace FS.MQ.RocketMQ
             var config = configResolver.RocketMQConfig();
             if (config == null || config.Items.Count == 0)
             {
-                configResolver.Set(new RocketMQConfig {Items = new List<RocketMQItemConfig> {new RocketMQItemConfig {Name = "test", Server = "", AccessKey = "AccessKey", SecretKey = "SecretKey", ProducerID = "ProducerID", ConsumerID = "ConsumerID", Topic = "Topic", Channel = ONSChannel.CLOUD, ConsumeThreadNums = 16}}});
+                configResolver.Set(new RocketMQConfig
+                {
+                    Items = new List<RocketMQItemConfig>
+                    {
+                        new RocketMQItemConfig
+                        {
+                            Name = "test",
+                            Server = "",
+                            AccessKey = "AccessKey",
+                            SecretKey = "SecretKey",
+                            ProducerID = "ProducerID",
+                            ConsumerID = "ConsumerID",
+                            Topic = "Topic",
+                            Channel = ONSChannel.CLOUD,
+                            ConsumeThreadNums = 16
+                        }
+                    }
+                });
                 configResolver.Save();
             }
         }
@@ -37,7 +54,8 @@ namespace FS.MQ.RocketMQ
         {
             //模块初始化，实现IOC信息的注册
             IocManager.Container.Install(new RocketMQInstaller());
-            IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly(), new ConventionalRegistrationConfig {InstallInstallers = false});
+            IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly(),
+                new ConventionalRegistrationConfig {InstallInstallers = false});
         }
     }
 }

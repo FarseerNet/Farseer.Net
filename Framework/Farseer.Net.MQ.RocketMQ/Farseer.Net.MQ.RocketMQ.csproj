@@ -6,9 +6,9 @@
     <Copyright>http://www.fsgit.com</Copyright>
     <Product>RocketMQ组件</Product>
     <Description>包括：RocketMQ组件</Description>
-    <AssemblyVersion>2.1.1</AssemblyVersion>
-    <FileVersion>2.1.1</FileVersion>
-    <Version>2.1.1</Version>
+    <AssemblyVersion>2.2.0</AssemblyVersion>
+    <FileVersion>2.2.0</FileVersion>
+    <Version>2.2.0</Version>
     <Authors>steden</Authors>
     <PackageTags>RocketMQ组件</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -18,6 +18,10 @@
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <DefineConstants>$(DefineConstants);CORE</DefineConstants>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />

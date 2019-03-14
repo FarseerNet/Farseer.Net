@@ -1,5 +1,4 @@
-﻿#if CORE
-using System;
+﻿using System;
 using System.Collections.Generic;
 using CacheManager.Core;
 using CacheManager.Core.Internal;
@@ -277,4 +276,3 @@ namespace FS.Cache.CachingMemory
         }
     }
 }
-#endif

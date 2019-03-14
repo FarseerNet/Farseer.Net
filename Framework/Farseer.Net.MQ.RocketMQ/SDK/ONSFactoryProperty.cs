@@ -15,8 +15,8 @@ namespace FS.MQ.RocketMQ.SDK
 {
     public class ONSFactoryProperty : IDisposable
     {
-        private HandleRef swigCPtr;
         protected bool swigCMemOwn;
+        private HandleRef swigCPtr;
 
         internal ONSFactoryProperty(IntPtr cPtr, bool cMemoryOwn)
         {
@@ -24,168 +24,8 @@ namespace FS.MQ.RocketMQ.SDK
             swigCPtr = new HandleRef(this, cPtr);
         }
 
-        internal static HandleRef getCPtr(ONSFactoryProperty obj) { return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr; }
-
-        ~ONSFactoryProperty() { Dispose(); }
-
-        public virtual void Dispose()
+        public ONSFactoryProperty() : this(ONSClient4CPPPINVOKE.new_ONSFactoryProperty(), true)
         {
-            lock (this)
-            {
-                if (swigCPtr.Handle != IntPtr.Zero)
-                {
-                    if (swigCMemOwn)
-                    {
-                        swigCMemOwn = false;
-                        ONSClient4CPPPINVOKE.delete_ONSFactoryProperty(swigCPtr);
-                    }
-                    swigCPtr = new HandleRef(null, IntPtr.Zero);
-                }
-                GC.SuppressFinalize(this);
-            }
-        }
-
-        public ONSFactoryProperty() : this(ONSClient4CPPPINVOKE.new_ONSFactoryProperty(), true) { }
-
-        public bool checkValidityOfFactoryProperties(string key, string value)
-        {
-            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_checkValidityOfFactoryProperties(swigCPtr, key, value);
-            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending) throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
-            return ret;
-        }
-
-        public string getLogPath()
-        {
-            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getLogPath(swigCPtr);
-            return ret;
-        }
-
-        public void setSendMsgTimeout(int value) { ONSClient4CPPPINVOKE.ONSFactoryProperty_setSendMsgTimeout(swigCPtr, value); }
-
-        public void setSendMsgRetryTimes(int value) { ONSClient4CPPPINVOKE.ONSFactoryProperty_setSendMsgRetryTimes(swigCPtr, value); }
-
-        public void setMaxMsgCacheSize(int size) { ONSClient4CPPPINVOKE.ONSFactoryProperty_setMaxMsgCacheSize(swigCPtr, size); }
-
-        public void setOnsTraceSwitch(bool onswitch) { ONSClient4CPPPINVOKE.ONSFactoryProperty_setOnsTraceSwitch(swigCPtr, onswitch); }
-
-        public void setOnsChannel(ONSChannel onsChannel)
-        {
-            ONSClient4CPPPINVOKE.ONSFactoryProperty_setOnsChannel(swigCPtr, (int)onsChannel);
-            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending) throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
-        }
-
-        public void setFactoryProperty(string key, string value)
-        {
-            ONSClient4CPPPINVOKE.ONSFactoryProperty_setFactoryProperty(swigCPtr, key, value);
-            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending) throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
-        }
-
-        public void setFactoryProperties(SWIGTYPE_p_std__mapT_std__string_std__string_t factoryProperties)
-        {
-            ONSClient4CPPPINVOKE.ONSFactoryProperty_setFactoryProperties(swigCPtr, SWIGTYPE_p_std__mapT_std__string_std__string_t.getCPtr(factoryProperties));
-            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending) throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
-        }
-
-        public SWIGTYPE_p_std__mapT_std__string_std__string_t getFactoryProperties()
-        {
-            var ret = new SWIGTYPE_p_std__mapT_std__string_std__string_t(ONSClient4CPPPINVOKE.ONSFactoryProperty_getFactoryProperties(swigCPtr), true);
-            return ret;
-        }
-
-        public string getProducerId()
-        {
-            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getProducerId(swigCPtr);
-            return ret;
-        }
-
-        public string getConsumerId()
-        {
-            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getConsumerId(swigCPtr);
-            return ret;
-        }
-
-        public string getPublishTopics()
-        {
-            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getPublishTopics(swigCPtr);
-            return ret;
-        }
-
-        public string getMessageModel()
-        {
-            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getMessageModel(swigCPtr);
-            return ret;
-        }
-
-        public int getSendMsgTimeout()
-        {
-            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getSendMsgTimeout(swigCPtr);
-            return ret;
-        }
-
-        public int getSendMsgRetryTimes()
-        {
-            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getSendMsgRetryTimes(swigCPtr);
-            return ret;
-        }
-
-        public int getConsumeThreadNums()
-        {
-            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getConsumeThreadNums(swigCPtr);
-            return ret;
-        }
-
-        public int getMaxMsgCacheSize()
-        {
-            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getMaxMsgCacheSize(swigCPtr);
-            return ret;
-        }
-
-        public ONSChannel getOnsChannel()
-        {
-            var ret = (ONSChannel)ONSClient4CPPPINVOKE.ONSFactoryProperty_getOnsChannel(swigCPtr);
-            return ret;
-        }
-
-        public string getChannel()
-        {
-            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getChannel(swigCPtr);
-            return ret;
-        }
-
-        public string getMessageContent()
-        {
-            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getMessageContent(swigCPtr);
-            return ret;
-        }
-
-        public string getNameSrvAddr()
-        {
-            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getNameSrvAddr(swigCPtr);
-            return ret;
-        }
-
-        public string getNameSrvDomain()
-        {
-            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getNameSrvDomain(swigCPtr);
-            return ret;
-        }
-
-        public string getAccessKey()
-        {
-            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getAccessKey(swigCPtr);
-            return ret;
-        }
-
-        public string getSecretKey()
-        {
-            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getSecretKey(swigCPtr);
-            return ret;
-        }
-
-        public bool getOnsTraceSwitch()
-        {
-            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getOnsTraceSwitch(swigCPtr);
-            return ret;
         }
 
         public static string LogPath
@@ -366,6 +206,192 @@ namespace FS.MQ.RocketMQ.SDK
                 var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_SendMsgRetryTimes_get();
                 return ret;
             }
+        }
+
+        public virtual void Dispose()
+        {
+            lock (this)
+            {
+                if (swigCPtr.Handle != IntPtr.Zero)
+                {
+                    if (swigCMemOwn)
+                    {
+                        swigCMemOwn = false;
+                        ONSClient4CPPPINVOKE.delete_ONSFactoryProperty(swigCPtr);
+                    }
+                    swigCPtr = new HandleRef(null, IntPtr.Zero);
+                }
+                GC.SuppressFinalize(this);
+            }
+        }
+
+        internal static HandleRef getCPtr(ONSFactoryProperty obj)
+        {
+            return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr;
+        }
+
+        ~ONSFactoryProperty()
+        {
+            Dispose();
+        }
+
+        public bool checkValidityOfFactoryProperties(string key, string value)
+        {
+            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_checkValidityOfFactoryProperties(swigCPtr, key, value);
+            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
+                throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+            return ret;
+        }
+
+        public string getLogPath()
+        {
+            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getLogPath(swigCPtr);
+            return ret;
+        }
+
+        public void setSendMsgTimeout(int value)
+        {
+            ONSClient4CPPPINVOKE.ONSFactoryProperty_setSendMsgTimeout(swigCPtr, value);
+        }
+
+        public void setSendMsgRetryTimes(int value)
+        {
+            ONSClient4CPPPINVOKE.ONSFactoryProperty_setSendMsgRetryTimes(swigCPtr, value);
+        }
+
+        public void setMaxMsgCacheSize(int size)
+        {
+            ONSClient4CPPPINVOKE.ONSFactoryProperty_setMaxMsgCacheSize(swigCPtr, size);
+        }
+
+        public void setOnsTraceSwitch(bool onswitch)
+        {
+            ONSClient4CPPPINVOKE.ONSFactoryProperty_setOnsTraceSwitch(swigCPtr, onswitch);
+        }
+
+        public void setOnsChannel(ONSChannel onsChannel)
+        {
+            ONSClient4CPPPINVOKE.ONSFactoryProperty_setOnsChannel(swigCPtr, (int) onsChannel);
+            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
+                throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+        }
+
+        public void setFactoryProperty(string key, string value)
+        {
+            ONSClient4CPPPINVOKE.ONSFactoryProperty_setFactoryProperty(swigCPtr, key, value);
+            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
+                throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+        }
+
+        public void setFactoryProperties(SWIGTYPE_p_std__mapT_std__string_std__string_t factoryProperties)
+        {
+            ONSClient4CPPPINVOKE.ONSFactoryProperty_setFactoryProperties(swigCPtr,
+                SWIGTYPE_p_std__mapT_std__string_std__string_t.getCPtr(factoryProperties));
+            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
+                throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+        }
+
+        public SWIGTYPE_p_std__mapT_std__string_std__string_t getFactoryProperties()
+        {
+            var ret = new SWIGTYPE_p_std__mapT_std__string_std__string_t(
+                ONSClient4CPPPINVOKE.ONSFactoryProperty_getFactoryProperties(swigCPtr), true);
+            return ret;
+        }
+
+        public string getProducerId()
+        {
+            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getProducerId(swigCPtr);
+            return ret;
+        }
+
+        public string getConsumerId()
+        {
+            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getConsumerId(swigCPtr);
+            return ret;
+        }
+
+        public string getPublishTopics()
+        {
+            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getPublishTopics(swigCPtr);
+            return ret;
+        }
+
+        public string getMessageModel()
+        {
+            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getMessageModel(swigCPtr);
+            return ret;
+        }
+
+        public int getSendMsgTimeout()
+        {
+            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getSendMsgTimeout(swigCPtr);
+            return ret;
+        }
+
+        public int getSendMsgRetryTimes()
+        {
+            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getSendMsgRetryTimes(swigCPtr);
+            return ret;
+        }
+
+        public int getConsumeThreadNums()
+        {
+            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getConsumeThreadNums(swigCPtr);
+            return ret;
+        }
+
+        public int getMaxMsgCacheSize()
+        {
+            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getMaxMsgCacheSize(swigCPtr);
+            return ret;
+        }
+
+        public ONSChannel getOnsChannel()
+        {
+            var ret = (ONSChannel) ONSClient4CPPPINVOKE.ONSFactoryProperty_getOnsChannel(swigCPtr);
+            return ret;
+        }
+
+        public string getChannel()
+        {
+            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getChannel(swigCPtr);
+            return ret;
+        }
+
+        public string getMessageContent()
+        {
+            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getMessageContent(swigCPtr);
+            return ret;
+        }
+
+        public string getNameSrvAddr()
+        {
+            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getNameSrvAddr(swigCPtr);
+            return ret;
+        }
+
+        public string getNameSrvDomain()
+        {
+            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getNameSrvDomain(swigCPtr);
+            return ret;
+        }
+
+        public string getAccessKey()
+        {
+            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getAccessKey(swigCPtr);
+            return ret;
+        }
+
+        public string getSecretKey()
+        {
+            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getSecretKey(swigCPtr);
+            return ret;
+        }
+
+        public bool getOnsTraceSwitch()
+        {
+            var ret = ONSClient4CPPPINVOKE.ONSFactoryProperty_getOnsTraceSwitch(swigCPtr);
+            return ret;
         }
     }
 }

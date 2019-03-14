@@ -15,18 +15,14 @@ namespace FS.MQ.RocketMQ.SDK
 {
     public class TransactionProducer : IDisposable
     {
-        private HandleRef swigCPtr;
         protected bool swigCMemOwn;
+        private HandleRef swigCPtr;
 
         internal TransactionProducer(IntPtr cPtr, bool cMemoryOwn)
         {
             swigCMemOwn = cMemoryOwn;
             swigCPtr = new HandleRef(this, cPtr);
         }
-
-        internal static HandleRef getCPtr(TransactionProducer obj) { return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr; }
-
-        ~TransactionProducer() { Dispose(); }
 
         public virtual void Dispose()
         {
@@ -45,14 +41,33 @@ namespace FS.MQ.RocketMQ.SDK
             }
         }
 
-        public virtual void start() { ONSClient4CPPPINVOKE.TransactionProducer_start(swigCPtr); }
+        internal static HandleRef getCPtr(TransactionProducer obj)
+        {
+            return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr;
+        }
 
-        public virtual void shutdown() { ONSClient4CPPPINVOKE.TransactionProducer_shutdown(swigCPtr); }
+        ~TransactionProducer()
+        {
+            Dispose();
+        }
+
+        public virtual void start()
+        {
+            ONSClient4CPPPINVOKE.TransactionProducer_start(swigCPtr);
+        }
+
+        public virtual void shutdown()
+        {
+            ONSClient4CPPPINVOKE.TransactionProducer_shutdown(swigCPtr);
+        }
 
         public virtual SendResultONS send(Message msg, LocalTransactionExecuter executer)
         {
-            var ret = new SendResultONS(ONSClient4CPPPINVOKE.TransactionProducer_send(swigCPtr, Message.getCPtr(msg), LocalTransactionExecuter.getCPtr(executer)), true);
-            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending) throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
+            var ret = new SendResultONS(
+                ONSClient4CPPPINVOKE.TransactionProducer_send(swigCPtr, Message.getCPtr(msg),
+                    LocalTransactionExecuter.getCPtr(executer)), true);
+            if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
+                throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
             return ret;
         }
     }

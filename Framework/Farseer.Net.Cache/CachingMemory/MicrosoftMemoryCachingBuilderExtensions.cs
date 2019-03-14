@@ -1,5 +1,4 @@
-﻿#if CORE
-using System;
+﻿using System;
 using CacheManager.Core;
 using Microsoft.Extensions.Caching.Memory;
 using FS.Cache.CachingMemory;
@@ -73,5 +72,3 @@ namespace FS.Cache
         public static ConfigurationBuilderCacheHandlePart WithMemoryCacheHandle(this ConfigurationBuilderCachePart part, string instanceName, bool isBackplaneSource, MemoryCacheOptions options) => part?.WithHandle(typeof(MemoryCacheHandle<>), instanceName, isBackplaneSource, options);
     }
 }
-
-#endif

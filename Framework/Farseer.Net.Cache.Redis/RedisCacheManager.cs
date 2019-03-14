@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Text;
-using FS.Cache.Redis.Configuration;
 using Newtonsoft.Json;
 using StackExchange.Redis;
+using FS.Cache.Redis.Configuration;
 
 namespace FS.Cache.Redis
 {

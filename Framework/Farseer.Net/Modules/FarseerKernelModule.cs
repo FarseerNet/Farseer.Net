@@ -22,7 +22,7 @@ namespace FS.Modules
             ServicePointManager.DefaultConnectionLimit = 512;
             ServicePointManager.UseNagleAlgorithm = false;
 
-            // 读取zto.json的配置文件名称
+            // 读取Farseer..json的配置文件名称
             string appSetting = ConfigurationManager.AppSettings["ConfigName"];
             if (!string.IsNullOrWhiteSpace(appSetting)) SysPath.ConfigurationName = appSetting;
             //todo:SystemConfigBuilder.LoadConfig();

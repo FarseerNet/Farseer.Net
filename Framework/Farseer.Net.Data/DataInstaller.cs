@@ -1,17 +1,4 @@
-﻿//------------------------------------------------------------------------------
-// <copyright file="DbInstaller.cs" company="ZTO">
-//     Copyright (c) Shanghai Zhongtongji Network Technology Co., Ltd.  All rights reserved.
-// </copyright>                                                                
-//------------------------------------------------------------------------------
-
-/*
- * DbInstaller.cs
- * 
- * Copyright (c) 2016-2030, ZTO Corporation
- * 
- */
-
-using Castle.MicroKernel.Registration;
+﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using FS.Configuration;
