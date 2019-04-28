@@ -13,6 +13,7 @@
     <Version>2.3.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RootNamespace>FS</RootNamespace>
+    <PackageVersion>2.3.1</PackageVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'net45'">

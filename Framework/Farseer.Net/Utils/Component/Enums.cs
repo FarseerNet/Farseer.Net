@@ -57,6 +57,8 @@ namespace FS.Utils.Component
                         return dscript.Name;
                     }
                 }
+                // 还是找不到时，返回空
+                return string.Empty;
             }
             return CacheList[key];
         }
