@@ -10,9 +10,12 @@ namespace FS.Job
             MenuItem preItem = null;
             while (true)
             {
-                // 显示菜单，并拿到输入的命令
-                preItem = meu.ShowMenu(preItem);
-                if (preItem.SubMenuList.Count == 0) preItem = preItem.PreItem;
+                // 显示菜单
+                var lstMeu = meu.ShowMenu(preItem);
+                // 拿到输入的命令
+                preItem = new CmdInput().OutputReadLine(lstMeu);
+                
+                if (preItem?.SubMenuList.Count == 0) preItem = preItem.PreItem;
             }
         }
     }

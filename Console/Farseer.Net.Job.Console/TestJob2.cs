@@ -1,11 +1,12 @@
+using System.Threading;
 using System.Threading.Tasks;
 using FS.Job;
 
 namespace Farseer.Net.Job.Console
 {
-    public class TestJob1 : IJob
+    public class TestJob2 : IJob
     {
-        public string Name { get; } = "测试普通执行";
+        public string Name { get; } = "延迟执行";
 
         public void Init()
         {
@@ -13,6 +14,7 @@ namespace Farseer.Net.Job.Console
 
         public void Start()
         {
+            Thread.Sleep(5000);
             System.Console.WriteLine($"Test~~~");
         }
 

@@ -14,11 +14,11 @@ namespace FS.Job.Entity
         /// </summary>
         void CreateMenu(MenuItem preItem);
 
-        /// <summary>
-        /// 读取输入命令
-        /// </summary>
-        /// <param name="lstMeu"></param>
-        /// <returns></returns>
-        void OutputReadLine();
+//        /// <summary>
+//        /// 读取输入命令
+//        /// </summary>
+//        /// <param name="lstMeu"></param>
+//        /// <returns></returns>
+//        void OutputReadLine();
     }
 }

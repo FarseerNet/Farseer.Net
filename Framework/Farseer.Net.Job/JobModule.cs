@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using FS.Configuration;
 using FS.DI;
+using FS.Job.ActService;
 using FS.Modules;
 
 namespace FS.Job
@@ -23,6 +24,8 @@ namespace FS.Job
             IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly(), new ConventionalRegistrationConfig { InstallInstallers = false });
             new JobFinder().RegisterJob();
             new Menu().CreateMenu();
+            new JobManager().Run();
+            LazyExecute.Init();
         }
     }
 }
