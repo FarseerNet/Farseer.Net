@@ -40,29 +40,29 @@ namespace FS.Job
         /// 执行目录
         /// </summary>
         /// <param name="meu"></param>
-        /// <param name="saveLog">是否保存执行记录</param>
+        /// <param name="isOutputLog">是否输出打印信息</param>
         /// <returns></returns>
-        public static MenuItem ExecuteMenu(MenuItem meu, bool saveLog = false)
+        public static MenuItem ExecuteMenu(MenuItem meu, bool isOutputLog = true)
         {
             if (meu.Act != null)
             {
-                if (meu.SaveRecord || saveLog) Console.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] 开始执行：");
+                if (meu.SaveRecord && isOutputLog) Console.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] 开始执行：");
                 var startNew = Stopwatch.StartNew();
                 try
                 {
                     meu.Act();
-                    if (meu.SaveRecord || saveLog)
+                    if (meu.SaveRecord)
                         HistoryExecuteRecord.Add($"{meu.MenuName}，执行完成", startNew.ElapsedMilliseconds);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                    if (meu.SaveRecord || saveLog)
+                    if (meu.SaveRecord)
                         HistoryExecuteRecord.Add($"{meu.MenuName}，执行失败：{e.Message}", startNew.ElapsedMilliseconds);
                 }
 
                 startNew.Stop();
-                if (meu.SaveRecord || saveLog)
+                if (meu.SaveRecord && isOutputLog)
                     Console.WriteLine(
                         $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] 执行完成，耗时：{startNew.ElapsedMilliseconds:N1}ms");
             }

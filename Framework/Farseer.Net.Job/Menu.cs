@@ -27,7 +27,6 @@ namespace FS.Job
             var menuItem = new MenuItem(null, 1, "JOB 立即执行") {Act = () => new AtonceExecute().Run(),};
             new AtonceExecute().CreateMenu(menuItem);
             MeuList.Add(menuItem);
-
             
             menuItem = new MenuItem(null, 2, "JOB 加入队列") {Act = () => new LazyExecute().Run(),};
             new LazyExecute().CreateMenu(menuItem);
@@ -40,7 +39,7 @@ namespace FS.Job
             });
             MeuList.Add(new MenuItem(null, 4, "显示执行列表")
             {
-                Act = null,
+                Act = LazyExecute.Show,
                 SubMenuList = new List<MenuItem>()
             });
             MeuList.Add(new MenuItem(null, 5, "显示历史列表")

@@ -1,20 +1,23 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FS.DI;
+using FS.Job.Entity;
 
 namespace FS.Job.ActService
 {
     public class LazyExecute
     {
-        public static Stack<MenuItem> List = new Stack<MenuItem>();
+        public static Stack<JobEntity> List = new Stack<JobEntity>();
 
         public void Run()
         {
         }
 
-        private void Add(MenuItem item)
+        private void Add(JobEntity item)
         {
             List.Push(item);
         }
@@ -31,10 +34,26 @@ namespace FS.Job.ActService
                         continue;
                     }
 
-                    var menuItem = List.Pop();
-                    CmdInput.ExecuteMenu(menuItem, true);
+                    var job = List.Pop();
+                    var menuItem = new MenuItem(null, -1, job.JobName, true)
+                    {
+                        Act = () => IocManager.Instance.Resolve<IJob>(job.IocName).Start()
+                    };
+                    CmdInput.ExecuteMenu(menuItem, false);
                 }
             });
+        }
+
+        public static void Show()
+        {
+            var lst = List.ToList();
+            Console.Write($"共");
+            Utils.Write(lst.Count.ToString(), ConsoleColor.Red);
+            Console.WriteLine($"项Job待执行");
+            foreach (var msg in lst)
+            {
+                Utils.WriteLine($"{msg.JobName} ", ConsoleColor.Green);
+            }
         }
 
         /// <summary>
@@ -49,7 +68,7 @@ namespace FS.Job.ActService
                 {
                     SubMenuList = new List<MenuItem>()
                 };
-                item.Act = () => Add(item);
+                item.Act = () => Add(job);
                 preItem.SubMenuList.Add(item);
             }
         }

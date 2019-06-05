@@ -24,8 +24,8 @@ namespace FS.Job
             IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly(), new ConventionalRegistrationConfig { InstallInstallers = false });
             new JobFinder().RegisterJob();
             new Menu().CreateMenu();
-            new JobManager().Run();
             LazyExecute.Init();
+            new JobManager().Run();
         }
     }
 }
