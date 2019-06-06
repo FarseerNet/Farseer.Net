@@ -24,41 +24,11 @@ namespace FS.Job
         {
             MeuList.Clear();
 
-            var menuItem = new MenuItem(null, 1, "JOB 立即执行") {Act = () => new AtonceExecute().Run(),};
-            new AtonceExecute().CreateMenu(menuItem);
-            MeuList.Add(menuItem);
-            
-            menuItem = new MenuItem(null, 2, "JOB 加入队列") {Act = () => new LazyExecute().Run(),};
-            new LazyExecute().CreateMenu(menuItem);
-            MeuList.Add(menuItem);
-            
-            MeuList.Add(new MenuItem(null, 3, "JOB 设置计划")
-            {
-                Act = null,
-                SubMenuList = new List<MenuItem>()
-            });
-            MeuList.Add(new MenuItem(null, 4, "显示执行列表")
-            {
-                Act = LazyExecute.Show,
-                SubMenuList = new List<MenuItem>()
-            });
-            MeuList.Add(new MenuItem(null, 5, "显示历史列表")
-            {
-                Act = HistoryExecuteRecord.Show,
-                SubMenuList = new List<MenuItem>()
-            });
-            
-            MeuList.Add(new MenuItem(null, 6, "显示计划列表")
-            {
-                Act = null,
-                SubMenuList = new List<MenuItem>()
-            });
-            MeuList.Add(new MenuItem(null, 0, "退出程序")
-            {
-                Act = () => Environment.Exit(0),
-                SubMenuList = new List<MenuItem>()
-            });
-            return;
+            MeuList.Add(new MenuItem(null, 1, "JOB 单项执行").SetAct(meu => new SingleExecute().Run(meu)));
+            MeuList.Add(new MenuItem(null, 2, "JOB 顺序执行").SetAct(meu => new MultipleExecute().Run(meu)));
+            MeuList.Add(new MenuItem(null, 3, "JOB 异步执行").SetAct(meu => new AsyncExecute().Run(meu)));
+            MeuList.Add(new MenuItem(null, 4, "显示历史列表").SetAct(meu => HistoryExecuteRecord.Show()));
+            MeuList.Add(new MenuItem(null, 0, "退出程序").SetAct(meu => Environment.Exit(0)));
         }
 
         /// <summary>

@@ -50,7 +50,7 @@ namespace FS.Job
                 var startNew = Stopwatch.StartNew();
                 try
                 {
-                    meu.Act();
+                    meu.Act(meu);
                     if (meu.SaveRecord)
                         HistoryExecuteRecord.Add($"{meu.MenuName}，执行完成", startNew.ElapsedMilliseconds);
                 }

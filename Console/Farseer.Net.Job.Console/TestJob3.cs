@@ -5,9 +5,9 @@ using FS.Job.Entity;
 
 namespace Farseer.Net.Job.Console
 {
-    public class TestJob1 : IJob
+    public class TestJob3 : IJob
     {
-        public string Name { get; } = "测试普通执行";
+        public string Name { get; } = "间隔执行";
         public JobSetting Setting { get; }
 
         public void Init()
@@ -16,6 +16,7 @@ namespace Farseer.Net.Job.Console
 
         public void Start(CancellationToken token)
         {
+            Thread.Sleep(5000);
             System.Console.WriteLine($"Test~~~");
         }
 

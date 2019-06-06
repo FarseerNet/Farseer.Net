@@ -10,6 +10,7 @@ namespace FS.Job
             MenuItem preItem = null;
             while (true)
             {
+                if (preItem != null) CmdInput.ExecuteMenu(preItem);
                 // 显示菜单
                 var lstMeu = meu.ShowMenu(preItem);
                 // 拿到输入的命令

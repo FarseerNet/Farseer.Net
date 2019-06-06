@@ -7,7 +7,7 @@ namespace FS.Job.Entity
         /// <summary>
         /// 运行
         /// </summary>
-        void Run();
+        void Run(MenuItem meu);
 
         /// <summary>
         /// 显示菜单

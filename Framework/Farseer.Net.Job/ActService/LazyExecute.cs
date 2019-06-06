@@ -13,8 +13,9 @@ namespace FS.Job.ActService
     {
         public static Stack<JobEntity> List = new Stack<JobEntity>();
 
-        public void Run()
+        public void Run(MenuItem meu)
         {
+            if (meu.SubMenuList.Count == 0) CreateMenu(meu);
         }
 
         private void Add(JobEntity item)
@@ -35,11 +36,13 @@ namespace FS.Job.ActService
                     }
 
                     var job = List.Pop();
-                    var menuItem = new MenuItem(null, -1, job.JobName, true)
+                    CmdInput.ExecuteMenu(new MenuItem(null, -1, job.JobName, true).SetAct(meu =>
                     {
-                        Act = () => IocManager.Instance.Resolve<IJob>(job.IocName).Start()
-                    };
-                    CmdInput.ExecuteMenu(menuItem, false);
+                        var resolve = IocManager.Instance.Resolve<IJob>(job.IocName);
+                        resolve.Init();
+                        resolve.Start(CancellationToken.None);
+                        resolve.Stop();
+                    }), false);
                 }
             });
         }
@@ -64,12 +67,7 @@ namespace FS.Job.ActService
             preItem.SubMenuList = new List<MenuItem>();
             foreach (var job in JobFinder.JobList)
             {
-                var item = new MenuItem(preItem, job.Index, job.JobName)
-                {
-                    SubMenuList = new List<MenuItem>()
-                };
-                item.Act = () => Add(job);
-                preItem.SubMenuList.Add(item);
+                preItem.SubMenuList.Add(new MenuItem(preItem, job.Index, job.JobName).SetAct(meu => Add(job)));
             }
         }
     }

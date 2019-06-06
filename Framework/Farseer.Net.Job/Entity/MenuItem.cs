@@ -34,16 +34,22 @@ namespace FS.Job
         /// <summary>
         /// 子菜单列表
         /// </summary>
-        public List<MenuItem> SubMenuList { get; set; }
+        public List<MenuItem> SubMenuList { get; set; } = new List<MenuItem>();
 
         /// <summary>
         /// 当前目录要执行的功能
         /// </summary>
-        public Action Act { get; set; }
+        public Action<MenuItem> Act { get; private set; }
 
         /// <summary>
         /// 保存执行记录
         /// </summary>
         public bool SaveRecord { get; set; }
+
+        public MenuItem SetAct(Action<MenuItem> act)
+        {
+            Act = act;
+            return this;
+        }
     }
 }
