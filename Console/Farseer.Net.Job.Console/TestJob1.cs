@@ -7,7 +7,7 @@ namespace Farseer.Net.Job.Console
 {
     public class TestJob1 : IJob
     {
-        public string Name { get; } = "测试普通执行";
+        public string Name { get; } = "TestJob1：普通执行";
         public JobSetting Setting { get; }
 
         public void Init()

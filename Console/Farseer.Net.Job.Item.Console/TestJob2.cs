@@ -1,13 +1,12 @@
 using System.Threading;
-using System.Threading.Tasks;
 using FS.Job;
 using FS.Job.Entity;
 
-namespace Farseer.Net.Job.Console
+namespace Farseer.Net.Job.Item.Console
 {
     public class TestJob2 : IJob
     {
-        public string Name { get; } = "延迟执行";
+        public string Name { get; } = "TestJob2：延迟执行";
         public JobSetting Setting { get; }
 
         public void Init()

@@ -59,7 +59,7 @@ namespace FS.Job
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    Utils.WriteLine(e.ToString(), ConsoleColor.Red);
                     if (meu.SaveRecord)
                         HistoryExecuteRecord.Error(meu.MenuName, e.Message);
                 }
