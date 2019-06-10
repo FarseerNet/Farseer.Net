@@ -25,10 +25,16 @@ namespace FS.Job.ActService
             {
                 preItem.SubMenuList.Add(new MenuItem(preItem, job.Index, job.JobName, true).SetAct(meu =>
                 {
-                    var resolve = IocManager.Instance.Resolve<IJob>(job.IocName);
-                    resolve.Init();
-                    resolve.Start(CancellationToken.None);
-                    resolve.Stop();
+                    using (var co = new ConsoleOutput())
+                    {
+                        co.Execute(job.JobName, () =>
+                        {
+                            var resolve = IocManager.Instance.Resolve<IJob>(job.IocName);
+                            resolve.Init();
+                            resolve.Start(CancellationToken.None);
+                            resolve.Stop();
+                        },true,true);
+                    }
                 }));
             }
         }

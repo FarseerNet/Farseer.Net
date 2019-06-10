@@ -36,18 +36,15 @@ namespace FS.Job.ActService
             List[job.JobType].TokenSource = new CancellationTokenSource();
             List[job.JobType].Task = new Task(() =>
             {
-                var startNew = Stopwatch.StartNew();
-                try
+                using (var co = new ConsoleOutput())
                 {
-                    var resolve = IocManager.Instance.Resolve<IJob>(job.IocName);
-                    resolve.Init();
-                    resolve.Start(List[job.JobType].TokenSource.Token);
-                    resolve.Stop();
-                    HistoryExecuteRecord.Success(job.JobName, startNew.ElapsedMilliseconds);
-                }
-                catch (Exception e)
-                {
-                    HistoryExecuteRecord.Error(job.JobName, e.Message);
+                    co.Execute(job.JobName, () =>
+                    {
+                        var resolve = IocManager.Instance.Resolve<IJob>(job.IocName);
+                        resolve.Init();
+                        resolve.Start(List[job.JobType].TokenSource.Token);
+                        resolve.Stop();
+                    },false,true);
                 }
             }, List[job.JobType].TokenSource.Token);
             return List[job.JobType].Task;

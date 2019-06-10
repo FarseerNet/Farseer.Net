@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using FS.DI;
@@ -14,10 +15,16 @@ namespace FS.Job.ActService
         {
             foreach (var job in JobFinder.JobList)
             {
-                var resolve = IocManager.Instance.Resolve<IJob>(job.IocName);
-                resolve.Init();
-                resolve.Start(CancellationToken.None);
-                resolve.Stop();
+                using (var co = new ConsoleOutput())
+                {
+                    co.Execute(job.JobName, () =>
+                        {
+                            var resolve = IocManager.Instance.Resolve<IJob>(job.IocName);
+                            resolve.Init();
+                            resolve.Start(CancellationToken.None);
+                            resolve.Stop();
+                        },true,true);
+                }
             }
         }
 

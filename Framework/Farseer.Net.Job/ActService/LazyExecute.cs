@@ -38,10 +38,16 @@ namespace FS.Job.ActService
                     var job = List.Pop();
                     CmdInput.ExecuteMenu(new MenuItem(null, -1, job.JobName, true).SetAct(meu =>
                     {
-                        var resolve = IocManager.Instance.Resolve<IJob>(job.IocName);
-                        resolve.Init();
-                        resolve.Start(CancellationToken.None);
-                        resolve.Stop();
+                        using (var co = new ConsoleOutput())
+                        {
+                            co.Execute(job.JobName, () =>
+                            {
+                                var resolve = IocManager.Instance.Resolve<IJob>(job.IocName);
+                                resolve.Init();
+                                resolve.Start(CancellationToken.None);
+                                resolve.Stop();
+                            },false,true);
+                        }
                     }), false);
                 }
             });

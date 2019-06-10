@@ -47,28 +47,12 @@ namespace FS.Job
         /// <returns></returns>
         public static MenuItem ExecuteMenu(MenuItem meu, bool isOutputLog = true)
         {
-            if (meu.Act != null)
-            {
-                if (meu.SaveRecord && isOutputLog) Console.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] 开始执行：");
-                var startNew = Stopwatch.StartNew();
-                try
-                {
-                    meu.Act(meu);
-                    if (meu.SaveRecord)
-                        HistoryExecuteRecord.Success(meu.MenuName, startNew.ElapsedMilliseconds);
-                }
-                catch (Exception e)
-                {
-                    Utils.WriteLine(e.ToString(), ConsoleColor.Red);
-                    if (meu.SaveRecord)
-                        HistoryExecuteRecord.Error(meu.MenuName, e.Message);
-                }
-
-                startNew.Stop();
-                if (meu.SaveRecord && isOutputLog)
-                    Console.WriteLine(
-                        $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] 执行完成，耗时：{startNew.ElapsedMilliseconds:N1}ms");
-            }
+            if (meu.Act == null) return meu;
+            meu.Act(meu);
+//            using (var co = new ConsoleOutput())
+//            {
+//                co.Execute(meu.MenuName,()=> meu.Act(meu),meu.SaveRecord && isOutputLog,meu.SaveRecord);
+//            }
 
             return meu;
         }
