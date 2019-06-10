@@ -1,11 +1,11 @@
+using System;
 using System.Threading;
-using System.Threading.Tasks;
 using FS.Job;
 using FS.Job.Entity;
 
-namespace Farseer.Net.Job.Console
+namespace Farseer.Net.Job.Item.Console
 {
-    public class TestJob3 : IJob
+    public class TestJob4 : IJob
     {
         public string Name { get; } = "间隔执行";
         public JobSetting Setting { get; }
@@ -16,8 +16,7 @@ namespace Farseer.Net.Job.Console
 
         public void Start(CancellationToken token)
         {
-            Thread.Sleep(5000);
-            System.Console.WriteLine($"Test~~~");
+            throw new Exception("出错啦~~");
         }
 
         public void Stop()

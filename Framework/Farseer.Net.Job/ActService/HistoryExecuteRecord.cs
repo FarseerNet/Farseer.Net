@@ -1,18 +1,23 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using FS.Job.Entity;
 
-namespace FS.Job
+namespace FS.Job.ActService
 {
     public class HistoryExecuteRecord
     {
         private static Stack<HistoryExecuteEntity> List = new Stack<HistoryExecuteEntity>();
 
-        public static void Add(string msg, long ms)
+        public static void Success(string jobName, long ms)
         {
-            List.Push(new HistoryExecuteEntity {CreateAt = DateTime.Now, Msg = msg, UseTime = ms});
+            List.Push(new HistoryExecuteEntity {CreateAt = DateTime.Now, UseTime = ms, JobName = jobName});
+        }
+
+        public static void Error(string jobName, string msg)
+        {
+            List.Push(new HistoryExecuteEntity
+                {CreateAt = DateTime.Now, Msg = msg, JobName = jobName, IsError = true});
         }
 
         private static List<HistoryExecuteEntity> ToList()
@@ -36,9 +41,24 @@ namespace FS.Job
 
             foreach (var msg in lst)
             {
-                Utils.Write($"{msg.CreateAt:yy-MM-dd HH:mm:ss} ", ConsoleColor.Green);
-                Utils.Write($"{msg.Msg} 耗时:", ConsoleColor.White);
-                Utils.WriteLine($"{msg.UseTime} ms", ConsoleColor.Red);
+                if (!msg.IsError)
+                {
+                    Utils.Write($"{msg.CreateAt:yy-MM-dd HH:mm:ss} ", ConsoleColor.Green);
+                    Console.Write($"【");
+                    Utils.Write($"{msg.JobName} ", ConsoleColor.Red);
+                    Console.Write($"】 执行耗时:");
+                    Utils.WriteLine($"{msg.UseTime} ms", ConsoleColor.Red);
+                }
+                else
+                {
+                    Utils.Write($"{msg.CreateAt:yy-MM-dd HH:mm:ss} ", ConsoleColor.Green);
+                    Console.Write($"【");
+                    Utils.Write($"{msg.JobName} ", ConsoleColor.Red);
+                    Console.Write($"】");
+                    Utils.Write($"执行失败", ConsoleColor.Red);
+                    Console.Write($"失败原因：");
+                    Utils.WriteLine($"{msg.Msg}", ConsoleColor.Red);
+                }
             }
         }
     }

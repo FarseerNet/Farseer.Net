@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using FS.Extends;
+using FS.Job.ActService;
 
 namespace FS.Job
 {
@@ -54,13 +55,13 @@ namespace FS.Job
                 {
                     meu.Act(meu);
                     if (meu.SaveRecord)
-                        HistoryExecuteRecord.Add($"完成【{meu.MenuName}】Job", startNew.ElapsedMilliseconds);
+                        HistoryExecuteRecord.Success(meu.MenuName, startNew.ElapsedMilliseconds);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
                     if (meu.SaveRecord)
-                        HistoryExecuteRecord.Add($"【{meu.MenuName}】Job，执行失败：{e.Message}", startNew.ElapsedMilliseconds);
+                        HistoryExecuteRecord.Error(meu.MenuName, e.Message);
                 }
 
                 startNew.Stop();

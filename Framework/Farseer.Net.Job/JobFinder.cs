@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FS.DI;
 using FS.Job.Entity;
+using FS.Reflection;
 using FS.Utils.Common;
 
 namespace FS.Job
@@ -17,7 +18,7 @@ namespace FS.Job
         /// <summary>
         /// 找继承IJob接口的实现类
         /// </summary>
-        public Type[] FindJobType() => AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IJob)))).ToArray();
+        public Type[] FindJobType() => IocManager.Instance.Resolve<IAssemblyFinder>().GetAllAssemblies().SelectMany(a => a.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IJob)))).ToArray();
 
         /// <summary>
         /// 注册实现继承IJob接口的实现类

@@ -43,11 +43,11 @@ namespace FS.Job.ActService
                     resolve.Init();
                     resolve.Start(List[job.JobType].TokenSource.Token);
                     resolve.Stop();
-                    HistoryExecuteRecord.Add($"完成【{job.JobName}】Job，", startNew.ElapsedMilliseconds);
+                    HistoryExecuteRecord.Success(job.JobName, startNew.ElapsedMilliseconds);
                 }
                 catch (Exception e)
                 {
-                    HistoryExecuteRecord.Add($"【{job.JobName}】Job，执行失败：{e.Message}", startNew.ElapsedMilliseconds);
+                    HistoryExecuteRecord.Error(job.JobName, e.Message);
                 }
             }, List[job.JobType].TokenSource.Token);
             return List[job.JobType].Task;
@@ -75,7 +75,8 @@ namespace FS.Job.ActService
             preItem.SubMenuList = new List<MenuItem>();
             foreach (var job in JobFinder.JobList)
             {
-                var status = List[job.JobType].Task?.Status == System.Threading.Tasks.TaskStatus.Running || List[job.JobType].Task?.Status == System.Threading.Tasks.TaskStatus.WaitingToRun ;
+                var status = List[job.JobType].Task?.Status == System.Threading.Tasks.TaskStatus.Running ||
+                             List[job.JobType].Task?.Status == System.Threading.Tasks.TaskStatus.WaitingToRun;
                 preItem.SubMenuList.Add(
                     new MenuItem(preItem, job.Index, $"{job.JobName} ({(status ? "运行中" : " - ")})").SetAct(meu =>
                     {
