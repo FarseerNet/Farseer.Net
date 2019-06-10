@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,10 +36,19 @@ namespace FS.Job.ActService
             List[job.JobType].TokenSource = new CancellationTokenSource();
             List[job.JobType].Task = new Task(() =>
             {
-                var resolve = IocManager.Instance.Resolve<IJob>(job.IocName);
-                resolve.Init();
-                resolve.Start(List[job.JobType].TokenSource.Token);
-                resolve.Stop();
+                var startNew = Stopwatch.StartNew();
+                try
+                {
+                    var resolve = IocManager.Instance.Resolve<IJob>(job.IocName);
+                    resolve.Init();
+                    resolve.Start(List[job.JobType].TokenSource.Token);
+                    resolve.Stop();
+                    HistoryExecuteRecord.Add($"完成【{job.JobName}】Job，", startNew.ElapsedMilliseconds);
+                }
+                catch (Exception e)
+                {
+                    HistoryExecuteRecord.Add($"【{job.JobName}】Job，执行失败：{e.Message}", startNew.ElapsedMilliseconds);
+                }
             }, List[job.JobType].TokenSource.Token);
             return List[job.JobType].Task;
         }

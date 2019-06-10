@@ -17,16 +17,23 @@ namespace FS.Job
 
         private static List<HistoryExecuteEntity> ToList()
         {
-            while (List.Count> 50)
+            while (List.Count > 50)
             {
                 List.Pop();
             }
+
             return List.ToList();
         }
 
         public static void Show()
         {
             var lst = ToList();
+            if (lst.Count == 0)
+            {
+                Console.WriteLine("无执行记录");
+                return;
+            }
+
             foreach (var msg in lst)
             {
                 Utils.Write($"{msg.CreateAt:yy-MM-dd HH:mm:ss} ", ConsoleColor.Green);

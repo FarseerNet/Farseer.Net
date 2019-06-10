@@ -18,7 +18,9 @@ namespace FS.Job
             while (true)
             {
                 Console.Write("请选择操作：");
-                var cmd = Console.ReadLine().ConvertType(-99999);
+                var readLine = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(readLine)) return lstMeu[0].PreItem;
+                var cmd = readLine.ConvertType(-99999);
 
                 // -1 返回上一层
                 if (cmd == -1)
@@ -52,13 +54,13 @@ namespace FS.Job
                 {
                     meu.Act(meu);
                     if (meu.SaveRecord)
-                        HistoryExecuteRecord.Add($"{meu.MenuName}，执行完成", startNew.ElapsedMilliseconds);
+                        HistoryExecuteRecord.Add($"完成【{meu.MenuName}】Job", startNew.ElapsedMilliseconds);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
                     if (meu.SaveRecord)
-                        HistoryExecuteRecord.Add($"{meu.MenuName}，执行失败：{e.Message}", startNew.ElapsedMilliseconds);
+                        HistoryExecuteRecord.Add($"【{meu.MenuName}】Job，执行失败：{e.Message}", startNew.ElapsedMilliseconds);
                 }
 
                 startNew.Stop();
