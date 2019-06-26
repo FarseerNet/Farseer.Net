@@ -25,6 +25,10 @@ namespace FS.Job
             new JobFinder().RegisterJob();
             new Menu().CreateMenu();
             LazyExecute.Init();
+        }
+
+        public override void PostInitialize()
+        {
             new JobManager().Run();
         }
     }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using FS.Extends;
 using FS.Job.ActService;
@@ -19,7 +20,19 @@ namespace FS.Job
             while (true)
             {
                 Console.Write("请选择操作：");
-                var readLine = Console.ReadLine();
+                string readLine;
+                while (true)
+                {
+                    try
+                    {
+                        readLine = Console.ReadLine();
+                        break;
+                    }
+                    catch
+                    {
+                        Thread.Sleep(500);
+                    }
+                }
                 if (string.IsNullOrWhiteSpace(readLine)) return lstMeu[0].PreItem;
                 var cmd = readLine.ConvertType(-99999);
 
