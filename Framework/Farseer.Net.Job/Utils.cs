@@ -11,7 +11,7 @@ namespace FS.Job
             Console.WriteLine(msg);
             Console.ForegroundColor = consoleColor;
         }
-        
+
         public static void Write(string msg, ConsoleColor color)
         {
             var consoleColor = Console.ForegroundColor;

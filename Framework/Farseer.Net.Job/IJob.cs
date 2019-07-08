@@ -13,6 +13,7 @@ namespace FS.Job
         /// Job名称
         /// </summary>
         string Name { get; }
+
 //        /// <summary>
 //        /// 计划设置
 //        /// </summary>
@@ -21,10 +22,12 @@ namespace FS.Job
         /// 初始化
         /// </summary>
         void Init();
+
         /// <summary>
         /// 开始执行
         /// </summary>
         void Start(CancellationToken token);
+
         /// <summary>
         /// 结束
         /// </summary>

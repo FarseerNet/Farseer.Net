@@ -33,6 +33,7 @@ namespace FS.Job
                         Thread.Sleep(500);
                     }
                 }
+
                 if (string.IsNullOrWhiteSpace(readLine)) return lstMeu[0].PreItem;
                 var cmd = readLine.ConvertType(-99999);
 
