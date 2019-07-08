@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Mime;
 using System.Text;
+using System.Threading;
 using FS.Extends;
 using FS.Job.ActService;
 
@@ -23,11 +24,11 @@ namespace FS.Job
         internal void CreateMenu()
         {
             MeuList.Clear();
-
             MeuList.Add(new MenuItem(null, 1, "JOB 单项执行").SetAct(meu => new SingleExecute().Run(meu)));
             MeuList.Add(new MenuItem(null, 2, "JOB 顺序执行").SetAct(meu => new MultipleExecute().Run(meu)));
             MeuList.Add(new MenuItem(null, 3, "JOB 异步执行").SetAct(meu => new AsyncExecute().Run(meu)));
             MeuList.Add(new MenuItem(null, 4, "显示历史列表").SetAct(meu => HistoryExecuteRecord.Show()));
+            MeuList.Add(new MenuItem(null, 9, "取消输入").SetAct(meu => Thread.Sleep(-1)));
             MeuList.Add(new MenuItem(null, 0, "退出程序").SetAct(meu => Environment.Exit(0)));
         }
 

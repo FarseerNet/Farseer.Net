@@ -7,12 +7,13 @@
         <Authors>steden</Authors>
         <Product>Job组件</Product>
         <Description>包括：Job执行（定时、手动）</Description>
-        <AssemblyVersion>2.0.1</AssemblyVersion>
-        <FileVersion>2.0.1</FileVersion>
-        <Version>2.0.1</Version>
+        <AssemblyVersion>2.0.2</AssemblyVersion>
+        <FileVersion>2.0.2</FileVersion>
+        <Version>2.0.2</Version>
         <PackageTags>Job组件</PackageTags>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <RootNamespace>FS.Job</RootNamespace>
+        <PackageVersion>2.0.2</PackageVersion>
     </PropertyGroup>
 
 
