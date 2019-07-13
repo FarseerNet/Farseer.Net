@@ -21,10 +21,14 @@ namespace FS.Job
         public override void Initialize()
         {
             IocManager.Container.Install(new JobInstaller(IocManager));
-            IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly(), new ConventionalRegistrationConfig { InstallInstallers = false });
+            IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly(), new ConventionalRegistrationConfig {InstallInstallers = false});
             new JobFinder().RegisterJob();
             new Menu().CreateMenu();
             LazyExecute.Init();
+        }
+
+        public override void PostInitialize()
+        {
             new JobManager().Run();
         }
     }

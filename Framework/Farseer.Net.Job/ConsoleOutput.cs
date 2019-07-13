@@ -15,8 +15,8 @@ namespace FS.Job
             {
                 Console.Write(new string('-', 15) + "【");
                 Utils.Write($"{jobName} ", ConsoleColor.Red);
-                Console.WriteLine("】"+new string('-', 15));
-                
+                Console.WriteLine("】" + new string('-', 15));
+
                 Utils.Write($"{DateTime.Now:yy-MM-dd HH:mm:ss} ", ConsoleColor.Green);
                 Console.WriteLine($"开始执行:");
             }
@@ -30,11 +30,11 @@ namespace FS.Job
                     Utils.Write($"{DateTime.Now:yy-MM-dd HH:mm:ss} ", ConsoleColor.Green);
                     Console.Write($"执行完成，耗时:");
                     Utils.WriteLine($"{useTime:N1} ms", ConsoleColor.Red);
-                    
-                    
+
+
                     Console.Write(new string('-', 15) + "【");
                     Utils.Write($"{jobName} ", ConsoleColor.Red);
-                    Console.WriteLine("】"+new string('-', 15));
+                    Console.WriteLine("】" + new string('-', 15));
                 }
 
                 if (needSaveHistory) HistoryExecuteRecord.Success(jobName, useTime);

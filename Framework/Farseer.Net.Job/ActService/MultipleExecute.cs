@@ -18,12 +18,12 @@ namespace FS.Job.ActService
                 using (var co = new ConsoleOutput())
                 {
                     co.Execute(job.JobName, () =>
-                        {
-                            var resolve = IocManager.Instance.Resolve<IJob>(job.IocName);
-                            resolve.Init();
-                            resolve.Start(CancellationToken.None);
-                            resolve.Stop();
-                        },true,true);
+                    {
+                        var resolve = IocManager.Instance.Resolve<IJob>(job.IocName);
+                        resolve.Init();
+                        resolve.Start(CancellationToken.None);
+                        resolve.Stop();
+                    }, true, true);
                 }
             }
         }

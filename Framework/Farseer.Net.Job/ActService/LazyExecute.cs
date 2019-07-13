@@ -46,7 +46,7 @@ namespace FS.Job.ActService
                                 resolve.Init();
                                 resolve.Start(CancellationToken.None);
                                 resolve.Stop();
-                            },false,true);
+                            }, false, true);
                         }
                     }), false);
                 }

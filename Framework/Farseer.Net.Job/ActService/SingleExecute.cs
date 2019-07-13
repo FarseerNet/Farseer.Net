@@ -33,7 +33,7 @@ namespace FS.Job.ActService
                             resolve.Init();
                             resolve.Start(CancellationToken.None);
                             resolve.Stop();
-                        },true,true);
+                        }, true, true);
                     }
                 }));
             }

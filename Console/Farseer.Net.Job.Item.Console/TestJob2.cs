@@ -15,9 +15,12 @@ namespace Farseer.Net.Job.Item.Console
 
         public void Start(CancellationToken token)
         {
-            for (int i = 0; i < 10000; i++)
+            for (int i = 0; i < 100; i++)
             {
-                if (token.IsCancellationRequested) return;
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
                 Thread.Sleep(i + 1);
             }
 
