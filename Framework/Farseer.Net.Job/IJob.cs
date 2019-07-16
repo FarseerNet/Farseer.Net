@@ -26,7 +26,7 @@ namespace FS.Job
         /// <summary>
         /// 开始执行
         /// </summary>
-        void Start(CancellationToken token);
+        void Start(CancellationToken token,bool isAsyncRun);
 
         /// <summary>
         /// 结束

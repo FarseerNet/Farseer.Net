@@ -9,6 +9,9 @@ using FS.Job.Entity;
 
 namespace FS.Job.ActService
 {
+    /// <summary>
+    /// 队列执行
+    /// </summary>
     public class LazyExecute
     {
         public static Stack<JobEntity> List = new Stack<JobEntity>();
@@ -44,7 +47,7 @@ namespace FS.Job.ActService
                             {
                                 var resolve = IocManager.Instance.Resolve<IJob>(job.IocName);
                                 resolve.Init();
-                                resolve.Start(CancellationToken.None);
+                                resolve.Start(CancellationToken.None, false);
                                 resolve.Stop();
                             }, false, true);
                         }
