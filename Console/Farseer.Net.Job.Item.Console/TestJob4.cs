@@ -7,14 +7,13 @@ namespace Farseer.Net.Job.Item.Console
 {
     public class TestJob4 : IJob
     {
-        public string Name { get; } = "TestJob4：测试ing?";
-        public JobSetting Setting { get; }
+        public JobSetting Setting { get; }=new JobSetting(4,"TestJob4：测试ing?");
 
         public void Init()
         {
         }
 
-        public void Start(CancellationToken token)
+        public void Start(CancellationToken token,bool isAsyncRun)
         {
             Nullable<int> count1 = null;
             int count2 = 2;
