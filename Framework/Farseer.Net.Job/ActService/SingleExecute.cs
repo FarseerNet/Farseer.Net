@@ -31,7 +31,7 @@ namespace FS.Job.ActService
                         {
                             var resolve = IocManager.Instance.Resolve<IJob>(job.IocName);
                             resolve.Init();
-                            resolve.Start(CancellationToken.None);
+                            resolve.Start(CancellationToken.None, false);
                             resolve.Stop();
                         }, true, true);
                     }

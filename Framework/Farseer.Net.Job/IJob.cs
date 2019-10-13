@@ -10,14 +10,9 @@ namespace FS.Job
     public interface IJob
     {
         /// <summary>
-        /// Job名称
+        /// 计划设置
         /// </summary>
-        string Name { get; }
-
-//        /// <summary>
-//        /// 计划设置
-//        /// </summary>
-//        JobSetting Setting { get; }
+        JobSetting Setting { get; }
         /// <summary>
         /// 初始化
         /// </summary>
@@ -26,7 +21,7 @@ namespace FS.Job
         /// <summary>
         /// 开始执行
         /// </summary>
-        void Start(CancellationToken token);
+        void Start(CancellationToken token,bool isAsyncRun);
 
         /// <summary>
         /// 结束
