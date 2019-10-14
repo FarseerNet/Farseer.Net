@@ -22,6 +22,9 @@ namespace FS.MQ.RocketMQ.Configuration
         /// <summary> 生产者ID </summary>
         public string ProducerID { get; set; }
 
+        /// <summary> 实例ID </summary>
+        public string InstanceID { get; set; }
+
         /// <summary> 消息队列主题名称 </summary>
         public string Topic { get; set; }
 
@@ -36,5 +39,8 @@ namespace FS.MQ.RocketMQ.Configuration
 
         /// <summary> 是否输出日志 </summary>
         public bool IsWriteLog { get; set; }
+
+        /// <summary> Http消费长轮询等待时间(最多可设置为30秒) </summary>
+        public int HttpConsumeWaitSeconds { get; set; }
     }
 }

@@ -106,11 +106,11 @@ namespace FS.MQ.RocketMQ.SDK
             return ret;
         }
 
-        public virtual PushConsumer createPushConsumer(ONSFactoryProperty factoryProperty)
+        public virtual Consumer createPushConsumer(ONSFactoryProperty factoryProperty)
         {
             var cPtr = ONSClient4CPPPINVOKE.ONSFactoryAPI_createPushConsumer(swigCPtr,
                 ONSFactoryProperty.getCPtr(factoryProperty));
-            var ret = cPtr == IntPtr.Zero ? null : new PushConsumer(cPtr, false);
+            var ret = cPtr == IntPtr.Zero ? null : new Consumer(cPtr, false);
             if (ONSClient4CPPPINVOKE.SWIGPendingException.Pending)
                 throw ONSClient4CPPPINVOKE.SWIGPendingException.Retrieve();
             return ret;

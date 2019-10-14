@@ -424,8 +424,8 @@ namespace FS.MQ.RocketMQ.SDK
 
         [DllImport("ONSClient4CPP", EntryPoint = "CSharp_ons_PushConsumer_director_connect")]
         public static extern void PushConsumer_director_connect(HandleRef jarg1,
-            PushConsumer.SwigDelegatePushConsumer_0 delegate0, PushConsumer.SwigDelegatePushConsumer_1 delegate1,
-            PushConsumer.SwigDelegatePushConsumer_2 delegate2);
+            Consumer.SwigDelegatePushConsumer_0 delegate0, Consumer.SwigDelegatePushConsumer_1 delegate1,
+            Consumer.SwigDelegatePushConsumer_2 delegate2);
 
         [DllImport("ONSClient4CPP", EntryPoint = "CSharp_ons_new_PullConsumer")]
         public static extern IntPtr new_PullConsumer();
