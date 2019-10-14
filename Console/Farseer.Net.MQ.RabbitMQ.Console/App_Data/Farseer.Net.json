@@ -1,0 +1,20 @@
+{
+  "RabbitConfig": {
+    "Items": [
+      {
+        "Name": "test",
+        "UserName": "steden",
+        "Password": "steden",
+        "Server": "mq.sz.cprapi.com",
+        "Port": 5672,
+        "QueueName": "test1",
+        "ExchangeName": "",
+        "UseConfirmModel": false
+      }
+    ]
+  },
+  "GlobalConfig": {
+    "AppName": null,
+    "ApiGatewayType": 0
+  }
+}
