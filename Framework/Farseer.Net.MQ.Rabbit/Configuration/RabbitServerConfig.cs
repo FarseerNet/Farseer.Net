@@ -13,5 +13,8 @@ namespace FS.MQ.RabbitMQ.Configuration
 
         /// <summary> 端口 </summary>
         public int Port { get; set; }
+
+        /// <summary> 虚拟主机 </summary>
+        public string VirtualHost { get; set; }
     }
 }
