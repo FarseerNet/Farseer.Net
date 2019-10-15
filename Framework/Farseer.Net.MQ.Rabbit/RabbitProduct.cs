@@ -14,7 +14,7 @@ namespace FS.MQ.RabbitMQ
         /// <summary>
         /// 配置信息
         /// </summary>
-        private readonly RabbitItemConfig _config;
+        private readonly ProductConfig _productConfig;
 
         /// <summary>
         /// 创建连接对象
@@ -26,10 +26,10 @@ namespace FS.MQ.RabbitMQ
         /// </summary>
         private IModel _channel;
 
-        public RabbitProduct(IConnectionFactory factoryInfo, RabbitItemConfig config)
+        public RabbitProduct(IConnectionFactory factoryInfo, ProductConfig productConfig)
         {
             _factoryInfo = factoryInfo;
-            _config = config;
+            _productConfig = productConfig;
             Connect();
         }
 
@@ -40,8 +40,8 @@ namespace FS.MQ.RabbitMQ
         {
             _con = _factoryInfo.CreateConnection();
             _channel = _con.CreateModel();
-            
-            if (_config.UseConfirmModel) _channel.ConfirmSelect();
+
+            if (_productConfig.UseConfirmModel) _channel.ConfirmSelect();
         }
 
         /// <summary>
@@ -60,31 +60,31 @@ namespace FS.MQ.RabbitMQ
         }
 
         /// <summary>
-        ///     发送消息
+        ///     发送消息（Routingkey默认配置中的RoutingKey；ExchangeName默认配置中的ExchangeName）
         /// </summary>
         /// <param name="message">消息主体</param>
         /// <param name="basicProperties">属性</param>
         public bool Send(string message, IBasicProperties basicProperties = null)
         {
-            return Send(message, _config.QueueName, _config.ExchangeName, basicProperties);
+            return Send(message, _productConfig.RoutingKey, _productConfig.ExchangeName, basicProperties);
         }
 
         /// <summary>
         ///     发送消息
         /// </summary>
         /// <param name="message">消息主体</param>
-        /// <param name="queueName">队列名称</param>
+        /// <param name="routingKey">路由KEY名称</param>
         /// <param name="exchange">交换器名称</param>
         /// <param name="basicProperties">属性</param>
-        public bool Send(string message, string queueName, string exchange = "", IBasicProperties basicProperties = null)
+        public bool Send(string message, string routingKey, string exchange = "", IBasicProperties basicProperties = null)
         {
             if (_channel == null) Connect();
-            
+
             //消息内容
             var body = Encoding.UTF8.GetBytes(message);
             //发送消息
-            _channel.BasicPublish(exchange: exchange, routingKey: queueName, basicProperties: null, body: body);
-            return !_config.UseConfirmModel || _channel.WaitForConfirms();
+            _channel.BasicPublish(exchange: exchange, routingKey: routingKey, basicProperties: null, body: body);
+            return !_productConfig.UseConfirmModel || _channel.WaitForConfirms();
         }
     }
 }

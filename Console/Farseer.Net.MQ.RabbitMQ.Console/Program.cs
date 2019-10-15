@@ -48,15 +48,15 @@ namespace Farseer.Net.MQ.RabbitMQ.Console
                 var message = $"PID:{Process.GetCurrentProcess().Id} index:{i},Time：{DateTime.Now}";
 
                 if (i%2 == 0) IocManager.Instance.Resolve<IRabbitManager>("test1").Product.Send(message, "aaaa1");
-                else IocManager.Instance.Resolve<IRabbitManager>("test2").Product.Send(message, "aaaa2");
+                else IocManager.Instance.Resolve<IRabbitManager>("test1").Product.Send(message, "aaaa2");
                 System.Console.WriteLine(message);
             });
         }
 
         public static void Consumer()
         {
-            IocManager.Instance.Resolve<IRabbitManager>("test1").Consumer.Start(new ListenMessage());
-            IocManager.Instance.Resolve<IRabbitManager>("test2").Consumer.Start(new ListenMessage());
+            IocManager.Instance.Resolve<IRabbitManager>("aaaa1").Consumer.Start(new ListenMessage());
+            IocManager.Instance.Resolve<IRabbitManager>("aaaa2").Consumer.Start(new ListenMessage());
         }
     }
 

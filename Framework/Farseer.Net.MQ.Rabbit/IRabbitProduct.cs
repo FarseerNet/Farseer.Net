@@ -10,7 +10,7 @@ namespace FS.MQ.RabbitMQ
         void Close();
 
         /// <summary>
-        ///     发送消息
+        ///     发送消息（Routingkey默认配置中的RoutingKey；ExchangeName默认配置中的ExchangeName）
         /// </summary>
         /// <param name="message">消息主体</param>
         /// <param name="basicProperties">属性</param>
@@ -20,9 +20,9 @@ namespace FS.MQ.RabbitMQ
         ///     发送消息
         /// </summary>
         /// <param name="message">消息主体</param>
-        /// <param name="queueName">队列名称</param>
+        /// <param name="routingKey">路由KEY名称</param>
         /// <param name="exchange">交换器名称</param>
         /// <param name="basicProperties">属性</param>
-        bool Send(string message, string queueName, string exchange = "", IBasicProperties basicProperties = null);
+        bool Send(string message, string routingKey, string exchange = "", IBasicProperties basicProperties = null);
     }
 }

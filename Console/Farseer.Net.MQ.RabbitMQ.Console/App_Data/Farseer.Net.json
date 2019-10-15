@@ -2,24 +2,28 @@
   "RabbitConfig": {
     "Items": [
       {
-        "Name": "test1",
         "UserName": "steden",
         "Password": "steden",
         "Server": "mq.sz.cprapi.com",
         "Port": 5672,
-        "QueueName": "aaaa1",
-        "ExchangeName": "",
-        "UseConfirmModel": false
-      },
-      {
-        "Name": "test2",
-        "UserName": "steden",
-        "Password": "steden",
-        "Server": "mq.sz.cprapi.com",
-        "Port": 5672,
-        "QueueName": "aaaa2",
-        "ExchangeName": "",
-        "UseConfirmModel": false
+        "Product": [
+          {
+            "Name": "test1",
+            "ExchangeName": "",
+            "RoutingKey": "",
+            "UseConfirmModel": false
+          }
+        ],
+        "Consumer": [
+          {
+            "Name": "aaaa1",
+            "QueueName": "aaaa1"
+          },
+          {
+            "Name": "aaaa2",
+            "QueueName": "aaaa2"
+          }
+        ]
       }
     ]
   },

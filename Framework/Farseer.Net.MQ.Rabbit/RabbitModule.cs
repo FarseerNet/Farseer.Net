@@ -32,13 +32,12 @@ namespace FS.MQ.RabbitMQ
                     {
                         new RabbitItemConfig
                         {
-                            Name = "test",
                             Server = "",
                             UserName = "",
                             Password = "",
                             Port = 5672,
-                            QueueName = "",
-                            ExchangeName = ""
+                            Product = new List<ProductConfig>() {new ProductConfig() {Name = "test1", ExchangeName = "", RoutingKey = "", UseConfirmModel = false}},
+                            Consumer = new List<ConsumerConfig>() {new ConsumerConfig() {Name = "test2", QueueName = ""}},
                         }
                     }
                 });

@@ -15,7 +15,7 @@ namespace FS.MQ.RabbitMQ
         /// <summary>
         /// 配置信息
         /// </summary>
-        private readonly RabbitItemConfig _config;
+        private readonly ConsumerConfig _consumerConfig;
 
         /// <summary>
         /// 创建连接对象
@@ -27,10 +27,10 @@ namespace FS.MQ.RabbitMQ
         /// </summary>
         private IModel _channel;
 
-        public RabbitConsumer(IConnectionFactory factoryInfo, RabbitItemConfig config)
+        public RabbitConsumer(IConnectionFactory factoryInfo, ConsumerConfig consumerConfig)
         {
             _factoryInfo = factoryInfo;
-            _config = config;
+            _consumerConfig = consumerConfig;
 
             Connect();
         }
@@ -42,8 +42,6 @@ namespace FS.MQ.RabbitMQ
         {
             _con = _factoryInfo.CreateConnection();
             _channel = _con.CreateModel();
-
-            if (_config.UseConfirmModel) _channel.ConfirmSelect();
         }
 
         /// <summary>
@@ -65,7 +63,6 @@ namespace FS.MQ.RabbitMQ
         /// 监控消费
         /// </summary>
         /// <param name="listener">消费事件</param>
-        /// <param name="queueName">队列名称</param>
         /// <param name="autoAck">是否自动确认，默认false</param>
         public void Start(IListenerMessage listener, bool autoAck = false)
         {
@@ -81,7 +78,7 @@ namespace FS.MQ.RabbitMQ
             };
 
             // 消费者开启监听
-            _channel.BasicConsume(queue: _config.QueueName, autoAck: autoAck, consumer: consumer);
+            _channel.BasicConsume(queue: _consumerConfig.QueueName, autoAck: autoAck, consumer: consumer);
         }
 
         /// <summary>
@@ -94,7 +91,7 @@ namespace FS.MQ.RabbitMQ
         {
             if (_channel == null) Connect();
             // 只获取一次
-            var resp = _channel.BasicGet(_config.QueueName, autoAck);
+            var resp = _channel.BasicGet(_consumerConfig.QueueName, autoAck);
 
             var result = listener.Consumer(Encoding.UTF8.GetString(resp.Body), resp);
 
