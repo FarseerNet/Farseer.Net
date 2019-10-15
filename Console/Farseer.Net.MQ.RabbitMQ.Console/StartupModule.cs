@@ -13,5 +13,9 @@ namespace Farseer.Net.MQ.RabbitMQ.Console
         public override void PreInitialize()
         {
         }
+
+        public override void PostInitialize()
+        {
+        }
     }
 }

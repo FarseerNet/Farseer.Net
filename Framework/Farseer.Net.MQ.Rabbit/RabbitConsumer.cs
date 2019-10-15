@@ -31,12 +31,14 @@ namespace FS.MQ.RabbitMQ
         {
             _factoryInfo = factoryInfo;
             _config = config;
+
+            Connect();
         }
 
         /// <summary>
         ///     开启生产消息
         /// </summary>
-        public void Start()
+        private void Connect()
         {
             _con = _factoryInfo.CreateConnection();
             _channel = _con.CreateModel();
@@ -63,21 +65,11 @@ namespace FS.MQ.RabbitMQ
         /// 监控消费
         /// </summary>
         /// <param name="listener">消费事件</param>
-        /// <param name="autoAck">是否自动确认，默认false</param>
-        public void Listener(IListenerMessage listener, bool autoAck = false)
-        {
-            Listener(listener, _config.QueueName, _config.ExchangeName, autoAck);
-        }
-
-        /// <summary>
-        /// 监控消费
-        /// </summary>
-        /// <param name="listener">消费事件</param>
         /// <param name="queueName">队列名称</param>
         /// <param name="autoAck">是否自动确认，默认false</param>
-        public void Listener(IListenerMessage listener, string queueName, string exchangeName = "", bool autoAck = false)
+        public void Start(IListenerMessage listener, bool autoAck = false)
         {
-            if (_channel == null) throw new FarseerException("未开启Start方法，进行初始化");
+            if (_channel == null) Connect();
             var consumer = new EventingBasicConsumer(_channel);
 
             consumer.Received += (model, ea) =>
@@ -89,7 +81,7 @@ namespace FS.MQ.RabbitMQ
             };
 
             // 消费者开启监听
-            _channel.BasicConsume(queue: queueName, autoAck: autoAck, consumer: consumer);
+            _channel.BasicConsume(queue: _config.QueueName, autoAck: autoAck, consumer: consumer);
         }
 
         /// <summary>
@@ -98,22 +90,11 @@ namespace FS.MQ.RabbitMQ
         /// <param name="listener">消费事件</param>
         /// <param name="queueName">队列名称</param>
         /// <param name="autoAck">是否自动确认，默认false</param>
-        public void ListenerSignle(IListenerMessageSingle listener, bool autoAck = false)
+        public void StartSignle(IListenerMessageSingle listener, bool autoAck = false)
         {
-            ListenerSignle(listener, _config.QueueName, autoAck);
-        }
-
-        /// <summary>
-        /// 监控消费（只消费一次）
-        /// </summary>
-        /// <param name="listener">消费事件</param>
-        /// <param name="queueName">队列名称</param>
-        /// <param name="autoAck">是否自动确认，默认false</param>
-        public void ListenerSignle(IListenerMessageSingle listener, string queueName, bool autoAck = false)
-        {
-            if (_channel == null) throw new FarseerException("未开启Start方法，进行初始化");
+            if (_channel == null) Connect();
             // 只获取一次
-            var resp = _channel.BasicGet(queueName, autoAck);
+            var resp = _channel.BasicGet(_config.QueueName, autoAck);
 
             var result = listener.Consumer(Encoding.UTF8.GetString(resp.Body), resp);
 

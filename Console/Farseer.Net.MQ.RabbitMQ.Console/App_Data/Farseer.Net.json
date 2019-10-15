@@ -2,12 +2,22 @@
   "RabbitConfig": {
     "Items": [
       {
-        "Name": "test",
+        "Name": "test1",
         "UserName": "steden",
         "Password": "steden",
         "Server": "mq.sz.cprapi.com",
         "Port": 5672,
-        "QueueName": "test1",
+        "QueueName": "aaaa1",
+        "ExchangeName": "",
+        "UseConfirmModel": false
+      },
+      {
+        "Name": "test2",
+        "UserName": "steden",
+        "Password": "steden",
+        "Server": "mq.sz.cprapi.com",
+        "Port": 5672,
+        "QueueName": "aaaa2",
         "ExchangeName": "",
         "UseConfirmModel": false
       }

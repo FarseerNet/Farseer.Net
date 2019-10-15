@@ -28,10 +28,5 @@ namespace FS.MQ.RocketMQ
         ///     关闭生产者
         /// </summary>
         void Close();
-
-        /// <summary>
-        ///     开启生产消息
-        /// </summary>
-        void Start();
     }
 }

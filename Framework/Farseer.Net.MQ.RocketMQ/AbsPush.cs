@@ -117,11 +117,6 @@ namespace FS.MQ.RocketMQ
         /// <summary>
         ///     关闭连接
         /// </summary>
-        public void Start() => _mqManager.Product.Start();
-
-        /// <summary>
-        ///     关闭连接
-        /// </summary>
         public void Close() => _mqManager.Product.Close();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
 using FS;
@@ -20,21 +21,13 @@ namespace Farseer.Net.MQ.RabbitMQ.Console
         {
             FarseerBootstrapper.Create<StartupModule>().Initialize();
 
-            IConnectionFactory conFactory = new ConnectionFactory //创建连接工厂对象
-            {
-                HostName = "mq.sz.cprapi.com", //IP地址
-                Port = 5672, //端口号
-                UserName = "steden", //用户账号
-                Password = "steden" //用户密码
-            };
-
             System.Console.WriteLine("请输入：1）发送；2）消费");
             switch (System.Console.ReadLine())
             {
                 case "2":
                 {
                     System.Console.Title = "消费";
-                    Consumer(conFactory);
+                    Consumer();
                     break;
                 }
                 case "1":
@@ -48,23 +41,22 @@ namespace Farseer.Net.MQ.RabbitMQ.Console
 
         private static void SendMessage()
         {
-            IocManager.Instance.Resolve<IRabbitManager>().CreateQueue();
-            IocManager.Instance.Resolve<IRabbitManager>().Product.Start();
-
+            //IocManager.Instance.Resolve<IRabbitManager>("test1").CreateQueue();
 
             Parallel.For(0, 10000000, new ParallelOptions {MaxDegreeOfParallelism = 64}, i =>
             {
                 var message = $"PID:{Process.GetCurrentProcess().Id} index:{i},Time：{DateTime.Now}";
 
-                IocManager.Instance.Resolve<IRabbitManager>().Product.Send(message);
+                if (i%2 == 0) IocManager.Instance.Resolve<IRabbitManager>("test1").Product.Send(message, "aaaa1");
+                else IocManager.Instance.Resolve<IRabbitManager>("test2").Product.Send(message, "aaaa2");
                 System.Console.WriteLine(message);
             });
         }
 
-        public static void Consumer(IConnectionFactory conFactory)
+        public static void Consumer()
         {
-            IocManager.Instance.Resolve<IRabbitManager>().Consumer.Start();
-            IocManager.Instance.Resolve<IRabbitManager>().Consumer.Listener(new ListenMessage());
+            IocManager.Instance.Resolve<IRabbitManager>("test1").Consumer.Start(new ListenMessage());
+            IocManager.Instance.Resolve<IRabbitManager>("test2").Consumer.Start(new ListenMessage());
         }
     }
 
@@ -73,6 +65,7 @@ namespace Farseer.Net.MQ.RabbitMQ.Console
         public bool Consumer(string message, object sender, BasicDeliverEventArgs ea)
         {
             System.Console.WriteLine(ea.ConsumerTag + "接收到信息为:" + message);
+            Thread.Sleep(3000);
             return true;
         }
     }

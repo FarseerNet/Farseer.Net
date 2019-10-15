@@ -23,7 +23,7 @@ namespace FS.MQ.RocketMQ
         /// <summary>
         ///     开启生产消息
         /// </summary>
-        public void Start()
+        private void Connect()
         {
             if (_producer == null)
             {
@@ -62,9 +62,9 @@ namespace FS.MQ.RocketMQ
         /// <param name="key">每条消息的唯一标识</param>
         public SendResultONS Send(string message, long deliver, string tag = null, string key = null)
         {
+            if (_producer == null) Connect();
             if (string.IsNullOrWhiteSpace(tag)) tag = "";
             if (string.IsNullOrWhiteSpace(key)) key = Guid.NewGuid().ToString();
-            if (_factoryInfo == null) throw new FarseerException("未开启Start方法，进行初始化");
             var msg = new Message(_factoryInfo.getPublishTopics(), tag, key, message);
             if (deliver > 0) msg.setStartDeliverTime(deliver);
             return _producer.send(msg);

@@ -5,11 +5,6 @@ namespace FS.MQ.RabbitMQ
     public interface IRabbitProduct
     {
         /// <summary>
-        ///     开启生产消息
-        /// </summary>
-        void Start();
-
-        /// <summary>
         ///     关闭生产者
         /// </summary>
         void Close();

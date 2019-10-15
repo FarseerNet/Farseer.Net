@@ -30,12 +30,13 @@ namespace FS.MQ.RabbitMQ
         {
             _factoryInfo = factoryInfo;
             _config = config;
+            Connect();
         }
 
         /// <summary>
         ///     开启生产消息
         /// </summary>
-        public void Start()
+        private void Connect()
         {
             _con = _factoryInfo.CreateConnection();
             _channel = _con.CreateModel();
@@ -77,7 +78,7 @@ namespace FS.MQ.RabbitMQ
         /// <param name="basicProperties">属性</param>
         public bool Send(string message, string queueName, string exchange = "", IBasicProperties basicProperties = null)
         {
-            if (_channel == null) throw new FarseerException("未开启Start方法，进行初始化");
+            if (_channel == null) Connect();
             
             //消息内容
             var body = Encoding.UTF8.GetBytes(message);
