@@ -53,6 +53,7 @@ namespace FS.MQ.RabbitMQ
         {
             _serverConfig = config;
             _productConfig = productConfig;
+            if (string.IsNullOrWhiteSpace(_serverConfig.VirtualHost)) _serverConfig.VirtualHost = "/";
             _factoryInfo = new ConnectionFactory //创建连接工厂对象
             {
                 HostName = _serverConfig.Server, //IP地址
@@ -84,7 +85,7 @@ namespace FS.MQ.RabbitMQ
         {
             get
             {
-                if (_productConfig==null) throw new Exception("当前配置的是消费端的配置，你只可以使用Consumer属性");
+                if (_productConfig == null) throw new Exception("当前配置的是消费端的配置，你只可以使用Consumer属性");
                 if (_product != null) return _product;
                 lock (ObjLock)
                 {
@@ -100,7 +101,7 @@ namespace FS.MQ.RabbitMQ
         {
             get
             {
-                if (_consumerConfig==null) throw new Exception("当前配置的是生产端的配置，你只可以使用Product属性");
+                if (_consumerConfig == null) throw new Exception("当前配置的是生产端的配置，你只可以使用Product属性");
                 if (_consumer != null) return _consumer;
                 lock (ObjLock)
                 {

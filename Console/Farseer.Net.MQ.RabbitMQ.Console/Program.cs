@@ -20,7 +20,8 @@ namespace Farseer.Net.MQ.RabbitMQ.Console
         static void Main(string[] args)
         {
             FarseerBootstrapper.Create<StartupModule>().Initialize();
-
+            IocManager.Instance.Resolve<IRabbitManager>("test1").CreateExchange("LotteryNumber", eumExchangeType.fanout);
+            
             System.Console.WriteLine("请输入：1）发送；2）消费");
             switch (System.Console.ReadLine())
             {
