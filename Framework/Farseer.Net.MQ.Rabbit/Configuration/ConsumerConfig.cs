@@ -7,5 +7,8 @@ namespace FS.MQ.RabbitMQ.Configuration
 
         /// <summary> 队列名称 </summary>
         public string QueueName { get; set; }
+
+        /// <summary> 线程数 </summary>
+        public int ConsumeThreadNums { get; set; }
     }
 }
