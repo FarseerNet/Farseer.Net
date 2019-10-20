@@ -32,7 +32,7 @@ namespace FS.DI
         /// <summary>
         /// 日志接口
         /// </summary>
-        public ILogger Logger
+        public ILogger Logger // Microsoft.Extensions.Logging
         {
             get
             {

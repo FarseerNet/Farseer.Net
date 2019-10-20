@@ -18,12 +18,12 @@
           {
             "Name": "aaaa1",
             "QueueName": "aaaa1",
-            "ConsumeThreadNums": 16
+            "ConsumeThreadNums": 1
           },
           {
             "Name": "aaaa2",
             "QueueName": "aaaa2",
-            "ConsumeThreadNums": 16
+            "ConsumeThreadNums": 1
           }
         ]
       }

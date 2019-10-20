@@ -87,7 +87,8 @@ namespace FS.MQ.RabbitMQ
             if (_channel?.Count == 0) Connect();
             for (int i = 0; i < _consumerConfig.ConsumeThreadNums; i++)
             {
-                var consumer = new EventingBasicConsumer(_channel[i]);
+                var chl = _channel[i];
+                var consumer = new EventingBasicConsumer(chl);
 
                 consumer.Received += (model, ea) =>
                 {
@@ -100,14 +101,18 @@ namespace FS.MQ.RabbitMQ
                     {
                         IocManager.Instance.Logger.Error(e.Message);
                     }
-
-                    if (autoAck) return;
-                    if (result) _channel[i].BasicAck(ea.DeliveryTag, false);
-                    else _channel[i].BasicReject(ea.DeliveryTag, true);
+                    finally
+                    {
+                        if (!autoAck)
+                        {
+                            if (result) chl.BasicAck(ea.DeliveryTag, false);
+                            else chl.BasicReject(ea.DeliveryTag, true);
+                        }
+                    }
                 };
 
                 // 消费者开启监听
-                _channel[i].BasicConsume(queue: _consumerConfig.QueueName, autoAck: autoAck, consumer: consumer);
+                chl.BasicConsume(queue: _consumerConfig.QueueName, autoAck: autoAck, consumer: consumer);
             }
         }
 
@@ -123,7 +128,8 @@ namespace FS.MQ.RabbitMQ
             for (int i = 0; i < _consumerConfig.ConsumeThreadNums; i++)
             {
                 // 只获取一次
-                var resp = _channel[i].BasicGet(_consumerConfig.QueueName, autoAck);
+                var chl = _channel[i];
+                var resp = chl.BasicGet(_consumerConfig.QueueName, autoAck);
 
                 var result = false;
                 try
@@ -134,10 +140,14 @@ namespace FS.MQ.RabbitMQ
                 {
                     IocManager.Instance.Logger.Error(e.Message);
                 }
-
-                if (autoAck) return;
-                if (result) _channel[i].BasicAck(resp.DeliveryTag, false);
-                else _channel[i].BasicReject(resp.DeliveryTag, true);
+                finally
+                {
+                    if (!autoAck)
+                    {
+                        if (result) chl.BasicAck(resp.DeliveryTag, false);
+                        else chl.BasicReject(resp.DeliveryTag, true);
+                    }
+                }
             }
         }
     }
