@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
+using FS.DI;
 using FS.MQ.RabbitMQ.Configuration;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -89,7 +91,16 @@ namespace FS.MQ.RabbitMQ
 
                 consumer.Received += (model, ea) =>
                 {
-                    var result = listener.Consumer(Encoding.UTF8.GetString(ea.Body), model, ea);
+                    var result = false;
+                    try
+                    {
+                        result = listener.Consumer(Encoding.UTF8.GetString(ea.Body), model, ea);
+                    }
+                    catch (Exception e)
+                    {
+                        IocManager.Instance.Logger.Error(e.Message);
+                    }
+
                     if (autoAck) return;
                     if (result) _channel[i].BasicAck(ea.DeliveryTag, false);
                     else _channel[i].BasicReject(ea.DeliveryTag, true);
@@ -114,7 +125,15 @@ namespace FS.MQ.RabbitMQ
                 // 只获取一次
                 var resp = _channel[i].BasicGet(_consumerConfig.QueueName, autoAck);
 
-                var result = listener.Consumer(Encoding.UTF8.GetString(resp.Body), resp);
+                var result = false;
+                try
+                {
+                    result = listener.Consumer(Encoding.UTF8.GetString(resp.Body), resp);
+                }
+                catch (Exception e)
+                {
+                    IocManager.Instance.Logger.Error(e.Message);
+                }
 
                 if (autoAck) return;
                 if (result) _channel[i].BasicAck(resp.DeliveryTag, false);
