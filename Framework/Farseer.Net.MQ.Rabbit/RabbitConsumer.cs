@@ -25,12 +25,12 @@ namespace FS.MQ.RabbitMQ
         /// <summary>
         /// 创建连接对象
         /// </summary>
-        private IConnection[] _con;
+        private IConnection _con;
 
         /// <summary>
         /// 创建连接会话对象
         /// </summary>
-        private IModel[] _channel;
+        private IModel _channel;
 
         private bool _isClose;
 
@@ -43,9 +43,6 @@ namespace FS.MQ.RabbitMQ
         {
             _factoryInfo = factoryInfo;
             _consumerConfig = consumerConfig;
-
-            _con = new IConnection[_consumerConfig.ConsumeThreadNums];
-            _channel = new IModel[_consumerConfig.ConsumeThreadNums];
         }
 
         /// <summary>
@@ -55,19 +52,13 @@ namespace FS.MQ.RabbitMQ
         {
             _isClose = true;
             _checkStatsAndConnectTask?.Dispose();
-            for (var index = 0; index < _channel.Length; index++)
-            {
-                _channel[index].Close();
-                _channel[index].Dispose();
-                _channel[index] = null;
-            }
+            _channel.Close();
+            _channel.Dispose();
+            _channel = null;
 
-            for (var index = 0; index < _con.Length; index++)
-            {
-                _con[index].Close();
-                _con[index].Dispose();
-                _con[index] = null;
-            }
+            _con.Close();
+            _con.Dispose();
+            _con = null;
         }
 
         /// <summary>
@@ -90,35 +81,36 @@ namespace FS.MQ.RabbitMQ
         {
             _isClose = false;
 
-            for (int i = 0; i < _consumerConfig.ConsumeThreadNums; i++)
+            Connect();
+
+            // 只获取一次
+            var resp = _channel.BasicGet(_consumerConfig.QueueName, autoAck);
+
+            var result = false;
+            try
             {
-                if (!(_con[i]?.IsOpen).GetValueOrDefault() || (_channel[i]?.IsClosed).GetValueOrDefault())
+                result = listener.Consumer(Encoding.UTF8.GetString(resp.Body), resp);
+            }
+            catch (Exception e)
+            {
+                IocManager.Instance.Logger.Error(e.Message);
+            }
+            finally
+            {
+                if (!autoAck)
                 {
-                    _con[i] = _factoryInfo.CreateConnection();
-                    _channel[i] = _con[i].CreateModel();
+                    if (result) _channel.BasicAck(resp.DeliveryTag, false);
+                    else _channel.BasicReject(resp.DeliveryTag, true);
                 }
+            }
+        }
 
-                // 只获取一次
-                var chl = _channel[i];
-                var resp = chl.BasicGet(_consumerConfig.QueueName, autoAck);
-
-                var result = false;
-                try
-                {
-                    result = listener.Consumer(Encoding.UTF8.GetString(resp.Body), resp);
-                }
-                catch (Exception e)
-                {
-                    IocManager.Instance.Logger.Error(e.Message);
-                }
-                finally
-                {
-                    if (!autoAck)
-                    {
-                        if (result) chl.BasicAck(resp.DeliveryTag, false);
-                        else chl.BasicReject(resp.DeliveryTag, true);
-                    }
-                }
+        private void Connect()
+        {
+            if (!(_con?.IsOpen).GetValueOrDefault() || (_channel?.IsClosed).GetValueOrDefault())
+            {
+                _con = _factoryInfo.CreateConnection();
+                _channel = _con.CreateModel();
             }
         }
 
@@ -128,39 +120,34 @@ namespace FS.MQ.RabbitMQ
         private void Connect(IListenerMessage listener, bool autoAck = false)
         {
             _isClose = false;
-            for (int i = 0; i < _con.Length; i++)
+            if (!(_con?.IsOpen).GetValueOrDefault() || (_channel?.IsClosed).GetValueOrDefault())
             {
-                if (!(_con[i]?.IsOpen).GetValueOrDefault() || (_channel[i]?.IsClosed).GetValueOrDefault())
+                _con = _factoryInfo.CreateConnection();
+                _channel = _con.CreateModel();
+                _channel.BasicQos(0, (ushort)_consumerConfig.ConsumeThreadNums, false);
+                var consumer = new EventingBasicConsumer(_channel);
+                consumer.Received += (model, ea) =>
                 {
-                    var con = _factoryInfo.CreateConnection();
-                    var chl = con.CreateModel();
-
-                    _con[i] = con;
-                    _channel[i] = chl;
-                    var consumer = new EventingBasicConsumer(chl);
-                    consumer.Received += (model, ea) =>
+                    var result = false;
+                    try
                     {
-                        var result = false;
-                        try
+                        result = listener.Consumer(Encoding.UTF8.GetString(ea.Body), model, ea);
+                    }
+                    catch (Exception e)
+                    {
+                        IocManager.Instance.Logger.Error(e.Message);
+                    }
+                    finally
+                    {
+                        if (!autoAck)
                         {
-                            result = listener.Consumer(Encoding.UTF8.GetString(ea.Body), model, ea);
+                            if (result) _channel.BasicAck(ea.DeliveryTag, false);
+                            else _channel.BasicReject(ea.DeliveryTag, true);
                         }
-                        catch (Exception e)
-                        {
-                            IocManager.Instance.Logger.Error(e.Message);
-                        }
-                        finally
-                        {
-                            if (!autoAck)
-                            {
-                                if (result) chl.BasicAck(ea.DeliveryTag, false);
-                                else chl.BasicReject(ea.DeliveryTag, true);
-                            }
-                        }
-                    };
-                    // 消费者开启监听
-                    chl.BasicConsume(queue: _consumerConfig.QueueName, autoAck: autoAck, consumer: consumer);
-                }
+                    }
+                };
+                // 消费者开启监听
+                _channel.BasicConsume(queue: _consumerConfig.QueueName, autoAck: autoAck, consumer: consumer);
             }
         }
 
