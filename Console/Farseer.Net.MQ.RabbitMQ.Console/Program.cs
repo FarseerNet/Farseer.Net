@@ -58,7 +58,8 @@ namespace Farseer.Net.MQ.RabbitMQ.Console
         public static void Consumer()
         {
             IocManager.Instance.Resolve<IRabbitManager>("aaaa1").Consumer.Start(new ListenMessage());
-            IocManager.Instance.Resolve<IRabbitManager>("aaaa2").Consumer.Start(new ListenMessage());
+            //IocManager.Instance.Resolve<IRabbitManager>("aaaa2").Consumer.Start(new ListenMessage());
+            Thread.Sleep(-1);
         }
     }
 
@@ -67,7 +68,6 @@ namespace Farseer.Net.MQ.RabbitMQ.Console
         public bool Consumer(string message, object sender, BasicDeliverEventArgs ea)
         {
             System.Console.WriteLine(ea.ConsumerTag + "接收到信息为:" + message);
-            Thread.Sleep(3000);
             return true;
         }
     }
