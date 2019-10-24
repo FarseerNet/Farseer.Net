@@ -79,11 +79,17 @@ namespace FS.MQ.RabbitMQ
         public bool Send(string message, string routingKey, string exchange = "", IBasicProperties basicProperties = null)
         {
             if (_channel == null) Connect();
-
+            // 默认设置为消息持久化
+            if (basicProperties == null)
+            {
+                basicProperties = _channel.CreateBasicProperties();
+                basicProperties.DeliveryMode = 2;
+            }
+            
             //消息内容
             var body = Encoding.UTF8.GetBytes(message);
             //发送消息
-            _channel.BasicPublish(exchange: exchange, routingKey: routingKey, basicProperties: null, body: body);
+            _channel.BasicPublish(exchange: exchange, routingKey: routingKey, basicProperties: basicProperties, body: body);
             return !_productConfig.UseConfirmModel || _channel.WaitForConfirms();
         }
     }
