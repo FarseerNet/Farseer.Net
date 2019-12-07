@@ -86,7 +86,7 @@ namespace FS.Core.Net
                 StatusMessage = statusMessage,
                 StatusCode = 200,
                 ResultValue = returnVal?.ToString(),
-                Data = JsonConvert.SerializeObject(data),
+                Data = data,
                 SystemName = RegisterInfomation.Register?.SystemName,
                 NodeName = RegisterInfomation.Register?.NodeName
             };
