@@ -45,7 +45,7 @@ namespace FS.Configuration
             {
                 var environmentVariable = Environment.GetEnvironmentVariable("FS_ENV");
                 if (string.IsNullOrEmpty(environmentVariable)) return string.Empty;
-                return "_" + environmentVariable.ToLower();
+                return $".{environmentVariable.ToLower()}";
             }
         }
 
