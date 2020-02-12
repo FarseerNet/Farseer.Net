@@ -23,4 +23,13 @@
     <ProjectReference Include="..\..\Framework\Farseer.Net\Farseer.Net.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="App_Data\Farseer.Net.dev.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="App_Data\Farseer.Net.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -13,7 +13,6 @@ namespace Farseer.Net.Data.Console
     {
         public override void PreInitialize()
         {
-            new EntityDynamics().BuildType(typeof(SpAccountPO));
         }
     }
 }

@@ -14,11 +14,13 @@ namespace Farseer.Net.Data.Console
     /// </summary>
     public class TestContext : DbContext<TestContext>
     {
-        public TestContext() : base("sms", false) { }
+        public TestContext() : base("test", false) { }
 
-        protected override void CreateModelInit(Dictionary<string, SetDataMap> map) { map["SpAccount"].SetName("SpAccount"); }
+        protected override void CreateModelInit(Dictionary<string, SetDataMap> map)
+        {
+            map["UserCoins"].SetName("account_user_coins");
+        }
+        public TableSet<UserCoinsPO> UserCoins { get; set; }
 
-        /// <summary>Sp供应商账号</summary>
-        public ViewSet<SpAccountPO> SpAccount { get; set; }
     }
 }

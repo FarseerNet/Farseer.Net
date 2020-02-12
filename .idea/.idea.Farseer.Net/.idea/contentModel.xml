@@ -9,10 +9,11 @@
         <e p="Farseer.Net.Data.Console" t="IncludeRecursive">
           <e p="app.config" t="Include" />
           <e p="App_Data" t="Include">
+            <e p="Farseer.Net.dev.json" t="Include" />
             <e p="Farseer.Net.json" t="Include" />
-            <e p="Farseer.Net.local.json" t="Include" />
           </e>
           <e p="bin" t="ExcludeRecursive" />
+          <e p="EumCoinsType.cs" t="Include" />
           <e p="Farseer.Net.Data.Console.csproj" t="IncludeRecursive" />
           <e p="obj" t="ExcludeRecursive">
             <e p="Release" t="Include">
@@ -24,9 +25,10 @@
           <e p="packages.config" t="Include" />
           <e p="Program.cs" t="Include" />
           <e p="Properties" t="Include" />
-          <e p="SpAccountPO.cs" t="Include" />
           <e p="StartupModule.cs" t="Include" />
           <e p="TestContext.cs" t="Include" />
+          <e p="UserCoinsAgent.cs" t="Include" />
+          <e p="UserCoinsPO.cs" t="Include" />
         </e>
         <e p="Farseer.Net.Job.Console" t="IncludeRecursive">
           <e p="bin" t="ExcludeRecursive" />

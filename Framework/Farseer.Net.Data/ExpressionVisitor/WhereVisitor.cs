@@ -189,10 +189,7 @@ namespace FS.Data.ExpressionVisitor
         /// <param name="fieldName"></param>
         /// <param name="paramType"></param>
         /// <param name="paramName"></param>
-        protected virtual void VisitMethodStartswith(Type fieldType, string fieldName, Type paramType, string paramName)
-        {
-            SqlList.Push(FunctionProvider.CharIndex(fieldName, paramName, IsNot));
-        }
+        protected virtual void VisitMethodStartswith(Type fieldType, string fieldName, Type paramType, string paramName) => SqlList.Push(FunctionProvider.CharIndex(fieldName, paramName, IsNot));
 
         /// <summary>
         ///     EndSwith方法解析
@@ -214,10 +211,7 @@ namespace FS.Data.ExpressionVisitor
         /// <param name="fieldName"></param>
         /// <param name="paramType"></param>
         /// <param name="paramName"></param>
-        protected virtual void VisitMethodIsEquals(Type fieldType, string fieldName, Type paramType, string paramName)
-        {
-            SqlList.Push(FunctionProvider.IsEquals(fieldName, paramName, IsNot));
-        }
+        protected virtual void VisitMethodIsEquals(Type fieldType, string fieldName, Type paramType, string paramName) => SqlList.Push(FunctionProvider.IsEquals(fieldName, paramName, IsNot));
 
         /// <summary>
         ///     IsEquals方法解析
@@ -226,28 +220,19 @@ namespace FS.Data.ExpressionVisitor
         /// <param name="fieldName"></param>
         /// <param name="paramType"></param>
         /// <param name="paramName"></param>
-        protected virtual void VisitMethodEquals(Type fieldType, string fieldName, Type paramType, string paramName)
-        {
-            SqlList.Push(FunctionProvider.IsEquals(fieldName, paramName, IsNot));
-        }
+        protected virtual void VisitMethodEquals(Type fieldType, string fieldName, Type paramType, string paramName) => SqlList.Push(FunctionProvider.IsEquals(fieldName, paramName, IsNot));
 
         /// <summary>
         ///     ToShortDate方法解析
         /// </summary>
         /// <param name="fieldType"></param>
         /// <param name="fieldName"></param>
-        protected virtual void VisitMethodToShortDate(Type fieldType, string fieldName)
-        {
-            SqlList.Push(FunctionProvider.ToShortDate(fieldName));
-        }
+        protected virtual void VisitMethodToShortDate(Type fieldType, string fieldName) => SqlList.Push(FunctionProvider.ToShortDate(fieldName));
 
         /// <summary>
         /// 是否为数组或泛型类型
         /// </summary>
         /// <param name="type">Type</param>
-        public static bool IsGenericOrArray(Type type)
-        {
-            return type.IsArray || (type.IsGenericType && type.GetGenericTypeDefinition() != typeof(Nullable<>));
-        }
+        public static bool IsGenericOrArray(Type type) => type.IsArray || (type.IsGenericType && type.GetGenericTypeDefinition() != typeof(Nullable<>));
     }
 }
