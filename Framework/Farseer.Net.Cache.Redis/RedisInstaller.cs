@@ -4,7 +4,7 @@ using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using System;
 using FS.Cache.Configuration;
-using FS.Cache.Redis.CacheManager;
+using FS.Cache.Manager.Redis;
 using FS.Cache.Redis.Configuration;
 using FS.Configuration;
 using FS.DI;
@@ -66,7 +66,7 @@ namespace FS.Cache.Redis
                 }
 
                 // 注册
-                container.Register(Component.For<ICacheManager>().Named(m.Name).ImplementedBy<Cache.CacheManager>().DependsOn(Dependency.OnValue(settings.GetType(), settings)).LifestyleSingleton());
+                container.Register(Component.For<ICacheManager>().Named(m.Name).ImplementedBy<CacheManager>().DependsOn(Dependency.OnValue(settings.GetType(), settings)).LifestyleSingleton());
             });
         }
 

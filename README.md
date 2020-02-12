@@ -26,6 +26,3 @@
 
 * QQ群: 116228666
 * 教程：http://www.cnblogs.com/steden/
-
-##关于作者
-[Leandro](http://www.cnblogs.com/lhyEmpty/)

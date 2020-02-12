@@ -32,28 +32,21 @@ namespace FS.Core.MicroService
         /// 网关效验
         /// </summary>
         /// <returns></returns>
-        protected ApiResponseJson GatewayValidate()
+        protected ApiNodeResponseJson GatewayValidate()
         {
             //1、內网校验,ip格式 192.168*,10.*,ipV6的地址：fe80::*,feco::*
             var ip = GatewayHeader.AppIP;
             if (!(ip.StartsWith("192.168.") || ip.StartsWith("10.") || ip == "::1" || ip == "127.0.0.1" || ip.ToLower().StartsWith("fe80::") || ip.ToLower().StartsWith("feco::")))
             {
-                return ApiResponseJson.Error($"网关Ip({ip})禁止访问");
+                return ApiNodeResponseJson.Error($"网关Ip({ip})禁止访问");
             }
-
-            #region 参数值校验
-            if (GatewayHeader.GatewayTimestamp <= 0) { return ApiResponseJson.Error($"时间戳({GatewayHeader.GatewayTimestamp})错误"); }  // 时间戳有误
-            if (string.IsNullOrEmpty(GatewayHeader.GatewayVer)) { return ApiResponseJson.Error("网关版本号不能为空"); }               // 网关版本号不能为空
-            if (string.IsNullOrEmpty(GatewayHeader.AppID)) { return ApiResponseJson.Error("授权应用ID不能为空"); }                    // 授权应用ID
-            if (string.IsNullOrEmpty(GatewayHeader.ServiceSign)) { return ApiResponseJson.Error("签名不能为空"); }                    // 签名为空
-            #endregion
 
             //2、时间戳有效期校验
             var currentTimestamp = DateTime.Now.Subtract(Convert.ToDateTime("1970-1-1 08:00:00")).TotalSeconds;
-            if (currentTimestamp - GatewayHeader.GatewayTimestamp > 60 * 10) { return ApiResponseJson.Error($"请求过期，时间戳({GatewayHeader.GatewayTimestamp})"); }
+            if (currentTimestamp - GatewayHeader.GatewayTimestamp > 60 * 10) { return ApiNodeResponseJson.Error($"请求过期，时间戳({GatewayHeader.GatewayTimestamp})"); }
 
-            if (GatewayHeader.BuilderSign() != GatewayHeader.ServiceSign) { return ApiResponseJson.Error($"签名校验失败，接收到的签名为({GatewayHeader.ServiceSign})"); }
-            return ApiResponseJson.Success("网关效验通过");
+            if (GatewayHeader.BuilderSign() != GatewayHeader.ServiceSign) { return ApiNodeResponseJson.Error($"签名校验失败，接收到的签名为({GatewayHeader.ServiceSign})"); }
+            return ApiNodeResponseJson.Success("网关效验通过");
         }
 
         /// <summary>
