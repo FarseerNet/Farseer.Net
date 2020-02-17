@@ -28,11 +28,6 @@ namespace FS.Modules
         private Type _startupModuleType;
 
         /// <summary>
-        ///     日志
-        /// </summary>
-        public ILogger Logger { get; set; }
-
-        /// <summary>
         ///     构造函数
         /// </summary>
         /// <param name="iocManager"></param>
@@ -40,7 +35,6 @@ namespace FS.Modules
         {
             _moduleCollection = new FarseerModuleCollection();
             _iocManager = iocManager;
-            Logger = NullLogger.Instance;
         }
 
         /// <summary>
@@ -68,14 +62,14 @@ namespace FS.Modules
         /// </summary>
         public virtual void StartModules()
         {
-            Logger.Debug("开始启动模块...");
+            _iocManager.Logger.Debug("开始启动模块...");
 
             var sortedModules = _moduleCollection.GetListSortDependency();
             sortedModules.ForEach(module => module.Instance.PreInitialize());
             sortedModules.ForEach(module => module.Instance.Initialize());
             sortedModules.ForEach(module => module.Instance.PostInitialize());
 
-            Logger.Debug("模块已成功启动...");
+            _iocManager.Logger.Debug("模块已成功启动...");
         }
 
         /// <summary>
@@ -83,13 +77,13 @@ namespace FS.Modules
         /// </summary>
         public virtual void ShutdownModules()
         {
-            Logger.Debug("开始关闭模块...");
+            _iocManager.Logger.Debug("开始关闭模块...");
 
             var sortedModules = _moduleCollection.GetListSortDependency();
             sortedModules.Reverse();
             sortedModules.ForEach(sm => sm.Instance.Shutdown());
 
-            Logger.Debug("模块已关闭...");
+            _iocManager.Logger.Debug("模块已关闭...");
         }
 
         /// <summary>
@@ -97,11 +91,11 @@ namespace FS.Modules
         /// </summary>
         private void LoadAllModules()
         {
-            Logger.Debug("正在加载模块...");
+            _iocManager.Logger.Debug("正在加载模块...");
 
             var moduleTypes = FindAllModules();
 
-            Logger.Debug("总共找到 " + moduleTypes.Count + " 个模块");
+            _iocManager.Logger.Debug("总共找到 " + moduleTypes.Count + " 个模块");
 
             RegisterModules(moduleTypes);
             CreateModules(moduleTypes);
@@ -110,7 +104,7 @@ namespace FS.Modules
 
             SetDependencies();
 
-            Logger.DebugFormat("{0} 个模块已经加载", _moduleCollection.Count);
+            _iocManager.Logger.DebugFormat("{0} 个模块已经加载", _moduleCollection.Count);
         }
 
         /// <summary>
@@ -144,7 +138,7 @@ namespace FS.Modules
 
                 if (moduleType == _startupModuleType) StartupModule = moduleInfo;
 
-                Logger.DebugFormat("已经加载模块: " + moduleType.AssemblyQualifiedName);
+                _iocManager.Logger.DebugFormat("已经加载模块: " + moduleType.AssemblyQualifiedName);
             }
         }
 

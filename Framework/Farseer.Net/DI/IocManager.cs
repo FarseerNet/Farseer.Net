@@ -19,6 +19,7 @@ namespace FS.DI
         ///     约定注册器列表（目前有：普用、MVC控制器）
         /// </summary>
         private readonly List<IConventionalDependencyRegistrar> _conventionalRegistrars = new List<IConventionalDependencyRegistrar>();
+
         /// <summary>
         /// 是否已注册过WindsorInstaller
         /// </summary>
@@ -39,8 +40,8 @@ namespace FS.DI
                 #region 获取宿主类的FullName
 
                 string className;
-                Type declaringType;
-                int framesToSkip = 2;
+                Type   declaringType;
+                int    framesToSkip = 2;
                 do
                 {
 #if SILVERLIGHT
@@ -61,14 +62,20 @@ namespace FS.DI
                 } while (declaringType.Module.Name.Equals("mscorlib.dll", StringComparison.OrdinalIgnoreCase));
 
                 #endregion
-                return IsRegistered<IExtendedLoggerFactory>() ? Resolve<IExtendedLoggerFactory>().Create(className) : NullLogger.Instance;
+
+                if (IsRegistered<IExtendedLoggerFactory>()) Resolve<IExtendedLoggerFactory>().Create(className);
+                // 没注册时，用默认的
+                return new DefaultLogger();
             }
         }
 
-	    /// <summary>
+        /// <summary>
         ///     构造函数
         /// </summary>
-        static IocManager() { Instance = new IocManager(); }
+        static IocManager()
+        {
+            Instance = new IocManager();
+        }
 
         /// <summary>
         ///     构造函数
@@ -97,17 +104,22 @@ namespace FS.DI
         /// </summary>
         public void RegisterAssemblyByConvention(params Assembly[] assemblys)
         {
-            var ignores = new[] { "System.", "Castle.", "Farseer.Net.", "mscorlib" };
+            var ignores = new[] {"System.", "Castle.", "Farseer.Net.", "mscorlib"};
             foreach (var assembly in assemblys)
             {
                 // 忽略程序集
-                if (ignores.Any(ignore => assembly.FullName.StartsWith(ignore)) || _isRegistrarWindsorInstaller.ContainsKey(assembly)) { continue; }
+                if (ignores.Any(ignore => assembly.FullName.StartsWith(ignore)) || _isRegistrarWindsorInstaller.ContainsKey(assembly))
+                {
+                    continue;
+                }
+
                 try
                 {
                     RegisterAssemblyByConvention(assembly, new ConventionalRegistrationConfig());
                 }
                 catch
-                { // ignored
+                {
+                    // ignored
                 }
             }
         }
@@ -125,10 +137,14 @@ namespace FS.DI
         /// <param name="config"></param>
         public void RegisterAssemblyByConvention(Assembly assembly, ConventionalRegistrationConfig config)
         {
-            var context = new ConventionalRegistrationContext(assembly, this, config);
+            var context          = new ConventionalRegistrationContext(assembly, this, config);
             var windsorInstaller = FromAssembly.Instance(assembly);
             foreach (var registerer in _conventionalRegistrars) registerer.RegisterAssembly(context);
-            if (config.InstallInstallers && windsorInstaller != null) { Container.Install(windsorInstaller); }
+            if (config.InstallInstallers && windsorInstaller != null)
+            {
+                Container.Install(windsorInstaller);
+            }
+
             _isRegistrarWindsorInstaller.Add(assembly, windsorInstaller);
         }
 
@@ -202,7 +218,7 @@ namespace FS.DI
         /// <param name="type"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        public T Resolve<T>(Type type, string name = "") => string.IsNullOrEmpty(name) ? (T)Container.Resolve(type) : (T)Container.Resolve(name, type);
+        public T Resolve<T>(Type type, string name = "") => string.IsNullOrEmpty(name) ? (T) Container.Resolve(type) : (T) Container.Resolve(name, type);
 
         /// <summary>
         ///     获取实例
