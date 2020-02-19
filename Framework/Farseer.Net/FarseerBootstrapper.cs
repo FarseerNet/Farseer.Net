@@ -96,17 +96,19 @@ namespace FS
         {
             try
             {
+                IocManager.Logger.Info("-------------------------------------------------");
                 var dt = DateTime.Now;
                 IocManager.Logger.Info("注册启动器");
                 RegisterBootstrapper();
-                IocManager.Logger.Info("开始系统核心组件的注册");
+                IocManager.Logger.Info("注册系统核心组件");
                 IocManager.Container.Install(new FarseerInstaller());
 
                 IocManager.Resolve<FarseerStartupConfiguration>().Initialize();
                 _moduleManager = IocManager.Resolve<IFarseerModuleManager>();
                 _moduleManager.Initialize(StartupModule);
                 _moduleManager.StartModules();
-                IocManager.Logger.Info($"系统初始化完毕，共耗时{(DateTime.Now - dt).TotalMilliseconds:n}");
+                IocManager.Logger.Info($"系统初始化完毕，耗时{(DateTime.Now - dt).TotalMilliseconds:n}ms");
+                IocManager.Logger.Info("-------------------------------------------------");
             }
             catch (Exception ex)
             {
