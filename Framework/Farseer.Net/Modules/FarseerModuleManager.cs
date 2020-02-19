@@ -34,7 +34,7 @@ namespace FS.Modules
         public FarseerModuleManager(IIocManager iocManager)
         {
             _moduleCollection = new FarseerModuleCollection();
-            _iocManager = iocManager;
+            _iocManager       = iocManager;
         }
 
         /// <summary>
@@ -62,14 +62,26 @@ namespace FS.Modules
         /// </summary>
         public virtual void StartModules()
         {
-            _iocManager.Logger.Debug("开始启动模块...");
-
             var sortedModules = _moduleCollection.GetListSortDependency();
-            sortedModules.ForEach(module => module.Instance.PreInitialize());
-            sortedModules.ForEach(module => module.Instance.Initialize());
-            sortedModules.ForEach(module => module.Instance.PostInitialize());
 
-            _iocManager.Logger.Debug("模块已成功启动...");
+            _iocManager.Logger.Info($"开始启动{sortedModules.Count}个模块...");
+            sortedModules.ForEach(module =>
+            {
+                module.Instance.PreInitialize();
+                _iocManager.Logger.Info($"模块:{module.Type.AssemblyQualifiedName}，PreInitialize 初始完毕");
+            });
+            sortedModules.ForEach(module =>
+            {
+                module.Instance.Initialize();
+                _iocManager.Logger.Info($"模块:{module.Type.AssemblyQualifiedName}，Initialize 初始完毕");
+            });
+            sortedModules.ForEach(module =>
+            {
+                module.Instance.PostInitialize();
+                _iocManager.Logger.Info($"模块:{module.Type.AssemblyQualifiedName}，PostInitialize 初始完毕");
+            });
+
+            _iocManager.Logger.Info("全部模块已成功启动...");
         }
 
         /// <summary>
@@ -77,13 +89,13 @@ namespace FS.Modules
         /// </summary>
         public virtual void ShutdownModules()
         {
-            _iocManager.Logger.Debug("开始关闭模块...");
+            _iocManager.Logger.Info("开始关闭模块...");
 
             var sortedModules = _moduleCollection.GetListSortDependency();
             sortedModules.Reverse();
             sortedModules.ForEach(sm => sm.Instance.Shutdown());
 
-            _iocManager.Logger.Debug("模块已关闭...");
+            _iocManager.Logger.Info("模块已关闭...");
         }
 
         /// <summary>
@@ -91,11 +103,9 @@ namespace FS.Modules
         /// </summary>
         private void LoadAllModules()
         {
-            _iocManager.Logger.Debug("正在加载模块...");
-
             var moduleTypes = FindAllModules();
 
-            _iocManager.Logger.Debug("总共找到 " + moduleTypes.Count + " 个模块");
+            _iocManager.Logger.Info($"总共找到 {moduleTypes.Count} 个模块");
 
             RegisterModules(moduleTypes);
             CreateModules(moduleTypes);
@@ -104,7 +114,7 @@ namespace FS.Modules
 
             SetDependencies();
 
-            _iocManager.Logger.DebugFormat("{0} 个模块已经加载", _moduleCollection.Count);
+            _iocManager.Logger.InfoFormat("{0} 个模块已经加载", _moduleCollection.Count);
         }
 
         /// <summary>
@@ -129,7 +139,7 @@ namespace FS.Modules
                 var moduleObject = _iocManager.Resolve(moduleType) as FarseerModule;
                 Check.NotNull<FarseerModule, FarseerInitException>(moduleObject, $"此类型不是一个有效的模块: {moduleType.AssemblyQualifiedName}");
 
-                moduleObject.IocManager = _iocManager;
+                moduleObject.IocManager    = _iocManager;
                 moduleObject.Configuration = _iocManager.Resolve<IFarseerStartupConfiguration>();
 
                 var moduleInfo = new FarseerModuleInfo(moduleType, moduleObject);
@@ -138,7 +148,7 @@ namespace FS.Modules
 
                 if (moduleType == _startupModuleType) StartupModule = moduleInfo;
 
-                _iocManager.Logger.DebugFormat("已经加载模块: " + moduleType.AssemblyQualifiedName);
+                _iocManager.Logger.InfoFormat($"已经加载模块: {moduleType.AssemblyQualifiedName}");
             }
         }
 
@@ -163,7 +173,7 @@ namespace FS.Modules
                 foreach (var dependedModuleType in FarseerModule.FindDependedModuleTypes(moduleInfo.Type))
                 {
                     var dependedModuleInfo = _moduleCollection.FirstOrDefault(m => m.Type == dependedModuleType);
-                    if (dependedModuleInfo == null) throw new FarseerInitException(moduleInfo.Type.AssemblyQualifiedName + "没有找到依赖的模块 " + dependedModuleType.AssemblyQualifiedName);
+                    if (dependedModuleInfo == null) throw new FarseerInitException($"{moduleInfo.Type.AssemblyQualifiedName}没有找到依赖的模块 {dependedModuleType.AssemblyQualifiedName}");
 
                     if (moduleInfo.Dependencies.FirstOrDefault(dm => dm.Type == dependedModuleType) == null) moduleInfo.Dependencies.Add(dependedModuleInfo);
                 }

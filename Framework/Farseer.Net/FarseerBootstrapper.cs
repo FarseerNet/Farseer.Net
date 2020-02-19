@@ -20,7 +20,7 @@ namespace FS
         /// <summary>
         /// 模块管理器
         /// </summary>
-        private FarseerModuleManager _moduleManager;
+        private IFarseerModuleManager _moduleManager;
 
         /// <summary>
         ///     对象是否disposed
@@ -36,6 +36,7 @@ namespace FS
         ///     依赖注入管理器
         /// </summary>
         public IIocManager IocManager { get; set; }
+
         /// <summary>
         ///     构造函数
         /// </summary>
@@ -48,7 +49,7 @@ namespace FS
             Check.AssignableFrom(typeof(FarseerModule), startupModule);
 
             StartupModule = startupModule;
-            IocManager = iocManager;
+            IocManager    = iocManager;
         }
 
         /// <summary>
@@ -95,16 +96,21 @@ namespace FS
         {
             try
             {
+                var dt = DateTime.Now;
+                IocManager.Logger.Info("注册启动器");
                 RegisterBootstrapper();
+                IocManager.Logger.Info("开始系统核心组件的注册");
                 IocManager.Container.Install(new FarseerInstaller());
+
                 IocManager.Resolve<FarseerStartupConfiguration>().Initialize();
-                _moduleManager = IocManager.Resolve<FarseerModuleManager>();
+                _moduleManager = IocManager.Resolve<IFarseerModuleManager>();
                 _moduleManager.Initialize(StartupModule);
                 _moduleManager.StartModules();
+                IocManager.Logger.Info($"系统初始化完毕，共耗时{(DateTime.Now - dt).TotalMilliseconds:n}");
             }
             catch (Exception ex)
             {
-                IocManager.Logger.Fatal(ex.ToString(), ex);
+                IocManager.Logger.Error(ex.ToString(), ex);
                 throw;
             }
         }
@@ -114,7 +120,10 @@ namespace FS
         /// </summary>
         private void RegisterBootstrapper()
         {
-            if (!IocManager.IsRegistered<FarseerBootstrapper>()) { IocManager.Container.Register(Component.For<FarseerBootstrapper>().Instance(this)); }
+            if (!IocManager.IsRegistered<FarseerBootstrapper>())
+            {
+                IocManager.Container.Register(Component.For<FarseerBootstrapper>().Instance(this));
+            }
         }
     }
 }

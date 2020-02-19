@@ -141,6 +141,7 @@
             <e p="IEntity.cs" t="Include" />
             <e p="MapingData.cs" t="Include" />
           </e>
+          <e p="DefaultLogger.cs" t="Include" />
           <e p="DI" t="Include">
             <e p="BasicConventionalRegistrar.cs" t="Include" />
             <e p="ConventionalRegistrationConfig.cs" t="Include" />
@@ -358,7 +359,6 @@
           </e>
           <e p="Farseer.Net.Core.csproj" t="IncludeRecursive" />
           <e p="FarseerCoreModule.cs" t="Include" />
-          <e p="Interface" t="Include" />
           <e p="ISqlMonitor.cs" t="Include" />
           <e p="Jsons.cs" t="Include" />
           <e p="Mapping" t="Include">
