@@ -41,7 +41,7 @@ namespace FS.MQ.RabbitMQ
 
         public RabbitConsumer(IConnectionFactory factoryInfo, ConsumerConfig consumerConfig)
         {
-            _factoryInfo = factoryInfo;
+            _factoryInfo    = factoryInfo;
             _consumerConfig = consumerConfig;
         }
 
@@ -109,7 +109,7 @@ namespace FS.MQ.RabbitMQ
         {
             if (!(_con?.IsOpen).GetValueOrDefault() || (_channel?.IsClosed).GetValueOrDefault())
             {
-                _con = _factoryInfo.CreateConnection();
+                _con     = _factoryInfo.CreateConnection();
                 _channel = _con.CreateModel();
             }
         }
@@ -122,9 +122,9 @@ namespace FS.MQ.RabbitMQ
             _isClose = false;
             if (!(_con?.IsOpen).GetValueOrDefault() || (_channel?.IsClosed).GetValueOrDefault())
             {
-                _con = _factoryInfo.CreateConnection();
+                _con     = _factoryInfo.CreateConnection();
                 _channel = _con.CreateModel();
-                _channel.BasicQos(0, (ushort)_consumerConfig.ConsumeThreadNums, false);
+                _channel.BasicQos(0, (ushort) _consumerConfig.ConsumeThreadNums, false);
                 var consumer = new EventingBasicConsumer(_channel);
                 consumer.Received += (model, ea) =>
                 {
@@ -135,7 +135,7 @@ namespace FS.MQ.RabbitMQ
                     }
                     catch (Exception e)
                     {
-                        IocManager.Instance.Logger.Error(e.Message);
+                        IocManager.Instance.Logger.Error(listener.GetType().FullName, e);
                     }
                     finally
                     {
