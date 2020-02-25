@@ -221,13 +221,13 @@ namespace FS.Data.Internal
         /// <summary> 写入日志 </summary>
         private void WriteException(Exception ex, ISqlParam sqlParam)
         {
-            new SqlErrorLog(ex, sqlParam.Name, CommandType.Text, sqlParam.Sql.ToString(), sqlParam.Param ?? new List<DbParameter>()).Write();
+            new SqlErrorLog(ex, sqlParam.DbName, sqlParam.TableName, CommandType.Text, sqlParam.Sql.ToString(), sqlParam.Param ?? new List<DbParameter>()).Write();
         }
 
         /// <summary> 写入日志 </summary>
         private void WriteException(Exception ex, ProcBuilder procBuilder)
         {
-            new SqlErrorLog(ex, procBuilder.Name, CommandType.StoredProcedure, "", procBuilder.Param ?? new List<DbParameter>()).Write();
+            new SqlErrorLog(ex, procBuilder.DbName, procBuilder.ProcName, CommandType.StoredProcedure, "", procBuilder.Param ?? new List<DbParameter>()).Write();
         }
     }
 }

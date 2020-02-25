@@ -23,9 +23,13 @@ namespace FS.Data.Log.Default
         [DataMember]
         public long UserTime { get; set; }
 
+        /// <summary> 数据库名称 </summary>
+        [DataMember]
+        public string DbName { get; set; }
+
         /// <summary> 执行表名称 </summary>
         [DataMember]
-        public string Name { get; set; }
+        public string TableName { get; set; }
 
         /// <summary> 执行SQL </summary>
         [DataMember]
@@ -36,14 +40,16 @@ namespace FS.Data.Log.Default
         public List<SqlParam> SqlParamList { get; set; }
 
         /// <summary> SQL执行记录</summary>
-        /// <param name="name">表名称</param>
+        /// <param name="dbName">数据库名称 </param>
+        /// <param name="tableName">表名称</param>
         /// <param name="cmdType">执行方式</param>
         /// <param name="sql">T-SQL</param>
         /// <param name="param">SQL参数</param>
         /// <param name="elapsedMilliseconds">执行时间（单位：ms）</param>
-        public SqlRunLog(string name, CommandType cmdType, string sql, IEnumerable<DbParameter> param, long elapsedMilliseconds)
+        public SqlRunLog(string dbName, string tableName, CommandType cmdType, string sql, IEnumerable<DbParameter> param, long elapsedMilliseconds)
         {
-            Name = name;
+            DbName = dbName;
+            TableName = tableName;
             CmdType = cmdType;
             Sql = sql ?? "";
             UserTime = elapsedMilliseconds;

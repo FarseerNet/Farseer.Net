@@ -1,4 +1,5 @@
 ﻿using System;
+using FS.Data.Client;
 using FS.Data.Infrastructure;
 using FS.Data.Map;
 
@@ -11,9 +12,9 @@ namespace FS.Data.Internal
     {
         internal Queue(InternalContext context, SetDataMap map)
         {
-            ID = Guid.NewGuid();
-            Context = context;
-            Map = map;
+            ID       = Guid.NewGuid();
+            Context  = context;
+            Map      = map;
             CreateAt = DateTime.Now;
         }
 
@@ -43,8 +44,8 @@ namespace FS.Data.Internal
         /// <param name="queue">队列</param>
         internal void Copy(Queue queue)
         {
-            ID = queue.ID;
-            Context = queue.Context;
+            ID          = queue.ID;
+            Context     = queue.Context;
             _expBuilder = queue.ExpBuilder;
             queue.Dispose();
         }
@@ -72,7 +73,7 @@ namespace FS.Data.Internal
         /// <summary>
         ///     SQL生成器
         /// </summary>
-        internal AbsSqlBuilder SqlBuilder => _sqlBuilder ?? (_sqlBuilder = Context.DbProvider.CreateSqlBuilder(ExpBuilder, Map.Name));
+        internal AbsSqlBuilder SqlBuilder => _sqlBuilder ?? (_sqlBuilder = Context.DbProvider.CreateSqlBuilder(ExpBuilder, Map.DbName, Map.TableName));
 
         #endregion
 
@@ -83,7 +84,7 @@ namespace FS.Data.Internal
         /// <summary>
         ///     存储过程生成器
         /// </summary>
-        internal ProcBuilder ProcBuilder => _procBuilder ?? (_procBuilder = new ProcBuilder(Context.DbProvider, Map, Map.Name));
+        internal ProcBuilder ProcBuilder => _procBuilder ?? (_procBuilder = new ProcBuilder(Context.DbProvider, Map));
 
         #endregion
 
@@ -98,12 +99,12 @@ namespace FS.Data.Internal
             //释放托管资源
             if (disposing)
             {
-                Context = null;
-                Map = null;
-                _expBuilder = null;
-                _sqlBuilder = null;
+                Context      = null;
+                Map          = null;
+                _expBuilder  = null;
+                _sqlBuilder  = null;
                 _procBuilder = null;
-                LazyAct = null;
+                LazyAct      = null;
             }
         }
 

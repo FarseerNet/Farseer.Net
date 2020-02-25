@@ -6,6 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using FS.Core.Mapping;
+using FS.Data.Client;
 using FS.Data.Infrastructure;
 using FS.Data.Map;
 using FS.Utils.Common.ExpressionVisitor;

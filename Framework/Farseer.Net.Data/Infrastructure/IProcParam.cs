@@ -9,9 +9,14 @@ namespace FS.Data.Infrastructure
     public interface IProcParam
     {
         /// <summary>
+        ///     数据库名称
+        /// </summary>
+        string DbName { get; }
+
+        /// <summary>
         ///     存储过程名
         /// </summary>
-        string Name { get; }
+        string ProcName { get; }
 
         /// <summary>
         ///     当前生成的参数

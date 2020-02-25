@@ -3,6 +3,7 @@ using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using FS.Configuration;
 using FS.Core;
+using FS.Data.Client;
 using FS.Data.Configuration;
 using FS.Data.Infrastructure;
 using FS.Data.Internal;

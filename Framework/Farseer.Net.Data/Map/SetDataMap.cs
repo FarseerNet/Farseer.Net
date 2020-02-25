@@ -14,7 +14,7 @@ namespace FS.Data.Map
         {
             ClassProperty = entityPhysicsMap.Key;
             PhysicsMap = entityPhysicsMap.Value;
-            Name = ClassProperty.Name;
+            TableName = ClassProperty.Name;
         }
 
         /// <summary>
@@ -23,9 +23,14 @@ namespace FS.Data.Map
         public SetPhysicsMap PhysicsMap { get; private set; }
 
         /// <summary>
+        ///     库名称
+        /// </summary>
+        public string DbName { get; private set; }
+
+        /// <summary>
         ///     表/视图/存储过程名称
         /// </summary>
-        public string Name { get; private set; }
+        public string TableName { get; private set; }
 
         /// <summary>
         ///     类属性
@@ -40,10 +45,22 @@ namespace FS.Data.Map
         /// <summary>
         ///     设置表/视图/存储过程名称
         /// </summary>
-        /// <param name="name">表/视图/存储过程名称</param>
-        public SetDataMap SetName(string name)
+        /// <param name="tableName">表/视图/存储过程名称</param>
+        public SetDataMap SetName(string tableName)
         {
-            Name = name;
+            TableName = tableName;
+            return this;
+        }
+
+        /// <summary>
+        ///     设置表/视图/存储过程名称
+        /// </summary>
+        /// <param name="dbName">库名称 </param>
+        /// <param name="tableName">表/视图/存储过程名称</param>
+        public SetDataMap SetName(string dbName, string tableName)
+        {
+            DbName = dbName;
+            TableName = tableName;
             return this;
         }
 

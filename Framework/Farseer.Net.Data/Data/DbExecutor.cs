@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using FS.Data.Client;
 using FS.Data.Infrastructure;
 using FS.DI;
 

@@ -425,6 +425,7 @@
             <e p="SortDeleteCacheManger.cs" t="Include" />
           </e>
           <e p="Client" t="Include">
+            <e p="AbsDbProvider.cs" t="Include" />
             <e p="MySql" t="Include">
               <e p="MySqlBuilder.cs" t="Include" />
               <e p="MySqlFunctionProvider.cs" t="Include" />
@@ -492,7 +493,6 @@
             <e p="SortDelete.cs" t="Include" />
           </e>
           <e p="Infrastructure" t="Include">
-            <e p="AbsDbProvider.cs" t="Include" />
             <e p="AbsDbSet.cs" t="Include" />
             <e p="AbsFunctionProvider.cs" t="Include" />
             <e p="AbsSqlBuilder.cs" t="Include" />

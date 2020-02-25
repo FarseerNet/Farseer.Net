@@ -35,7 +35,7 @@
         "UserID": "root",
         "PassWord": "steden@123",
         "DataType": "MySql",
-        "Catalog": "lottery_company_dt",
+        "Catalog": "",
         "ConnectTimeout": 600,
         "CommandTimeout": 300,
         "PoolMaxSize": 5,

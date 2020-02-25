@@ -15,7 +15,7 @@ namespace FS.Data.Client.SqlServer
     {
         public override DbProviderFactory DbProviderFactory => SqlClientFactory.Instance;
         public override AbsFunctionProvider FunctionProvider => new SqlServerFunctionProvider();
-        internal override AbsSqlBuilder CreateSqlBuilder(ExpressionBuilder expBuilder, string name) => new SqlServerBuilder(this, expBuilder, name);
+        internal override AbsSqlBuilder CreateSqlBuilder(ExpressionBuilder expBuilder,string dbName, string tableName) => new SqlServerBuilder(this, expBuilder, dbName, tableName);
         public override bool IsSupportTransaction => true;
         public override string CreateDbConnstring(string server, string port, string userID, string passWord = null, string catalog = null, string dataVer = null, string additional = null, int connectTimeout = 60, int poolMinSize = 16, int poolMaxSize = 100)
         {

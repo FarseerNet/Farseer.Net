@@ -15,13 +15,14 @@ using FS.Data.Map;
 using FS.Cache;
 using FS.Utils.Common;
 using FS.Configuration;
+using FS.Data.Infrastructure;
 using FS.Extends;
 #if !CORE
 using FS.Data.Client.OleDb;
 using FS.Data.Client.Oracle;
 #endif
 
-namespace FS.Data.Infrastructure
+namespace FS.Data.Client
 {
     /// <summary>
     ///     数据库提供者（不同数据库的特性）
@@ -135,10 +136,7 @@ namespace FS.Data.Infrastructure
         /// <param name="name">参数名称</param>
         /// <param name="valu">参数值</param>
         /// <param name="output">是否是输出值</param>
-        public DbParameter CreateDbParam(string name, object valu, bool output = false)
-        {
-            return CreateDbParam(name, valu, valu.GetType(), output);
-        }
+        public DbParameter CreateDbParam(string name, object valu, bool output = false) => CreateDbParam(name, valu, valu.GetType(), output);
 
         /// <summary>
         ///     创建一个数据库参数对象
@@ -238,13 +236,13 @@ namespace FS.Data.Infrastructure
 
 #endregion
 
-        /// <summary>
-        ///     创建SQL查询
-        /// </summary>
-        /// <param name="expBuilder">表达式持久化</param>
-        /// <param name="name">表名/视图名/存储过程名</param>
-        /// 
-        internal abstract AbsSqlBuilder CreateSqlBuilder(ExpressionBuilder expBuilder, string name);
+/// <summary>
+///     创建SQL查询
+/// </summary>
+/// <param name="expBuilder">表达式持久化</param>
+/// <param name="dbName">数据库名称 </param>
+/// <param name="tableName">表名/视图名/存储过程名</param>
+internal abstract AbsSqlBuilder CreateSqlBuilder(ExpressionBuilder expBuilder, string dbName, string tableName);
 
         /// <summary>
         ///     存储过程创建SQL 输入、输出参数化

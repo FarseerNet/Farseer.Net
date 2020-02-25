@@ -12,7 +12,7 @@ namespace FS.Data.Client.OleDb
     {
         public override DbProviderFactory DbProviderFactory => System.Data.OleDb.OleDbFactory.Instance;
         public override AbsFunctionProvider FunctionProvider => new OleDbFunctionProvider();
-        internal override AbsSqlBuilder CreateSqlBuilder(ExpressionBuilder expBuilder, string name)=> new OleDbBuilder(this, expBuilder, name);
+        internal override AbsSqlBuilder CreateSqlBuilder(ExpressionBuilder expBuilder, string dbName, string tableName)=> new OleDbBuilder(this, expBuilder, dbName, tableName);
         public override bool IsSupportTransaction => false;
         public override string CreateDbConnstring(string server, string port, string userID, string passWord = null, string catalog = null, string dataVer = null, string additional = null, int connectTimeout = 60, int poolMinSize = 16, int poolMaxSize = 100)
         {

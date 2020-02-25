@@ -303,7 +303,7 @@ namespace FS.Data
             {
                 QueueManger.Commit(SetMap, (queue) =>
                 {
-                    Context.Executeor.DataBase.ExecuteSqlBulkCopy(SetMap.Name, lst.ToTable());
+                    Context.Executeor.DataBase.ExecuteSqlBulkCopy(SetMap.TableName, lst.ToTable());
                     return lst.Count;
                 }, false);
             }
@@ -324,7 +324,7 @@ namespace FS.Data
             {
                 return await QueueManger.CommitAsync(SetMap, async (queue) =>
                 {
-                    await Context.Executeor.DataBase.ExecuteSqlBulkCopyAsync(SetMap.Name, lst.ToTable());
+                    await Context.Executeor.DataBase.ExecuteSqlBulkCopyAsync(SetMap.TableName, lst.ToTable());
                     return lst.Count;
                 }, false);
             }

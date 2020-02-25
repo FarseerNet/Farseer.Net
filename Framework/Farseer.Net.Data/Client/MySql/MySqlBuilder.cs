@@ -13,8 +13,9 @@ namespace FS.Data.Client.MySql
         /// </summary>
         /// <param name="dbProvider">数据库提供者（不同数据库的特性）</param>
         /// <param name="expBuilder">表达式持久化</param>
-        /// <param name="name">表名/视图名/存储过程名</param>
-        internal MySqlBuilder(AbsDbProvider dbProvider, ExpressionBuilder expBuilder, string name) : base(dbProvider, expBuilder, name)
+        /// <param name="tableName">表名/视图名/存储过程名</param>
+        /// <param name="dbName">数据库名称 </param>
+        internal MySqlBuilder(AbsDbProvider dbProvider, ExpressionBuilder expBuilder,string dbName, string tableName) : base(dbProvider ,expBuilder ,dbName, tableName)
         {
         }
 
@@ -27,7 +28,7 @@ namespace FS.Data.Client.MySql
             if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
             if (!string.IsNullOrWhiteSpace(strOrderBySql)) { strOrderBySql = "ORDER BY " + strOrderBySql; }
 
-            Sql.Append($"SELECT {strSelectSql} FROM {DbProvider.KeywordAegis(Name)} {strWhereSql} {strOrderBySql} LIMIT 1");
+            Sql.Append($"SELECT {strSelectSql} FROM {DbProvider.KeywordAegis(TableName)} {strWhereSql} {strOrderBySql} LIMIT 1");
             return this;
         }
 
@@ -44,14 +45,14 @@ namespace FS.Data.Client.MySql
             if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
             if (!string.IsNullOrWhiteSpace(strOrderBySql)) { strOrderBySql = "ORDER BY " + strOrderBySql; }
 
-            if (!isRand) { Sql.Append($"SELECT {strDistinctSql}{strSelectSql} FROM {DbProvider.KeywordAegis(Name)} {strWhereSql} {strOrderBySql} {strTopSql}"); }
+            if (!isRand) { Sql.Append($"SELECT {strDistinctSql}{strSelectSql} FROM {DbProvider.KeywordAegis(TableName)} {strWhereSql} {strOrderBySql} {strTopSql}"); }
             else if (!isDistinct && string.IsNullOrWhiteSpace(strOrderBySql))
             {
-                Sql.Append($"SELECT {strSelectSql}{randField} FROM {DbProvider.KeywordAegis(Name)} {strWhereSql} ORDER BY Rand() {strTopSql}");
+                Sql.Append($"SELECT {strSelectSql}{randField} FROM {DbProvider.KeywordAegis(TableName)} {strWhereSql} ORDER BY Rand() {strTopSql}");
             }
             else
             {
-                Sql.Append($"SELECT * {randField} FROM (SELECT {strDistinctSql} {strSelectSql} FROM {DbProvider.KeywordAegis(Name)} {strWhereSql} {strOrderBySql}) s ORDER BY Rand() {strTopSql}");
+                Sql.Append($"SELECT * {randField} FROM (SELECT {strDistinctSql} {strSelectSql} FROM {DbProvider.KeywordAegis(TableName)} {strWhereSql} {strOrderBySql}) s ORDER BY Rand() {strTopSql}");
             }
             return this;
         }
@@ -74,7 +75,7 @@ namespace FS.Data.Client.MySql
             if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
             if (!string.IsNullOrWhiteSpace(strOrderBySql)) { strOrderBySql = "ORDER BY " + strOrderBySql; }
 
-            Sql.Append($"SELECT {strDistinctSql}{strSelectSql} FROM {DbProvider.KeywordAegis(Name)} {strWhereSql} {strOrderBySql} LIMIT {pageSize * (pageIndex - 1)},{pageSize}");
+            Sql.Append($"SELECT {strDistinctSql}{strSelectSql} FROM {DbProvider.KeywordAegis(TableName)} {strWhereSql} {strOrderBySql} LIMIT {pageSize * (pageIndex - 1)},{pageSize}");
             return this;
         }
 
@@ -87,7 +88,7 @@ namespace FS.Data.Client.MySql
             if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
             if (!string.IsNullOrWhiteSpace(strOrderBySql)) { strOrderBySql = "ORDER BY " + strOrderBySql; }
 
-            Sql.Append($"SELECT {strSelectSql} FROM {DbProvider.KeywordAegis(Name)} {strWhereSql} {strOrderBySql} LIMIT 1");
+            Sql.Append($"SELECT {strSelectSql} FROM {DbProvider.KeywordAegis(TableName)} {strWhereSql} {strOrderBySql} LIMIT 1");
             return this;
         }
 

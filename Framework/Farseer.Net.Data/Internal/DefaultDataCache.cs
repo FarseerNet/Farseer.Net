@@ -23,7 +23,7 @@ namespace FS.Data.Internal
             {
                 var expBuilder = new ExpressionBuilder(_set.SetMap);
                 expBuilder.DeleteSortCondition();
-                return _set.Context.Executeor.ToList<TEntity>(_set.Context.DbProvider.CreateSqlBuilder(expBuilder, _set.SetMap.Name).ToList());
+                return _set.Context.Executeor.ToList<TEntity>(_set.Context.DbProvider.CreateSqlBuilder(expBuilder, _set.SetMap.DbName, _set.SetMap.TableName).ToList());
             });
         }
 
