@@ -159,6 +159,7 @@ namespace FS.Data.Data
         /// </summary>
         public void Commit()
         {
+            if (_comm == null) return;
             if (_comm.Transaction == null) { throw new Exception("未开启事务"); }
             _comm.Transaction.Commit();
         }

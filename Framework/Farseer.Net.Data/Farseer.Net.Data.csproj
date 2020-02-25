@@ -7,9 +7,9 @@
     <Product>ORM组件</Product>
     <Description>包括：Farseer.NetORM组件</Description>
     <Authors>steden</Authors>
-    <AssemblyVersion>2.3.1</AssemblyVersion>
-    <FileVersion>2.3.1</FileVersion>
-    <Version>2.3.1</Version>
+    <AssemblyVersion>2.3.2</AssemblyVersion>
+    <FileVersion>2.3.2</FileVersion>
+    <Version>2.3.2</Version>
     <PackageTags>ORM</PackageTags>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>

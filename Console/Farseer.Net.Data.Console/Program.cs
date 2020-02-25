@@ -8,7 +8,10 @@ namespace Farseer.Net.Data.Console
         static void Main(string[] args)
         {
             FarseerBootstrapper.Create<StartupModule>().Initialize();
-
+            using (var db = new TestContext())
+            {
+                db.SaveChanges();
+            }
             var lst = new UserCoinsAgent().ToCreditList();
             var a = 1;
             a++;
