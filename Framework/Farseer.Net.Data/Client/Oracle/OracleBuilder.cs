@@ -28,7 +28,7 @@ namespace FS.Data.Client.Oracle
             if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
             if (!string.IsNullOrWhiteSpace(strOrderBySql)) { strOrderBySql = "ORDER BY " + strOrderBySql; }
 
-            Sql.Append(BuilderTop(1, $"SELECT {strSelectSql} FROM {DbProvider.KeywordAegis(TableName)} {strWhereSql} {strOrderBySql}"));
+            Sql.Append(BuilderTop(1, $"SELECT {strSelectSql} FROM {DbTableName} {strWhereSql} {strOrderBySql}"));
             return this;
         }
 
@@ -44,9 +44,9 @@ namespace FS.Data.Client.Oracle
             if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
             if (!string.IsNullOrWhiteSpace(strOrderBySql)) { strOrderBySql = "ORDER BY " + strOrderBySql; }
 
-            if (!isRand) Sql.Append(BuilderTop(top, $"SELECT {strDistinctSql}{strSelectSql} FROM {DbProvider.KeywordAegis(TableName)} {strWhereSql} {strOrderBySql}"));
-            else if (!isDistinct && string.IsNullOrWhiteSpace(strOrderBySql)) Sql.Append(BuilderTop(top, $"SELECT {strSelectSql}{randField} FROM {DbProvider.KeywordAegis(TableName)} {strWhereSql} ORDER BY dbms_random.value"));
-            else Sql.Append(BuilderTop(top, $"SELECT * {randField} FROM (SELECT {strDistinctSql} {strSelectSql} FROM {DbProvider.KeywordAegis(TableName)} {strWhereSql} {strOrderBySql}) s ORDER BY dbms_random.value"));
+            if (!isRand) Sql.Append(BuilderTop(top, $"SELECT {strDistinctSql}{strSelectSql} FROM {DbTableName} {strWhereSql} {strOrderBySql}"));
+            else if (!isDistinct && string.IsNullOrWhiteSpace(strOrderBySql)) Sql.Append(BuilderTop(top, $"SELECT {strSelectSql}{randField} FROM {DbTableName} {strWhereSql} ORDER BY dbms_random.value"));
+            else Sql.Append(BuilderTop(top, $"SELECT * {randField} FROM (SELECT {strDistinctSql} {strSelectSql} FROM {DbTableName} {strWhereSql} {strOrderBySql}) s ORDER BY dbms_random.value"));
             return this;
         }
 
@@ -68,7 +68,7 @@ namespace FS.Data.Client.Oracle
             if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
             if (!string.IsNullOrWhiteSpace(strOrderBySql)) { strOrderBySql = "ORDER BY " + strOrderBySql; }
 
-            Sql.Append(string.Format("SELECT * FROM ( SELECT A.*, ROWNUM RN FROM (SELECT {0}{1} FROM {4} {5} {6}) A WHERE ROWNUM <= {3} ) WHERE RN > {2}", strDistinctSql, strSelectSql, pageSize * (pageIndex - 1), pageSize * pageIndex, DbProvider.KeywordAegis(TableName), strWhereSql, strOrderBySql));
+            Sql.Append(string.Format("SELECT * FROM ( SELECT A.*, ROWNUM RN FROM (SELECT {0}{1} FROM {4} {5} {6}) A WHERE ROWNUM <= {3} ) WHERE RN > {2}", strDistinctSql, strSelectSql, pageSize * (pageIndex - 1), pageSize * pageIndex, DbTableName, strWhereSql, strOrderBySql));
             return this;
         }
 
@@ -82,7 +82,7 @@ namespace FS.Data.Client.Oracle
             if (!string.IsNullOrWhiteSpace(strOrderBySql)) { strOrderBySql = "ORDER BY " + strOrderBySql; }
             var strTopSql = (string.IsNullOrWhiteSpace(strWhereSql) ? "WHERE" : "AND") + " rownum <=1";
 
-            Sql.Append($"SELECT {strSelectSql} FROM {DbProvider.KeywordAegis(TableName)} {strWhereSql} {strOrderBySql} {strTopSql}");
+            Sql.Append($"SELECT {strSelectSql} FROM {DbTableName} {strWhereSql} {strOrderBySql} {strTopSql}");
             return this;
         }
 

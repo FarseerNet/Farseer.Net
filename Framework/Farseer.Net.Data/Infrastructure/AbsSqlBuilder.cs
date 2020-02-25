@@ -62,6 +62,8 @@ namespace FS.Data.Infrastructure
         /// </summary>
         public string TableName { get; }
 
+        public string DbTableName => string.IsNullOrEmpty(DbName) ? DbProvider.KeywordAegis(TableName) : $"{DbProvider.KeywordAegis(DbName)}.{DbProvider.KeywordAegis(TableName)}";
+
         /// <summary>
         ///     Where条件表达式树的解析
         /// </summary>
@@ -99,7 +101,7 @@ namespace FS.Data.Infrastructure
             if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
             if (!string.IsNullOrWhiteSpace(strOrderBySql)) { strOrderBySql = "ORDER BY " + strOrderBySql; }
 
-            Sql.Append($"SELECT TOP 1 {strSelectSql} FROM {DbProvider.KeywordAegis(TableName)} {strWhereSql} {strOrderBySql}");
+            Sql.Append($"SELECT TOP 1 {strSelectSql} FROM {DbTableName} {strWhereSql} {strOrderBySql}");
             return this;
         }
 
@@ -121,14 +123,14 @@ namespace FS.Data.Infrastructure
             if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
             if (!string.IsNullOrWhiteSpace(strOrderBySql)) { strOrderBySql = "ORDER BY " + strOrderBySql; }
 
-            if (!isRand) { Sql.Append($"SELECT {strDistinctSql}{strTopSql}{strSelectSql} FROM {DbProvider.KeywordAegis(TableName)} {strWhereSql} {strOrderBySql}"); }
+            if (!isRand) { Sql.Append($"SELECT {strDistinctSql}{strTopSql}{strSelectSql} FROM {DbTableName} {strWhereSql} {strOrderBySql}"); }
             else if (!isDistinct && string.IsNullOrWhiteSpace(strOrderBySql))
             {
-                Sql.Append($"SELECT {strTopSql}{strSelectSql}{randField} FROM {DbProvider.KeywordAegis(TableName)} {strWhereSql} ORDER BY NEWID()");
+                Sql.Append($"SELECT {strTopSql}{strSelectSql}{randField} FROM {DbTableName} {strWhereSql} ORDER BY NEWID()");
             }
             else
             {
-                Sql.Append($"SELECT {strTopSql} *{randField} FROM (SELECT {strDistinctSql} {strSelectSql} FROM {DbProvider.KeywordAegis(TableName)} {strWhereSql} {strOrderBySql}) s ORDER BY NEWID()");
+                Sql.Append($"SELECT {strTopSql} *{randField} FROM (SELECT {strDistinctSql} {strSelectSql} FROM {DbTableName} {strWhereSql} {strOrderBySql}) s ORDER BY NEWID()");
             }
             return this;
         }
@@ -160,7 +162,7 @@ namespace FS.Data.Infrastructure
 
             if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
 
-            Sql.Append(string.Format("SELECT {0}TOP {2} {1} FROM (SELECT TOP {3} * FROM {4} {5} {6}) a  {7}", strDistinctSql, strSelectSql, pageSize, pageSize * pageIndex, DbProvider.KeywordAegis(TableName), strWhereSql, strOrderBySql, strOrderBySqlReverse));
+            Sql.Append(string.Format("SELECT {0}TOP {2} {1} FROM (SELECT TOP {3} * FROM {4} {5} {6}) a  {7}", strDistinctSql, strSelectSql, pageSize, pageSize * pageIndex, DbTableName, strWhereSql, strOrderBySql, strOrderBySqlReverse));
             return this;
         }
 
@@ -170,7 +172,7 @@ namespace FS.Data.Infrastructure
         public virtual ISqlParam Insert()
         {
             var strinsertAssemble = InsertVisitor.Visit(ExpBuilder.ExpAssign);
-            Sql.Append($"INSERT INTO {DbProvider.KeywordAegis(TableName)} {strinsertAssemble}");
+            Sql.Append($"INSERT INTO {DbTableName} {strinsertAssemble}");
             return this;
         }
 
@@ -180,7 +182,7 @@ namespace FS.Data.Infrastructure
         public virtual ISqlParam InsertIdentity()
         {
             var strinsertAssemble = InsertVisitor.Visit(ExpBuilder.ExpAssign);
-            Sql.Append($"INSERT INTO {DbProvider.KeywordAegis(TableName)} {strinsertAssemble} ");
+            Sql.Append($"INSERT INTO {DbTableName} {strinsertAssemble} ");
             return this;
         }
 
@@ -195,7 +197,7 @@ namespace FS.Data.Infrastructure
             // 主键如果有值、或者设置成只读条件，则自动转成条件
             if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
 
-            Sql.Append($"UPDATE {DbProvider.KeywordAegis(TableName)} SET {strAssemble} {strWhereSql}");
+            Sql.Append($"UPDATE {DbTableName} SET {strAssemble} {strWhereSql}");
             return this;
         }
 
@@ -210,7 +212,7 @@ namespace FS.Data.Infrastructure
 
             if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
 
-            Sql.Append($"SELECT {strDistinctSql}Count(0) FROM {DbProvider.KeywordAegis(TableName)} {strWhereSql}");
+            Sql.Append($"SELECT {strDistinctSql}Count(0) FROM {DbTableName} {strWhereSql}");
             return this;
         }
 
@@ -226,7 +228,7 @@ namespace FS.Data.Infrastructure
             if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
             if (!string.IsNullOrWhiteSpace(strOrderBySql)) { strOrderBySql = "ORDER BY " + strOrderBySql; }
 
-            Sql.Append($"SELECT TOP 1 {strSelectSql} FROM {DbProvider.KeywordAegis(TableName)} {strWhereSql} {strOrderBySql}");
+            Sql.Append($"SELECT TOP 1 {strSelectSql} FROM {DbTableName} {strWhereSql} {strOrderBySql}");
             return this;
         }
 
@@ -239,7 +241,7 @@ namespace FS.Data.Infrastructure
 
             if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
 
-            Sql.Append($"DELETE FROM {DbProvider.KeywordAegis(TableName)} {strWhereSql}");
+            Sql.Append($"DELETE FROM {DbTableName} {strWhereSql}");
             return this;
         }
 
@@ -255,7 +257,7 @@ namespace FS.Data.Infrastructure
 
             if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
 
-            Sql.Append($"UPDATE {DbProvider.KeywordAegis(TableName)} SET {strAssemble} {strWhereSql}");
+            Sql.Append($"UPDATE {DbTableName} SET {strAssemble} {strWhereSql}");
             return this;
         }
 
@@ -270,7 +272,7 @@ namespace FS.Data.Infrastructure
             if (string.IsNullOrWhiteSpace(strSelectSql)) { strSelectSql = "0"; }
             if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
 
-            Sql.Append($"SELECT SUM({strSelectSql}) FROM {DbProvider.KeywordAegis(TableName)} {strWhereSql}");
+            Sql.Append($"SELECT SUM({strSelectSql}) FROM {DbTableName} {strWhereSql}");
             return this;
         }
 
@@ -285,7 +287,7 @@ namespace FS.Data.Infrastructure
             if (string.IsNullOrWhiteSpace(strSelectSql)) { strSelectSql = "0"; }
             if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
 
-            Sql.Append($"SELECT MAX({strSelectSql}) FROM {DbProvider.KeywordAegis(TableName)} {strWhereSql}");
+            Sql.Append($"SELECT MAX({strSelectSql}) FROM {DbTableName} {strWhereSql}");
             return this;
         }
 
@@ -300,7 +302,7 @@ namespace FS.Data.Infrastructure
             if (string.IsNullOrWhiteSpace(strSelectSql)) { strSelectSql = "0"; }
             if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
 
-            Sql.Append($"SELECT MIN({strSelectSql}) FROM {DbProvider.KeywordAegis(TableName)} {strWhereSql}");
+            Sql.Append($"SELECT MIN({strSelectSql}) FROM {DbTableName} {strWhereSql}");
             return this;
         }
 
