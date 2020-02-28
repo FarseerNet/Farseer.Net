@@ -20,6 +20,7 @@ namespace Farseer.Net.Data.Console
         {
             map["UserCoins"].SetName("account_user_coins");
         }
+        
         public TableSet<UserCoinsPO> UserCoins { get; set; }
 
     }

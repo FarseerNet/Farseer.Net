@@ -7,6 +7,7 @@ using FS.DI;
 using FS.MQ.RabbitMQ.Configuration;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using RabbitMQ.Client.Exceptions;
 
 namespace FS.MQ.RabbitMQ
 {
@@ -50,8 +51,8 @@ namespace FS.MQ.RabbitMQ
         /// </summary>
         public void Close()
         {
-            _isClose = true;
             _checkStatsAndConnectTask?.Dispose();
+            _isClose = true;
             _channel.Close();
             _channel.Dispose();
             _channel = null;
@@ -68,8 +69,24 @@ namespace FS.MQ.RabbitMQ
         /// <param name="autoAck">是否自动确认，默认false</param>
         public void Start(IListenerMessage listener, bool autoAck = false)
         {
-            _isClose = false;
+            Close();
             CheckStatsAndConnect(listener, autoAck);
+        }
+
+        /// <summary>
+        /// 定时检查连接状态
+        /// </summary>
+        private void CheckStatsAndConnect(IListenerMessage listener, bool autoAck = false)
+        {
+            _checkStatsAndConnectTask?.Dispose();
+            _checkStatsAndConnectTask = Task.Factory.StartNew(() =>
+            {
+                while (true)
+                {
+                    if (_isClose) Connect(listener, autoAck);
+                    Thread.Sleep(1000);
+                }
+            });
         }
 
         /// <summary>
@@ -102,6 +119,7 @@ namespace FS.MQ.RabbitMQ
                     if (result) _channel.BasicAck(resp.DeliveryTag, false);
                     else _channel.BasicReject(resp.DeliveryTag, true);
                 }
+                Close();
             }
         }
 
@@ -133,6 +151,11 @@ namespace FS.MQ.RabbitMQ
                     {
                         result = listener.Consumer(Encoding.UTF8.GetString(ea.Body), model, ea);
                     }
+                    catch (AlreadyClosedException e) // rabbit被关闭了，重新打开链接
+                    {
+                        Close();
+                        IocManager.Instance.Logger.Error(listener.GetType().FullName, e);
+                    }
                     catch (Exception e)
                     {
                         IocManager.Instance.Logger.Error(listener.GetType().FullName, e);
@@ -149,24 +172,6 @@ namespace FS.MQ.RabbitMQ
                 // 消费者开启监听
                 _channel.BasicConsume(queue: _consumerConfig.QueueName, autoAck: autoAck, consumer: consumer);
             }
-        }
-
-        /// <summary>
-        /// 定时检查连接状态
-        /// </summary>
-        /// <param name="listener"></param>
-        /// <param name="autoAck"></param>
-        private void CheckStatsAndConnect(IListenerMessage listener, bool autoAck = false)
-        {
-            _checkStatsAndConnectTask?.Dispose();
-            _checkStatsAndConnectTask = Task.Factory.StartNew(() =>
-            {
-                while (!_isClose)
-                {
-                    Connect(listener, autoAck);
-                    Thread.Sleep(1000);
-                }
-            });
         }
     }
 }

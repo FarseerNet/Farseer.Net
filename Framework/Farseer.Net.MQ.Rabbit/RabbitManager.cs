@@ -51,30 +51,32 @@ namespace FS.MQ.RabbitMQ
         /// <summary> Rabbit管理器 </summary>
         public RabbitManager(RabbitServerConfig config, ProductConfig productConfig)
         {
-            _serverConfig = config;
+            _serverConfig  = config;
             _productConfig = productConfig;
             if (string.IsNullOrWhiteSpace(_serverConfig.VirtualHost)) _serverConfig.VirtualHost = "/";
             _factoryInfo = new ConnectionFactory //创建连接工厂对象
             {
-                HostName = _serverConfig.Server, //IP地址
-                Port = _serverConfig.Port, //端口号
-                UserName = _serverConfig.UserName, //用户账号
-                Password = _serverConfig.Password, //用户密码
-                VirtualHost = _serverConfig.VirtualHost // 虚拟主机
+                HostName                 = _serverConfig.Server,      //IP地址
+                Port                     = _serverConfig.Port,        //端口号
+                UserName                 = _serverConfig.UserName,    //用户账号
+                Password                 = _serverConfig.Password,    //用户密码
+                VirtualHost              = _serverConfig.VirtualHost, // 虚拟主机
+                AutomaticRecoveryEnabled = true,
             };
         }
 
         /// <summary> Rabbit管理器 </summary>
         public RabbitManager(RabbitServerConfig config, ConsumerConfig consumerConfig)
         {
-            _serverConfig = config;
+            _serverConfig   = config;
             _consumerConfig = consumerConfig;
             _factoryInfo = new ConnectionFactory //创建连接工厂对象
             {
-                HostName = _serverConfig.Server, //IP地址
-                Port = _serverConfig.Port, //端口号
+                HostName = _serverConfig.Server,   //IP地址
+                Port     = _serverConfig.Port,     //端口号
                 UserName = _serverConfig.UserName, //用户账号
-                Password = _serverConfig.Password //用户密码
+                Password = _serverConfig.Password,  //用户密码
+                AutomaticRecoveryEnabled = true,
             };
         }
 
@@ -126,8 +128,8 @@ namespace FS.MQ.RabbitMQ
                 {
                     //声明一个队列
                     channel.QueueDeclare(
-                        queue: queueName, //消息队列名称
-                        durable: durable, //是否缓存
+                        queue: queueName,     //消息队列名称
+                        durable: durable,     //是否缓存
                         exclusive: exclusive, // 创建后删除
                         autoDelete: autoDelete,
                         arguments: arguments
