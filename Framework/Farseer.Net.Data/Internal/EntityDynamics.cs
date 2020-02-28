@@ -129,7 +129,7 @@ namespace FS.Data.Internal
                     throw new Exception(error.ToString(","));
                 }
                 IocManager.Instance.Logger.Error(exp.ToString());
-                throw exp;
+                throw;
             }
 #else
             var scriptOptions = ScriptOptions.Default;
