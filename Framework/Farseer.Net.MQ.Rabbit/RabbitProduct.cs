@@ -78,7 +78,7 @@ namespace FS.MQ.RabbitMQ
         /// <param name="basicProperties">属性</param>
         public bool Send(string message, string routingKey, string exchange = "", IBasicProperties basicProperties = null)
         {
-            if (_channel == null || _channel.IsClosed) Connect();
+            if (!(_con?.IsOpen).GetValueOrDefault() || (_channel?.IsClosed).GetValueOrDefault()) Connect();
             // 默认设置为消息持久化
             if (basicProperties == null)
             {

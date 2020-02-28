@@ -33,8 +33,6 @@ namespace FS.MQ.RabbitMQ
         /// </summary>
         private IModel _channel;
 
-        private bool _isClose;
-
         /// <summary>
         /// 后台定时检查连接状态
         /// </summary>
@@ -52,14 +50,19 @@ namespace FS.MQ.RabbitMQ
         public void Close()
         {
             _checkStatsAndConnectTask?.Dispose();
-            _isClose = true;
-            _channel.Close();
-            _channel.Dispose();
-            _channel = null;
+            if (_channel != null)
+            {
+                _channel.Close();
+                _channel.Dispose();
+                _channel = null;
+            }
 
-            _con.Close();
-            _con.Dispose();
-            _con = null;
+            if (_con != null)
+            {
+                _con.Close();
+                _con.Dispose();
+                _con = null;
+            }
         }
 
         /// <summary>
@@ -83,7 +86,7 @@ namespace FS.MQ.RabbitMQ
             {
                 while (true)
                 {
-                    if (_isClose) Connect(listener, autoAck);
+                    if (!(_con?.IsOpen).GetValueOrDefault() || (_channel?.IsClosed).GetValueOrDefault()) Connect(listener, autoAck);
                     Thread.Sleep(1000);
                 }
             });
@@ -96,8 +99,6 @@ namespace FS.MQ.RabbitMQ
         /// <param name="autoAck">是否自动确认，默认false</param>
         public void StartSignle(IListenerMessageSingle listener, bool autoAck = false)
         {
-            _isClose = false;
-
             Connect();
 
             // 只获取一次
@@ -119,6 +120,7 @@ namespace FS.MQ.RabbitMQ
                     if (result) _channel.BasicAck(resp.DeliveryTag, false);
                     else _channel.BasicReject(resp.DeliveryTag, true);
                 }
+
                 Close();
             }
         }
@@ -137,7 +139,7 @@ namespace FS.MQ.RabbitMQ
         /// </summary>
         private void Connect(IListenerMessage listener, bool autoAck = false)
         {
-            _isClose = false;
+            //_isClose = false;
             if (!(_con?.IsOpen).GetValueOrDefault() || (_channel?.IsClosed).GetValueOrDefault())
             {
                 _con     = _factoryInfo.CreateConnection();
