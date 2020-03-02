@@ -36,7 +36,7 @@ namespace FS.MQ.RabbitMQ
                     // 按生产者遍历
                     foreach (var consumerConfig in rabbitItemConfig.Consumer)
                     {
-                        container.Register(Component.For<IRabbitManager>().Named(consumerConfig.Name).ImplementedBy<RabbitManager>().DependsOn(Dependency.OnValue<RabbitServerConfig>(rabbitItemConfig), Dependency.OnValue<ConsumerConfig>(consumerConfig)).LifestyleSingleton());
+                        container.Register(Component.For<IRabbitManager>().Named(consumerConfig.Name).ImplementedBy<RabbitManager>().DependsOn(Dependency.OnValue<RabbitServerConfig>(rabbitItemConfig), Dependency.OnValue<ConsumerConfig>(consumerConfig)).LifestyleTransient());
                     }
                 }
             }

@@ -72,11 +72,12 @@ namespace FS.MQ.RabbitMQ
             _consumerConfig = consumerConfig;
             _factoryInfo = new ConnectionFactory //创建连接工厂对象
             {
-                HostName = _serverConfig.Server,   //IP地址
-                Port     = _serverConfig.Port,     //端口号
-                UserName = _serverConfig.UserName, //用户账号
-                Password = _serverConfig.Password,  //用户密码
+                HostName                 = _serverConfig.Server,   //IP地址
+                Port                     = _serverConfig.Port,     //端口号
+                UserName                 = _serverConfig.UserName, //用户账号
+                Password                 = _serverConfig.Password, //用户密码
                 AutomaticRecoveryEnabled = true,
+                TopologyRecoveryEnabled  = true
             };
         }
 

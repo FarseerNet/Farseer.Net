@@ -100,7 +100,7 @@ namespace FS.MQ.RabbitMQ
         /// <param name="autoAck">是否自动确认，默认false</param>
         public void StartSignle(IListenerMessageSingle listener, bool autoAck = false)
         {
-            Connect();
+            Connect(listener.GetType().FullName);
 
             // 只获取一次
             var resp = _channel.BasicGet(_consumerConfig.QueueName, autoAck);
@@ -129,11 +129,12 @@ namespace FS.MQ.RabbitMQ
         /// <summary>
         /// 单次消费连接MQ
         /// </summary>
-        private void Connect()
+        /// <param name="clientProvidedName"> </param>
+        private void Connect(string clientProvidedName)
         {
             if (!(_con?.IsOpen).GetValueOrDefault() || (_channel?.IsClosed).GetValueOrDefault())
             {
-                _con     = _factoryInfo.CreateConnection();
+                _con     = _factoryInfo.CreateConnection(clientProvidedName);
                 _channel = _con.CreateModel();
             }
         }
@@ -145,7 +146,7 @@ namespace FS.MQ.RabbitMQ
         {
             if (!(_con?.IsOpen).GetValueOrDefault() || (_channel?.IsClosed).GetValueOrDefault())
             {
-                _con     = _factoryInfo.CreateConnection();
+                _con     = _factoryInfo.CreateConnection(listener.GetType().FullName);
                 _channel = _con.CreateModel();
                 _channel.BasicQos(0, (ushort) _consumerConfig.ConsumeThreadNums, false);
                 var consumer = new EventingBasicConsumer(_channel);
