@@ -10,5 +10,8 @@ namespace FS.MQ.RabbitMQ.Configuration
 
         /// <summary> 线程数 </summary>
         public int ConsumeThreadNums { get; set; }
+
+        /// <summary> 最后ACK多少秒超时则重连（默认5分钟） </summary>
+        public int LastAckTimeoutRestart { get; set; }
     }
 }
