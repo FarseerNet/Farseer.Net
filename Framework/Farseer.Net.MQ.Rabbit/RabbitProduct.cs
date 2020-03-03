@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Text;
 using FS.MQ.RabbitMQ.Configuration;
 using RabbitMQ.Client;
@@ -28,7 +30,7 @@ namespace FS.MQ.RabbitMQ
 
         public RabbitProduct(IConnectionFactory factoryInfo, ProductConfig productConfig)
         {
-            _factoryInfo = factoryInfo;
+            _factoryInfo   = factoryInfo;
             _productConfig = productConfig;
             Connect();
         }
@@ -38,7 +40,7 @@ namespace FS.MQ.RabbitMQ
         /// </summary>
         private void Connect()
         {
-            _con = _factoryInfo.CreateConnection();
+            _con     = _factoryInfo.CreateConnection();
             _channel = _con.CreateModel();
 
             if (_productConfig.UseConfirmModel) _channel.ConfirmSelect();
@@ -70,6 +72,16 @@ namespace FS.MQ.RabbitMQ
         }
 
         /// <summary>
+        ///     发送消息（Routingkey默认配置中的RoutingKey；ExchangeName默认配置中的ExchangeName）
+        /// </summary>
+        /// <param name="message">消息主体</param>
+        /// <param name="basicProperties">属性</param>
+        public bool Send(IEnumerable<string> message, IBasicProperties basicProperties = null)
+        {
+            return Send(message, _productConfig.RoutingKey, _productConfig.ExchangeName, basicProperties);
+        }
+
+        /// <summary>
         ///     发送消息
         /// </summary>
         /// <param name="message">消息主体</param>
@@ -82,15 +94,60 @@ namespace FS.MQ.RabbitMQ
             // 默认设置为消息持久化
             if (basicProperties == null)
             {
-                basicProperties = _channel.CreateBasicProperties();
+                basicProperties              = _channel.CreateBasicProperties();
                 basicProperties.DeliveryMode = 2;
             }
-            
+
             //消息内容
             var body = Encoding.UTF8.GetBytes(message);
             //发送消息
             _channel.BasicPublish(exchange: exchange, routingKey: routingKey, basicProperties: basicProperties, body: body);
             return !_productConfig.UseConfirmModel || _channel.WaitForConfirms();
+        }
+
+        /// <summary>
+        ///     发送消息（批量）
+        /// </summary>
+        /// <param name="message">消息主体</param>
+        /// <param name="routingKey">路由KEY名称</param>
+        /// <param name="exchange">交换器名称</param>
+        /// <param name="basicProperties">属性</param>
+        public bool Send(IEnumerable<string> message, string routingKey, string exchange = "", IBasicProperties basicProperties = null)
+        {
+            IConnection con     = null;
+            IModel      channel = null;
+            try
+            {
+                con     = _factoryInfo.CreateConnection();
+                channel = _con.CreateModel();
+
+                if (_productConfig.UseConfirmModel) channel.ConfirmSelect();
+
+                // 默认设置为消息持久化
+                if (basicProperties == null)
+                {
+                    basicProperties              = channel.CreateBasicProperties();
+                    basicProperties.DeliveryMode = 2;
+                }
+
+                foreach (var msg in message)
+                {
+                    //消息内容
+                    var body = Encoding.UTF8.GetBytes(msg);
+                    //发送消息
+                    channel.BasicPublish(exchange: exchange, routingKey: routingKey, basicProperties: basicProperties, body: body);
+                }
+
+                return !_productConfig.UseConfirmModel || _channel.WaitForConfirms();
+            }
+            finally
+            {
+                channel?.Close();
+                channel?.Dispose();
+
+                con?.Close();
+                con?.Dispose();
+            }
         }
     }
 }

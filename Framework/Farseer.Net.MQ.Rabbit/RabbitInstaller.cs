@@ -18,8 +18,6 @@ namespace FS.MQ.RabbitMQ
             if (localConfigResolver.RabbitConfig().Items.Count == 0) return;
 
             //注册所有的消息队列的Topic消费者
-            //localConfigResolver.RabbitConfig().Items.ForEach(c =>container.Register(Component.For<IRabbitManager>().Named(c.Name).ImplementedBy<RabbitManager>().DependsOn(Dependency.OnValue<RabbitItemConfig>(c)).LifestyleSingleton()));
-            // 按服务器地址遍历
             foreach (var rabbitItemConfig in localConfigResolver.RabbitConfig().Items)
             {
                 if (rabbitItemConfig.Product != null)
