@@ -43,7 +43,6 @@ namespace FS.Modules
 
         public override void PostInitialize()
         {
-            ServicePointManager.DefaultConnectionLimit = 512;
         }
     }
 }
