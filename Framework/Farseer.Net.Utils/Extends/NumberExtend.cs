@@ -11,6 +11,16 @@ namespace FS.Extends
     public static partial class UtilsExtend
     {
         /// <summary>
+        /// 只显示最后N位（四舍五入）
+        /// </summary>
+        public static decimal FormatDecimal(this decimal num, int decimals = 1) => Math.Round(num, decimals, MidpointRounding.AwayFromZero);
+
+        /// <summary>
+        /// 只显示最后N位（四舍五入）
+        /// </summary>
+        public static decimal FormatDecimal(this decimal? num, int decimals = 1) => Math.Round(num.GetValueOrDefault(), decimals, MidpointRounding.AwayFromZero);
+        
+        /// <summary>
         ///     数字格式化,将转换成1000,10
         /// </summary>
         public static string Format(this int number, bool isHaveTag = true, int len = 2)
