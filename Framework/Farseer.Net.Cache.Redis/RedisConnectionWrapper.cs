@@ -78,7 +78,7 @@ namespace FS.Cache.Redis
                             case "synctimeout": option.SyncTimeout = time; break;
                             //case "asynctimeout": option.AsyncTimeout = time; break;
                             case "connecttimeout": option.ConnectTimeout = time; break;
-                            case "responsetimeout": option.ResponseTimeout = time; break;
+                            //case "responsetimeout": option.ResponseTimeout = time; break;
                         }
                     }
                 }

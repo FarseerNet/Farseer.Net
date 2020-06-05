@@ -4,6 +4,7 @@ using System.Linq;
 using Nest;
 using FS.Core.Queue.Core;
 using FS.Core.Queue.Core.AsyncQueue;
+using FS.DI;
 
 namespace FS.ElasticSearch.Queue
 {
@@ -55,6 +56,7 @@ namespace FS.ElasticSearch.Queue
             }
             catch (Exception e)
             {
+                IocManager.Instance.Logger.Error(e.ToString(), e);
                 return false;
             }
         }

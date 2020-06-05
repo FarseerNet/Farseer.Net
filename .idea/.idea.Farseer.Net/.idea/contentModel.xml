@@ -53,17 +53,6 @@
           <e p="Program.cs" t="Include" />
           <e p="StartupModule.cs" t="Include" />
           <e p="TestJob1.cs" t="Include" />
-        </e>
-        <e p="Farseer.Net.Job.Item.Console" t="IncludeRecursive">
-          <e p="bin" t="ExcludeRecursive" />
-          <e p="Farseer.Net.Job.Item.Console.csproj" t="IncludeRecursive" />
-          <e p="obj" t="ExcludeRecursive">
-            <e p="Release" t="Include">
-              <e p="netstandard2.0" t="Include">
-                <e p="Farseer.Net.Job.Item.Console.AssemblyInfo.cs" t="Include" />
-              </e>
-            </e>
-          </e>
           <e p="TestJob2.cs" t="Include" />
           <e p="TestJob3.cs" t="Include" />
           <e p="TestJob4.cs" t="Include" />
