@@ -4,7 +4,17 @@
     <e p="$PROJECT_DIR$" t="IncludeFlat">
       <e p="Console" t="Include">
         <e p="Farseer.Net.Cache.Redis.Test" t="IncludeRecursive">
+          <e p="bin" t="ExcludeRecursive" />
           <e p="Farseer.Net.Cache.Redis.Test.csproj" t="IncludeRecursive" />
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Release" t="Include">
+              <e p="netcoreapp3.0" t="Include">
+                <e p="Farseer.Net.Cache.Redis.Test.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+          <e p="Program.cs" t="Include" />
+          <e p="StartupModule.cs" t="Include" />
         </e>
         <e p="Farseer.Net.Data.Console" t="IncludeRecursive">
           <e p="app.config" t="Include" />
