@@ -27,28 +27,10 @@ namespace FS.DI
         /// <summary>
         ///     获取实例
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="argumentsAsAnonymousType"></param>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        T Resolve<T>(object argumentsAsAnonymousType, string name = "");
-
-        /// <summary>
-        ///     获取实例
-        /// </summary>
         /// <param name="type"></param>
         /// <param name="name"></param>
         /// <returns></returns>
         object Resolve(Type type, string name = "");
-
-        /// <summary>
-        ///     获取实例
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="argumentsAsAnonymousType"></param>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        object Resolve(Type type, object argumentsAsAnonymousType, string name = "");
 
         /// <summary>
         ///     获取所有实例
@@ -60,25 +42,9 @@ namespace FS.DI
         /// <summary>
         ///     获取所有实例
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="argumentsAsAnonymousType"></param>
-        /// <returns></returns>
-        T[] ResolveAll<T>(object argumentsAsAnonymousType);
-
-        /// <summary>
-        ///     获取所有实例
-        /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
         object[] ResolveAll(Type type);
-
-        /// <summary>
-        ///     获取所有实例
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="argumentsAsAnonymousType"></param>
-        /// <returns></returns>
-        object[] ResolveAll(Type type, object argumentsAsAnonymousType);
 
         /// <summary>
         ///     释放对象

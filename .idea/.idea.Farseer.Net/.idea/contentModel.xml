@@ -35,7 +35,7 @@
           <e p="Farseer.Net.Job.Console.csproj" t="IncludeRecursive" />
           <e p="obj" t="ExcludeRecursive">
             <e p="Release" t="Include">
-              <e p="netcoreapp2.0" t="Include">
+              <e p="netcoreapp3.1" t="Include">
                 <e p="Farseer.Net.Job.Console.AssemblyInfo.cs" t="Include" />
               </e>
             </e>
@@ -66,7 +66,7 @@
           <e p="Farseer.Net.MQ.RabbitMQ.Console.csproj" t="IncludeRecursive" />
           <e p="obj" t="ExcludeRecursive">
             <e p="Release" t="Include">
-              <e p="netcoreapp3.0" t="Include">
+              <e p="netcoreapp3.1" t="Include">
                 <e p="Farseer.Net.MQ.RabbitMQ.Console.AssemblyInfo.cs" t="Include" />
               </e>
             </e>
@@ -83,6 +83,7 @@
           <e p="Farseer.Net.MQ.RocketMQ.Console.csproj" t="IncludeRecursive" />
           <e p="obj" t="ExcludeRecursive" />
           <e p="ONSClient4CPP.dll" t="Include" />
+          <e p="packages.config" t="Include" />
           <e p="Program.cs" t="Include" />
           <e p="Properties" t="Include">
             <e p="AssemblyInfo.cs" t="Include" />
@@ -186,7 +187,7 @@
           </e>
           <e p="obj" t="ExcludeRecursive">
             <e p="Release" t="Include">
-              <e p="net45" t="Include">
+              <e p="net461" t="Include">
                 <e p="Farseer.Net.AssemblyInfo.cs" t="Include" />
               </e>
               <e p="netstandard2.0" t="Include">
@@ -258,7 +259,7 @@
           <e p="ICacheManager.cs" t="Include" />
           <e p="obj" t="ExcludeRecursive">
             <e p="Release" t="Include">
-              <e p="net45" t="Include">
+              <e p="net461" t="Include">
                 <e p="Farseer.Net.Cache.AssemblyInfo.cs" t="Include" />
               </e>
               <e p="netstandard2.0" t="Include">
@@ -317,7 +318,7 @@
           <e p="LocalConfigResolver.cs" t="Include" />
           <e p="obj" t="ExcludeRecursive">
             <e p="Release" t="Include">
-              <e p="net45" t="Include">
+              <e p="net461" t="Include">
                 <e p="Farseer.Net.Configuration.AssemblyInfo.cs" t="Include" />
               </e>
               <e p="netstandard2.0" t="Include">
@@ -376,7 +377,7 @@
           </e>
           <e p="obj" t="ExcludeRecursive">
             <e p="Release" t="Include">
-              <e p="net45" t="Include">
+              <e p="net461" t="Include">
                 <e p="Farseer.Net.Core.AssemblyInfo.cs" t="Include" />
               </e>
               <e p="netstandard2.0" t="Include">
@@ -538,7 +539,7 @@
           </e>
           <e p="obj" t="ExcludeRecursive">
             <e p="Release" t="Include">
-              <e p="net45" t="Include">
+              <e p="net461" t="Include">
                 <e p="Farseer.Net.Data.AssemblyInfo.cs" t="Include" />
               </e>
               <e p="netstandard2.0" t="Include">
@@ -568,7 +569,7 @@
           <e p="IElasticSearchManager.cs" t="Include" />
           <e p="obj" t="ExcludeRecursive">
             <e p="Release" t="Include">
-              <e p="net45" t="Include">
+              <e p="net461" t="Include">
                 <e p="Farseer.Net.ElasticSearch.AssemblyInfo.cs" t="Include" />
               </e>
               <e p="netstandard2.0" t="Include">
@@ -610,7 +611,7 @@
           <e p="Menu.cs" t="Include" />
           <e p="obj" t="ExcludeRecursive">
             <e p="Release" t="Include">
-              <e p="net45" t="Include">
+              <e p="net461" t="Include">
                 <e p="Farseer.Net.Job.AssemblyInfo.cs" t="Include" />
               </e>
               <e p="netstandard2.0" t="Include">
@@ -632,7 +633,7 @@
           <e p="NLogModule.cs" t="Include" />
           <e p="obj" t="ExcludeRecursive">
             <e p="Release" t="Include">
-              <e p="net45" t="Include">
+              <e p="net461" t="Include">
                 <e p="Farseer.Net.Log.AssemblyInfo.cs" t="Include" />
               </e>
             </e>
@@ -640,17 +641,17 @@
         </e>
         <e p="Farseer.Net.Mapper" t="IncludeRecursive">
           <e p="AutoMapAttribute.cs" t="Include" />
-          <e p="AutoMapDirection.cs" t="Include" />
           <e p="AutoMapExtensions.cs" t="Include" />
           <e p="AutoMapFromAttribute.cs" t="Include" />
           <e p="AutoMapperHelper.cs" t="Include" />
           <e p="AutoMapperModule.cs" t="Include" />
           <e p="AutoMapToAttribute.cs" t="Include" />
           <e p="bin" t="ExcludeRecursive" />
+          <e p="EumAutoMapDirection.cs" t="Include" />
           <e p="Farseer.Net.Mapper.csproj" t="IncludeRecursive" />
           <e p="obj" t="ExcludeRecursive">
             <e p="Release" t="Include">
-              <e p="net45" t="Include">
+              <e p="net461" t="Include">
                 <e p="Farseer.Net.Mapper.AssemblyInfo.cs" t="Include" />
               </e>
               <e p="netstandard2.0" t="Include">
@@ -674,7 +675,7 @@
           <e p="MongoModule.cs" t="Include" />
           <e p="obj" t="ExcludeRecursive">
             <e p="Release" t="Include">
-              <e p="net45" t="Include">
+              <e p="net461" t="Include">
                 <e p="Farseer.Net.MongoDB.AssemblyInfo.cs" t="Include" />
               </e>
               <e p="netstandard2.0" t="Include">
@@ -688,7 +689,7 @@
           <e p="Farseer.Net.MQ.csproj" t="IncludeRecursive" />
           <e p="obj" t="ExcludeRecursive">
             <e p="Release" t="Include">
-              <e p="net45" t="Include">
+              <e p="net461" t="Include">
                 <e p="Farseer.Net.MQ.AssemblyInfo.cs" t="Include" />
               </e>
               <e p="netstandard2.0" t="Include">
@@ -712,7 +713,7 @@
           <e p="KafkaModule.cs" t="Include" />
           <e p="obj" t="ExcludeRecursive">
             <e p="Release" t="Include">
-              <e p="net45" t="Include">
+              <e p="net461" t="Include">
                 <e p="Farseer.Net.MQ.Kafka.AssemblyInfo.cs" t="Include" />
               </e>
               <e p="netstandard2.0" t="Include">
@@ -740,7 +741,7 @@
           <e p="IRabbitProduct.cs" t="Include" />
           <e p="obj" t="ExcludeRecursive">
             <e p="Release" t="Include">
-              <e p="net451" t="Include">
+              <e p="net461" t="Include">
                 <e p="Farseer.Net.MQ.Rabbit.AssemblyInfo.cs" t="Include" />
               </e>
               <e p="netstandard2.0" t="Include">
@@ -773,7 +774,7 @@
           <e p="IRocketMQProduct.cs" t="Include" />
           <e p="obj" t="ExcludeRecursive">
             <e p="Release" t="Include">
-              <e p="net45" t="Include">
+              <e p="net461" t="Include">
                 <e p="Farseer.Net.MQ.RocketMQ.AssemblyInfo.cs" t="Include" />
               </e>
               <e p="netstandard2.0" t="Include">
@@ -1033,7 +1034,7 @@
           <e p="Farseer.Net.Utils.csproj" t="IncludeRecursive" />
           <e p="obj" t="ExcludeRecursive">
             <e p="Release" t="Include">
-              <e p="net45" t="Include">
+              <e p="net461" t="Include">
                 <e p="Farseer.Net.Utils.AssemblyInfo.cs" t="Include" />
               </e>
               <e p="netstandard2.0" t="Include">
@@ -1048,7 +1049,7 @@
           <e p="Farseer.Net.Web.Mvc.csproj" t="IncludeRecursive" />
           <e p="obj" t="ExcludeRecursive">
             <e p="Release" t="Include">
-              <e p="net45" t="Include">
+              <e p="net461" t="Include">
                 <e p="Farseer.Net.Web.Mvc.AssemblyInfo.cs" t="Include" />
               </e>
               <e p="netstandard2.0" t="Include">

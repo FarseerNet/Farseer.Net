@@ -12,6 +12,19 @@ namespace FS
         public bool IsWarnEnabled  { get; }
 
         public ILogger CreateChildLogger(string loggerName) => this;
+        public void Trace(string message) => Console.WriteLine($"【Trace】{DateTime.Now:yyyy-MM-dd HH:mm:ss} {message}");
+
+        public void Trace(Func<string> messageFactory) => Console.WriteLine($"【Trace】{DateTime.Now:yyyy-MM-dd HH:mm:ss} {messageFactory()}");
+
+        public void Trace(string message, Exception exception) => Console.WriteLine($"【Trace】{DateTime.Now:yyyy-MM-dd HH:mm:ss} {message} {exception.ToString()}");
+
+        public void TraceFormat(string format, params object[] args) => Console.WriteLine($"【Trace】{DateTime.Now:yyyy-MM-dd HH:mm:ss} {format}", args);
+
+        public void TraceFormat(Exception exception, string format, params object[] args) => Console.WriteLine($"【Trace】{DateTime.Now:yyyy-MM-dd HH:mm:ss} {format} {exception.ToString()}", args);
+
+        public void TraceFormat(IFormatProvider formatProvider, string format, params object[] args) => Console.WriteLine($"【Trace】{DateTime.Now:yyyy-MM-dd HH:mm:ss} {format.ToString(formatProvider)}", args);
+
+        public void TraceFormat(Exception exception, IFormatProvider formatProvider, string format, params object[] args) => Console.WriteLine($"【Trace】{DateTime.Now:yyyy-MM-dd HH:mm:ss} {format.ToString(formatProvider)} {exception.ToString()}", args);
 
         public void Debug(string message) => Console.WriteLine($"【Debug】{DateTime.Now:yyyy-MM-dd HH:mm:ss} {message}");
 
@@ -86,5 +99,6 @@ namespace FS
         public void WarnFormat(IFormatProvider formatProvider, string format, params object[] args) => Console.WriteLine($"【Warn】{DateTime.Now:yyyy-MM-dd HH:mm:ss} {format.ToString(formatProvider)}", args);
 
         public void WarnFormat(Exception exception, IFormatProvider formatProvider, string format, params object[] args) => Console.WriteLine($"【Warn】{DateTime.Now:yyyy-MM-dd HH:mm:ss} {format.ToString(formatProvider)} {exception.ToString()}", args);
+        public bool IsTraceEnabled { get; }
     }
 }

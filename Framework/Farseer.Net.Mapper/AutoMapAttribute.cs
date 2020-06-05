@@ -23,6 +23,6 @@ namespace FS.Mapper
         /// <summary>
         /// 实体匹配方向为双向匹配
         /// </summary>
-        internal virtual AutoMapDirection Direction => AutoMapDirection.From | AutoMapDirection.To;
+        internal virtual EumAutoMapDirection Direction => EumAutoMapDirection.From | EumAutoMapDirection.To;
     }
 }

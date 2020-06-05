@@ -1,28 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
     <Company>steden</Company>
     <Copyright>http://www.fsgit.com</Copyright>
     <Product>Redis缓存组件</Product>
     <Description>包括：Redis缓存组件</Description>
     <Authors>steden</Authors>
     <PackageTags>Redis缓存组件</PackageTags>
-    <AssemblyVersion>2.3.0</AssemblyVersion>
-    <FileVersion>2.3.0</FileVersion>
-    <Version>2.3.0</Version>
+    <AssemblyVersion>2.4.0</AssemblyVersion>
+    <FileVersion>2.4.0</FileVersion>
+    <Version>2.4.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RootNamespace>FS.Cache</RootNamespace>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net45'">
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net461'">
     <DefineConstants>net45</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <DefineConstants>CORE</DefineConstants>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Runtime.Caching" />
@@ -31,14 +31,14 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.0.0" />
     <Compile Remove="Runtime\**" />
     <EmbeddedResource Remove="Runtime\**" />
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="CacheManager.Core" Version="1.1.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="CacheManager.Core" Version="1.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.1.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />
   </ItemGroup>
 

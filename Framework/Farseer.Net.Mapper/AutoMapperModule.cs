@@ -9,10 +9,10 @@ namespace FS.Mapper
     /// </summary>
     public class AutoMapperModule : FarseerModule
     {
-        private readonly ITypeFinder typeFinder;
-        public AutoMapperModule(ITypeFinder _typeFinder)
+        private readonly ITypeFinder _typeFinder;
+        public AutoMapperModule(ITypeFinder typeFinder)
         {
-            typeFinder = _typeFinder;
+            this._typeFinder = typeFinder;
         }
 
         /// <summary>
@@ -20,7 +20,7 @@ namespace FS.Mapper
         /// </summary>
         public override void PostInitialize()
         {
-            var types = typeFinder.Find(type =>
+            var types = _typeFinder.Find(type =>
                 type.IsDefined(typeof(AutoMapAttribute)) ||
                 type.IsDefined(typeof(AutoMapFromAttribute)) ||
                 type.IsDefined(typeof(AutoMapToAttribute))

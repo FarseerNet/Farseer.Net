@@ -1,21 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
     <Company>steden</Company>
     <Copyright>http://www.fsgit.com</Copyright>
     <Product>核心组件</Product>
     <Description>包括：公共对象类型、对象映射、微服务客户端</Description>
     <Authors>steden</Authors>
     <PackageTags>公共对象类型、对象映射、微服务客户端</PackageTags>
-    <AssemblyVersion>2.3.3</AssemblyVersion>
-    <FileVersion>2.3.3</FileVersion>
-    <Version>2.3.3</Version>
+    <AssemblyVersion>2.4.0</AssemblyVersion>
+    <FileVersion>2.4.0</FileVersion>
+    <Version>2.4.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RootNamespace>FS.Core</RootNamespace>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net45'">
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net461'">
     <DefineConstants>net45</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
@@ -23,17 +23,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="4.7.0" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.ServiceModel.Primitives" Version="4.4.0" />
   </ItemGroup>
 
   <ItemGroup>

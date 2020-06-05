@@ -5,7 +5,6 @@
 
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using FS.Core.Fabric;
 
 namespace FS.Core.Net

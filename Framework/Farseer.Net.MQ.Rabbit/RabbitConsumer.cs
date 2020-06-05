@@ -108,7 +108,7 @@ namespace FS.MQ.RabbitMQ
             var result = false;
             try
             {
-                result = listener.Consumer(Encoding.UTF8.GetString(resp.Body), resp);
+                result = listener.Consumer(Encoding.UTF8.GetString(resp.Body.ToArray()), resp);
             }
             catch (Exception e)
             {
@@ -155,7 +155,7 @@ namespace FS.MQ.RabbitMQ
                     var result = false;
                     try
                     {
-                        result     = listener.Consumer(Encoding.UTF8.GetString(ea.Body), model, ea);
+                        result     = listener.Consumer(Encoding.UTF8.GetString(ea.Body.ToArray()), model, ea);
                         _lastAckAt = DateTime.Now;
                     }
                     catch (AlreadyClosedException e) // rabbit被关闭了，重新打开链接

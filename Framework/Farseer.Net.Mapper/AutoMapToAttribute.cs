@@ -6,12 +6,6 @@ namespace FS.Mapper
     {
         public AutoMapToAttribute(params Type[] targetTypes) : base(targetTypes) { }
 
-        internal override AutoMapDirection Direction
-        {
-            get
-            {
-                return AutoMapDirection.To;
-            }
-        }
+        internal override EumAutoMapDirection Direction => EumAutoMapDirection.To;
     }
 }

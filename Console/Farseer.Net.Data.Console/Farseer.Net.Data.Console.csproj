@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MySql.Data" Version="8.0.15" />
+    <PackageReference Include="MySql.Data" Version="8.0.20" />
     <PackageReference Include="NETStandard.Library" Version="2.0.3" />
   </ItemGroup>
 

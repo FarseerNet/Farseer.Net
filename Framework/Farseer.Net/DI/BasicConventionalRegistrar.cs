@@ -20,10 +20,7 @@ namespace FS.DI
 
 			// 注册单例对象
 			context.IocManager.Container.Register(Classes.FromAssembly(context.Assembly).IncludeNonPublicTypes().BasedOn<ISingletonDependency>().WithService.Self().WithService.DefaultInterfaces().LifestyleSingleton());
-#if !CORE
-            // 注册每个请求对象
-            context.IocManager.Container.Register(Classes.FromAssembly(context.Assembly).IncludeNonPublicTypes().BasedOn<IPerRequestDependency>().WithService.Self().WithService.DefaultInterfaces().LifestylePerWebRequest());
-#endif
+
 			// 注册拦截器
 			context.IocManager.Container.Register(Classes.FromAssembly(context.Assembly).IncludeNonPublicTypes().BasedOn<IInterceptor>().WithService.Self().LifestyleTransient());
 		}

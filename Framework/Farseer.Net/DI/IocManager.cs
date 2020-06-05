@@ -223,28 +223,10 @@ namespace FS.DI
         /// <summary>
         ///     获取实例
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="argumentsAsAnonymousType"></param>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public T Resolve<T>(object argumentsAsAnonymousType, string name = "") => string.IsNullOrEmpty(name) ? Container.Resolve<T>(argumentsAsAnonymousType) : Container.Resolve<T>(name, argumentsAsAnonymousType);
-
-        /// <summary>
-        ///     获取实例
-        /// </summary>
         /// <param name="type"></param>
         /// <param name="name"></param>
         /// <returns></returns>
         public object Resolve(Type type, string name = "") => string.IsNullOrEmpty(name) ? Container.Resolve(type) : Container.Resolve(name, type);
-
-        /// <summary>
-        ///     获取实例
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="argumentsAsAnonymousType"></param>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public object Resolve(Type type, object argumentsAsAnonymousType, string name = "") => string.IsNullOrEmpty(name) ? Container.Resolve(type, argumentsAsAnonymousType) : Container.Resolve(name, type, argumentsAsAnonymousType);
 
         /// <summary>
         ///     获取所有实例
@@ -256,25 +238,9 @@ namespace FS.DI
         /// <summary>
         ///     获取所有实例
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="argumentsAsAnonymousType"></param>
-        /// <returns></returns>
-        public T[] ResolveAll<T>(object argumentsAsAnonymousType) => Container.ResolveAll<T>(argumentsAsAnonymousType);
-
-        /// <summary>
-        ///     获取所有实例
-        /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
         public object[] ResolveAll(Type type) => Container.ResolveAll(type).Cast<object>().ToArray();
-
-        /// <summary>
-        ///     获取所有实例
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="argumentsAsAnonymousType"></param>
-        /// <returns></returns>
-        public object[] ResolveAll(Type type, object argumentsAsAnonymousType) => Container.ResolveAll(type, argumentsAsAnonymousType).Cast<object>().ToArray();
 
         /// <summary>
         ///     释放
@@ -300,9 +266,6 @@ namespace FS.DI
             {
                 case DependencyLifeStyle.Transient: return registration.LifestyleTransient();
                 case DependencyLifeStyle.Singleton: return registration.LifestyleSingleton();
-#if !CORE
-                case DependencyLifeStyle.PerRequest: return registration.LifestylePerWebRequest();
-#endif
                 default:
                     return registration;
             }

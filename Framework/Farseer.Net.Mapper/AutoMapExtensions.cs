@@ -1,15 +1,18 @@
-﻿namespace FS.Mapper
+﻿using FS.Mapper;
+
+// ReSharper disable once CheckNamespace
+namespace FS.Extends
 {
     public static class AutoMapExtensions
     {
-        public static TDestination MapTo<TDestination>(this object source)
+        public static TDestination Map<TDestination>(this object source)
         {
-            return AutoMapper.Mapper.Map<TDestination>(source);
+            return AutoMapperHelper.Mapper.Map<TDestination>(source);
         }
 
-        public static TDestination MapTo<TSource,TDestination>(this TSource source,TDestination destination)
+        public static TDestination Map<TSource,TDestination>(this TSource source,TDestination destination)
         {
-            return AutoMapper.Mapper.Map(source, destination);
+            return AutoMapperHelper.Mapper.Map(source, destination);
         }
     }
 }
