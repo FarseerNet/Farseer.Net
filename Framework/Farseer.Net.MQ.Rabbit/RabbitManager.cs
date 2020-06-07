@@ -19,11 +19,6 @@ namespace FS.MQ.RabbitMQ
         private static readonly object ObjLock = new object();
 
         /// <summary>
-        ///     创建消息队列属性
-        /// </summary>
-        private readonly IConnectionFactory _factoryInfo;
-
-        /// <summary>
         ///     生产消息
         /// </summary>
         private IRabbitProduct _product;
@@ -36,11 +31,6 @@ namespace FS.MQ.RabbitMQ
         /// <summary>
         /// 配置信息
         /// </summary>
-        private readonly RabbitServerConfig _serverConfig;
-
-        /// <summary>
-        /// 配置信息
-        /// </summary>
         private readonly ProductConfig _productConfig;
 
         /// <summary>
@@ -48,37 +38,23 @@ namespace FS.MQ.RabbitMQ
         /// </summary>
         private readonly ConsumerConfig _consumerConfig;
 
+        /// <summary>
+        /// Rabbit连接
+        /// </summary>
+        private readonly RabbitConnect _connect;
+
         /// <summary> Rabbit管理器 </summary>
-        public RabbitManager(RabbitServerConfig config, ProductConfig productConfig)
+        public RabbitManager(RabbitConnect connect, ProductConfig productConfig)
         {
-            _serverConfig  = config;
+            _connect       = connect;
             _productConfig = productConfig;
-            if (string.IsNullOrWhiteSpace(_serverConfig.VirtualHost)) _serverConfig.VirtualHost = "/";
-            _factoryInfo = new ConnectionFactory //创建连接工厂对象
-            {
-                HostName                 = _serverConfig.Server,      //IP地址
-                Port                     = _serverConfig.Port,        //端口号
-                UserName                 = _serverConfig.UserName,    //用户账号
-                Password                 = _serverConfig.Password,    //用户密码
-                VirtualHost              = _serverConfig.VirtualHost, // 虚拟主机
-                AutomaticRecoveryEnabled = true,
-            };
         }
 
         /// <summary> Rabbit管理器 </summary>
-        public RabbitManager(RabbitServerConfig config, ConsumerConfig consumerConfig)
+        public RabbitManager(RabbitConnect connect, ConsumerConfig consumerConfig)
         {
-            _serverConfig   = config;
+            _connect        = connect;
             _consumerConfig = consumerConfig;
-            _factoryInfo = new ConnectionFactory //创建连接工厂对象
-            {
-                HostName                 = _serverConfig.Server,   //IP地址
-                Port                     = _serverConfig.Port,     //端口号
-                UserName                 = _serverConfig.UserName, //用户账号
-                Password                 = _serverConfig.Password, //用户密码
-                AutomaticRecoveryEnabled = true,
-                TopologyRecoveryEnabled  = true
-            };
         }
 
         /// <summary>
@@ -92,7 +68,7 @@ namespace FS.MQ.RabbitMQ
                 if (_product != null) return _product;
                 lock (ObjLock)
                 {
-                    return _product ?? (_product = new RabbitProduct(_factoryInfo, _productConfig));
+                    return _product ?? (_product = new RabbitProduct(_connect, _productConfig));
                 }
             }
         }
@@ -108,7 +84,7 @@ namespace FS.MQ.RabbitMQ
                 if (_consumer != null) return _consumer;
                 lock (ObjLock)
                 {
-                    return _consumer ?? (_consumer = new RabbitConsumer(_factoryInfo, _consumerConfig));
+                    return _consumer ?? (_consumer = new RabbitConsumer(_connect, _consumerConfig));
                 }
             }
         }
@@ -123,19 +99,17 @@ namespace FS.MQ.RabbitMQ
         /// <param name="arguments">队列参数</param>
         public void CreateQueue(string queueName, bool durable = true, bool exclusive = false, bool autoDelete = false, IDictionary<string, object> arguments = null)
         {
-            using (var conn = _factoryInfo.CreateConnection())
+            if (_connect.Connection == null || !_connect.Connection.IsOpen) _connect.Open();
+            using (var channel = _connect.Connection.CreateModel())
             {
-                using (var channel = conn.CreateModel())
-                {
-                    //声明一个队列
-                    channel.QueueDeclare(
-                        queue: queueName,     //消息队列名称
-                        durable: durable,     //是否缓存
-                        exclusive: exclusive, // 创建后删除
-                        autoDelete: autoDelete,
-                        arguments: arguments
-                    );
-                }
+                //声明一个队列
+                channel.QueueDeclare(
+                    queue: queueName,     //消息队列名称
+                    durable: durable,     //是否缓存
+                    exclusive: exclusive, // 创建后删除
+                    autoDelete: autoDelete,
+                    arguments: arguments
+                );
             }
         }
 
@@ -149,12 +123,10 @@ namespace FS.MQ.RabbitMQ
         /// <param name="arguments">参数</param>
         public void CreateExchange(string exchangeName, eumExchangeType exchangeType, bool durable = true, bool autoDelete = false, IDictionary<string, object> arguments = null)
         {
-            using (var conn = _factoryInfo.CreateConnection())
+            if (_connect.Connection == null || !_connect.Connection.IsOpen) _connect.Open();
+            using (var channel = _connect.Connection.CreateModel())
             {
-                using (var channel = conn.CreateModel())
-                {
-                    channel.ExchangeDeclare(exchangeName, exchangeType.ToString(), durable, autoDelete, arguments); // 声明fanout交换器
-                }
+                channel.ExchangeDeclare(exchangeName, exchangeType.ToString(), durable, autoDelete, arguments); // 声明fanout交换器
             }
         }
 
@@ -170,7 +142,7 @@ namespace FS.MQ.RabbitMQ
         /// <param name="arguments">队列参数</param>
         public void CreateQueueAndBind(string queueName, string exchangeName, string routingKey, bool durable = true, bool exclusive = false, bool autoDelete = false, IDictionary<string, object> arguments = null)
         {
-            CreateQueue(queueName, durable,exclusive,autoDelete,arguments);
+            CreateQueue(queueName, durable, exclusive, autoDelete, arguments);
             BindQueueExchange(exchangeName, queueName, routingKey);
         }
 
@@ -182,12 +154,10 @@ namespace FS.MQ.RabbitMQ
         /// <param name="routingKey">路由标签</param>
         public void BindQueueExchange(string exchangeName, string queueName, string routingKey)
         {
-            using (var conn = _factoryInfo.CreateConnection())
+            if (_connect.Connection == null || !_connect.Connection.IsOpen) _connect.Open();
+            using (var channel = _connect.Connection.CreateModel())
             {
-                using (var channel = conn.CreateModel())
-                {
-                    channel.QueueBind(queueName, exchangeName, routingKey);
-                }
+                channel.QueueBind(queueName, exchangeName, routingKey);
             }
         }
     }

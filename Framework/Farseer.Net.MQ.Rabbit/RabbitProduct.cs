@@ -9,28 +9,23 @@ namespace FS.MQ.RabbitMQ
     public class RabbitProduct : IRabbitProduct
     {
         /// <summary>
-        ///     创建消息队列属性
-        /// </summary>
-        private readonly IConnectionFactory _factoryInfo;
-
-        /// <summary>
         /// 配置信息
         /// </summary>
         private readonly ProductConfig _productConfig;
-
+        
         /// <summary>
-        /// 创建连接对象
+        ///     创建消息队列属性
         /// </summary>
-        private IConnection _con;
+        private readonly RabbitConnect _connect;
 
         /// <summary>
         /// 创建连接会话对象
         /// </summary>
         private IModel _channel;
 
-        public RabbitProduct(IConnectionFactory factoryInfo, ProductConfig productConfig)
+        public RabbitProduct(RabbitConnect connect, ProductConfig productConfig)
         {
-            _factoryInfo   = factoryInfo;
+            _connect       = connect;
             _productConfig = productConfig;
             Connect();
         }
@@ -40,10 +35,13 @@ namespace FS.MQ.RabbitMQ
         /// </summary>
         private void Connect()
         {
-            _con     = _factoryInfo.CreateConnection();
-            _channel = _con.CreateModel();
-
-            if (_productConfig.UseConfirmModel) _channel.ConfirmSelect();
+            // 如果连接断开，则要重连
+            if (_connect.Connection == null || !_connect.Connection.IsOpen) _connect.Open();
+            if (_channel == null || _channel.IsClosed)
+            {
+                _channel = _connect.Connection.CreateModel();
+                if (_productConfig.UseConfirmModel) _channel.ConfirmSelect();
+            }
         }
 
         /// <summary>
@@ -54,11 +52,6 @@ namespace FS.MQ.RabbitMQ
             _channel.Close();
             _channel.Dispose();
             _channel = null;
-
-
-            _con.Close();
-            _con.Dispose();
-            _con = null;
         }
 
         /// <summary>
@@ -90,7 +83,7 @@ namespace FS.MQ.RabbitMQ
         /// <param name="funcBasicProperties">属性</param>
         public bool Send(string message, string routingKey, string exchange = "", Action<IBasicProperties> funcBasicProperties = null)
         {
-            if (!(_con?.IsOpen).GetValueOrDefault() || (_channel?.IsClosed).GetValueOrDefault()) Connect();
+            Connect();
 
             var basicProperties = _channel.CreateBasicProperties();
             // 默认设置为消息持久化
@@ -113,16 +106,16 @@ namespace FS.MQ.RabbitMQ
         /// <param name="funcBasicProperties">属性</param>
         public bool Send(IEnumerable<string> message, string routingKey, string exchange = "", Action<IBasicProperties> funcBasicProperties = null)
         {
-            IConnection con     = null;
-            IModel      channel = null;
+            IModel channel = null;
             try
             {
-                con     = _factoryInfo.CreateConnection();
-                channel = _con.CreateModel();
-
+                // 如果连接断开，则要重连
+                if (!_connect.Connection.IsOpen) _connect.Open();
+                
+                channel = _connect.Connection.CreateModel();
                 if (_productConfig.UseConfirmModel) channel.ConfirmSelect();
 
-                var basicProperties = _channel.CreateBasicProperties();
+                var basicProperties = channel.CreateBasicProperties();
                 // 默认设置为消息持久化
                 if (funcBasicProperties != null) funcBasicProperties(basicProperties);
                 else basicProperties.DeliveryMode = 2;
@@ -141,9 +134,6 @@ namespace FS.MQ.RabbitMQ
             {
                 channel?.Close();
                 channel?.Dispose();
-
-                con?.Close();
-                con?.Dispose();
             }
         }
     }

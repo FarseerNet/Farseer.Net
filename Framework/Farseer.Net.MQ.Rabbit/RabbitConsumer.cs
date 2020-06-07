@@ -14,19 +14,14 @@ namespace FS.MQ.RabbitMQ
     public class RabbitConsumer : IRabbitConsumer
     {
         /// <summary>
-        ///     创建消息队列属性
-        /// </summary>
-        private readonly IConnectionFactory _factoryInfo;
-
-        /// <summary>
         /// 配置信息
         /// </summary>
         private readonly ConsumerConfig _consumerConfig;
 
         /// <summary>
-        /// 创建连接对象
+        ///     创建消息队列属性
         /// </summary>
-        private IConnection _con;
+        private readonly RabbitConnect _connect;
 
         /// <summary>
         /// 创建连接会话对象
@@ -46,9 +41,9 @@ namespace FS.MQ.RabbitMQ
         private IListenerMessage _listener;
         private bool             _autoAck;
 
-        public RabbitConsumer(IConnectionFactory factoryInfo, ConsumerConfig consumerConfig)
+        public RabbitConsumer(RabbitConnect connect, ConsumerConfig consumerConfig)
         {
-            _factoryInfo    = factoryInfo;
+            _connect        = connect;
             _consumerConfig = consumerConfig;
             if (consumerConfig.LastAckTimeoutRestart == 0) consumerConfig.LastAckTimeoutRestart = 5 * 60;
         }
@@ -87,7 +82,7 @@ namespace FS.MQ.RabbitMQ
                 while (true)
                 {
                     // 未打开、关闭状态、上一次ACK超时，则重启
-                    if (!(_con?.IsOpen).GetValueOrDefault() || (_channel?.IsClosed).GetValueOrDefault() || (DateTime.Now - _lastAckAt).TotalSeconds >= _consumerConfig.LastAckTimeoutRestart) ReStart();
+                    if (_channel == null || _channel.IsClosed || (DateTime.Now - _lastAckAt).TotalSeconds >= _consumerConfig.LastAckTimeoutRestart) ReStart();
                     Thread.Sleep(3000);
                 }
             });
@@ -100,7 +95,7 @@ namespace FS.MQ.RabbitMQ
         /// <param name="autoAck">是否自动确认，默认false</param>
         public void StartSignle(IListenerMessageSingle listener, bool autoAck = false)
         {
-            Connect(listener.GetType().FullName);
+            Connect();
 
             // 只获取一次
             var resp = _channel.BasicGet(_consumerConfig.QueueName, autoAck);
@@ -129,14 +124,10 @@ namespace FS.MQ.RabbitMQ
         /// <summary>
         /// 单次消费连接MQ
         /// </summary>
-        /// <param name="clientProvidedName"> </param>
-        private void Connect(string clientProvidedName)
+        private void Connect()
         {
-            if (!(_con?.IsOpen).GetValueOrDefault() || (_channel?.IsClosed).GetValueOrDefault())
-            {
-                _con     = _factoryInfo.CreateConnection(clientProvidedName);
-                _channel = _con.CreateModel();
-            }
+            if (_connect.Connection == null || !_connect.Connection.IsOpen) _connect.Open();
+            if (_channel == null || _channel.IsClosed) _channel = _connect.Connection.CreateModel();
         }
 
         /// <summary>
@@ -144,41 +135,38 @@ namespace FS.MQ.RabbitMQ
         /// </summary>
         private void Connect(IListenerMessage listener, bool autoAck = false)
         {
-            if (!(_con?.IsOpen).GetValueOrDefault() || (_channel?.IsClosed).GetValueOrDefault())
+            Connect();
+            
+            _channel.BasicQos(0, (ushort) _consumerConfig.ConsumeThreadNums, false);
+            var consumer = new EventingBasicConsumer(_channel);
+            consumer.Received += (model, ea) =>
             {
-                _con     = _factoryInfo.CreateConnection(listener.GetType().FullName);
-                _channel = _con.CreateModel();
-                _channel.BasicQos(0, (ushort) _consumerConfig.ConsumeThreadNums, false);
-                var consumer = new EventingBasicConsumer(_channel);
-                consumer.Received += (model, ea) =>
+                var result = false;
+                try
                 {
-                    var result = false;
-                    try
+                    result     = listener.Consumer(Encoding.UTF8.GetString(ea.Body.ToArray()), model, ea);
+                    _lastAckAt = DateTime.Now;
+                }
+                catch (AlreadyClosedException e) // rabbit被关闭了，重新打开链接
+                {
+                    ReStart();
+                    IocManager.Instance.Logger.Error(listener.GetType().FullName, e);
+                }
+                catch (Exception e)
+                {
+                    IocManager.Instance.Logger.Error(listener.GetType().FullName, e);
+                }
+                finally
+                {
+                    if (!autoAck)
                     {
-                        result     = listener.Consumer(Encoding.UTF8.GetString(ea.Body.ToArray()), model, ea);
-                        _lastAckAt = DateTime.Now;
+                        if (result) _channel.BasicAck(ea.DeliveryTag, false);
+                        else _channel.BasicReject(ea.DeliveryTag, true);
                     }
-                    catch (AlreadyClosedException e) // rabbit被关闭了，重新打开链接
-                    {
-                        ReStart();
-                        IocManager.Instance.Logger.Error(listener.GetType().FullName, e);
-                    }
-                    catch (Exception e)
-                    {
-                        IocManager.Instance.Logger.Error(listener.GetType().FullName, e);
-                    }
-                    finally
-                    {
-                        if (!autoAck)
-                        {
-                            if (result) _channel.BasicAck(ea.DeliveryTag, false);
-                            else _channel.BasicReject(ea.DeliveryTag, true);
-                        }
-                    }
-                };
-                // 消费者开启监听
-                _channel.BasicConsume(queue: _consumerConfig.QueueName, autoAck: autoAck, consumer: consumer);
-            }
+                }
+            };
+            // 消费者开启监听
+            _channel.BasicConsume(queue: _consumerConfig.QueueName, autoAck: autoAck, consumer: consumer);
         }
 
         /// <summary>
@@ -192,13 +180,6 @@ namespace FS.MQ.RabbitMQ
                 _channel.Close();
                 _channel.Dispose();
                 _channel = null;
-            }
-
-            if (_con != null)
-            {
-                _con.Close();
-                _con.Dispose();
-                _con = null;
             }
         }
     }

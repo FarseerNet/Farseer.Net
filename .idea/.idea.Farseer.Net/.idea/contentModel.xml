@@ -748,6 +748,7 @@
               </e>
             </e>
           </e>
+          <e p="RabbitConnect.cs" t="Include" />
           <e p="RabbitConsumer.cs" t="Include" />
           <e p="RabbitInstaller.cs" t="Include" />
           <e p="RabbitManager.cs" t="Include" />
