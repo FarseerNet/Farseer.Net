@@ -7,11 +7,6 @@ namespace FS.MQ.RabbitMQ
     public interface IRabbitProduct
     {
         /// <summary>
-        ///     关闭生产者
-        /// </summary>
-        void Close();
-
-        /// <summary>
         ///     发送消息（Routingkey默认配置中的RoutingKey；ExchangeName默认配置中的ExchangeName）
         /// </summary>
         /// <param name="message">消息主体</param>

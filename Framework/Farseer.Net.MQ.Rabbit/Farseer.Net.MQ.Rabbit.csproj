@@ -6,9 +6,9 @@
         <Copyright>http://www.fsgit.com</Copyright>
         <Product>RabbitMQ组件</Product>
         <Description>包括：RabbitMQ组件</Description>
-        <AssemblyVersion>2.4.3</AssemblyVersion>
-        <FileVersion>2.4.3</FileVersion>
-        <Version>2.4.3</Version>
+        <AssemblyVersion>2.4.4</AssemblyVersion>
+        <FileVersion>2.4.4</FileVersion>
+        <Version>2.4.4</Version>
         <Authors>steden</Authors>
         <PackageTags>RabbitMQ组件</PackageTags>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
