@@ -66,7 +66,7 @@ namespace FS.Core.Net
         /// </summary>
         /// <param name="statusMessage">成功提示内容</param>
         /// <param name="data">返回的数据列表</param>
-        public static Task<ApiResponseJson> SuccessAsync(string statusMessage, dynamic data = null) => Task.FromResult<Task<ApiResponseJson>>(Success(statusMessage, data));
+        public static Task<ApiResponseJson> SuccessAsync(string statusMessage, dynamic data = null) => Task.FromResult(Success(statusMessage, data));
 
         /// <summary>
         ///     接口调用失时返回的Json
