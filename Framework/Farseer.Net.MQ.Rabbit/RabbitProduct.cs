@@ -65,20 +65,20 @@ namespace FS.MQ.RabbitMQ
         ///     发送消息（Routingkey默认配置中的RoutingKey；ExchangeName默认配置中的ExchangeName）
         /// </summary>
         /// <param name="message">消息主体</param>
-        /// <param name="basicProperties">属性</param>
-        public bool Send(string message, IBasicProperties basicProperties = null)
+        /// <param name="funcBasicProperties">属性</param>
+        public bool Send(string message, Action<IBasicProperties> funcBasicProperties = null)
         {
-            return Send(message, _productConfig.RoutingKey, _productConfig.ExchangeName, basicProperties);
+            return Send(message, _productConfig.RoutingKey, _productConfig.ExchangeName, funcBasicProperties);
         }
 
         /// <summary>
         ///     发送消息（Routingkey默认配置中的RoutingKey；ExchangeName默认配置中的ExchangeName）
         /// </summary>
         /// <param name="message">消息主体</param>
-        /// <param name="basicProperties">属性</param>
-        public bool Send(IEnumerable<string> message, IBasicProperties basicProperties = null)
+        /// <param name="funcBasicProperties">属性</param>
+        public bool Send(IEnumerable<string> message, Action<IBasicProperties> funcBasicProperties = null)
         {
-            return Send(message, _productConfig.RoutingKey, _productConfig.ExchangeName, basicProperties);
+            return Send(message, _productConfig.RoutingKey, _productConfig.ExchangeName, funcBasicProperties);
         }
 
         /// <summary>
@@ -87,16 +87,15 @@ namespace FS.MQ.RabbitMQ
         /// <param name="message">消息主体</param>
         /// <param name="routingKey">路由KEY名称</param>
         /// <param name="exchange">交换器名称</param>
-        /// <param name="basicProperties">属性</param>
-        public bool Send(string message, string routingKey, string exchange = "", IBasicProperties basicProperties = null)
+        /// <param name="funcBasicProperties">属性</param>
+        public bool Send(string message, string routingKey, string exchange = "", Action<IBasicProperties> funcBasicProperties = null)
         {
             if (!(_con?.IsOpen).GetValueOrDefault() || (_channel?.IsClosed).GetValueOrDefault()) Connect();
+
+            var basicProperties = _channel.CreateBasicProperties();
             // 默认设置为消息持久化
-            if (basicProperties == null)
-            {
-                basicProperties              = _channel.CreateBasicProperties();
-                basicProperties.DeliveryMode = 2;
-            }
+            if (funcBasicProperties != null) funcBasicProperties(basicProperties);
+            else basicProperties.DeliveryMode = 2;
 
             //消息内容
             var body = Encoding.UTF8.GetBytes(message);
@@ -111,8 +110,8 @@ namespace FS.MQ.RabbitMQ
         /// <param name="message">消息主体</param>
         /// <param name="routingKey">路由KEY名称</param>
         /// <param name="exchange">交换器名称</param>
-        /// <param name="basicProperties">属性</param>
-        public bool Send(IEnumerable<string> message, string routingKey, string exchange = "", IBasicProperties basicProperties = null)
+        /// <param name="funcBasicProperties">属性</param>
+        public bool Send(IEnumerable<string> message, string routingKey, string exchange = "", Action<IBasicProperties> funcBasicProperties = null)
         {
             IConnection con     = null;
             IModel      channel = null;
@@ -123,12 +122,10 @@ namespace FS.MQ.RabbitMQ
 
                 if (_productConfig.UseConfirmModel) channel.ConfirmSelect();
 
+                var basicProperties = _channel.CreateBasicProperties();
                 // 默认设置为消息持久化
-                if (basicProperties == null)
-                {
-                    basicProperties              = channel.CreateBasicProperties();
-                    basicProperties.DeliveryMode = 2;
-                }
+                if (funcBasicProperties != null) funcBasicProperties(basicProperties);
+                else basicProperties.DeliveryMode = 2;
 
                 foreach (var msg in message)
                 {
