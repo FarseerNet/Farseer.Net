@@ -14,7 +14,7 @@
           <e p="bin" t="ExcludeRecursive" />
           <e p="Farseer.Net.Cache.Redis.Test.csproj" t="IncludeRecursive" />
           <e p="obj" t="ExcludeRecursive">
-            <e p="Debug" t="Include">
+            <e p="Release" t="Include">
               <e p="netcoreapp3.0" t="Include">
                 <e p="Farseer.Net.Cache.Redis.Test.AssemblyInfo.cs" t="Include" />
               </e>
@@ -33,7 +33,7 @@
           <e p="EumCoinsType.cs" t="Include" />
           <e p="Farseer.Net.Data.Console.csproj" t="IncludeRecursive" />
           <e p="obj" t="ExcludeRecursive">
-            <e p="Debug" t="Include">
+            <e p="Release" t="Include">
               <e p="netcoreapp2.0" t="Include">
                 <e p="Farseer.Net.Data.Console.AssemblyInfo.cs" t="Include" />
               </e>
@@ -51,7 +51,7 @@
           <e p="bin" t="ExcludeRecursive" />
           <e p="Farseer.Net.Job.Console.csproj" t="IncludeRecursive" />
           <e p="obj" t="ExcludeRecursive">
-            <e p="Debug" t="Include">
+            <e p="Release" t="Include">
               <e p="netcoreapp3.1" t="Include">
                 <e p="Farseer.Net.Job.Console.AssemblyInfo.cs" t="Include" />
               </e>
@@ -71,7 +71,7 @@
           <e p="bin" t="ExcludeRecursive" />
           <e p="Farseer.Net.MQ.RabbitMQ.Console.csproj" t="IncludeRecursive" />
           <e p="obj" t="ExcludeRecursive">
-            <e p="Debug" t="Include">
+            <e p="Release" t="Include">
               <e p="netcoreapp3.1" t="Include">
                 <e p="Farseer.Net.MQ.RabbitMQ.Console.AssemblyInfo.cs" t="Include" />
               </e>
@@ -100,7 +100,7 @@
         <e p="TestLinuxDisown" t="IncludeRecursive">
           <e p="bin" t="ExcludeRecursive" />
           <e p="obj" t="ExcludeRecursive">
-            <e p="Debug" t="Include">
+            <e p="Release" t="Include">
               <e p="netcoreapp2.1" t="Include">
                 <e p="TestLinuxDisown.AssemblyInfo.cs" t="Include" />
               </e>
@@ -192,7 +192,7 @@
             <e p="IFarseerModuleManager.cs" t="Include" />
           </e>
           <e p="obj" t="ExcludeRecursive">
-            <e p="Debug" t="Include">
+            <e p="Release" t="Include">
               <e p="net461" t="Include">
                 <e p="Farseer.Net.AssemblyInfo.cs" t="Include" />
               </e>
@@ -264,7 +264,7 @@
           <e p="Farseer.Net.Cache.csproj" t="IncludeRecursive" />
           <e p="ICacheManager.cs" t="Include" />
           <e p="obj" t="ExcludeRecursive">
-            <e p="Debug" t="Include">
+            <e p="Release" t="Include">
               <e p="net461" t="Include">
                 <e p="Farseer.Net.Cache.AssemblyInfo.cs" t="Include" />
               </e>
@@ -297,7 +297,7 @@
           <e p="IRedisCacheManager.cs" t="Include" />
           <e p="IRedisConnectionWrapper.cs" t="Include" />
           <e p="obj" t="ExcludeRecursive">
-            <e p="Debug" t="Include">
+            <e p="Release" t="Include">
               <e p="net461" t="Include">
                 <e p="Farseer.Net.Cache.Redis.AssemblyInfo.cs" t="Include" />
               </e>
@@ -323,7 +323,7 @@
           </e>
           <e p="LocalConfigResolver.cs" t="Include" />
           <e p="obj" t="ExcludeRecursive">
-            <e p="Debug" t="Include">
+            <e p="Release" t="Include">
               <e p="net461" t="Include">
                 <e p="Farseer.Net.Configuration.AssemblyInfo.cs" t="Include" />
               </e>
@@ -382,7 +382,7 @@
             </e>
           </e>
           <e p="obj" t="ExcludeRecursive">
-            <e p="Debug" t="Include">
+            <e p="Release" t="Include">
               <e p="net461" t="Include">
                 <e p="Farseer.Net.Core.AssemblyInfo.cs" t="Include" />
               </e>
@@ -544,7 +544,7 @@
             <e p="SetPhysicsMap.cs" t="Include" />
           </e>
           <e p="obj" t="ExcludeRecursive">
-            <e p="Debug" t="Include">
+            <e p="Release" t="Include">
               <e p="net461" t="Include">
                 <e p="Farseer.Net.Data.AssemblyInfo.cs" t="Include" />
               </e>
@@ -574,7 +574,7 @@
           <e p="Farseer.Net.ElasticSearch.csproj" t="IncludeRecursive" />
           <e p="IElasticSearchManager.cs" t="Include" />
           <e p="obj" t="ExcludeRecursive">
-            <e p="Debug" t="Include">
+            <e p="Release" t="Include">
               <e p="net461" t="Include">
                 <e p="Farseer.Net.ElasticSearch.AssemblyInfo.cs" t="Include" />
               </e>
@@ -616,7 +616,7 @@
           <e p="JobModule.cs" t="Include" />
           <e p="Menu.cs" t="Include" />
           <e p="obj" t="ExcludeRecursive">
-            <e p="Debug" t="Include">
+            <e p="Release" t="Include">
               <e p="net461" t="Include">
                 <e p="Farseer.Net.Job.AssemblyInfo.cs" t="Include" />
               </e>
@@ -638,7 +638,7 @@
           <e p="NLogInstaller.cs" t="Include" />
           <e p="NLogModule.cs" t="Include" />
           <e p="obj" t="ExcludeRecursive">
-            <e p="Debug" t="Include">
+            <e p="Release" t="Include">
               <e p="net461" t="Include">
                 <e p="Farseer.Net.Log.AssemblyInfo.cs" t="Include" />
               </e>
@@ -651,12 +651,13 @@
           <e p="Farseer.Net.Mapper.csproj" t="IncludeRecursive" />
           <e p="MapAttribute.cs" t="Include" />
           <e p="MapExtend.cs" t="Include" />
+          <e p="MapFieldAttribute.cs" t="Include" />
           <e p="MapFromAttribute.cs" t="Include" />
           <e p="MapperHelper.cs" t="Include" />
           <e p="MapperModule.cs" t="Include" />
           <e p="MapToAttribute.cs" t="Include" />
           <e p="obj" t="ExcludeRecursive">
-            <e p="Debug" t="Include">
+            <e p="Release" t="Include">
               <e p="net461" t="Include">
                 <e p="Farseer.Net.Mapper.AssemblyInfo.cs" t="Include" />
               </e>
@@ -680,7 +681,7 @@
           <e p="MongoManager.cs" t="Include" />
           <e p="MongoModule.cs" t="Include" />
           <e p="obj" t="ExcludeRecursive">
-            <e p="Debug" t="Include">
+            <e p="Release" t="Include">
               <e p="net461" t="Include">
                 <e p="Farseer.Net.MongoDB.AssemblyInfo.cs" t="Include" />
               </e>
@@ -694,7 +695,7 @@
           <e p="bin" t="ExcludeRecursive" />
           <e p="Farseer.Net.MQ.csproj" t="IncludeRecursive" />
           <e p="obj" t="ExcludeRecursive">
-            <e p="Debug" t="Include">
+            <e p="Release" t="Include">
               <e p="net461" t="Include">
                 <e p="Farseer.Net.MQ.AssemblyInfo.cs" t="Include" />
               </e>
@@ -718,7 +719,7 @@
           <e p="KafkaManager.cs" t="Include" />
           <e p="KafkaModule.cs" t="Include" />
           <e p="obj" t="ExcludeRecursive">
-            <e p="Debug" t="Include">
+            <e p="Release" t="Include">
               <e p="net461" t="Include">
                 <e p="Farseer.Net.MQ.Kafka.AssemblyInfo.cs" t="Include" />
               </e>
@@ -746,7 +747,7 @@
           <e p="IRabbitManager.cs" t="Include" />
           <e p="IRabbitProduct.cs" t="Include" />
           <e p="obj" t="ExcludeRecursive">
-            <e p="Debug" t="Include">
+            <e p="Release" t="Include">
               <e p="net461" t="Include">
                 <e p="Farseer.Net.MQ.Rabbit.AssemblyInfo.cs" t="Include" />
               </e>
@@ -780,7 +781,7 @@
           <e p="IRocketMQManager.cs" t="Include" />
           <e p="IRocketMQProduct.cs" t="Include" />
           <e p="obj" t="ExcludeRecursive">
-            <e p="Debug" t="Include">
+            <e p="Release" t="Include">
               <e p="net461" t="Include">
                 <e p="Farseer.Net.MQ.RocketMQ.AssemblyInfo.cs" t="Include" />
               </e>
@@ -1040,7 +1041,7 @@
           </e>
           <e p="Farseer.Net.Utils.csproj" t="IncludeRecursive" />
           <e p="obj" t="ExcludeRecursive">
-            <e p="Debug" t="Include">
+            <e p="Release" t="Include">
               <e p="net461" t="Include">
                 <e p="Farseer.Net.Utils.AssemblyInfo.cs" t="Include" />
               </e>
@@ -1055,7 +1056,7 @@
           <e p="ControllerConventionalRegistrar.cs" t="Include" />
           <e p="Farseer.Net.Web.Mvc.csproj" t="IncludeRecursive" />
           <e p="obj" t="ExcludeRecursive">
-            <e p="Debug" t="Include">
+            <e p="Release" t="Include">
               <e p="net461" t="Include">
                 <e p="Farseer.Net.Web.Mvc.AssemblyInfo.cs" t="Include" />
               </e>
@@ -1078,7 +1079,7 @@
           </e>
           <e p="Farseer.net.AutoMapper.Test.csproj" t="IncludeRecursive" />
           <e p="obj" t="ExcludeRecursive">
-            <e p="Debug" t="Include">
+            <e p="Release" t="Include">
               <e p="netcoreapp3.1" t="Include">
                 <e p="Farseer.net.AutoMapper.Test.AssemblyInfo.cs" t="Include" />
               </e>

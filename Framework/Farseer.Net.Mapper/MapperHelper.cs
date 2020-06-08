@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using AutoMapper;
 using AutoMapper.Configuration;
+using Castle.Core.Internal;
 
 namespace FS.Mapper
 {
@@ -36,17 +37,57 @@ namespace FS.Mapper
             foreach (var autoMapToAttribute in type.GetCustomAttributes<TAttribute>())
             {
                 if (autoMapToAttribute.TargetTypes == null || !autoMapToAttribute.TargetTypes.Any()) continue;
-                
+
                 foreach (var targetType in autoMapToAttribute.TargetTypes)
                 {
                     if (autoMapToAttribute.Direction.HasFlag(EumMapDirection.To))
                     {
-                        cfg.CreateMap(type, targetType);
+                        var mappingExpression = cfg.CreateMap(type, targetType);
+
+                        // 找到源实体，是否有MapFieldAttribute特性
+                        // 注意的地址，映射到对方时，要取对方的属性名称（目标名称），AutoMapper要求
+                        foreach (var propertyInfo in type.GetProperties())
+                        {
+                            var mapFieldAttribute = propertyInfo.GetCustomAttribute<MapFieldAttribute>();
+                            // 忽略当前字段
+                            if (mapFieldAttribute.IsIgnore)
+                            {
+                                // 目标相同的名称成员
+                                var findTarget = targetType.GetProperties().Find(o => o.Name.ToLower() == propertyInfo.Name.ToLower());
+                                if (findTarget != null) mappingExpression = mappingExpression.ForMember(findTarget.Name, opt => opt.Ignore());
+                            }
+
+                            // 转换实际的映射名称
+                            if (!string.IsNullOrWhiteSpace(mapFieldAttribute.FromName))
+                            {
+                                var findTarget = targetType.GetProperties().Find(o => o.Name.ToLower() == mapFieldAttribute.FromName.ToLower());
+                                if (findTarget != null) mappingExpression = mappingExpression.ForMember(findTarget.Name, opt => opt.MapFrom(propertyInfo.Name));
+                            }
+                        }
                     }
 
                     if (autoMapToAttribute.Direction.HasFlag(EumMapDirection.From))
                     {
-                        cfg.CreateMap(targetType, type);
+                        var mappingExpression = cfg.CreateMap(targetType, type);
+                        
+                        // 找到源实体，是否有MapFieldAttribute特性
+                        // 注意的地址，映射到对方时，要取对方的属性名称（目标名称），AutoMapper要求
+                        foreach (var propertyInfo in type.GetProperties())
+                        {
+                            var mapFieldAttribute = propertyInfo.GetCustomAttribute<MapFieldAttribute>();
+                            // 忽略当前字段
+                            if (mapFieldAttribute.IsIgnore)
+                            {
+                                mappingExpression = mappingExpression.ForMember(propertyInfo.Name, opt => opt.Ignore());
+                            }
+
+                            // 转换实际的映射名称
+                            if (!string.IsNullOrWhiteSpace(mapFieldAttribute.FromName))
+                            {
+                                var findTarget= targetType.GetProperties().Find(o => o.Name.ToLower() == mapFieldAttribute.FromName.ToLower());
+                                if (findTarget != null) mappingExpression = mappingExpression.ForMember(propertyInfo.Name, opt => opt.MapFrom(findTarget.Name));
+                            }
+                        }
                     }
                 }
             }

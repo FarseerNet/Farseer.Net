@@ -9,6 +9,6 @@
         public int ID { get; set; }
 
         /// <summary> 用户账号 </summary>
-        public string UserName { get; set; }
+        public string Name { get; set; }
     }
 }
