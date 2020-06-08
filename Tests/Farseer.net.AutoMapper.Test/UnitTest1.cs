@@ -1,0 +1,30 @@
+using System.Collections.Generic;
+using Farseer.net.AutoMapper.Test.Entity;
+using FS;
+using FS.Extends;
+using NUnit.Framework;
+
+namespace Farseer.net.AutoMapper.Test
+{
+    public class Tests
+    {
+        [SetUp]
+        public void Setup()
+        {
+            FarseerBootstrapper.Create<Startup>().Initialize();
+        }
+
+        [Test]
+        public void Test1()
+        {
+            var lst = new List<UserPO>();
+            lst.Add(new UserPO {Id = 1, UserName = "张三"});
+
+            var vo    = new UserPO {Id = 1, UserName = "张三"}.Map<UserListVO>();
+            var lstVo = lst.Map<UserListVO>();
+
+            Assert.IsNotNull(vo);
+            Assert.IsTrue(lstVo.Count == 1);
+        }
+    }
+}
