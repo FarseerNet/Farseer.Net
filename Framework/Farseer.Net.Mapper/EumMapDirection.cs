@@ -6,7 +6,7 @@ namespace FS.Mapper
     /// 实体匹配方向枚举
     /// </summary>
     [Flags]
-    public enum EumAutoMapDirection
+    public enum EumMapDirection
     {
         From,
         To

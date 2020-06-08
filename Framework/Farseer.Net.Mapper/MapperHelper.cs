@@ -6,7 +6,7 @@ using AutoMapper.Configuration;
 
 namespace FS.Mapper
 {
-    internal class AutoMapperHelper
+    internal class MapperHelper
     {
         public static IMapper Mapper;
 
@@ -18,9 +18,9 @@ namespace FS.Mapper
             var cfg = new MapperConfigurationExpression();
             foreach (var type in typeArr)
             {
-                CreateMap<AutoMapFromAttribute>(type, cfg);
-                CreateMap<AutoMapToAttribute>(type, cfg);
-                CreateMap<AutoMapAttribute>(type, cfg);
+                CreateMap<MapFromAttribute>(type, cfg);
+                CreateMap<MapToAttribute>(type, cfg);
+                CreateMap<MapAttribute>(type, cfg);
             }
 
             Mapper = new MapperConfiguration(cfg).CreateMapper();
@@ -29,7 +29,7 @@ namespace FS.Mapper
         /// <summary>
         /// 根据Map方向，完成类型间的Map
         /// </summary>
-        public static void CreateMap<TAttribute>(Type type, MapperConfigurationExpression cfg) where TAttribute : AutoMapAttribute
+        public static void CreateMap<TAttribute>(Type type, MapperConfigurationExpression cfg) where TAttribute : MapAttribute
         {
             if (!type.IsDefined(typeof(TAttribute))) return;
 
@@ -39,12 +39,12 @@ namespace FS.Mapper
                 
                 foreach (var targetType in autoMapToAttribute.TargetTypes)
                 {
-                    if (autoMapToAttribute.Direction.HasFlag(EumAutoMapDirection.To))
+                    if (autoMapToAttribute.Direction.HasFlag(EumMapDirection.To))
                     {
                         cfg.CreateMap(type, targetType);
                     }
 
-                    if (autoMapToAttribute.Direction.HasFlag(EumAutoMapDirection.From))
+                    if (autoMapToAttribute.Direction.HasFlag(EumMapDirection.From))
                     {
                         cfg.CreateMap(targetType, type);
                     }

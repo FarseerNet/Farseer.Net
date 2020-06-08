@@ -5,7 +5,7 @@ namespace FS.Mapper
     /// <summary>
     /// 实体自动匹配特性
     /// </summary>
-    public class AutoMapAttribute : Attribute
+    public class MapAttribute : Attribute
     {
         /// <summary>
         /// 目标类型
@@ -15,7 +15,7 @@ namespace FS.Mapper
         /// <summary>
         /// 实体自动匹配特性
         /// </summary>
-        public AutoMapAttribute(params Type[] targetTypes)
+        public MapAttribute(params Type[] targetTypes)
         {
             TargetTypes = targetTypes;
         }
@@ -23,6 +23,6 @@ namespace FS.Mapper
         /// <summary>
         /// 实体匹配方向为双向匹配
         /// </summary>
-        internal virtual EumAutoMapDirection Direction => EumAutoMapDirection.From | EumAutoMapDirection.To;
+        internal virtual EumMapDirection Direction => EumMapDirection.From | EumMapDirection.To;
     }
 }
