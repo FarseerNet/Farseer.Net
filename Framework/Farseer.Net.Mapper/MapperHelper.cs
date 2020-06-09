@@ -49,6 +49,7 @@ namespace FS.Mapper
                         foreach (var propertyInfo in type.GetProperties())
                         {
                             var mapFieldAttribute = propertyInfo.GetCustomAttribute<MapFieldAttribute>();
+                            if (mapFieldAttribute == null) continue;
                             // 忽略当前字段
                             if (mapFieldAttribute.IsIgnore)
                             {
@@ -75,6 +76,8 @@ namespace FS.Mapper
                         foreach (var propertyInfo in type.GetProperties())
                         {
                             var mapFieldAttribute = propertyInfo.GetCustomAttribute<MapFieldAttribute>();
+                            if (mapFieldAttribute == null) continue;
+                            
                             // 忽略当前字段
                             if (mapFieldAttribute.IsIgnore)
                             {

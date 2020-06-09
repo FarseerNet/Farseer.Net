@@ -5,9 +5,9 @@
     <Company>steden</Company>
     <Copyright>http://www.fsgit.com</Copyright>
     <Authors>steden</Authors>
-    <AssemblyVersion>2.4.1</AssemblyVersion>
-    <FileVersion>2.4.1</FileVersion>
-    <Version>2.4.1</Version>
+    <AssemblyVersion>2.4.2</AssemblyVersion>
+    <FileVersion>2.4.2</FileVersion>
+    <Version>2.4.2</Version>
     <Product>对象类型转换组件</Product>
     <Description>包括：AutoMapper</Description>
     <PackageTags>AutoMapper</PackageTags>
