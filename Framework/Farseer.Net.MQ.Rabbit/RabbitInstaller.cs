@@ -41,6 +41,8 @@ namespace FS.MQ.RabbitMQ
                     }
                 }
             }
+            
+            // 查找所有继承IListenerMessage接口的消费者
         }
     }
 }

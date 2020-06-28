@@ -7,7 +7,7 @@ namespace Farseer.Net.Data.Console
     {
         static void Main(string[] args)
         {
-            FarseerBootstrapper.Create<StartupModule>().Initialize();
+            FarseerBoot.Run<StartupModule>().Initialize();
 
             var lst = new UserCoinsAgent().ToCreditList();
             var a = 1;

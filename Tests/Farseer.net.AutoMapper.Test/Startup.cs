@@ -14,6 +14,7 @@ namespace Farseer.net.AutoMapper.Test
         public override void PostInitialize()
         {
             IocManager.RegisterAssemblyByConvention(GetType());
+            IocManager.Register(typeof(Test),typeof(Test));
         }
     }
 }

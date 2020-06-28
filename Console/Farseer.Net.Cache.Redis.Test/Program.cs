@@ -7,7 +7,7 @@ namespace Farseer.Net.Cache.Redis.Test
     {
         static void Main(string[] args)
         {
-            FarseerBootstrapper.Create<StartupModule>().Initialize();
+            FarseerBoot.Run<StartupModule>().Initialize();
         }
     }
 }

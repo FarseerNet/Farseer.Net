@@ -32,6 +32,7 @@ namespace FS.Mapper
         /// </summary>
         public static void CreateMap<TAttribute>(Type type, MapperConfigurationExpression cfg) where TAttribute : MapAttribute
         {
+            // 通常type表示po
             if (!type.IsDefined(typeof(TAttribute))) return;
 
             foreach (var autoMapToAttribute in type.GetCustomAttributes<TAttribute>())

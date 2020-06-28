@@ -174,7 +174,7 @@
             <e p="SingletonDependency.cs" t="Include" />
           </e>
           <e p="Farseer.Net.csproj" t="IncludeRecursive" />
-          <e p="FarseerBootstrapper.cs" t="Include" />
+          <e p="FarseerBoot.cs" t="Include" />
           <e p="FarseerConfigException.cs" t="Include" />
           <e p="FarseerException.cs" t="Include" />
           <e p="FarseerInitException.cs" t="Include" />
@@ -1078,6 +1078,7 @@
             <e p="UserPO.cs" t="Include" />
           </e>
           <e p="Farseer.net.AutoMapper.Test.csproj" t="IncludeRecursive" />
+          <e p="ITest.cs" t="Include" />
           <e p="obj" t="ExcludeRecursive">
             <e p="Release" t="Include">
               <e p="netcoreapp3.1" t="Include">
@@ -1086,6 +1087,7 @@
             </e>
           </e>
           <e p="Startup.cs" t="Include" />
+          <e p="Test.cs" t="Include" />
           <e p="UnitTest1.cs" t="Include" />
         </e>
       </e>

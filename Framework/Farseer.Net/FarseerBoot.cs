@@ -15,7 +15,7 @@ namespace FS
     /// <summary>
     ///     模块启动器
     /// </summary>
-    public sealed class FarseerBootstrapper : IDisposable
+    public sealed class FarseerBoot : IDisposable
     {
         /// <summary>
         /// 模块管理器
@@ -42,7 +42,7 @@ namespace FS
         /// </summary>
         /// <param name="startupModule">启动模块</param>
         /// <param name="iocManager">依赖注入管理器</param>
-        private FarseerBootstrapper(Type startupModule, IIocManager iocManager)
+        private FarseerBoot(Type startupModule, IIocManager iocManager)
         {
             Check.NotNull(startupModule);
             Check.NotNull(iocManager);
@@ -67,27 +67,27 @@ namespace FS
         ///     创建系统启动器实例
         /// </summary>
         /// <typeparam name="TStartupModule">模块</typeparam>
-        public static FarseerBootstrapper Create<TStartupModule>() where TStartupModule : FarseerModule => new FarseerBootstrapper(typeof(TStartupModule), DI.IocManager.Instance);
+        public static FarseerBoot Run<TStartupModule>() where TStartupModule : FarseerModule => new FarseerBoot(typeof(TStartupModule), DI.IocManager.Instance);
 
         /// <summary>
         ///     创建系统启动器
         /// </summary>
         /// <typeparam name="TStartupModule">模块</typeparam>
         /// <param name="iocManager">容器管理器</param>
-        public static FarseerBootstrapper Create<TStartupModule>(IIocManager iocManager) where TStartupModule : FarseerModule => new FarseerBootstrapper(typeof(TStartupModule), iocManager);
+        public static FarseerBoot Run<TStartupModule>(IIocManager iocManager) where TStartupModule : FarseerModule => new FarseerBoot(typeof(TStartupModule), iocManager);
 
         /// <summary>
         ///     创建启动器
         /// </summary>
         /// <param name="startupModule">模块类型</param>
-        public static FarseerBootstrapper Create(Type startupModule) => new FarseerBootstrapper(startupModule, DI.IocManager.Instance);
+        public static FarseerBoot Run(Type startupModule) => new FarseerBoot(startupModule, DI.IocManager.Instance);
 
         /// <summary>
         ///     创建启动器
         /// </summary>
         /// <param name="startupModule"></param>
         /// <param name="iocManager"></param>
-        public static FarseerBootstrapper Create(Type startupModule, IIocManager iocManager) => new FarseerBootstrapper(startupModule, iocManager);
+        public static FarseerBoot Run(Type startupModule, IIocManager iocManager) => new FarseerBoot(startupModule, iocManager);
 
         /// <summary>
         ///     初始化系统
@@ -122,9 +122,9 @@ namespace FS
         /// </summary>
         private void RegisterBootstrapper()
         {
-            if (!IocManager.IsRegistered<FarseerBootstrapper>())
+            if (!IocManager.IsRegistered<FarseerBoot>())
             {
-                IocManager.Container.Register(Component.For<FarseerBootstrapper>().Instance(this));
+                IocManager.Container.Register(Component.For<FarseerBoot>().Instance(this));
             }
         }
     }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Farseer.net.AutoMapper.Test.Entity;
 using FS;
+using FS.DI;
 using FS.Extends;
 using NUnit.Framework;
 
@@ -11,12 +12,15 @@ namespace Farseer.net.AutoMapper.Test
         [SetUp]
         public void Setup()
         {
-            FarseerBootstrapper.Create<Startup>().Initialize();
+            FarseerBoot.Run<Startup>().Initialize();
+            
         }
 
         [Test]
         public void Test1()
         {
+            IocManager.Instance.Resolve<Test>().Console();
+            
             var lst = new List<UserPO>();
             lst.Add(new UserPO {Id = 1, UserName = "张三"});
 

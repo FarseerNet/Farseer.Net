@@ -19,7 +19,7 @@ namespace Farseer.Net.MQ.RabbitMQ.Console
 
         static void Main(string[] args)
         {
-            FarseerBootstrapper.Create<StartupModule>().Initialize();
+            FarseerBoot.Run<StartupModule>().Initialize();
             IocManager.Instance.Resolve<IRabbitManager>("test1").CreateQueue("aaaa1");
             IocManager.Instance.Resolve<IRabbitManager>("test1").CreateQueue("aaaa2");
             
