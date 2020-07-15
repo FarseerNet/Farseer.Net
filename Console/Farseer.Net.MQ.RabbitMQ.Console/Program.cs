@@ -70,5 +70,7 @@ namespace Farseer.Net.MQ.RabbitMQ.Console
             System.Console.WriteLine(ea.ConsumerTag + "接收到信息为:" + message);
             return true;
         }
+
+        public bool FailureHandling(string message, object sender, BasicDeliverEventArgs ea) => throw new NotImplementedException();
     }
 }

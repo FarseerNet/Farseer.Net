@@ -101,13 +101,24 @@ namespace FS.MQ.RabbitMQ
             var resp = _channel.BasicGet(_consumerConfig.QueueName, autoAck);
 
             var result = false;
+            var message = Encoding.UTF8.GetString(resp.Body.ToArray());
             try
             {
-                result = listener.Consumer(Encoding.UTF8.GetString(resp.Body.ToArray()), resp);
+                result = listener.Consumer(message, resp);
             }
             catch (Exception e)
             {
                 IocManager.Instance.Logger.Error(e.Message);
+                // 消费失败后处理
+                try
+                {
+                    result = listener.FailureHandling(message, resp);
+                }
+                catch (Exception exception)
+                {
+                    IocManager.Instance.Logger.Error("失败处理出现异常：" +listener.GetType().FullName, exception);
+                    result = false;
+                }
             }
             finally
             {
@@ -131,7 +142,7 @@ namespace FS.MQ.RabbitMQ
         }
 
         /// <summary>
-        /// 检查连接状态并自动恢复
+        /// 持续消费，并检查连接状态并自动恢复
         /// </summary>
         private void Connect(IListenerMessage listener, bool autoAck = false)
         {
@@ -142,9 +153,10 @@ namespace FS.MQ.RabbitMQ
             consumer.Received += (model, ea) =>
             {
                 var result = false;
+                var message = Encoding.UTF8.GetString(ea.Body.ToArray());
                 try
                 {
-                    result     = listener.Consumer(Encoding.UTF8.GetString(ea.Body.ToArray()), model, ea);
+                    result     = listener.Consumer(message, model, ea);
                     _lastAckAt = DateTime.Now;
                 }
                 catch (AlreadyClosedException e) // rabbit被关闭了，重新打开链接
@@ -154,7 +166,17 @@ namespace FS.MQ.RabbitMQ
                 }
                 catch (Exception e)
                 {
+                    // 消费失败后处理
                     IocManager.Instance.Logger.Error(listener.GetType().FullName, e);
+                    try
+                    {
+                        result = listener.FailureHandling(message, model, ea);
+                    }
+                    catch (Exception exception)
+                    {
+                        IocManager.Instance.Logger.Error("失败处理出现异常：" +listener.GetType().FullName, exception);
+                        result = false;
+                    }
                 }
                 finally
                 {
