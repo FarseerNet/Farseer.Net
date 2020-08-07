@@ -4,9 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using FS.Modules;
-#if CORE
 using System.Runtime.Loader;
-#endif
 
 namespace FS.Reflection
 {
@@ -51,21 +49,13 @@ namespace FS.Reflection
         public List<Assembly> GetAssembliesFromFolder()
         {
             var assemblies = new List<Assembly>();
-#if CORE
-	        var files = Directory.GetFiles($"{AppContext.BaseDirectory}", "*.dll");
-#else
-			var files = Directory.GetFiles($"{AppDomain.CurrentDomain.BaseDirectory}", "*.dll");
-#endif
-			foreach (var file in files)
+            var files = Directory.GetFiles($"{AppContext.BaseDirectory}", "*.dll");
+            foreach (var file in files)
             {
 	            try
 	            {
-#if CORE
-					assemblies.Add(Assembly.Load(AssemblyLoadContext.GetAssemblyName(file)));
-#else
-					assemblies.Add(Assembly.LoadFrom(file));
-#endif
-				}
+                    assemblies.Add(Assembly.Load(AssemblyLoadContext.GetAssemblyName(file)));
+                }
 				catch (Exception)
                 {
                     // ignored 失败的原因是非托管程序

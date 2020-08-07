@@ -51,11 +51,7 @@ namespace FS.Utils.Common
             }
 
             // 生成类型
-#if CORE
             return typeBuilder.CreateTypeInfo().AsType(); //ExpandoObject
-#else
-            return typeBuilder.CreateType(); //ExpandoObject
-#endif
         }
 
         /// <summary>
@@ -79,11 +75,7 @@ namespace FS.Utils.Common
             }
 
             // 生成类型
-#if CORE
             return typeBuilder.CreateTypeInfo().AsType(); //ExpandoObject
-#else
-            return typeBuilder.CreateType(); //ExpandoObject
-#endif
         }
 
         /// <summary>

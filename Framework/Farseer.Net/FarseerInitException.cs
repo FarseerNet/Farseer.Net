@@ -13,12 +13,7 @@ namespace FS
         ///     构造函数
         /// </summary>
         public FarseerInitException() { }
-#if !CORE
-        /// <summary>
-        ///     构造函数
-        /// </summary>
-        public FarseerInitException(SerializationInfo serializationInfo, StreamingContext context) : base(serializationInfo, context) { }
-#endif
+        
         /// <summary>
         ///     构造函数
         /// </summary>

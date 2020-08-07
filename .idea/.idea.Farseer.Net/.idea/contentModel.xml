@@ -194,9 +194,6 @@
           </e>
           <e p="obj" t="ExcludeRecursive">
             <e p="Release" t="Include">
-              <e p="net461" t="Include">
-                <e p="Farseer.Net.AssemblyInfo.cs" t="Include" />
-              </e>
               <e p="netstandard2.0" t="Include">
                 <e p="Farseer.Net.AssemblyInfo.cs" t="Include" />
               </e>

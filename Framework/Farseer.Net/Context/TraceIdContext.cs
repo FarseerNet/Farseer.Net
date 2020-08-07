@@ -1,10 +1,5 @@
 ﻿using System;
-#if !CORE
-using System.Runtime.Remoting;
-using System.Runtime.Remoting.Messaging;
-#else
 using System.Threading;
-#endif
 
 namespace FS.Context
 {
@@ -52,28 +47,11 @@ namespace FS.Context
             this.ParentId = parentId;
             this.ChildId = childId;
         }
-#if !CORE
-        //NET45以上
-        private static readonly string LogicalDataKey = "__TraceContext_Current__" + AppDomain.CurrentDomain.Id;
-        /// <summary>
-        /// 获取当前TraceContext
-        /// </summary>
-        public static TraceIdContext Current
-        {
-            get
-            {
-                var handle = CallContext.LogicalGetData(LogicalDataKey) as ObjectHandle;
-                return handle?.Unwrap() as TraceIdContext;
-            }
-            set => CallContext.LogicalSetData(LogicalDataKey, new ObjectHandle(value));
-        }
-#else
         private static readonly AsyncLocal<TraceIdContext> HttpContextCurrent = new AsyncLocal<TraceIdContext>();
         public static TraceIdContext Current
         {
             get => HttpContextCurrent.Value;
             set => HttpContextCurrent.Value = value;
         }
-#endif
     }
 }
