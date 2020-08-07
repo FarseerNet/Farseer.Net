@@ -38,11 +38,17 @@ namespace FS
         public IIocManager IocManager { get; set; }
 
         /// <summary>
+        ///     应用名称
+        /// </summary>
+        public static string AppName { get; set; }
+
+        /// <summary>
         ///     构造函数
         /// </summary>
         /// <param name="startupModule">启动模块</param>
         /// <param name="iocManager">依赖注入管理器</param>
-        private FarseerApplication(Type startupModule, IIocManager iocManager)
+        /// <param name="appName">应用名称</param>
+        private FarseerApplication(Type startupModule, IIocManager iocManager, string appName)
         {
             Check.NotNull(startupModule);
             Check.NotNull(iocManager);
@@ -50,6 +56,7 @@ namespace FS
 
             StartupModule = startupModule;
             IocManager    = iocManager;
+            if (!string.IsNullOrWhiteSpace(appName)) AppName = appName;
         }
 
         /// <summary>
@@ -67,27 +74,31 @@ namespace FS
         ///     创建系统启动器实例
         /// </summary>
         /// <typeparam name="TStartupModule">模块</typeparam>
-        public static FarseerApplication Run<TStartupModule>() where TStartupModule : FarseerModule => new FarseerApplication(typeof(TStartupModule), DI.IocManager.Instance);
+        /// <param name="appName">应用名称</param>
+        public static FarseerApplication Run<TStartupModule>(string appName = "") where TStartupModule : FarseerModule
+        {
+            return new FarseerApplication(typeof(TStartupModule), DI.IocManager.Instance, appName);
+        }
 
         /// <summary>
         ///     创建系统启动器
         /// </summary>
         /// <typeparam name="TStartupModule">模块</typeparam>
         /// <param name="iocManager">容器管理器</param>
-        public static FarseerApplication Run<TStartupModule>(IIocManager iocManager) where TStartupModule : FarseerModule => new FarseerApplication(typeof(TStartupModule), iocManager);
+        public static FarseerApplication Run<TStartupModule>(IIocManager iocManager, string appName = "") where TStartupModule : FarseerModule => new FarseerApplication(typeof(TStartupModule), iocManager, appName);
 
         /// <summary>
         ///     创建启动器
         /// </summary>
         /// <param name="startupModule">模块类型</param>
-        public static FarseerApplication Run(Type startupModule) => new FarseerApplication(startupModule, DI.IocManager.Instance);
+        public static FarseerApplication Run(Type startupModule, string appName = "") => new FarseerApplication(startupModule, DI.IocManager.Instance, appName);
 
         /// <summary>
         ///     创建启动器
         /// </summary>
         /// <param name="startupModule"></param>
         /// <param name="iocManager"></param>
-        public static FarseerApplication Run(Type startupModule, IIocManager iocManager) => new FarseerApplication(startupModule, iocManager);
+        public static FarseerApplication Run(Type startupModule, IIocManager iocManager, string appName = "") => new FarseerApplication(startupModule, iocManager, appName);
 
         /// <summary>
         ///     初始化系统
