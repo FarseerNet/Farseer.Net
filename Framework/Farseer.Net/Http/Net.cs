@@ -194,24 +194,5 @@ namespace FS.Http
         /// <param name="encoding">编码格式</param>
         /// <param name="cookie">是否需要cookie</param>
         public static Task<string> PutAsync(string url, Dictionary<string, string> postData, Encoding encoding = null, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, CookieContainer cookie = null) => PutAsync(url, postData.Select(keyVal => $"{keyVal.Key}={keyVal.Value}").ToString("&"), null, encoding, contentType, requestTimeout, cookie);
-
-        /// <summary>
-        ///     获取网络IP
-        /// </summary>
-        public static string GetIP()
-        {
-            var ip          = "127.0.0.1";
-            var strHostName = Dns.GetHostName();
-            var ipHost      = Dns.GetHostEntry(strHostName);
-            foreach (var item in ipHost.AddressList)
-            {
-                if (item.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                {
-                    ip = item.ToString();
-                }
-            }
-
-            return ip;
-        }
     }
 }
