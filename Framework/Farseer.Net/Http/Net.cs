@@ -37,27 +37,7 @@ namespace FS.Http
         /// <param name="requestTimeout">超时时间</param>
         /// <param name="encoding">编码格式</param>
         /// <param name="cookie">是否需要cookie</param>
-        public static Task<string> GetAsync(string url, Dictionary<string, string> postData, Encoding encoding = null, int requestTimeout = 0, CookieContainer cookie = null) => GetAsync(url, postData.Select(keyVal => $"{keyVal.Key}={keyVal.Value}").ToString("&"), encoding, requestTimeout, cookie);
-
-        /// <summary>
-        /// http request请求
-        /// </summary>
-        /// <param name="url">资源地址</param>
-        /// <param name="postData">查询条件</param>
-        /// <param name="requestTimeout">超时时间</param>
-        /// <param name="encoding">编码格式</param>
-        /// <param name="cookie">是否需要cookie</param>
-        public static Task<string> GetAsync(string url, string postData = null, Encoding encoding = null, int requestTimeout = 0, CookieContainer cookie = null)
-        {
-            //if (encoding == null) { encoding = Encoding.UTF8; }
-            //var cancellationTokenSource = new CancellationTokenSource();
-            //if (requestTimeout > 0) cancellationTokenSource.CancelAfter(requestTimeout);
-            //var httpRspMessage = httpClient.GetAsync(string.IsNullOrWhiteSpace(postData) ? url : $"{url}?{postData}" ,cancellationTokenSource.Token);
-//
-            //var bytes = await (await httpRspMessage.ConfigureAwait(false)).Content.ReadAsByteArrayAsync().ConfigureAwait(false);
-            //return encoding.GetString(bytes);
-            return GetAsync(url, postData, null, encoding, requestTimeout, cookie);
-        }
+        public static Task<string> GetAsync(string url, Dictionary<string, string> postData, Encoding encoding = null, int requestTimeout = 0, CookieContainer cookie = null) => GetAsync(url, postData.Select(keyVal => $"{keyVal.Key}={keyVal.Value}").ToString("&"), null, encoding, requestTimeout, cookie);
 
         /// <summary>
         /// http request请求
