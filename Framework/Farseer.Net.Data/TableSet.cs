@@ -159,6 +159,7 @@ namespace FS.Data
         public int Update(TEntity entity)
         {
             Check.IsTure(entity == null && Queue.ExpBuilder.ExpAssign == null, "更新操作时，参数不能为空！");
+            
             // 实体类的赋值，转成表达式树
             Queue.ExpBuilder.AssignUpdate(entity);
 
@@ -224,8 +225,8 @@ namespace FS.Data
         ///     插入
         /// </summary>
         /// <param name="entity"></param>
-        /// <param name="isReturnLastID">是否需要返回标识字段（如果设置的话）</param>
-        public int Insert(TEntity entity, bool isReturnLastID = false)
+        /// <param name="isReturnLastId">是否需要返回标识字段（如果设置的话）</param>
+        public int Insert(TEntity entity, bool isReturnLastId = false)
         {
             Check.NotNull(entity, "插入操作时，参数不能为空！");
 
@@ -233,7 +234,7 @@ namespace FS.Data
             Queue.ExpBuilder.AssignInsert(entity);
 
             // 需要返回值时，则不允许延迟提交
-            if (isReturnLastID && SetMap.PhysicsMap.DbGeneratedFields.Key != null)
+            if (isReturnLastId && SetMap.PhysicsMap.DbGeneratedFields.Key != null)
             {
                 // 赋值标识字段
                 return QueueManger.Commit(SetMap, (queue) =>

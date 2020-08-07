@@ -12,7 +12,7 @@ namespace Farseer.net.AutoMapper.Test
         [SetUp]
         public void Setup()
         {
-            FarseerBoot.Run<Startup>().Initialize();
+            FarseerApplication.Run<Startup>().Initialize();
             
         }
 

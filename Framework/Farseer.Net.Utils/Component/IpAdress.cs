@@ -389,20 +389,11 @@ namespace FS.Utils.Component
         /// <summary>
         ///     省
         /// </summary>
-        public string Province
-        {
-            get { return new Regex(".*省|广西|内蒙古|宁夏|新疆|西藏").Match(Area).Value; }
-        }
+        public string Province => new Regex(".*省|广西|内蒙古|宁夏|新疆|西藏").Match(Area).Value;
 
         /// <summary>
         ///     城市
         /// </summary>
-        public string City
-        {
-            get
-            {
-                return !string.IsNullOrWhiteSpace(Province) ? Area.Replace(Province, "") : string.Empty;
-            }
-        }
+        public string City => !string.IsNullOrWhiteSpace(Province) ? Area.Replace(Province, "") : string.Empty;
     }
 }

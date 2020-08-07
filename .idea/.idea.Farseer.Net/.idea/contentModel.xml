@@ -173,8 +173,9 @@
             <e p="ITransientDependency.cs" t="Include" />
             <e p="SingletonDependency.cs" t="Include" />
           </e>
+          <e p="Env.cs" t="Include" />
           <e p="Farseer.Net.csproj" t="IncludeRecursive" />
-          <e p="FarseerBoot.cs" t="Include" />
+          <e p="FarseerApplication.cs" t="Include" />
           <e p="FarseerConfigException.cs" t="Include" />
           <e p="FarseerException.cs" t="Include" />
           <e p="FarseerInitException.cs" t="Include" />

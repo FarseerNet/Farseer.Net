@@ -31,43 +31,9 @@ namespace FS.DI
         public static IocManager Instance { get; }
 
         /// <summary>
-        /// 日志接口
+        /// 日志接口,没注册时，用默认的
         /// </summary>
-        public ILogger Logger // Microsoft.Extensions.Logging
-        {
-            get
-            {
-                #region 获取宿主类的FullName
-
-                string className;
-                Type   declaringType;
-                int    framesToSkip = 2;
-                do
-                {
-#if SILVERLIGHT
-                StackFrame frame = new StackTrace().GetFrame(framesToSkip);
-#else
-                    StackFrame frame = new StackFrame(framesToSkip, false);
-#endif
-                    MethodBase method = frame.GetMethod();
-                    declaringType = method.DeclaringType;
-                    if (declaringType == null)
-                    {
-                        className = method.Name;
-                        break;
-                    }
-
-                    framesToSkip++;
-                    className = declaringType.FullName;
-                } while (declaringType.Module.Name.Equals("mscorlib.dll", StringComparison.OrdinalIgnoreCase));
-
-                #endregion
-
-                if (IsRegistered<IExtendedLoggerFactory>()) Resolve<IExtendedLoggerFactory>().Create(className);
-                // 没注册时，用默认的
-                return new DefaultLogger();
-            }
-        }
+        public ILogger Logger => IsRegistered<ILogger>() ? Resolve<ILogger>() : new DefaultLogger(); // Microsoft.Extensions.Logging
 
         /// <summary>
         ///     构造函数
@@ -127,7 +93,6 @@ namespace FS.DI
         /// <summary>
         ///     根据约定注册程序集
         /// </summary>
-        /// <param name="type"></param>
         public void RegisterAssemblyByConvention(Type type) => RegisterAssemblyByConvention(type.GetTypeInfo().Assembly.GetReferencedAssemblies().Select(Assembly.Load).ToArray());
 
         /// <summary>
