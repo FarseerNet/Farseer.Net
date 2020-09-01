@@ -59,7 +59,7 @@ namespace FS.Http
                 foreach (var header in headerData)
                 {
                     if (httpContent.Headers.Contains(header.Key)) continue;
-                    httpContent.Headers.Add(header.Key, header.Value);
+                    httpContent.Headers.TryAddWithoutValidation(header.Key, header.Value);
                 }
             }
 
@@ -100,10 +100,7 @@ namespace FS.Http
         /// <param name="cookie">是否需要cookie</param>
         public static async Task<string> PostAsync(string url, string postData, Dictionary<string, string> headerData, Encoding encoding = null, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, CookieContainer cookie = null)
         {
-            if (encoding == null)
-            {
-                encoding = Encoding.UTF8;
-            }
+            encoding ??= Encoding.UTF8;
 
             var httpContent = new StringContent(postData, encoding, contentType); // 内容体
             httpContent.Headers.AddTraceInfoToHeader();                           // 添加头部
@@ -159,10 +156,7 @@ namespace FS.Http
         /// <param name="cookie">是否需要cookie</param>
         public static async Task<string> PutAsync(string url, string postData, Dictionary<string, string> headerData, Encoding encoding = null, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, CookieContainer cookie = null)
         {
-            if (encoding == null)
-            {
-                encoding = Encoding.UTF8;
-            }
+            encoding ??= Encoding.UTF8;
 
             var httpContent = new StringContent(postData, encoding, contentType); // 内容体
             httpContent.Headers.AddTraceInfoToHeader();                           // 添加头部

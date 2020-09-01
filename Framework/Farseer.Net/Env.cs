@@ -18,5 +18,10 @@ namespace FS
         ///     本地环境
         /// </summary>
         public static bool IsDev => Environment.GetEnvironmentVariable("FS_ENV") == "dev";
+
+        /// <summary>
+        ///     预发布环境
+        /// </summary>
+        public static bool IsPre => Environment.GetEnvironmentVariable("FS_ENV") == "pre";
     }
 }
