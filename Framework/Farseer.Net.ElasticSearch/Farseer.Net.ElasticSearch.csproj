@@ -6,20 +6,13 @@
     <Copyright>http://www.fsgit.com</Copyright>
     <Product>ElasticSearch组件</Product>
     <Description>包括：ElasticSearch客户端</Description>
-    <AssemblyVersion>2.4.0</AssemblyVersion>
-    <FileVersion>2.4.0</FileVersion>
-    <Version>2.4.0</Version>
+    <AssemblyVersion>2.4.1</AssemblyVersion>
+    <FileVersion>2.4.1</FileVersion>
+    <Version>2.4.1</Version>
     <Authors>steden</Authors>
     <PackageTags>ElasticSearch客户端</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RootNamespace>FS.ElasticSearch</RootNamespace>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net461'">
-    <DefineConstants>net461</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <DefineConstants>CORE</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,14 +25,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NEST" Version="7.7.1" />
+    <PackageReference Include="NEST" Version="7.9.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Nest">
-      <HintPath>..\..\packages\NEST.5.4.0\lib\net461\Nest.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

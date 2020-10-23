@@ -23,12 +23,10 @@ namespace FS.ElasticSearch.Queue
 
         public EnqueueResult Enqueue(T data,String indexName,String typeName, TimeSpan timeSpan)
         {
-            QueueDataEs queueDataEs = new QueueDataEs();
-            queueDataEs.IndexName = indexName;
-            queueDataEs.TypeName = typeName;
-
+            var queueDataEs = new QueueDataEs {IndexName = indexName, TypeName = typeName};
             return base.Enqueue(data,queueDataEs);
         }
+        
         protected override Func<List<AsyncQueueData<T, QueueDataEs>>,int, bool> GetDequeueDataHandlers()
         {
             return Save2Es;

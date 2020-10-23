@@ -20,8 +20,7 @@ namespace FS.ElasticSearch
         public ElasticSearchManager(ElasticSearchItemConfig config)
         {
             var lstUrls = config.Server.Split(',').Select(o => new Uri(o)).ToList();
-            var pool = new StaticConnectionPool(lstUrls);
-            var settings = new ConnectionSettings(pool);
+            var settings = new ConnectionSettings(new StaticConnectionPool(lstUrls));
             Client = new ElasticClient(settings);
         }
     }
