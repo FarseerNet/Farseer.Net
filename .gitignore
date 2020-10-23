@@ -5,4 +5,5 @@ bin
 obj
 packages
 /.vs
-/.vs/ZTO.Platform
+*.idea
+/.idea/
