@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using FS.Data.Client;
 using FS.Data.Infrastructure;
 using FS.DI;
 
@@ -80,7 +81,6 @@ namespace FS.Data.Data
         {
             if (IsTransaction)
             {
-                //_comm.Transaction.Rollback();
                 _comm?.Transaction?.Dispose();
             }
             IsTransaction = false;
@@ -159,6 +159,7 @@ namespace FS.Data.Data
         /// </summary>
         public void Commit()
         {
+            if (_comm == null) return;
             if (_comm.Transaction == null) { throw new Exception("未开启事务"); }
             _comm.Transaction.Commit();
         }
@@ -192,7 +193,7 @@ namespace FS.Data.Data
 
                 return _comm.ExecuteScalar();
             }
-            catch (Exception exp) { Close(true); IocManager.Instance.Logger.Error(exp.Message, exp); throw exp; }
+            catch (Exception) { Close(true); throw; }
             finally { Close(false); }
         }
 
@@ -215,7 +216,7 @@ namespace FS.Data.Data
 
                 return await _comm.ExecuteScalarAsync();
             }
-            catch (Exception exp) { Close(true); IocManager.Instance.Logger.Error(exp.Message, exp); throw exp; }
+            catch (Exception) { Close(true); throw; }
             finally { Close(false); }
         }
 
@@ -238,7 +239,7 @@ namespace FS.Data.Data
 
                 return _comm.ExecuteNonQuery();
             }
-            catch (Exception exp) { Close(true); IocManager.Instance.Logger.Error(exp.Message, exp); throw exp; }
+            catch (Exception) { Close(true); throw; }
             finally { Close(false); }
         }
 
@@ -261,7 +262,7 @@ namespace FS.Data.Data
 
                 return await _comm.ExecuteNonQueryAsync();
             }
-            catch (Exception exp) { Close(true); IocManager.Instance.Logger.Error(exp.Message, exp); throw exp; }
+            catch (Exception) { Close(true); throw; }
             finally { Close(false); }
         }
 
@@ -284,7 +285,7 @@ namespace FS.Data.Data
 
                 return IsTransaction ? _comm.ExecuteReader() : _comm.ExecuteReader(CommandBehavior.CloseConnection);
             }
-            catch (Exception exp) { Close(true); IocManager.Instance.Logger.Error(exp.Message, exp); throw exp; }
+            catch (Exception) { Close(true); throw; }
         }
 
         /// <summary>
@@ -307,7 +308,7 @@ namespace FS.Data.Data
 
                 return await (IsTransaction ? _comm.ExecuteReaderAsync().ConfigureAwait(false) : _comm.ExecuteReaderAsync(CommandBehavior.CloseConnection).ConfigureAwait(false));
             }
-            catch (Exception exp) { Close(true); IocManager.Instance.Logger.Error(exp.Message, exp); throw exp; }
+            catch (Exception) { Close(true); throw; }
         }
 
         /// <summary>
@@ -332,7 +333,7 @@ namespace FS.Data.Data
                 ada.Fill(ds);
                 return ds;
             }
-            catch (Exception exp) { Close(true); IocManager.Instance.Logger.Error(exp.Message, exp); throw exp; }
+            catch (Exception) { Close(true); throw; }
             finally { Close(false); }
         }
 
@@ -359,7 +360,7 @@ namespace FS.Data.Data
                 dataAdapter.Fill(ds);
                 return ds;
             }
-            catch (Exception exp) { Close(true); IocManager.Instance.Logger.Error(exp.Message, exp); throw exp; }
+            catch (Exception) { Close(true); throw; }
             finally { Close(false); }
         }
 
@@ -407,7 +408,7 @@ namespace FS.Data.Data
                     bulkCopy.WriteToServer(dt);
                 }
             }
-            catch (Exception exp) { Close(true); IocManager.Instance.Logger.Error(exp.Message, exp); throw exp; }
+            catch (Exception) { Close(true); throw; }
             finally { Close(false); }
         }
 
@@ -431,7 +432,7 @@ namespace FS.Data.Data
                     await bulkCopy.WriteToServerAsync(dt);
                 }
             }
-            catch (Exception exp) { Close(true); IocManager.Instance.Logger.Error(exp.Message, exp); throw exp; }
+            catch (Exception) { Close(true); throw; }
             finally { Close(false); }
         }
 

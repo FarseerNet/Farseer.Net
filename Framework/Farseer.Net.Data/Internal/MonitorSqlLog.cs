@@ -12,14 +12,14 @@ namespace FS.Data.Internal
     /// </summary>
     internal class MonitorSqlLog : ISqlMonitor
     {
-        public void ExecuteException(string methodName, string name, CommandType cmdType, string sql, IEnumerable<DbParameter> param, long elapsedMilliseconds, Exception exp)
+        public void ExecuteException(string methodName, string dbName, string tableName, CommandType cmdType, string sql, IEnumerable<DbParameter> param, long elapsedMilliseconds, Exception exp)
         {
         }
 
-        public void PreExecute(string methodName, string name, CommandType cmdType, string sql, IEnumerable<DbParameter> param)
+        public void PreExecute(string methodName, string dbName, string tableName, CommandType cmdType, string sql, IEnumerable<DbParameter> param)
         {
         }
 
-        public void Executed<TReturn>(string methodName, string name, CommandType cmdType, string sql, IEnumerable<DbParameter> param, long elapsedMilliseconds, TReturn result) => new SqlRunLog(name, cmdType, sql, param, elapsedMilliseconds).Write();
+        public void Executed<TReturn>(string methodName, string dbName, string tableName, CommandType cmdType, string sql, IEnumerable<DbParameter> param, long elapsedMilliseconds, TReturn result) => new SqlRunLog(dbName, tableName, cmdType, sql, param, elapsedMilliseconds).Write();
     }
 }

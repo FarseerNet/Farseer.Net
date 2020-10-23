@@ -1,11 +1,6 @@
-﻿using CacheManager.Core;
-using Castle.MicroKernel.Registration;
+﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using System;
-using FS.Cache.Configuration;
-using FS.Cache.Manager.Redis;
-using FS.Cache.Redis.Configuration;
 using FS.Configuration;
 using FS.DI;
 
@@ -39,35 +34,6 @@ namespace FS.Cache.Redis
         {
             var localConfigResolver = IocManager.Instance.Resolve<IConfigResolver>();
             InitRedisConfig(container, localConfigResolver);
-            InitCacheManager(container, localConfigResolver);
-        }
-
-        private static void InitCacheManager(IWindsorContainer container, IConfigResolver localConfigResolver)
-        {
-            if (localConfigResolver.CacheManagerConfig().Items.Count == 0) { return; }
-            localConfigResolver.CacheManagerConfig().Items.ForEach(m =>
-            {
-                Action<ConfigurationBuilderCachePart> settings;
-                var redisConfigName = $"{m.RedisConfigName}_connection";
-                if (!IocManager.Instance.IsRegistered(redisConfigName)) return;
-
-                var redisConnectionWrapper = IocManager.Instance.Resolve<IRedisConnectionWrapper>(redisConfigName);
-                switch (m.CacheModel)
-                {
-                    case EumCacheModel.Redis:
-                        {
-                            settings = (o) => o.WithRedisConfiguration("redis", redisConnectionWrapper.Database().Multiplexer).WithMaxRetries(100).WithRetryTimeout(50).WithRedisBackplane("redis").WithRedisCacheHandle("redis", true); break;
-                        }
-                    case EumCacheModel.RuntimeRedis:
-                        {
-                            settings = (o) => o.WithMemoryCacheHandle("handleName").And.WithRedisConfiguration("redis", redisConnectionWrapper.Database().Multiplexer).WithMaxRetries(100).WithRetryTimeout(50).WithRedisBackplane("redis").WithRedisCacheHandle("redis", true); break;
-                        }
-                    default: return;
-                }
-
-                // 注册
-                container.Register(Component.For<ICacheManager>().Named(m.Name).ImplementedBy<CacheManager>().DependsOn(Dependency.OnValue(settings.GetType(), settings)).LifestyleSingleton());
-            });
         }
 
         private void InitRedisConfig(IWindsorContainer container, IConfigResolver localConfigResolver)

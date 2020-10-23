@@ -17,8 +17,9 @@ namespace FS.Data.Client.SqlServer
         /// </summary>
         /// <param name="dbProvider">数据库提供者（不同数据库的特性）</param>
         /// <param name="expBuilder">表达式持久化</param>
-        /// <param name="name">表名/视图名/存储过程名</param>
-        internal SqlServerBuilder(AbsDbProvider dbProvider, ExpressionBuilder expBuilder, string name) : base(dbProvider, expBuilder, name)
+        /// <param name="tableName">表名/视图名/存储过程名</param>
+        /// <param name="dbName">数据库名称 </param>
+        internal SqlServerBuilder(AbsDbProvider dbProvider, ExpressionBuilder expBuilder,string dbName, string tableName) : base(dbProvider, expBuilder,dbName, tableName)
         {
         }
 
@@ -43,7 +44,7 @@ namespace FS.Data.Client.SqlServer
 
             strOrderBySql = "ORDER BY " + (string.IsNullOrWhiteSpace(strOrderBySql) ? $"{IEnumerableHelper.ToString(ExpBuilder.SetMap.PhysicsMap.PrimaryFields.Select(o => o.Value.Name), ",")} ASC" : strOrderBySql);
 
-            Sql.Append(string.Format("SELECT {1} FROM (SELECT {0} {1},ROW_NUMBER() OVER({2}) as Row FROM {3} {4}) a WHERE Row BETWEEN {5} AND {6}", strDistinctSql, strSelectSql, strOrderBySql, DbProvider.KeywordAegis(Name), strWhereSql, (pageIndex - 1)*pageSize + 1, pageIndex*pageSize));
+            Sql.Append(string.Format("SELECT {1} FROM (SELECT {0} {1},ROW_NUMBER() OVER({2}) as Row FROM {3} {4}) a WHERE Row BETWEEN {5} AND {6}", strDistinctSql, strSelectSql, strOrderBySql, DbTableName, strWhereSql, (pageIndex - 1)*pageSize + 1, pageIndex*pageSize));
             return this;
         }
 
@@ -59,7 +60,7 @@ namespace FS.Data.Client.SqlServer
                 {
                     var sql = Sql.ToString();
                     Sql.Clear();
-                    Sql.Append(string.Format(";SET IDENTITY_INSERT {0} ON ; {1} ; SET IDENTITY_INSERT {0} OFF;", DbProvider.KeywordAegis(Name), sql));
+                    Sql.Append(string.Format(";SET IDENTITY_INSERT {0} ON ; {1} ; SET IDENTITY_INSERT {0} OFF;", DbTableName, sql));
                 }
             }
             return this;

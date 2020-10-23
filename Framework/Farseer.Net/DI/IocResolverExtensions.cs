@@ -33,34 +33,6 @@ namespace FS.DI
         public static IDisposableDependencyObjectWrapper ResolveAsDisposable(this IIocResolver iocResolver, Type type) { return new DisposableDependencyObjectWrapper(iocResolver, iocResolver.Resolve(type)); }
 
         /// <summary>
-        ///     获取实现IDisabled接口的对象
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="iocResolver"></param>
-        /// <param name="argumentsAsAnonymousType"></param>
-        /// <returns></returns>
-        public static IDisposableDependencyObjectWrapper<T> ResolveAsDisposable<T>(this IIocResolver iocResolver, object argumentsAsAnonymousType) { return new DisposableDependencyObjectWrapper<T>(iocResolver, iocResolver.Resolve<T>(argumentsAsAnonymousType)); }
-
-        /// <summary>
-        ///     获取实现IDisabled接口的对象
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="iocResolver"></param>
-        /// <param name="type"></param>
-        /// <param name="argumentsAsAnonymousType"></param>
-        /// <returns></returns>
-        public static IDisposableDependencyObjectWrapper<T> ResolveAsDisposable<T>(this IIocResolver iocResolver, Type type, object argumentsAsAnonymousType) { return new DisposableDependencyObjectWrapper<T>(iocResolver, (T)iocResolver.Resolve(type, argumentsAsAnonymousType)); }
-
-        /// <summary>
-        ///     获取实现IDisabled接口的对象
-        /// </summary>
-        /// <param name="iocResolver"></param>
-        /// <param name="type"></param>
-        /// <param name="argumentsAsAnonymousType"></param>
-        /// <returns></returns>
-        public static IDisposableDependencyObjectWrapper ResolveAsDisposable(this IIocResolver iocResolver, Type type, object argumentsAsAnonymousType) { return new DisposableDependencyObjectWrapper(iocResolver, iocResolver.Resolve(type, argumentsAsAnonymousType)); }
-
-        /// <summary>
         ///     获取对象并自动释放
         /// </summary>
         /// <typeparam name="T"></typeparam>

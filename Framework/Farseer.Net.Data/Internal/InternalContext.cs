@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Data;
 using FS.Configuration;
 using FS.Core;
+using FS.Data.Client;
 using FS.Data.Data;
 using FS.Data.Infrastructure;
 using FS.Data.Map;

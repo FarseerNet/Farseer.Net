@@ -42,7 +42,7 @@ namespace FS.Job.ActService
                     {
                         var resolve = IocManager.Instance.Resolve<IJob>(job.IocName);
                         resolve.Init();
-                        resolve.Start(List[job.JobType].TokenSource.Token);
+                        resolve.Start(List[job.JobType].TokenSource.Token, true);
                         resolve.Stop();
                     }, false, true);
                 }

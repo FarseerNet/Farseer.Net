@@ -6,21 +6,31 @@
     public interface IRocketMQManager
     {
         /// <summary>
-        ///     生产消息
+        ///     生产普通消息
         /// </summary>
         IRocketMQProduct Product { get; }
 
         ///// <summary>
-        ///// 生产消息
+        ///// 生产顺序消息
         ///// </summary>
         //IRocketMQOrderProduct OrderProduct { get; }
         /// <summary>
-        ///     订阅消费
+        ///     消费普通消息
         /// </summary>
         IRocketMQConsumer Consumer { get; }
 
+        /// <summary>
+        ///     生产普通消息（基于HTTP）
+        /// </summary>
+        IHttpRocketMQProduct HttpProduct { get; }
+
+        /// <summary>
+        ///     消费普通消息
+        /// </summary>
+        IHttpRocketMQConsumer HttpConsumer { get; }
+
         ///// <summary>
-        ///// 消费
+        ///// 消费顺序消息
         ///// </summary>
         //IRocketMQOrderConsumer OrderConsumer { get; }
     }

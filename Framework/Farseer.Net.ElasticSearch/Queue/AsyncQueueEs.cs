@@ -4,6 +4,7 @@ using System.Linq;
 using Nest;
 using FS.Core.Queue.Core;
 using FS.Core.Queue.Core.AsyncQueue;
+using FS.DI;
 
 namespace FS.ElasticSearch.Queue
 {
@@ -14,7 +15,7 @@ namespace FS.ElasticSearch.Queue
     public class AsyncQueueEs<T> : AsyncQueue<T, QueueDataEs> where T:class 
     {
         private readonly ElasticClient _elasticClient;
-        public Action<IBulkResponse,int> EsSaveResultCallback = null;
+        public Action<BulkResponse,int> EsSaveResultCallback = null;
         public AsyncQueueEs(ElasticClient elasticClient,int queueCapacity, TimeSpan notifyDequeueTimeSpan, int notifyDequeueSize = 10) : base(queueCapacity,notifyDequeueTimeSpan, notifyDequeueSize)
         {
             this._elasticClient = elasticClient;
@@ -45,7 +46,7 @@ namespace FS.ElasticSearch.Queue
                 {
                     List<T> dataList = indexType.Select(qd => qd.Data).ToList<T>();
                     
-                    var result = _elasticClient.IndexMany(dataList, indexType.Key.IndexName, indexType.Key.TypeName);
+                    var result = _elasticClient.IndexMany(dataList, indexType.Key.IndexName);
                     
                     EsSaveResultCallback?.Invoke(result, queueCount);
                     
@@ -55,6 +56,7 @@ namespace FS.ElasticSearch.Queue
             }
             catch (Exception e)
             {
+                IocManager.Instance.Logger.Error(e.ToString(), e);
                 return false;
             }
         }

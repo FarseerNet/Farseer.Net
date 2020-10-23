@@ -28,12 +28,12 @@ namespace FS.Core.MicroService
         /// <summary>
         /// 调用的业务逻辑
         /// </summary>
-        protected abstract Task<ApiResponseJson> Invoke();
+        protected abstract Task<ApiNodeResponseJson> Invoke();
 
         /// <summary>
         /// 带实体类检查的调用
         /// </summary>
-        public async Task<ApiResponseJson> InvokeCheck()
+        public async Task<ApiNodeResponseJson> InvokeCheck()
         {
             try
             {
@@ -54,15 +54,15 @@ namespace FS.Core.MicroService
                     var exception = inner as FaultException;
                     if (exception != null) { statusCode = exception.Code.Name.ConvertType(0); }
                 }
-                return ApiResponseJson.Error(err, null, statusCode);
+                return ApiNodeResponseJson.Error(err, null, statusCode);
             }
             catch (FaultException exp)
             {
-                return ApiResponseJson.Error(exp.Message, exp.Action, exp.Code.Name.ConvertType(0));
+                return ApiNodeResponseJson.Error(exp.Message, exp.Action, exp.Code.Name.ConvertType(0));
             }
             catch (System.Exception exp)
             {
-                return ApiResponseJson.Error(exp.Message, null, 500);
+                return ApiNodeResponseJson.Error(exp.Message, null, 500);
             }
         }
     }

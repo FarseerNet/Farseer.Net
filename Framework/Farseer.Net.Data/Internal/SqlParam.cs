@@ -18,7 +18,8 @@ namespace FS.Data.Internal
             if (parameters != null) { Param = parameters.ToList(); }
         }
 
-        public string Name { get; private set; }
+        public string DbName { get; private set; }
+        public string TableName { get; private set; }
         public StringBuilder Sql { get; private set; }
         public List<DbParameter> Param { get; }
 

@@ -21,9 +21,13 @@ namespace FS.Data.Log.Default
         [DataMember]
         public CommandType CmdType { get; set; }
 
+        /// <summary> 数据库名称 </summary>
+        [DataMember]
+        public string DbName { get; set; }
+
         /// <summary> 执行表名称 </summary>
         [DataMember]
-        public string Name { get; set; }
+        public string TableName { get; set; }
 
         /// <summary> 执行SQL </summary>
         [DataMember]
@@ -34,16 +38,18 @@ namespace FS.Data.Log.Default
         public List<SqlParam> SqlParamList { get; set; }
 
         /// <summary> SQL异常记录写入 </summary>
-        /// <param name="name">表名称</param>
+        /// <param name="dbName">数据库名称 </param>
+        /// <param name="tableName">表名称</param>
         /// <param name="cmdType">执行方式</param>
         /// <param name="sql">T-SQL</param>
         /// <param name="param">SQL参数</param>
         /// <param name="exp">异常信息</param>
-        public SqlErrorLog(Exception exp, string name, CommandType cmdType, string sql, List<DbParameter> param)
+        public SqlErrorLog(Exception exp,string dbName, string tableName, CommandType cmdType, string sql, List<DbParameter> param)
         {
             Exp = exp;
             Message = exp.Message.Replace("\r\n", "");
-            Name = name;
+            DbName = dbName;
+            TableName = tableName;
             CmdType = cmdType;
             Sql = sql;
             if (param != null && param.Count > 0)

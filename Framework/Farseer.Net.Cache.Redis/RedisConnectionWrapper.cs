@@ -19,10 +19,7 @@ namespace FS.Cache.Redis
         ///     构造函数
         /// </summary>
         /// <param name="config">配置</param>
-        public RedisConnectionWrapper(RedisItemConfig config)
-        {
-            _config = config;
-        }
+        public RedisConnectionWrapper(RedisItemConfig config) => _config = config;
 
         /// <summary>
         ///     获取连接
@@ -81,7 +78,7 @@ namespace FS.Cache.Redis
                             case "synctimeout": option.SyncTimeout = time; break;
                             //case "asynctimeout": option.AsyncTimeout = time; break;
                             case "connecttimeout": option.ConnectTimeout = time; break;
-                            case "responsetimeout": option.ResponseTimeout = time; break;
+                            //case "responsetimeout": option.ResponseTimeout = time; break;
                         }
                     }
                 }
@@ -101,23 +98,20 @@ namespace FS.Cache.Redis
         /// </summary>
         /// <param name="db">数据库编号</param>
         /// <returns>IDatabase</returns>
-        public IDatabase Database(int? db = null)
-        {
-            return GetConnection().GetDatabase(db ?? -1);
-        }
+        public IDatabase Database(int? db = null) => GetConnection().GetDatabase(db ?? -1);
 
         /// <summary>
         ///     获取服务器
         /// </summary>
         /// <param name="endPoint">终结点</param>
         /// <returns>IServer</returns>
-        public IServer Server(EndPoint endPoint) { return GetConnection().GetServer(endPoint); }
+        public IServer Server(EndPoint endPoint) => GetConnection().GetServer(endPoint);
 
         /// <summary>
         ///     获取终结点
         /// </summary>
         /// <returns>终结点数组</returns>
-        public EndPoint[] GetEndpoints() { return GetConnection().GetEndPoints(); }
+        public EndPoint[] GetEndpoints() => GetConnection().GetEndPoints();
 
         /// <summary>
         ///     清空数据库
@@ -133,9 +127,6 @@ namespace FS.Cache.Redis
         /// <summary>
         ///     清理资源
         /// </summary>
-        public void Dispose()
-        {
-            _connection?.Dispose();
-        }
+        public void Dispose() => _connection?.Dispose();
     }
 }

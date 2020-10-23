@@ -20,23 +20,42 @@ namespace FS.Configuration
         ///     配置文件根节点、配置类型的对应关系
         /// </summary>
         private static readonly Dictionary<Type, object> ConfigBindList = new Dictionary<Type, object>();
+
         /// <summary>
         ///     配置文件的格式解析器
         /// </summary>
         private readonly IConfigFormat _configFormat;
+
         /// <summary>
         ///     配置文件
         /// </summary>
-        private string ConfigFileName => $"{SysPath.AppData}{SysPath.ConfigurationName}{_configFormat.ExtensionName}";
+        private string ConfigFileName => $"{SysPath.AppData}{SysPath.ConfigurationName}{EnvName}{_configFormat.ExtensionName}";
+
         /// <summary>
         ///     配置的最后一次写入时间
         /// </summary>
         private DateTime _fileLastWriteTime;
 
         /// <summary>
+        /// 多环境配置
+        /// </summary>
+        private string EnvName
+        {
+            get
+            {
+                var environmentVariable = Environment.GetEnvironmentVariable("FS_ENV");
+                if (string.IsNullOrEmpty(environmentVariable)) return string.Empty;
+                return $".{environmentVariable.ToLower()}";
+            }
+        }
+
+        /// <summary>
         ///     本地配置文件的解析
         /// </summary>
-        public LocalConfigResolver(IConfigFormat configFormat) { _configFormat = configFormat; }
+        public LocalConfigResolver(IConfigFormat configFormat)
+        {
+            _configFormat = configFormat;
+        }
 
         /// <summary>
         ///     追加配置

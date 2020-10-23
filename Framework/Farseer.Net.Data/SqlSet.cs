@@ -20,7 +20,7 @@ namespace FS.Data
             get
             {
                 if (_map != null) return _map;
-                var name = Context.ContextType.FullName + "." + SetMap.Name;
+                var name = Context.ContextType.FullName + "." + SetMap.TableName;
                 return _map = IocManager.Instance.Resolve<IConfigResolver>().SqlMapConfig().Items.Find(o=>o.Name==name);
             }
         }

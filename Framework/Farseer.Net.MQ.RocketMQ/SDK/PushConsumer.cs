@@ -14,7 +14,7 @@ using System.Runtime.InteropServices;
 
 namespace FS.MQ.RocketMQ.SDK
 {
-    public class PushConsumer : IDisposable
+    public class Consumer : IDisposable
     {
         public delegate void SwigDelegatePushConsumer_0();
 
@@ -32,13 +32,13 @@ namespace FS.MQ.RocketMQ.SDK
         private SwigDelegatePushConsumer_1 swigDelegate1;
         private SwigDelegatePushConsumer_2 swigDelegate2;
 
-        internal PushConsumer(IntPtr cPtr, bool cMemoryOwn)
+        internal Consumer(IntPtr cPtr, bool cMemoryOwn)
         {
             swigCMemOwn = cMemoryOwn;
             swigCPtr = new HandleRef(this, cPtr);
         }
 
-        public PushConsumer() : this(ONSClient4CPPPINVOKE.new_PushConsumer(), true)
+        public Consumer() : this(ONSClient4CPPPINVOKE.new_PushConsumer(), true)
         {
             SwigDirectorConnect();
         }
@@ -60,12 +60,12 @@ namespace FS.MQ.RocketMQ.SDK
             }
         }
 
-        internal static HandleRef getCPtr(PushConsumer obj)
+        internal static HandleRef getCPtr(Consumer obj)
         {
             return obj == null ? new HandleRef(null, IntPtr.Zero) : obj.swigCPtr;
         }
 
-        ~PushConsumer()
+        ~Consumer()
         {
             Dispose();
         }
@@ -101,7 +101,7 @@ namespace FS.MQ.RocketMQ.SDK
         {
             var methodInfo = GetType().GetMethod(methodName,
                 BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, methodTypes, null);
-            var hasDerivedMethod = methodInfo.DeclaringType.IsSubclassOf(typeof(PushConsumer));
+            var hasDerivedMethod = methodInfo.DeclaringType.IsSubclassOf(typeof(Consumer));
             return hasDerivedMethod;
         }
 

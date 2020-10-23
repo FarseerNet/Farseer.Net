@@ -1,0 +1,63 @@
+{
+  "RedisConfig": {
+    "Items": [
+      {
+        "Name": "",
+        "Server": ""
+      }
+    ]
+  },
+  "ApiConfig": {
+    "ApiGatewayType": 0,
+    "GatewayAppID": "",
+    "GatewayAppSecret": ""
+  },
+  "CacheManagerConfig": {
+    "Items": [
+      {
+        "Name": "RuntimeRedis",
+        "CacheModel": 2,
+        "RedisConfigName": ""
+      },
+      {
+        "Name": "Runtime",
+        "CacheModel": 0,
+        "RedisConfigName": ""
+      }
+    ]
+  },
+  "DbConfig": {
+    "Items": [
+      {
+        "Name": "",
+        "Server": "",
+        "UserID": "sa",
+        "PassWord": "",
+        "DataType": 0,
+        "Catalog": "",
+        "ConnectTimeout": 600,
+        "CommandTimeout": 300
+      }
+    ],
+    "IsWriteSqlRunLog": false,
+    "IsWriteSqlErrorLog": false
+  },
+  "SqlMapConfig": {
+    "Items": []
+  },
+  "RocketMQConfig": {
+    "Items": [
+      {
+        "Name": "test",
+        "Server": "mq.sz.cprapi.com:9876;mq.sz.cprapi.com:9877",
+        "ConsumerID": "test",
+        "ProducerID": "",
+        "InstanceID": "",
+        "Topic": "testHttp"
+      }
+    ]
+  },
+  "GlobalConfig": {
+    "AppName": null
+  }
+}

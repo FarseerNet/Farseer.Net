@@ -8,7 +8,7 @@ namespace Farseer.Net.Job.Console
     {
         public static void Main()
         {
-            FarseerBootstrapper.Create<StartupModule>().Initialize();
+            FarseerApplication.Run<StartupModule>().Initialize();
         }
     }
 }

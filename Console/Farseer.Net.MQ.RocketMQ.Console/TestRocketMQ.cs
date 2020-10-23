@@ -25,8 +25,6 @@ namespace Farseer.Net.MQ.RocketMQ.Console
             try
             {
                 var startAt = DateTime.Now;
-                rocket.Product.Start();
-                IocManager.Instance.Resolve<IRocketMQManager>(readLine).Product.Start();
                 Parallel.For(0, 10000000, new ParallelOptions { MaxDegreeOfParallelism = 64 }, i =>
                 {
                     var msgID = rocket.Product.Send($"PID:{Process.GetCurrentProcess().Id} index:{i},Time：{DateTime.Now}", "testTag").getMessageId();

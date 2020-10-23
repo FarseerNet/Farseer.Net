@@ -6,6 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using FS.Core.Mapping;
+using FS.Data.Client;
 using FS.Data.Infrastructure;
 using FS.Data.Map;
 using FS.Utils.Common.ExpressionVisitor;
@@ -71,8 +72,8 @@ namespace FS.Data.ExpressionVisitor
         protected AbsSqlVisitor(AbsDbProvider dbProvider, SetDataMap map, List<DbParameter> paramList)
         {
             DbProvider = dbProvider;
-            SetMap = map;
-            ParamList = paramList;
+            SetMap     = map;
+            ParamList  = paramList;
         }
 
         /// <summary>
@@ -81,7 +82,7 @@ namespace FS.Data.ExpressionVisitor
         public void Clear()
         {
             SqlList.Clear();
-            CurrentFieldName = null;
+            CurrentFieldName   = null;
             CurrentDbParameter = null;
             ParamList.Clear();
             IsNot = false;
@@ -93,15 +94,18 @@ namespace FS.Data.ExpressionVisitor
         protected override Expression VisitBinary(BinaryExpression bexp)
         {
             var exp = base.VisitBinary(bexp);
-            if (exp == null) { return null; }
+            if (exp == null)
+            {
+                return null;
+            }
 
             var right = SqlList.Pop();
-            var left = SqlList.Pop();
+            var left  = SqlList.Pop();
 
             if (bexp.NodeType == ExpressionType.AndAlso || bexp.NodeType == ExpressionType.OrElse)
             {
                 right = SqlTrue(right);
-                left = SqlTrue(left);
+                left  = SqlTrue(left);
             }
 
             if (CurrentDbParameter != null && CurrentDbParameter.Value == null)
@@ -115,9 +119,10 @@ namespace FS.Data.ExpressionVisitor
             // 清除状态（与或状态，不清除）
             if (bexp.NodeType != ExpressionType.And && bexp.NodeType != ExpressionType.Or)
             {
-                CurrentFieldName = null;
+                CurrentFieldName   = null;
                 CurrentDbParameter = null;
             }
+
             return exp;
         }
 
@@ -128,9 +133,9 @@ namespace FS.Data.ExpressionVisitor
                 case ExpressionType.Assign:
                     return "=";
                 case ExpressionType.Equal:
-                    return CurrentDbParameter != null && CurrentDbParameter.Value != null ? "=" : "IS";
+                    return CurrentDbParameter?.Value != null || (bexp.Left.NodeType == ExpressionType.MemberAccess && bexp.Right.NodeType == ExpressionType.MemberAccess)? "=" : "IS";
                 case ExpressionType.NotEqual:
-                    return CurrentDbParameter != null && CurrentDbParameter.Value != null ? "<>" : "IS NOT";
+                    return CurrentDbParameter?.Value != null || (bexp.Left.NodeType == ExpressionType.MemberAccess && bexp.Right.NodeType == ExpressionType.MemberAccess) ? "<>" : "IS NOT"; //|| bexp.Left is PropertyExpression
                 case ExpressionType.GreaterThan:
                     return ">";
                 case ExpressionType.GreaterThanOrEqual:
@@ -217,7 +222,7 @@ namespace FS.Data.ExpressionVisitor
             }
             else
             {
-                CurrentDbParameter = DbProvider.CreateDbParam($"p{ParamList.Count}_{ (CurrentField.Key != null ? CurrentField.Key.Name : CurrentFieldName)}", cexp.Value, cexp.Type, false, CurrentField.Value?.Field.FieldLength ?? 0);
+                CurrentDbParameter = DbProvider.CreateDbParam($"p{ParamList.Count}_{(CurrentField.Key != null ? CurrentField.Key.Name : CurrentFieldName)}", cexp.Value, cexp.Type, false, CurrentField.Value?.Field.FieldLength ?? 0);
             }
 
             ParamList.Add(CurrentDbParameter);
@@ -242,15 +247,16 @@ namespace FS.Data.ExpressionVisitor
                 {
                     case "Count":
                     case "Length":
-                        {
-                            VisitMemberAccess((MemberExpression)m.Expression);
-                            SqlList.Push(FunctionProvider.Len(SqlList.Pop()));
-                            return m;
-                        }
+                    {
+                        VisitMemberAccess((MemberExpression) m.Expression);
+                        SqlList.Push(FunctionProvider.Len(SqlList.Pop()));
+                        return m;
+                    }
                 }
+
                 if (m.Expression != null && m.Expression.NodeType == ExpressionType.MemberAccess)
                 {
-                    VisitMemberAccess((MemberExpression)m.Expression);
+                    VisitMemberAccess((MemberExpression) m.Expression);
                     return m;
                 }
 
@@ -280,7 +286,11 @@ namespace FS.Data.ExpressionVisitor
         /// </summary>
         protected override Expression VisitUnary(UnaryExpression u)
         {
-            if (u.NodeType == ExpressionType.Not) { IsNot = true; }
+            if (u.NodeType == ExpressionType.Not)
+            {
+                IsNot = true;
+            }
+
             return base.VisitUnary(u);
         }
 
@@ -289,9 +299,13 @@ namespace FS.Data.ExpressionVisitor
         /// </summary>
         protected override Expression VisitMethodCall(MethodCallExpression m)
         {
-            if (IsIgnoreMethod(m)) { return m; }
+            if (IsIgnoreMethod(m))
+            {
+                return m;
+            }
+
             var methodObject = m.Object;
-            var arguments = m.Arguments.ToList();
+            var arguments    = m.Arguments.ToList();
             if (methodObject == null)
             {
                 methodObject = arguments[0];
@@ -301,9 +315,21 @@ namespace FS.Data.ExpressionVisitor
 
             // 如果m.Object能压缩，证明不是字段（必须先解析字段，再解析值）
             var result = IsFieldValue(methodObject);
-            if (!result) { this.Visit(methodObject); }
-            foreach (var t in arguments) { this.Visit(t); }
-            if (result) { this.Visit(methodObject); }
+            if (!result)
+            {
+                this.Visit(methodObject);
+            }
+
+            foreach (var t in arguments)
+            {
+                this.Visit(t);
+            }
+
+            if (result)
+            {
+                this.Visit(methodObject);
+            }
+
             return m;
         }
 
@@ -319,6 +345,7 @@ namespace FS.Data.ExpressionVisitor
                 ParamList.RemoveAll(o => o.ParameterName == sql);
                 return result ? "1=1" : "1<>1";
             }
+
             return sql;
         }
 
@@ -335,6 +362,7 @@ namespace FS.Data.ExpressionVisitor
                         base.Visit(m.Object ?? m.Arguments[0]);
                         return true;
                     }
+
                     return false;
                 case "ToDateTime":
                     return true;

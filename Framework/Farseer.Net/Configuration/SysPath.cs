@@ -12,17 +12,10 @@ namespace FS.Configuration
 	/// </summary>
 	public class SysPath
 	{
-#if CORE
 		/// <summary>
 		///     获取项目的App_Data的路径
 		/// </summary>
 		public static string AppData { get; set; } = AppContext.BaseDirectory + "/App_Data/";
-#else
-	    /// <summary>
-	    ///     获取项目的App_Data的路径
-	    /// </summary>
-	    public static string AppData { get; set; } = AppDomain.CurrentDomain.BaseDirectory + "/App_Data/";
-#endif
 		/// <summary>
 		/// 配置文件名（可自己根据当前环境，设置不同的配置名称）
 		/// </summary>

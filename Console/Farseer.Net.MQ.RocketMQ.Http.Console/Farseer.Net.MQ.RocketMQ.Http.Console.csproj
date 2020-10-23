@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
+        <OutputType>Exe</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Framework\Farseer.Net.Configuration\Farseer.Net.Configuration.csproj" />
+      <ProjectReference Include="..\..\Framework\Farseer.Net.MQ.RocketMQ\Farseer.Net.MQ.RocketMQ.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="App_Data\Farseer.Net.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+</Project>

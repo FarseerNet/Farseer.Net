@@ -1,23 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45</TargetFrameworks>
+    <TargetFramework>net461</TargetFramework>
     <Company>steden</Company>
     <Copyright>http://www.fsgit.com</Copyright>
     <Product>日志组件</Product>
     <Description>包括：NLog日志组件</Description>
     <Authors>steden</Authors>
-    <AssemblyVersion>2.3.0</AssemblyVersion>
-    <FileVersion>2.3.0</FileVersion>
-    <Version>2.3.0</Version>
+    <AssemblyVersion>2.4.0</AssemblyVersion>
+    <FileVersion>2.4.0</FileVersion>
+    <Version>2.4.0</Version>
     <PackageTags>Log</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageReleaseNotes />
     <RootNamespace>FS.Log</RootNamespace>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net45'">
-    <DefineConstants>net45</DefineConstants>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net461'">
+    <DefineConstants>net461</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <DefineConstants>CORE</DefineConstants>
@@ -30,9 +30,9 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Castle.Core-NLog" Version="4.1.1" />
-    <PackageReference Include="Castle.LoggingFacility" Version="4.0.0" />
-    <PackageReference Include="NLog" Version="4.4.12" />
+    <PackageReference Include="Castle.Core-NLog" Version="4.4.1" />
+    <PackageReference Include="Castle.LoggingFacility" Version="5.0.1" />
+    <PackageReference Include="NLog" Version="4.7.2" />
   </ItemGroup>
   
   <ItemGroup>

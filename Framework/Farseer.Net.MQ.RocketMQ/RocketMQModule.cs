@@ -54,8 +54,7 @@ namespace FS.MQ.RocketMQ
         {
             //模块初始化，实现IOC信息的注册
             IocManager.Container.Install(new RocketMQInstaller());
-            IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly(),
-                new ConventionalRegistrationConfig {InstallInstallers = false});
+            IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly(), new ConventionalRegistrationConfig {InstallInstallers = false});
         }
     }
 }

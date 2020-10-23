@@ -14,9 +14,6 @@ namespace FS.Data
         /// </summary>
         /// <param name="context">上下文</param>
         /// <param name="pInfo">属性类型</param>
-        internal ViewSet(DbContext context, PropertyInfo pInfo)
-        {
-            SetContext(context, pInfo);
-        }
+        internal ViewSet(DbContext context, PropertyInfo pInfo) => SetContext(context, pInfo);
     }
 }

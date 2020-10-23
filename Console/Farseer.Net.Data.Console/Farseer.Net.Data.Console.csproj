@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MySql.Data" Version="8.0.15" />
+    <PackageReference Include="MySql.Data" Version="8.0.20" />
     <PackageReference Include="NETStandard.Library" Version="2.0.3" />
   </ItemGroup>
 
@@ -21,6 +21,15 @@
     <ProjectReference Include="..\..\Framework\Farseer.Net.Data\Farseer.Net.Data.csproj" />
     <ProjectReference Include="..\..\Framework\Farseer.Net.Utils\Farseer.Net.Utils.csproj" />
     <ProjectReference Include="..\..\Framework\Farseer.Net\Farseer.Net.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="App_Data\Farseer.Net.dev.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="App_Data\Farseer.Net.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

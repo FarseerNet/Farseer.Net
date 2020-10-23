@@ -33,7 +33,7 @@ namespace FS.Data.Internal
             timer.Start();
             var val = func();
             timer.Stop();
-            new SqlRunLog(sqlParam.Name, CommandType.Text, sqlParam.Sql.ToString(), sqlParam.Param, timer.ElapsedMilliseconds).Write();
+            new SqlRunLog(sqlParam.DbName, sqlParam.TableName, CommandType.Text, sqlParam.Sql.ToString(), sqlParam.Param, timer.ElapsedMilliseconds).Write();
             return val;
         }
 
@@ -47,7 +47,7 @@ namespace FS.Data.Internal
             var val = func();
             timer.Stop();
 
-            new SqlRunLog(procBuilder.Name, CommandType.StoredProcedure, "", procBuilder.Param, timer.ElapsedMilliseconds).Write();
+            new SqlRunLog(procBuilder.DbName, procBuilder.ProcName, CommandType.StoredProcedure, "", procBuilder.Param, timer.ElapsedMilliseconds).Write();
             return val;
         }
 

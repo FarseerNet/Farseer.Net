@@ -13,8 +13,9 @@ namespace FS.Data.Client.SqLite
         /// </summary>
         /// <param name="dbProvider">数据库提供者（不同数据库的特性）</param>
         /// <param name="expBuilder">表达式持久化</param>
-        /// <param name="name">表名/视图名/存储过程名</param>
-        internal SqLiteBuilder(AbsDbProvider dbProvider, ExpressionBuilder expBuilder, string name) : base(dbProvider, expBuilder, name)
+        /// <param name="tableName">表名/视图名/存储过程名</param>
+        /// <param name="dbName">数据库名称 </param>
+        internal SqLiteBuilder(AbsDbProvider dbProvider, ExpressionBuilder expBuilder,string dbName, string tableName) : base(dbProvider, expBuilder,dbName, tableName)
         {
         }
 
@@ -28,7 +29,7 @@ namespace FS.Data.Client.SqLite
             if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
             if (!string.IsNullOrWhiteSpace(strOrderBySql)) { strOrderBySql = "ORDER BY " + strOrderBySql; }
 
-            Sql.Append($"SELECT {strSelectSql} FROM {DbProvider.KeywordAegis(Name)} {strWhereSql} {strOrderBySql} LIMIT 0,1");
+            Sql.Append($"SELECT {strSelectSql} FROM {DbTableName} {strWhereSql} {strOrderBySql} LIMIT 0,1");
             return this;
         }
 
@@ -46,14 +47,14 @@ namespace FS.Data.Client.SqLite
             if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
             if (!string.IsNullOrWhiteSpace(strOrderBySql)) { strOrderBySql = "ORDER BY " + strOrderBySql; }
 
-            if (!isRand) { Sql.Append($"SELECT {strDistinctSql}{strSelectSql} FROM {DbProvider.KeywordAegis(Name)} {strWhereSql} {strOrderBySql} {strTopSql}"); }
+            if (!isRand) { Sql.Append($"SELECT {strDistinctSql}{strSelectSql} FROM {DbTableName} {strWhereSql} {strOrderBySql} {strTopSql}"); }
             else if (!isDistinct && string.IsNullOrWhiteSpace(strOrderBySql))
             {
-                Sql.Append($"SELECT {strTopSql}{strSelectSql}{randField} FROM {DbProvider.KeywordAegis(Name)} {strWhereSql} ORDER BY Rand()");
+                Sql.Append($"SELECT {strTopSql}{strSelectSql}{randField} FROM {DbTableName} {strWhereSql} ORDER BY Rand()");
             }
             else
             {
-                Sql.Append($"SELECT {strTopSql} *{randField} FROM (SELECT {strDistinctSql} {strSelectSql} FROM {DbProvider.KeywordAegis(Name)} {strWhereSql} {strOrderBySql}) s ORDER BY Rand()");
+                Sql.Append($"SELECT {strTopSql} *{randField} FROM (SELECT {strDistinctSql} {strSelectSql} FROM {DbTableName} {strWhereSql} {strOrderBySql}) s ORDER BY Rand()");
             }
             return this;
         }
@@ -77,7 +78,7 @@ namespace FS.Data.Client.SqLite
             if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
             if (!string.IsNullOrWhiteSpace(strOrderBySql)) { strOrderBySql = "ORDER BY " + strOrderBySql; }
 
-            Sql.Append($"SELECT {strDistinctSql}{strSelectSql} FROM {DbProvider.KeywordAegis(Name)} {strWhereSql} {strOrderBySql} LIMIT {pageSize*(pageIndex - 1)},{pageSize}");
+            Sql.Append($"SELECT {strDistinctSql}{strSelectSql} FROM {DbTableName} {strWhereSql} {strOrderBySql} LIMIT {pageSize*(pageIndex - 1)},{pageSize}");
             return this;
         }
 
@@ -91,7 +92,7 @@ namespace FS.Data.Client.SqLite
             if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
             if (!string.IsNullOrWhiteSpace(strOrderBySql)) { strOrderBySql = "ORDER BY " + strOrderBySql; }
 
-            Sql.Append($"SELECT {strSelectSql} FROM {DbProvider.KeywordAegis(Name)} {strWhereSql} {strOrderBySql} LIMIT 0,1");
+            Sql.Append($"SELECT {strSelectSql} FROM {DbTableName} {strWhereSql} {strOrderBySql} LIMIT 0,1");
             return this;
         }
 

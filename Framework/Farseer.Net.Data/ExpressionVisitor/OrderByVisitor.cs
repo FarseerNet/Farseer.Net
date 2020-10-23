@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data.Common;
+using FS.Data.Client;
 using FS.Data.Infrastructure;
 using FS.Data.Map;
 using FS.Utils.Common;

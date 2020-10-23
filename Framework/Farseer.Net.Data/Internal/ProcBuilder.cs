@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data.Common;
+using FS.Data.Client;
 using FS.Data.Infrastructure;
 using FS.Data.Map;
 
@@ -15,12 +16,12 @@ namespace FS.Data.Internal
         /// </summary>
         /// <param name="dbProvider">数据库驱动</param>
         /// <param name="setMap">实体类映射</param>
-        /// <param name="name">存储过程名称</param>
-        internal ProcBuilder(AbsDbProvider dbProvider, SetDataMap setMap, string name)
+        internal ProcBuilder(AbsDbProvider dbProvider, SetDataMap setMap)
         {
             _dbProvider = dbProvider;
             _setMap = setMap;
-            Name = name;
+            ProcName = setMap.TableName;
+            DbName = setMap.DbName;
         }
 
         /// <summary>
@@ -34,9 +35,14 @@ namespace FS.Data.Internal
         private readonly SetDataMap _setMap;
 
         /// <summary>
+        ///     数据库名称
+        /// </summary>
+        public string DbName { get; }
+
+        /// <summary>
         ///     存储过程名称
         /// </summary>
-        public string Name { get; }
+        public string ProcName { get; }
 
         /// <summary>
         ///     当前生成的参数

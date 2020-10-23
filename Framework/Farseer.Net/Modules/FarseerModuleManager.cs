@@ -28,19 +28,13 @@ namespace FS.Modules
         private Type _startupModuleType;
 
         /// <summary>
-        ///     日志
-        /// </summary>
-        public ILogger Logger { get; set; }
-
-        /// <summary>
         ///     构造函数
         /// </summary>
         /// <param name="iocManager"></param>
         public FarseerModuleManager(IIocManager iocManager)
         {
             _moduleCollection = new FarseerModuleCollection();
-            _iocManager = iocManager;
-            Logger = NullLogger.Instance;
+            _iocManager       = iocManager;
         }
 
         /// <summary>
@@ -68,14 +62,14 @@ namespace FS.Modules
         /// </summary>
         public virtual void StartModules()
         {
-            Logger.Debug("开始启动模块...");
-
             var sortedModules = _moduleCollection.GetListSortDependency();
+
+            _iocManager.Logger.Info($"模块加载完毕，开始启动{sortedModules.Count}个模块...");
             sortedModules.ForEach(module => module.Instance.PreInitialize());
             sortedModules.ForEach(module => module.Instance.Initialize());
             sortedModules.ForEach(module => module.Instance.PostInitialize());
 
-            Logger.Debug("模块已成功启动...");
+            _iocManager.Logger.Info("模块启动完毕...");
         }
 
         /// <summary>
@@ -83,13 +77,13 @@ namespace FS.Modules
         /// </summary>
         public virtual void ShutdownModules()
         {
-            Logger.Debug("开始关闭模块...");
+            _iocManager.Logger.Info("开始关闭模块...");
 
             var sortedModules = _moduleCollection.GetListSortDependency();
             sortedModules.Reverse();
             sortedModules.ForEach(sm => sm.Instance.Shutdown());
 
-            Logger.Debug("模块已关闭...");
+            _iocManager.Logger.Info("模块已关闭...");
         }
 
         /// <summary>
@@ -97,11 +91,9 @@ namespace FS.Modules
         /// </summary>
         private void LoadAllModules()
         {
-            Logger.Debug("正在加载模块...");
-
             var moduleTypes = FindAllModules();
 
-            Logger.Debug("总共找到 " + moduleTypes.Count + " 个模块");
+            _iocManager.Logger.Info($"总共找到 {moduleTypes.Count} 个模块");
 
             RegisterModules(moduleTypes);
             CreateModules(moduleTypes);
@@ -109,8 +101,6 @@ namespace FS.Modules
             FarseerModuleCollection.EnsureKernelModuleToBeFirst(_moduleCollection);
 
             SetDependencies();
-
-            Logger.DebugFormat("{0} 个模块已经加载", _moduleCollection.Count);
         }
 
         /// <summary>
@@ -135,7 +125,7 @@ namespace FS.Modules
                 var moduleObject = _iocManager.Resolve(moduleType) as FarseerModule;
                 Check.NotNull<FarseerModule, FarseerInitException>(moduleObject, $"此类型不是一个有效的模块: {moduleType.AssemblyQualifiedName}");
 
-                moduleObject.IocManager = _iocManager;
+                moduleObject.IocManager    = _iocManager;
                 moduleObject.Configuration = _iocManager.Resolve<IFarseerStartupConfiguration>();
 
                 var moduleInfo = new FarseerModuleInfo(moduleType, moduleObject);
@@ -144,7 +134,7 @@ namespace FS.Modules
 
                 if (moduleType == _startupModuleType) StartupModule = moduleInfo;
 
-                Logger.DebugFormat("已经加载模块: " + moduleType.AssemblyQualifiedName);
+                _iocManager.Logger.InfoFormat($"已经加载模块: {moduleType.AssemblyQualifiedName}");
             }
         }
 
@@ -169,7 +159,7 @@ namespace FS.Modules
                 foreach (var dependedModuleType in FarseerModule.FindDependedModuleTypes(moduleInfo.Type))
                 {
                     var dependedModuleInfo = _moduleCollection.FirstOrDefault(m => m.Type == dependedModuleType);
-                    if (dependedModuleInfo == null) throw new FarseerInitException(moduleInfo.Type.AssemblyQualifiedName + "没有找到依赖的模块 " + dependedModuleType.AssemblyQualifiedName);
+                    if (dependedModuleInfo == null) throw new FarseerInitException($"{moduleInfo.Type.AssemblyQualifiedName}没有找到依赖的模块 {dependedModuleType.AssemblyQualifiedName}");
 
                     if (moduleInfo.Dependencies.FirstOrDefault(dm => dm.Type == dependedModuleType) == null) moduleInfo.Dependencies.Add(dependedModuleInfo);
                 }

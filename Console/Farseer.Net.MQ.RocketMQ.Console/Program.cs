@@ -7,7 +7,7 @@ namespace Farseer.Net.MQ.RocketMQ.Console
     {
         private static void Main(string[] args)
         {
-            FarseerBootstrapper.Create<StartupModule>().Initialize();
+            FarseerApplication.Run<StartupModule>().Initialize();
 
             System.Console.Write("请输入：配置节点名称，直接回车，为默认配置：");
             var configName = System.Console.ReadLine();

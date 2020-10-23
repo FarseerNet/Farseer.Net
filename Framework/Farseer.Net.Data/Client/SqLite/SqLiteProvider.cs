@@ -14,7 +14,7 @@ namespace FS.Data.Client.SqLite
     {
         public override DbProviderFactory DbProviderFactory => (DbProviderFactory)InstanceCacheManger.Cache(Assembly.Load("System.Data.SQLite").GetType("System.Data.SQLite.SQLiteFactory"));
         public override AbsFunctionProvider FunctionProvider => new SqLiteFunctionProvider();
-        internal override AbsSqlBuilder CreateSqlBuilder(ExpressionBuilder expBuilder, string name) => new SqLiteBuilder(this, expBuilder, name);
+        internal override AbsSqlBuilder CreateSqlBuilder(ExpressionBuilder expBuilder, string dbName, string tableName) => new SqLiteBuilder(this, expBuilder, dbName, tableName);
         public override bool IsSupportTransaction => true;
         public override string CreateDbConnstring(string server, string port, string userID, string passWord = null, string catalog = null, string dataVer = null, string additional = null, int connectTimeout = 60, int poolMinSize = 16, int poolMaxSize = 100)
         {

@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using FS.Data.Client;
 using FS.Data.Infrastructure;
 using FS.Data.Map;
 

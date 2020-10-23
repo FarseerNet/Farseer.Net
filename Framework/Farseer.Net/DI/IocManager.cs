@@ -19,6 +19,7 @@ namespace FS.DI
         ///     约定注册器列表（目前有：普用、MVC控制器）
         /// </summary>
         private readonly List<IConventionalDependencyRegistrar> _conventionalRegistrars = new List<IConventionalDependencyRegistrar>();
+
         /// <summary>
         /// 是否已注册过WindsorInstaller
         /// </summary>
@@ -30,45 +31,17 @@ namespace FS.DI
         public static IocManager Instance { get; }
 
         /// <summary>
-        /// 日志接口
+        /// 日志接口,没注册时，用默认的
         /// </summary>
-        public ILogger Logger
-        {
-            get
-            {
-                #region 获取宿主类的FullName
+        public ILogger Logger => IsRegistered<ILogger>() ? Resolve<ILogger>() : new DefaultLogger(); // Microsoft.Extensions.Logging
 
-                string className;
-                Type declaringType;
-                int framesToSkip = 2;
-                do
-                {
-#if SILVERLIGHT
-                StackFrame frame = new StackTrace().GetFrame(framesToSkip);
-#else
-                    StackFrame frame = new StackFrame(framesToSkip, false);
-#endif
-                    MethodBase method = frame.GetMethod();
-                    declaringType = method.DeclaringType;
-                    if (declaringType == null)
-                    {
-                        className = method.Name;
-                        break;
-                    }
-
-                    framesToSkip++;
-                    className = declaringType.FullName;
-                } while (declaringType.Module.Name.Equals("mscorlib.dll", StringComparison.OrdinalIgnoreCase));
-
-                #endregion
-                return IsRegistered<IExtendedLoggerFactory>() ? Resolve<IExtendedLoggerFactory>().Create(className) : NullLogger.Instance;
-            }
-        }
-
-	    /// <summary>
+        /// <summary>
         ///     构造函数
         /// </summary>
-        static IocManager() { Instance = new IocManager(); }
+        static IocManager()
+        {
+            Instance = new IocManager();
+        }
 
         /// <summary>
         ///     构造函数
@@ -97,17 +70,22 @@ namespace FS.DI
         /// </summary>
         public void RegisterAssemblyByConvention(params Assembly[] assemblys)
         {
-            var ignores = new[] { "System.", "Castle.", "Farseer.Net.", "mscorlib" };
+            var ignores = new[] {"System.", "Castle.", "Farseer.Net.", "mscorlib"};
             foreach (var assembly in assemblys)
             {
                 // 忽略程序集
-                if (ignores.Any(ignore => assembly.FullName.StartsWith(ignore)) || _isRegistrarWindsorInstaller.ContainsKey(assembly)) { continue; }
+                if (ignores.Any(ignore => assembly.FullName.StartsWith(ignore)) || _isRegistrarWindsorInstaller.ContainsKey(assembly))
+                {
+                    continue;
+                }
+
                 try
                 {
                     RegisterAssemblyByConvention(assembly, new ConventionalRegistrationConfig());
                 }
                 catch
-                { // ignored
+                {
+                    // ignored
                 }
             }
         }
@@ -115,7 +93,6 @@ namespace FS.DI
         /// <summary>
         ///     根据约定注册程序集
         /// </summary>
-        /// <param name="type"></param>
         public void RegisterAssemblyByConvention(Type type) => RegisterAssemblyByConvention(type.GetTypeInfo().Assembly.GetReferencedAssemblies().Select(Assembly.Load).ToArray());
 
         /// <summary>
@@ -125,10 +102,14 @@ namespace FS.DI
         /// <param name="config"></param>
         public void RegisterAssemblyByConvention(Assembly assembly, ConventionalRegistrationConfig config)
         {
-            var context = new ConventionalRegistrationContext(assembly, this, config);
+            var context          = new ConventionalRegistrationContext(assembly, this, config);
             var windsorInstaller = FromAssembly.Instance(assembly);
             foreach (var registerer in _conventionalRegistrars) registerer.RegisterAssembly(context);
-            if (config.InstallInstallers && windsorInstaller != null) { Container.Install(windsorInstaller); }
+            if (config.InstallInstallers && windsorInstaller != null)
+            {
+                Container.Install(windsorInstaller);
+            }
+
             _isRegistrarWindsorInstaller.Add(assembly, windsorInstaller);
         }
 
@@ -202,16 +183,7 @@ namespace FS.DI
         /// <param name="type"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        public T Resolve<T>(Type type, string name = "") => string.IsNullOrEmpty(name) ? (T)Container.Resolve(type) : (T)Container.Resolve(name, type);
-
-        /// <summary>
-        ///     获取实例
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="argumentsAsAnonymousType"></param>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public T Resolve<T>(object argumentsAsAnonymousType, string name = "") => string.IsNullOrEmpty(name) ? Container.Resolve<T>(argumentsAsAnonymousType) : Container.Resolve<T>(name, argumentsAsAnonymousType);
+        public T Resolve<T>(Type type, string name = "") => string.IsNullOrEmpty(name) ? (T) Container.Resolve(type) : (T) Container.Resolve(name, type);
 
         /// <summary>
         ///     获取实例
@@ -220,15 +192,6 @@ namespace FS.DI
         /// <param name="name"></param>
         /// <returns></returns>
         public object Resolve(Type type, string name = "") => string.IsNullOrEmpty(name) ? Container.Resolve(type) : Container.Resolve(name, type);
-
-        /// <summary>
-        ///     获取实例
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="argumentsAsAnonymousType"></param>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public object Resolve(Type type, object argumentsAsAnonymousType, string name = "") => string.IsNullOrEmpty(name) ? Container.Resolve(type, argumentsAsAnonymousType) : Container.Resolve(name, type, argumentsAsAnonymousType);
 
         /// <summary>
         ///     获取所有实例
@@ -240,25 +203,9 @@ namespace FS.DI
         /// <summary>
         ///     获取所有实例
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="argumentsAsAnonymousType"></param>
-        /// <returns></returns>
-        public T[] ResolveAll<T>(object argumentsAsAnonymousType) => Container.ResolveAll<T>(argumentsAsAnonymousType);
-
-        /// <summary>
-        ///     获取所有实例
-        /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
         public object[] ResolveAll(Type type) => Container.ResolveAll(type).Cast<object>().ToArray();
-
-        /// <summary>
-        ///     获取所有实例
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="argumentsAsAnonymousType"></param>
-        /// <returns></returns>
-        public object[] ResolveAll(Type type, object argumentsAsAnonymousType) => Container.ResolveAll(type, argumentsAsAnonymousType).Cast<object>().ToArray();
 
         /// <summary>
         ///     释放
@@ -284,9 +231,6 @@ namespace FS.DI
             {
                 case DependencyLifeStyle.Transient: return registration.LifestyleTransient();
                 case DependencyLifeStyle.Singleton: return registration.LifestyleSingleton();
-#if !CORE
-                case DependencyLifeStyle.PerRequest: return registration.LifestylePerWebRequest();
-#endif
                 default:
                     return registration;
             }

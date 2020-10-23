@@ -4,7 +4,7 @@ using FS.MQ.RocketMQ.SDK;
 namespace FS.MQ.RocketMQ
 {
     /// <summary>
-    ///     Éú²úÏûÏ¢
+    ///     ç”Ÿäº§æ¶ˆæ¯
     /// </summary>
     internal class RocketMQProduct : IRocketMQProduct
     {
@@ -12,29 +12,29 @@ namespace FS.MQ.RocketMQ
         private Producer _producer;
 
         /// <summary>
-        ///     Éú²úÏûÏ¢
+        ///     ç”Ÿäº§æ¶ˆæ¯
         /// </summary>
-        /// <param name="factoryInfo">ÏûÏ¢¶ÓÁĞÊôĞÔ</param>
+        /// <param name="factoryInfo">æ¶ˆæ¯é˜Ÿåˆ—å±æ€§</param>
         public RocketMQProduct(ONSFactoryProperty factoryInfo)
         {
             _factoryInfo = factoryInfo;
         }
 
         /// <summary>
-        ///     ¿ªÆôÉú²úÏûÏ¢
+        ///     å¼€å¯ç”Ÿäº§æ¶ˆæ¯
         /// </summary>
-        public void Start()
+        private void Connect()
         {
             if (_producer == null)
             {
-                // »ñÈ¡Êµ²úÕßÊµÀı
+                // è·å–å®äº§è€…å®ä¾‹
                 _producer = ONSFactory.getInstance().createProducer(_factoryInfo);
                 _producer.start();
             }
         }
 
         /// <summary>
-        ///     ¹Ø±ÕÉú²úÕß
+        ///     å…³é—­ç”Ÿäº§è€…
         /// </summary>
         public void Close()
         {
@@ -43,28 +43,28 @@ namespace FS.MQ.RocketMQ
         }
 
         /// <summary>
-        ///     ·¢ËÍÏûÏ¢
+        ///     å‘é€æ¶ˆæ¯
         /// </summary>
-        /// <param name="message">ÏûÏ¢Ö÷Ìå</param>
-        /// <param name="tag">ÏûÏ¢±êÇ©</param>
-        /// <param name="key">Ã¿ÌõÏûÏ¢µÄÎ¨Ò»±êÊ¶</param>
+        /// <param name="message">æ¶ˆæ¯ä¸»ä½“</param>
+        /// <param name="tag">æ¶ˆæ¯æ ‡ç­¾</param>
+        /// <param name="key">æ¯æ¡æ¶ˆæ¯çš„å”¯ä¸€æ ‡è¯†</param>
         public SendResultONS Send(string message, string tag = null, string key = null)
         {
             return Send(message, 0, tag, key);
         }
 
         /// <summary>
-        ///     ·¢ËÍÏûÏ¢
+        ///     å‘é€æ¶ˆæ¯
         /// </summary>
-        /// <param name="message">ÏûÏ¢Ö÷Ìå</param>
-        /// <param name="deliver">ÑÓ³ÙÏû·Ñms</param>
-        /// <param name="tag">ÏûÏ¢±êÇ©</param>
-        /// <param name="key">Ã¿ÌõÏûÏ¢µÄÎ¨Ò»±êÊ¶</param>
+        /// <param name="message">æ¶ˆæ¯ä¸»ä½“</param>
+        /// <param name="deliver">å»¶è¿Ÿæ¶ˆè´¹ms</param>
+        /// <param name="tag">æ¶ˆæ¯æ ‡ç­¾</param>
+        /// <param name="key">æ¯æ¡æ¶ˆæ¯çš„å”¯ä¸€æ ‡è¯†</param>
         public SendResultONS Send(string message, long deliver, string tag = null, string key = null)
         {
+            if (_producer == null) Connect();
             if (string.IsNullOrWhiteSpace(tag)) tag = "";
             if (string.IsNullOrWhiteSpace(key)) key = Guid.NewGuid().ToString();
-            if (_factoryInfo == null) throw new FarseerException("Î´¿ªÆôStart·½·¨£¬½øĞĞ³õÊ¼»¯");
             var msg = new Message(_factoryInfo.getPublishTopics(), tag, key, message);
             if (deliver > 0) msg.setStartDeliverTime(deliver);
             return _producer.send(msg);

@@ -25,16 +25,6 @@ namespace FS.Modules
         protected internal IFarseerStartupConfiguration Configuration { get; internal set; }
 
         /// <summary>
-        ///     日志
-        /// </summary>
-        public ILogger Logger { get; set; }
-
-        /// <summary>
-        ///     构造函数
-        /// </summary>
-        protected FarseerModule() { Logger = NullLogger.Instance; }
-
-        /// <summary>
         ///     预初始化
         /// </summary>
         public virtual void PreInitialize() { }

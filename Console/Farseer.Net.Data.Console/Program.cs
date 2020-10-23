@@ -7,15 +7,11 @@ namespace Farseer.Net.Data.Console
     {
         static void Main(string[] args)
         {
-            FarseerBootstrapper.Create<StartupModule>().Initialize();
+            FarseerApplication.Run<StartupModule>().Initialize();
 
-            ToList().GetAwaiter().GetResult();
-        }
-
-        private static async Task ToList()
-        {
-            var spAccountPos = await TestContext.Data.SpAccount.ToListAsync();
-            var lstAsync = await TestContext.Data.SpAccount.ToListAsync().ConfigureAwait(false);
+            var lst = new UserCoinsAgent().ToCreditList();
+            var a = 1;
+            a++;
         }
     }
 }

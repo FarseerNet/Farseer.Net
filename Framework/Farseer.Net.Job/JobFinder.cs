@@ -32,7 +32,9 @@ namespace FS.Job
                 var name = $"job_{types[i].FullName}";
                 IocManager.Instance.Register(types[i], name, DependencyLifeStyle.Transient);
                 var job = IocManager.Instance.Resolve<IJob>(name);
-                JobList.Add(new JobEntity() {Index = i + 1, JobName = job.Name, JobType = types[i], IocName = name});
+                if (!job.Setting.Enable) continue;
+                JobList.Add(new JobEntity() {Index = job.Setting.Index, JobName = job.Setting.Name, JobType = types[i], IocName = name});
+                JobList = JobList.OrderBy(o => o.Index).ToList();
             }
         }
 
@@ -41,7 +43,7 @@ namespace FS.Job
             var jobs = IocManager.Instance.ResolveAll<IJob>();
             foreach (var job in jobs)
             {
-                Console.WriteLine($"{job.Name}");
+                Console.WriteLine($"{job.Setting.Name}");
             }
         }
     }

@@ -1,0 +1,1113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="$USER_HOME$/.nuget/packages/microsoft.net.test.sdk/16.4.0/build/netcoreapp2.1" t="Include">
+      <e p="Microsoft.NET.Test.Sdk.Program.cs" t="Include" />
+    </e>
+    <e p="$USER_HOME$/.nuget/packages/nunit3testadapter/3.15.1/build/netcoreapp2.0/nunit.engine.api.dll" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/nunit3testadapter/3.15.1/build/netcoreapp2.0/nunit.engine.dll" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/nunit3testadapter/3.15.1/build/netcoreapp2.0/NUnit3.TestAdapter.dll" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/nunit3testadapter/3.15.1/build/netcoreapp2.0/NUnit3.TestAdapter.pdb" t="Include" />
+    <e p="$PROJECT_DIR$" t="IncludeFlat">
+      <e p="Console" t="Include">
+        <e p="Farseer.Net.Cache.Redis.Test" t="IncludeRecursive">
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="Farseer.Net.Cache.Redis.Test.csproj" t="IncludeRecursive" />
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Release" t="Include">
+              <e p="netcoreapp3.0" t="Include">
+                <e p="Farseer.Net.Cache.Redis.Test.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+          <e p="Program.cs" t="Include" />
+          <e p="StartupModule.cs" t="Include" />
+        </e>
+        <e p="Farseer.Net.Data.Console" t="IncludeRecursive">
+          <e p="app.config" t="Include" />
+          <e p="App_Data" t="Include">
+            <e p="Farseer.Net.dev.json" t="Include" />
+            <e p="Farseer.Net.json" t="Include" />
+          </e>
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="EumCoinsType.cs" t="Include" />
+          <e p="Farseer.Net.Data.Console.csproj" t="IncludeRecursive" />
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Release" t="Include">
+              <e p="netcoreapp2.0" t="Include">
+                <e p="Farseer.Net.Data.Console.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+          <e p="packages.config" t="Include" />
+          <e p="Program.cs" t="Include" />
+          <e p="Properties" t="Include" />
+          <e p="StartupModule.cs" t="Include" />
+          <e p="TestContext.cs" t="Include" />
+          <e p="UserCoinsAgent.cs" t="Include" />
+          <e p="UserCoinsPO.cs" t="Include" />
+        </e>
+        <e p="Farseer.Net.Job.Console" t="IncludeRecursive">
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="Farseer.Net.Job.Console.csproj" t="IncludeRecursive" />
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Release" t="Include">
+              <e p="netcoreapp3.1" t="Include">
+                <e p="Farseer.Net.Job.Console.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+          <e p="Program.cs" t="Include" />
+          <e p="StartupModule.cs" t="Include" />
+          <e p="TestJob1.cs" t="Include" />
+          <e p="TestJob2.cs" t="Include" />
+          <e p="TestJob3.cs" t="Include" />
+          <e p="TestJob4.cs" t="Include" />
+        </e>
+        <e p="Farseer.Net.MQ.RabbitMQ.Console" t="IncludeRecursive">
+          <e p="App_Data" t="Include">
+            <e p="Farseer.Net.json" t="Include" />
+          </e>
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="Farseer.Net.MQ.RabbitMQ.Console.csproj" t="IncludeRecursive" />
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Release" t="Include">
+              <e p="netcoreapp3.1" t="Include">
+                <e p="Farseer.Net.MQ.RabbitMQ.Console.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+          <e p="Program.cs" t="Include" />
+          <e p="StartupModule.cs" t="Include" />
+        </e>
+        <e p="Farseer.Net.MQ.RocketMQ.Console" t="IncludeRecursive">
+          <e p="app.config" t="Include" />
+          <e p="App_Data" t="Include">
+            <e p="Farseer.Net.json" t="Include" />
+          </e>
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="Farseer.Net.MQ.RocketMQ.Console.csproj" t="IncludeRecursive" />
+          <e p="obj" t="ExcludeRecursive" />
+          <e p="ONSClient4CPP.dll" t="Include" />
+          <e p="packages.config" t="Include" />
+          <e p="Program.cs" t="Include" />
+          <e p="Properties" t="Include">
+            <e p="AssemblyInfo.cs" t="Include" />
+          </e>
+          <e p="StartupModule.cs" t="Include" />
+          <e p="TestRocketMQ.cs" t="Include" />
+        </e>
+        <e p="TestLinuxDisown" t="IncludeRecursive">
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Release" t="Include">
+              <e p="netcoreapp2.1" t="Include">
+                <e p="TestLinuxDisown.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+          <e p="Program.cs" t="Include" />
+          <e p="TestLinuxDisown.csproj" t="IncludeRecursive" />
+        </e>
+      </e>
+      <e p="Farseer.Net.sln" t="IncludeFlat" />
+      <e p="Framework" t="Include">
+        <e p="Farseer.Net" t="IncludeRecursive">
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="Cache" t="Include">
+            <e p="AbsCacheManger.cs" t="Include" />
+            <e p="DataCacheManger.cs" t="Include" />
+            <e p="DynamicsClassTypeCacheManger.cs" t="Include" />
+            <e p="FieldGetCacheManger.cs" t="Include" />
+            <e p="FieldSetCacheManger.cs" t="Include" />
+            <e p="InstanceCacheManger.cs" t="Include" />
+            <e p="InstanceStaticCacheManger.cs" t="Include" />
+            <e p="PropertyGetCacheManger.cs" t="Include" />
+            <e p="PropertySetCacheManger.cs" t="Include" />
+          </e>
+          <e p="Check.cs" t="Include" />
+          <e p="Configuration" t="Include">
+            <e p="DictionaryBasedConfig.cs" t="Include" />
+            <e p="IConfigResolver.cs" t="Include" />
+            <e p="IDictionaryBasedConfig.cs" t="Include" />
+            <e p="IFarseerConfig.cs" t="Include" />
+            <e p="Startup" t="Include">
+              <e p="FarseerStartupConfiguration.cs" t="Include" />
+              <e p="FarseerStartupConfigurationExtensions.cs" t="Include" />
+              <e p="IFarseerStartupConfiguration.cs" t="Include" />
+              <e p="IModuleConfigurations.cs" t="Include" />
+              <e p="ModuleConfigurations.cs" t="Include" />
+            </e>
+            <e p="SysPath.cs" t="Include" />
+          </e>
+          <e p="Context" t="Include">
+            <e p="HttpWebRequestExt.cs" t="Include" />
+            <e p="TraceIdContext.cs" t="Include" />
+          </e>
+          <e p="Core" t="Include">
+            <e p="IEntity.cs" t="Include" />
+            <e p="MapingData.cs" t="Include" />
+          </e>
+          <e p="DefaultLogger.cs" t="Include" />
+          <e p="DI" t="Include">
+            <e p="BasicConventionalRegistrar.cs" t="Include" />
+            <e p="ConventionalRegistrationConfig.cs" t="Include" />
+            <e p="ConventionalRegistrationContext.cs" t="Include" />
+            <e p="DependencyLifeStyle.cs" t="Include" />
+            <e p="DisposableDependencyObjectWrapperOfT.cs" t="Include" />
+            <e p="IConventionalDependencyRegistrar.cs" t="Include" />
+            <e p="IConventionalRegistrationContext.cs" t="Include" />
+            <e p="IDisposableDependencyObjectWrapper.cs" t="Include" />
+            <e p="IDisposableDependencyObjectWrapperOfT.cs" t="Include" />
+            <e p="IIocManager.cs" t="Include" />
+            <e p="IIocRegistrar.cs" t="Include" />
+            <e p="IIocResolver.cs" t="Include" />
+            <e p="Installers" t="Include">
+              <e p="FarseerInstaller.cs" t="Include" />
+            </e>
+            <e p="IocManager.cs" t="Include" />
+            <e p="IocRegistrarExtensions.cs" t="Include" />
+            <e p="IocResolverExtensions.cs" t="Include" />
+            <e p="IPerRequestDependency.cs" t="Include" />
+            <e p="ISingletonDependency.cs" t="Include" />
+            <e p="ITransientDependency.cs" t="Include" />
+            <e p="SingletonDependency.cs" t="Include" />
+          </e>
+          <e p="Env.cs" t="Include" />
+          <e p="Farseer.Net.csproj" t="IncludeRecursive" />
+          <e p="FarseerApplication.cs" t="Include" />
+          <e p="FarseerConfigException.cs" t="Include" />
+          <e p="FarseerException.cs" t="Include" />
+          <e p="FarseerInitException.cs" t="Include" />
+          <e p="FodyWeavers.xml" t="Include" />
+          <e p="Http" t="Include">
+            <e p="Net.cs" t="Include" />
+          </e>
+          <e p="Modules" t="Include">
+            <e p="DependsOnAttribute.cs" t="Include" />
+            <e p="FarseerKernelModule.cs" t="Include" />
+            <e p="FarseerModule.cs" t="Include" />
+            <e p="FarseerModuleCollection.cs" t="Include" />
+            <e p="FarseerModuleInfo.cs" t="Include" />
+            <e p="FarseerModuleManager.cs" t="Include" />
+            <e p="IFarseerModuleManager.cs" t="Include" />
+          </e>
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Release" t="Include">
+              <e p="netstandard2.0" t="Include">
+                <e p="Farseer.Net.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+          <e p="Reflection" t="Include">
+            <e p="Activator.cs" t="Include" />
+            <e p="AssemblyFinder.cs" t="Include" />
+            <e p="AssemblyHelper.cs" t="Include" />
+            <e p="IAssemblyFinder.cs" t="Include" />
+            <e p="ITypeFinder.cs" t="Include" />
+            <e p="ReflectionFieldInfo.cs" t="Include" />
+            <e p="ReflectionHelper.cs" t="Include" />
+            <e p="ReflectionPropertyInfo.cs" t="Include" />
+            <e p="TypeFinder.cs" t="Include" />
+            <e p="TypeHelper.cs" t="Include" />
+          </e>
+          <e p="Utils" t="Include">
+            <e p="Common" t="Include">
+              <e p="ConvertHelper.cs" t="Include" />
+              <e p="DataReaderHelper.cs" t="Include" />
+              <e p="Dynamics.cs" t="Include" />
+              <e p="EntityHelper.cs" t="Include" />
+              <e p="ExpressionHelper.cs" t="Include" />
+              <e p="ExpressionVisitor" t="Include">
+                <e p="AbsExpressionVisitor.cs" t="Include" />
+                <e p="GetBinaryVisitor.cs" t="Include" />
+                <e p="GetBlockExpressionVisitor.cs" t="Include" />
+                <e p="GetMemberVisitor.cs" t="Include" />
+                <e p="GetParamVisitor.cs" t="Include" />
+              </e>
+              <e p="IEnumerableHelper.cs" t="Include" />
+              <e p="IpHelper.cs" t="Include" />
+              <e p="StringHelper.cs" t="Include" />
+              <e p="TypeHelper.cs" t="Include" />
+            </e>
+            <e p="Component" t="Include">
+              <e p="Enums.cs" t="Include" />
+            </e>
+            <e p="Extends" t="Include">
+              <e p="EnumExtend.cs" t="Include" />
+              <e p="Extends.cs" t="Include" />
+              <e p="IEnumerableExtend.cs" t="Include" />
+              <e p="MemberInfoExtensions.cs" t="Include" />
+              <e p="ObjectExtend.cs" t="Include" />
+              <e p="ReflectionExtends.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="Farseer.Net.AspNetCore" t="IncludeRecursive">
+          <e p="BadRequestException.cs" t="Include" />
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="CorsMiddleware.cs" t="Include" />
+          <e p="ExceptionMiddleware.cs" t="Include" />
+          <e p="Farseer.Net.AspNetCore.csproj" t="IncludeRecursive" />
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Release" t="Include">
+              <e p="netstandard2.1" t="Include">
+                <e p="Farseer.Net.AspNetCore.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+        </e>
+        <e p="Farseer.Net.Cache" t="IncludeRecursive">
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="CacheManager.cs" t="Include" />
+          <e p="CacheManagerInstaller.cs" t="Include" />
+          <e p="CacheManagerModule.cs" t="Include" />
+          <e p="CachingMemory" t="Include">
+            <e p="MemoryCacheExtensions.cs" t="Include" />
+            <e p="MemoryCacheHandle`1.cs" t="Include" />
+            <e p="MicrosoftMemoryCachingBuilderExtensions.cs" t="Include" />
+          </e>
+          <e p="Configuration" t="Include">
+            <e p="CacheManagerConfig.cs" t="Include" />
+            <e p="CacheManagerConfigExtends.cs" t="Include" />
+            <e p="CacheManagerItemConfig.cs" t="Include" />
+            <e p="EumCacheModel.cs" t="Include" />
+          </e>
+          <e p="Farseer.Net.Cache.csproj" t="IncludeRecursive" />
+          <e p="ICacheManager.cs" t="Include" />
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Release" t="Include">
+              <e p="net461" t="Include">
+                <e p="Farseer.Net.Cache.AssemblyInfo.cs" t="Include" />
+              </e>
+              <e p="netstandard2.0" t="Include">
+                <e p="Farseer.Net.Cache.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+          <e p="Runtime" t="Include">
+            <e p="MemoryCacheHandle`1.cs" t="Include" />
+            <e p="RuntimeCachingBuilderExtensions.cs" t="Include" />
+          </e>
+          <e p="TypeManger" t="Include">
+            <e p="AbsCacheManger.cs" t="Include" />
+            <e p="DataCacheManger.cs" t="Include" />
+            <e p="EnumNameCacheManger.cs" t="Include" />
+            <e p="InstanceCacheManger.cs" t="Include" />
+            <e p="InstanceStaticCacheManger.cs" t="Include" />
+          </e>
+        </e>
+        <e p="Farseer.Net.Cache.Redis" t="IncludeRecursive">
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="Configuration" t="Include">
+            <e p="EumCommandType.cs" t="Include" />
+            <e p="RedisConfig.cs" t="Include" />
+            <e p="RedisConfigExtends.cs" t="Include" />
+            <e p="RedisItemConfig.cs" t="Include" />
+          </e>
+          <e p="Farseer.Net.Cache.Redis.csproj" t="IncludeRecursive" />
+          <e p="IRedisCacheManager.cs" t="Include" />
+          <e p="IRedisConnectionWrapper.cs" t="Include" />
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Release" t="Include">
+              <e p="net461" t="Include">
+                <e p="Farseer.Net.Cache.Redis.AssemblyInfo.cs" t="Include" />
+              </e>
+              <e p="netstandard2.0" t="Include">
+                <e p="Farseer.Net.Cache.Redis.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+          <e p="RedisCacheManager.cs" t="Include" />
+          <e p="RedisConnectionWrapper.cs" t="Include" />
+          <e p="RedisInstaller.cs" t="Include" />
+          <e p="RedisModule.cs" t="Include" />
+        </e>
+        <e p="Farseer.Net.Configuration" t="IncludeRecursive">
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="CloudConfigResolver.cs" t="Include" />
+          <e p="ConfigurationInstaller.cs" t="Include" />
+          <e p="ConfigurationModule.cs" t="Include" />
+          <e p="Farseer.Net.Configuration.csproj" t="IncludeRecursive" />
+          <e p="Format" t="Include">
+            <e p="IConfigFormat.cs" t="Include" />
+            <e p="JsonConfigFormat.cs" t="Include" />
+          </e>
+          <e p="LocalConfigResolver.cs" t="Include" />
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Release" t="Include">
+              <e p="net461" t="Include">
+                <e p="Farseer.Net.Configuration.AssemblyInfo.cs" t="Include" />
+              </e>
+              <e p="netstandard2.0" t="Include">
+                <e p="Farseer.Net.Configuration.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+        </e>
+        <e p="Farseer.Net.Core" t="IncludeRecursive">
+          <e p="Async" t="Include">
+            <e p="BaseAsyncQueue.cs" t="Include" />
+            <e p="BaseHashCache.cs" t="Include" />
+          </e>
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="Configuration" t="Include">
+            <e p="EumApiGatewayType.cs" t="Include" />
+            <e p="GlobalConfig.cs" t="Include" />
+          </e>
+          <e p="DataSplitList.cs" t="Include" />
+          <e p="EntityValidator.cs" t="Include" />
+          <e p="Exception" t="Include">
+            <e p="RefuseException.cs" t="Include" />
+          </e>
+          <e p="Fabric" t="Include">
+            <e p="RegisterInfomation.cs" t="Include" />
+          </e>
+          <e p="Farseer.Net.Core.csproj" t="IncludeRecursive" />
+          <e p="FarseerCoreModule.cs" t="Include" />
+          <e p="ISqlMonitor.cs" t="Include" />
+          <e p="Jsons.cs" t="Include" />
+          <e p="Mapping" t="Include">
+            <e p="Attribute" t="Include">
+              <e p="FieldAttribute.cs" t="Include" />
+              <e p="StatusType.cs" t="Include" />
+            </e>
+            <e p="EntityPhysicsMap.cs" t="Include" />
+            <e p="EntityPropertyMap.cs" t="Include" />
+            <e p="FieldMapState.cs" t="Include" />
+            <e p="SetFieldMap.cs" t="Include" />
+            <e p="SetFieldStatus.cs" t="Include" />
+          </e>
+          <e p="MicroService" t="Include">
+            <e p="AbsBaseService.cs" t="Include" />
+            <e p="BaseMicroService.cs" t="Include" />
+            <e p="BaseMicroService`1.cs" t="Include" />
+          </e>
+          <e p="Net" t="Include">
+            <e p="ApiNodeResponseJson.cs" t="Include" />
+            <e p="ApiResponseJson.cs" t="Include" />
+            <e p="Gateway" t="Include">
+              <e p="EumConnectType.cs" t="Include" />
+              <e p="GatewayHeaderVO.cs" t="Include" />
+              <e p="RegisterServiceVO.cs" t="Include" />
+              <e p="TraceIdContextGwExt.cs" t="Include" />
+            </e>
+          </e>
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Release" t="Include">
+              <e p="net461" t="Include">
+                <e p="Farseer.Net.Core.AssemblyInfo.cs" t="Include" />
+              </e>
+              <e p="netstandard2.0" t="Include">
+                <e p="Farseer.Net.Core.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+          <e p="Queue" t="Include">
+            <e p="Core" t="Include">
+              <e p="AsyncQueue" t="Include">
+                <e p="AsyncQueue.cs" t="Include" />
+                <e p="AsyncQueueCore.cs" t="Include" />
+                <e p="AsyncQueueData.cs" t="Include" />
+              </e>
+              <e p="DequeueSignal.cs" t="Include" />
+              <e p="EnqueueResult.cs" t="Include" />
+              <e p="SyncQueue" t="Include">
+                <e p="SyncQueue.cs" t="Include" />
+                <e p="SyncQueueCore.cs" t="Include" />
+                <e p="SyncQueueData.cs" t="Include" />
+                <e p="SyncQueueHandler.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+        </e>
+        <e p="Farseer.Net.Data" t="IncludeRecursive">
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="Cache" t="Include">
+            <e p="ContextMapCacheManger.cs" t="Include" />
+            <e p="ContextSetTypeCacheManger.cs" t="Include" />
+            <e p="EntityCacheManger.cs" t="Include" />
+            <e p="SetMapCacheManger.cs" t="Include" />
+            <e p="SortDeleteCacheManger.cs" t="Include" />
+          </e>
+          <e p="Client" t="Include">
+            <e p="AbsDbProvider.cs" t="Include" />
+            <e p="MySql" t="Include">
+              <e p="MySqlBuilder.cs" t="Include" />
+              <e p="MySqlFunctionProvider.cs" t="Include" />
+              <e p="MySqlProvider.cs" t="Include" />
+            </e>
+            <e p="OleDb" t="Include">
+              <e p="OleDbBuilder.cs" t="Include" />
+              <e p="OleDbFunctionProvider.cs" t="Include" />
+              <e p="OleDbProvider.cs" t="Include" />
+            </e>
+            <e p="Oracle" t="Include">
+              <e p="OracleBuilder.cs" t="Include" />
+              <e p="OracleFunctionProvider.cs" t="Include" />
+              <e p="OracleProvider.cs" t="Include" />
+            </e>
+            <e p="PostgreSql" t="Include">
+              <e p="PostgreSqlBuilder.cs" t="Include" />
+              <e p="PostgreSqlFunctionProvider.cs" t="Include" />
+              <e p="PostgreSqlProvider.cs" t="Include" />
+            </e>
+            <e p="SqLite" t="Include">
+              <e p="SqLiteBuilder.cs" t="Include" />
+              <e p="SqLiteFunctionProvider.cs" t="Include" />
+              <e p="SqLiteProvider.cs" t="Include" />
+            </e>
+            <e p="SqlServer" t="Include">
+              <e p="SqlServerBuilder.cs" t="Include" />
+              <e p="SqlServerFunctionProvider.cs" t="Include" />
+              <e p="SqlServerProvider.cs" t="Include" />
+            </e>
+          </e>
+          <e p="Configuration" t="Include">
+            <e p="DbConfig.cs" t="Include" />
+            <e p="DbConfigExtends.cs" t="Include" />
+            <e p="DbItemConfig.cs" t="Include" />
+            <e p="SqlMapConfig.cs" t="Include" />
+            <e p="SqlMapConfigExtends.cs" t="Include" />
+            <e p="SqlMapItemConfig.cs" t="Include" />
+          </e>
+          <e p="Data" t="Include">
+            <e p="DbExecutor.cs" t="Include" />
+          </e>
+          <e p="DataInstaller.cs" t="Include" />
+          <e p="DataModule.cs" t="Include" />
+          <e p="DbContext.cs" t="Include" />
+          <e p="DbContext`1.cs" t="Include" />
+          <e p="ExpressionVisitor" t="Include">
+            <e p="AbsSqlVisitor.cs" t="Include" />
+            <e p="AssignVisitor.cs" t="Include" />
+            <e p="InsertVisitor.cs" t="Include" />
+            <e p="OrderByVisitor.cs" t="Include" />
+            <e p="SelectVisitor.cs" t="Include" />
+            <e p="WhereVisitor.cs" t="Include" />
+          </e>
+          <e p="Extends" t="Include">
+            <e p="ExpressionExtend.cs" t="Include" />
+            <e p="ICateExtend.cs" t="Include" />
+            <e p="IEnumerableExtend.cs" t="Include" />
+            <e p="SetExtend.cs" t="Include" />
+            <e p="TypeConvertExtend.cs" t="Include" />
+          </e>
+          <e p="Farseer.Net.Data.csproj" t="IncludeRecursive" />
+          <e p="Features" t="Include">
+            <e p="eumSortDeleteType.cs" t="Include" />
+            <e p="SortDelete.cs" t="Include" />
+          </e>
+          <e p="Infrastructure" t="Include">
+            <e p="AbsDbSet.cs" t="Include" />
+            <e p="AbsFunctionProvider.cs" t="Include" />
+            <e p="AbsSqlBuilder.cs" t="Include" />
+            <e p="DbReadSet.cs" t="Include" />
+            <e p="eumDbType.cs" t="Include" />
+            <e p="FieldType.cs" t="Include" />
+            <e p="ICate.cs" t="Include" />
+            <e p="IDataCache.cs" t="Include" />
+            <e p="IDbSet.cs" t="Include" />
+            <e p="IDbSet`1.cs" t="Include" />
+            <e p="IExecuteSql.cs" t="Include" />
+            <e p="IProcParam.cs" t="Include" />
+            <e p="ISqlParam.cs" t="Include" />
+          </e>
+          <e p="Internal" t="Include">
+            <e p="ContextConnection.cs" t="Include" />
+            <e p="DefaultDataCache.cs" t="Include" />
+            <e p="EntityDynamics.cs" t="Include" />
+            <e p="ExecuteSql.cs" t="Include" />
+            <e p="ExecuteSqlExceptionLogProxy.cs" t="Include" />
+            <e p="ExecuteSqlLogProxy.cs" t="Include" />
+            <e p="ExecuteSqlMonitorProxy.cs" t="Include" />
+            <e p="ExpressionBuilder.cs" t="Include" />
+            <e p="IContextConnection.cs" t="Include" />
+            <e p="InternalContext.cs" t="Include" />
+            <e p="MonitorSqlExceptionLog.cs" t="Include" />
+            <e p="MonitorSqlLog.cs" t="Include" />
+            <e p="ProcBuilder.cs" t="Include" />
+            <e p="Queue.cs" t="Include" />
+            <e p="QueueManger.cs" t="Include" />
+            <e p="SetInitializer.cs" t="Include" />
+            <e p="SetTypesInitializersPair.cs" t="Include" />
+            <e p="SqlParam.cs" t="Include" />
+          </e>
+          <e p="Log" t="Include">
+            <e p="Default" t="Include">
+              <e p="DefaultLog.cs" t="Include" />
+              <e p="Entity" t="Include">
+                <e p="CommonLog.cs" t="Include" />
+                <e p="SqlParam.cs" t="Include" />
+              </e>
+              <e p="LogWrite.cs" t="Include" />
+              <e p="SqlErrorLog.cs" t="Include" />
+              <e p="SqlRunLog.cs" t="Include" />
+            </e>
+            <e p="eumLogType.cs" t="Include" />
+            <e p="ILog.cs" t="Include" />
+            <e p="LogManger.cs" t="Include" />
+          </e>
+          <e p="ManualSql.cs" t="Include" />
+          <e p="Map" t="Include">
+            <e p="ContextDataMap.cs" t="Include" />
+            <e p="ContextPhysicsMap.cs" t="Include" />
+            <e p="SetDataMap.cs" t="Include" />
+            <e p="SetPhysicsMap.cs" t="Include" />
+          </e>
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Release" t="Include">
+              <e p="net461" t="Include">
+                <e p="Farseer.Net.Data.AssemblyInfo.cs" t="Include" />
+              </e>
+              <e p="netstandard2.0" t="Include">
+                <e p="Farseer.Net.Data.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+          <e p="ProcSet.cs" t="Include" />
+          <e p="SqlSet.cs" t="Include" />
+          <e p="SqlSet`1.cs" t="Include" />
+          <e p="TableSet.cs" t="Include" />
+          <e p="TableSetCache.cs" t="Include" />
+          <e p="ViewSet.cs" t="Include" />
+          <e p="ViewSetCache.cs" t="Include" />
+        </e>
+        <e p="Farseer.Net.ElasticSearch" t="IncludeRecursive">
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="Configuration" t="Include">
+            <e p="ElasticSearchConfig.cs" t="Include" />
+            <e p="ElasticSearchConfigExtends.cs" t="Include" />
+            <e p="ElasticSearchItemConfig.cs" t="Include" />
+          </e>
+          <e p="ElasticSearchInstaller.cs" t="Include" />
+          <e p="ElasticSearchManager.cs" t="Include" />
+          <e p="ElasticSearchModule.cs" t="Include" />
+          <e p="Farseer.Net.ElasticSearch.csproj" t="IncludeRecursive" />
+          <e p="IElasticSearchManager.cs" t="Include" />
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Release" t="Include">
+              <e p="net461" t="Include">
+                <e p="Farseer.Net.ElasticSearch.AssemblyInfo.cs" t="Include" />
+              </e>
+              <e p="netstandard2.0" t="Include">
+                <e p="Farseer.Net.ElasticSearch.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+          <e p="Properties" t="Include" />
+          <e p="Queue" t="Include">
+            <e p="AsyncQueueEs.cs" t="Include" />
+            <e p="QueueDataEs.cs" t="Include" />
+            <e p="SyncQueueEs.cs" t="Include" />
+          </e>
+        </e>
+        <e p="Farseer.Net.Job" t="IncludeRecursive">
+          <e p="ActService" t="Include">
+            <e p="AsyncExecute.cs" t="Include" />
+            <e p="HistoryExecuteRecord.cs" t="Include" />
+            <e p="LazyExecute.cs" t="Include" />
+            <e p="MultipleExecute.cs" t="Include" />
+            <e p="SingleExecute.cs" t="Include" />
+          </e>
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="CmdInput.cs" t="Include" />
+          <e p="ConsoleOutput.cs" t="Include" />
+          <e p="Entity" t="Include">
+            <e p="HistoryExecuteEntity.cs" t="Include" />
+            <e p="IExecute.cs" t="Include" />
+            <e p="JobEntity.cs" t="Include" />
+            <e p="JobSetting.cs" t="Include" />
+            <e p="MenuItem.cs" t="Include" />
+          </e>
+          <e p="Farseer.Net.Job.csproj" t="IncludeRecursive" />
+          <e p="IJob.cs" t="Include" />
+          <e p="JobFinder.cs" t="Include" />
+          <e p="JobInstaller.cs" t="Include" />
+          <e p="JobManager.cs" t="Include" />
+          <e p="JobModule.cs" t="Include" />
+          <e p="Menu.cs" t="Include" />
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Release" t="Include">
+              <e p="net461" t="Include">
+                <e p="Farseer.Net.Job.AssemblyInfo.cs" t="Include" />
+              </e>
+              <e p="netstandard2.0" t="Include">
+                <e p="Farseer.Net.Job.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+          <e p="Utils.cs" t="Include" />
+        </e>
+        <e p="Farseer.Net.Log" t="IncludeRecursive">
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="Configuration" t="Include">
+            <e p="NLogConfig.cs" t="Include" />
+            <e p="NLogConfigExtends.cs" t="Include" />
+          </e>
+          <e p="Farseer.Net.Log.csproj" t="IncludeRecursive" />
+          <e p="NLogConfigrationProvider.cs" t="Include" />
+          <e p="NLogInstaller.cs" t="Include" />
+          <e p="NLogModule.cs" t="Include" />
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Release" t="Include">
+              <e p="net461" t="Include">
+                <e p="Farseer.Net.Log.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+        </e>
+        <e p="Farseer.Net.Mapper" t="IncludeRecursive">
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="EumMapDirection.cs" t="Include" />
+          <e p="Farseer.Net.Mapper.csproj" t="IncludeRecursive" />
+          <e p="MapAttribute.cs" t="Include" />
+          <e p="MapExtend.cs" t="Include" />
+          <e p="MapFieldAttribute.cs" t="Include" />
+          <e p="MapFromAttribute.cs" t="Include" />
+          <e p="MapperHelper.cs" t="Include" />
+          <e p="MapperModule.cs" t="Include" />
+          <e p="MapToAttribute.cs" t="Include" />
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Release" t="Include">
+              <e p="net461" t="Include">
+                <e p="Farseer.Net.Mapper.AssemblyInfo.cs" t="Include" />
+              </e>
+              <e p="netstandard2.0" t="Include">
+                <e p="Farseer.Net.Mapper.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+        </e>
+        <e p="Farseer.Net.MongoDB" t="IncludeRecursive">
+          <e p="app.config" t="Include" />
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="Configuration" t="Include">
+            <e p="MongoConfig.cs" t="Include" />
+            <e p="MongoConfigExtends.cs" t="Include" />
+            <e p="MongoItemConfig.cs" t="Include" />
+          </e>
+          <e p="Farseer.Net.MongoDB.csproj" t="IncludeRecursive" />
+          <e p="IMongoManager.cs" t="Include" />
+          <e p="MongoInstaller.cs" t="Include" />
+          <e p="MongoManager.cs" t="Include" />
+          <e p="MongoModule.cs" t="Include" />
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Release" t="Include">
+              <e p="net461" t="Include">
+                <e p="Farseer.Net.MongoDB.AssemblyInfo.cs" t="Include" />
+              </e>
+              <e p="netstandard2.0" t="Include">
+                <e p="Farseer.Net.MongoDB.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+        </e>
+        <e p="Farseer.Net.MQ" t="IncludeRecursive">
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="Farseer.Net.MQ.csproj" t="IncludeRecursive" />
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Release" t="Include">
+              <e p="net461" t="Include">
+                <e p="Farseer.Net.MQ.AssemblyInfo.cs" t="Include" />
+              </e>
+              <e p="netstandard2.0" t="Include">
+                <e p="Farseer.Net.MQ.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+        </e>
+        <e p="Farseer.Net.MQ.Kafka" t="IncludeRecursive">
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="Configuration" t="Include">
+            <e p="KafkaConfig.cs" t="Include" />
+            <e p="KafkaConfigExtends.cs" t="Include" />
+            <e p="KafkaItemConfig.cs" t="Include" />
+          </e>
+          <e p="Farseer.Net.MQ.Kafka.csproj" t="IncludeRecursive" />
+          <e p="IKafkaManager.cs" t="Include" />
+          <e p="KafkaConsumer.cs" t="Include" />
+          <e p="KafkaInstaller.cs" t="Include" />
+          <e p="KafkaManager.cs" t="Include" />
+          <e p="KafkaModule.cs" t="Include" />
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Release" t="Include">
+              <e p="net461" t="Include">
+                <e p="Farseer.Net.MQ.Kafka.AssemblyInfo.cs" t="Include" />
+              </e>
+              <e p="netstandard2.0" t="Include">
+                <e p="Farseer.Net.MQ.Kafka.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+        </e>
+        <e p="Farseer.Net.MQ.Rabbit" t="IncludeRecursive">
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="Configuration" t="Include">
+            <e p="ConsumerConfig.cs" t="Include" />
+            <e p="ProductConfig.cs" t="Include" />
+            <e p="RabbitConfig.cs" t="Include" />
+            <e p="RabbitConfigExtends.cs" t="Include" />
+            <e p="RabbitItemConfig.cs" t="Include" />
+            <e p="RabbitServerConfig.cs" t="Include" />
+          </e>
+          <e p="eumExchangeType.cs" t="Include" />
+          <e p="Farseer.Net.MQ.Rabbit.csproj" t="IncludeRecursive" />
+          <e p="IListenerMessage.cs" t="Include" />
+          <e p="IListenerMessageSingle.cs" t="Include" />
+          <e p="IRabbitConsumer.cs" t="Include" />
+          <e p="IRabbitManager.cs" t="Include" />
+          <e p="IRabbitProduct.cs" t="Include" />
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Release" t="Include">
+              <e p="net461" t="Include">
+                <e p="Farseer.Net.MQ.Rabbit.AssemblyInfo.cs" t="Include" />
+              </e>
+              <e p="netstandard2.0" t="Include">
+                <e p="Farseer.Net.MQ.Rabbit.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+          <e p="RabbitConnect.cs" t="Include" />
+          <e p="RabbitConsumer.cs" t="Include" />
+          <e p="RabbitInstaller.cs" t="Include" />
+          <e p="RabbitManager.cs" t="Include" />
+          <e p="RabbitModule.cs" t="Include" />
+          <e p="RabbitProduct.cs" t="Include" />
+        </e>
+        <e p="Farseer.Net.MQ.RocketMQ" t="IncludeRecursive">
+          <e p="AbsPush.cs" t="Include" />
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="Configuration" t="Include">
+            <e p="RocketMQConfig.cs" t="Include" />
+            <e p="RocketMQConfigExtends.cs" t="Include" />
+            <e p="RocketMQItemConfig.cs" t="Include" />
+          </e>
+          <e p="Farseer.Net.MQ.RocketMQ.csproj" t="IncludeRecursive" />
+          <e p="HttpMessageListener.cs" t="Include" />
+          <e p="HttpRocketMQConsumer.cs" t="Include" />
+          <e p="HttpRocketMQProduct.cs" t="Include" />
+          <e p="IHttpRocketMQConsumer.cs" t="Include" />
+          <e p="IHttpRocketMQProduct.cs" t="Include" />
+          <e p="IRocketMQConsumer.cs" t="Include" />
+          <e p="IRocketMQManager.cs" t="Include" />
+          <e p="IRocketMQProduct.cs" t="Include" />
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Release" t="Include">
+              <e p="net461" t="Include">
+                <e p="Farseer.Net.MQ.RocketMQ.AssemblyInfo.cs" t="Include" />
+              </e>
+              <e p="netstandard2.0" t="Include">
+                <e p="Farseer.Net.MQ.RocketMQ.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+          <e p="ONSClient4CPP.dll" t="Include" />
+          <e p="Remove" t="Include">
+            <e p="IRocketMQOrderConsumer.cs" t="Include" />
+            <e p="IRocketMQProduct.cs" t="Include" />
+            <e p="RocketMQOrderConsumer.cs" t="Include" />
+            <e p="RocketMQOrderProduct.cs" t="Include" />
+          </e>
+          <e p="RocketMQConsumer.cs" t="Include" />
+          <e p="RocketMQInstaller.cs" t="Include" />
+          <e p="RocketMQManager.cs" t="Include" />
+          <e p="RocketMQModule.cs" t="Include" />
+          <e p="RocketMQProduct.cs" t="Include" />
+          <e p="SDK" t="Include">
+            <e p="Action.cs" t="Include" />
+            <e p="ConsumeContext.cs" t="Include" />
+            <e p="ConsumeOrderContext.cs" t="Include" />
+            <e p="Http" t="Include">
+              <e p="Libs" t="Include">
+                <e p="log4net.dll" t="Include" />
+              </e>
+              <e p="log4net.config" t="Include" />
+              <e p="Model" t="Include">
+                <e p="AckMessageRequest.cs" t="Include" />
+                <e p="AckMessageResponse.cs" t="Include" />
+                <e p="ConsumeMessageRequest.cs" t="Include" />
+                <e p="ConsumeMessageResponse.cs" t="Include" />
+                <e p="exp" t="Include">
+                  <e p="AckMessageException.cs" t="Include" />
+                  <e p="ErrorCode.cs" t="Include" />
+                  <e p="InvalidArgumentException.cs" t="Include" />
+                  <e p="MalformedXMLException.cs" t="Include" />
+                  <e p="MessageNotExistException.cs" t="Include" />
+                  <e p="MQException.cs" t="Include" />
+                  <e p="ReceiptHandleErrorException.cs" t="Include" />
+                  <e p="SubscriptionNotExistException.cs" t="Include" />
+                  <e p="TopicNotExistException.cs" t="Include" />
+                </e>
+                <e p="Internal" t="Include">
+                  <e p="MarshallTransformations" t="Include">
+                    <e p="AckMessageRequestMarshaller.cs" t="Include" />
+                    <e p="AckMessageResponseUnmarshaller.cs" t="Include" />
+                    <e p="ConsumeMessageRequestMarshaller.cs" t="Include" />
+                    <e p="ConsumeMessageResponseUnmarshaller.cs" t="Include" />
+                    <e p="ErrorResponseUnmarshaller.cs" t="Include" />
+                    <e p="PublishMessageRequestMarshaller.cs" t="Include" />
+                    <e p="PublishMessageResponseUnmarshaller.cs" t="Include" />
+                  </e>
+                </e>
+                <e p="Message.cs" t="Include" />
+                <e p="PublishMessageRequest.cs" t="Include" />
+                <e p="PublishMessageResponse.cs" t="Include" />
+                <e p="TopicMessage.cs" t="Include" />
+              </e>
+              <e p="MQClient.cs" t="Include" />
+              <e p="MQConfig.cs" t="Include" />
+              <e p="MQConsumer.cs" t="Include" />
+              <e p="MQProducer.cs" t="Include" />
+              <e p="Runtime" t="Include">
+                <e p="AliyunServiceClient.cs" t="Include" />
+                <e p="AliyunServiceException.cs" t="Include" />
+                <e p="ClientConfig.cs" t="Include" />
+                <e p="Enumerations.cs" t="Include" />
+                <e p="Internal" t="Include">
+                  <e p="Auth" t="Include">
+                    <e p="IServiceSigner.cs" t="Include" />
+                    <e p="MQSigner.cs" t="Include" />
+                  </e>
+                  <e p="DefaultRequest.cs" t="Include" />
+                  <e p="ErrorResponse.cs" t="Include" />
+                  <e p="IRequest.cs" t="Include" />
+                  <e p="Transform" t="Include">
+                    <e p="HttpWebRequestResponseData.cs" t="Include" />
+                    <e p="IMarshaller.cs" t="Include" />
+                    <e p="IResponseUnmarshaller.cs" t="Include" />
+                    <e p="IUnmarshaller.cs" t="Include" />
+                    <e p="IWebResponseData.cs" t="Include" />
+                    <e p="RequestMarshallException.cs" t="Include" />
+                    <e p="ResponseUnmarshallers.cs" t="Include" />
+                    <e p="ResponseUnmarshallException.cs" t="Include" />
+                    <e p="UnmarshallerContext.cs" t="Include" />
+                    <e p="XmlMarshaller.cs" t="Include" />
+                    <e p="XmlUnmarshaller.cs" t="Include" />
+                  </e>
+                  <e p="Util" t="Include">
+                    <e p="Extensions.cs" t="Include" />
+                  </e>
+                  <e p="WebServiceRequest.cs" t="Include" />
+                </e>
+                <e p="Pipeline" t="Include">
+                  <e p="Contexts.cs" t="Include" />
+                  <e p="ErrorHandler" t="Include">
+                    <e p="ErrorHandler.cs" t="Include" />
+                    <e p="ExceptionHandler.cs" t="Include" />
+                    <e p="HttpErrorResponseExceptionHandler.cs" t="Include" />
+                    <e p="IExceptionHandler.cs" t="Include" />
+                    <e p="WebExceptionHandler.cs" t="Include" />
+                  </e>
+                  <e p="Handlers" t="Include">
+                    <e p="CredentialsRetriever.cs" t="Include" />
+                    <e p="GenericHandler.cs" t="Include" />
+                    <e p="Marshaller.cs" t="Include" />
+                    <e p="Signer.cs" t="Include" />
+                    <e p="Unmarshaller.cs" t="Include" />
+                  </e>
+                  <e p="HttpErrorResponseException.cs" t="Include" />
+                  <e p="HttpHandler" t="Include">
+                    <e p="HttpHandler.cs" t="Include" />
+                    <e p="HttpWebRequestFactory.cs" t="Include" />
+                    <e p="IHttpRequestFactory.cs" t="Include" />
+                  </e>
+                  <e p="IPiplelineHandler.cs" t="Include" />
+                  <e p="PipelineHandler.cs" t="Include" />
+                  <e p="RetryHandler" t="Include">
+                    <e p="DefaultRetryPolicy.cs" t="Include" />
+                    <e p="RetryHandler.cs" t="Include" />
+                    <e p="RetryPolicy.cs" t="Include" />
+                  </e>
+                  <e p="RuntimeAsyncResult.cs" t="Include" />
+                  <e p="RuntimePipeline.cs" t="Include" />
+                </e>
+                <e p="ServiceCredentials.cs" t="Include" />
+                <e p="WebServiceResponse.cs" t="Include" />
+              </e>
+              <e p="Util" t="Include">
+                <e p="AliyunSDKUtils.cs" t="Include" />
+                <e p="Constants.cs" t="Include" />
+                <e p="CryptoUtil.cs" t="Include" />
+              </e>
+            </e>
+            <e p="LocalTransactionChecker.cs" t="Include" />
+            <e p="LocalTransactionExecuter.cs" t="Include" />
+            <e p="Message.cs" t="Include" />
+            <e p="MessageListener.cs" t="Include" />
+            <e p="MessageOrderListener.cs" t="Include" />
+            <e p="MessageQueueONS.cs" t="Include" />
+            <e p="ONSChannel.cs" t="Include" />
+            <e p="ONSClient4CPP.cs" t="Include" />
+            <e p="ONSClient4CPPPINVOKE.cs" t="Include" />
+            <e p="ONSClientException.cs" t="Include" />
+            <e p="ONSFactory.cs" t="Include" />
+            <e p="ONSFactoryAPI.cs" t="Include" />
+            <e p="ONSFactoryProperty.cs" t="Include" />
+            <e p="ONSPullStatus.cs" t="Include" />
+            <e p="OrderAction.cs" t="Include" />
+            <e p="OrderConsumer.cs" t="Include" />
+            <e p="OrderProducer.cs" t="Include" />
+            <e p="Producer.cs" t="Include" />
+            <e p="PullConsumer.cs" t="Include" />
+            <e p="PullResultONS.cs" t="Include" />
+            <e p="PushConsumer.cs" t="Include" />
+            <e p="SendResultONS.cs" t="Include" />
+            <e p="SWIGTYPE_p_CONSTSTRING.cs" t="Include" />
+            <e p="SWIGTYPE_p_ConsumeContext.cs" t="Include" />
+            <e p="SWIGTYPE_p_ConsumeOrderContext.cs" t="Include" />
+            <e p="SWIGTYPE_p_LocalTransactionChecker.cs" t="Include" />
+            <e p="SWIGTYPE_p_Message.cs" t="Include" />
+            <e p="SWIGTYPE_p_MessageOrderListener.cs" t="Include" />
+            <e p="SWIGTYPE_p_MessageQueueONS.cs" t="Include" />
+            <e p="SWIGTYPE_p_MQException.cs" t="Include" />
+            <e p="SWIGTYPE_p_ons__LocalTransactionChecker.cs" t="Include" />
+            <e p="SWIGTYPE_p_ons__OrderConsumer.cs" t="Include" />
+            <e p="SWIGTYPE_p_ons__OrderProducer.cs" t="Include" />
+            <e p="SWIGTYPE_p_ons__PullConsumer.cs" t="Include" />
+            <e p="SWIGTYPE_p_ons__PushConsumer.cs" t="Include" />
+            <e p="SWIGTYPE_p_ons__TransactionProducer.cs" t="Include" />
+            <e p="SWIGTYPE_p_ONSCLIENT_API.cs" t="Include" />
+            <e p="SWIGTYPE_p_ONSClientException.cs" t="Include" />
+            <e p="SWIGTYPE_p_OrderConsumer.cs" t="Include" />
+            <e p="SWIGTYPE_p_OrderProducer.cs" t="Include" />
+            <e p="SWIGTYPE_p_PushConsumer.cs" t="Include" />
+            <e p="SWIGTYPE_p_SendResult.cs" t="Include" />
+            <e p="SWIGTYPE_p_SendResultONS.cs" t="Include" />
+            <e p="SWIGTYPE_p_std__mapT_std__string_std__string_t.cs" t="Include" />
+            <e p="SWIGTYPE_p_std__string.cs" t="Include" />
+            <e p="SWIGTYPE_p_std__vectorT_ons__Message_t.cs" t="Include" />
+            <e p="SWIGTYPE_p_std__vectorT_ons__MessageQueueONS_t.cs" t="Include" />
+            <e p="SWIGTYPE_p_TransactionProducer.cs" t="Include" />
+            <e p="SWIGTYPE_p_TransactionStatus.cs" t="Include" />
+            <e p="SWIGTYPE_p_unsigned_char.cs" t="Include" />
+            <e p="SystemPropKey.cs" t="Include" />
+            <e p="TransactionProducer.cs" t="Include" />
+            <e p="TransactionStatus.cs" t="Include" />
+          </e>
+        </e>
+        <e p="Farseer.Net.Utils" t="IncludeRecursive">
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="Common" t="Include">
+            <e p="Assembly.cs" t="Include" />
+            <e p="Compress.cs" t="Include" />
+            <e p="Consoles.cs" t="Include" />
+            <e p="DynamicOperate.cs" t="Include" />
+            <e p="Encrypt.cs" t="Include" />
+            <e p="Files.cs" t="Include" />
+            <e p="HttpHelper.cs" t="Include" />
+            <e p="HttpWebRequestExt.cs" t="Include" />
+            <e p="InfoComparer.cs" t="Include" />
+            <e p="IsType.cs" t="Include" />
+            <e p="Mac.cs" t="Include" />
+            <e p="Pro.cs" t="Include" />
+            <e p="Rand.cs" t="Include" />
+            <e p="Serialized.cs" t="Include" />
+            <e p="SpeedTest.cs" t="Include" />
+            <e p="Str.cs" t="Include" />
+            <e p="Thumbnail.cs" t="Include" />
+            <e p="Url.cs" t="Include" />
+            <e p="WinServer.cs" t="Include" />
+          </e>
+          <e p="Component" t="Include">
+            <e p="AdministrativeCode.cs" t="Include" />
+            <e p="Chinese.cs" t="Include" />
+            <e p="Cmd.cs" t="Include" />
+            <e p="ConsoleMsg.cs" t="Include" />
+            <e p="IpAdress.cs" t="Include" />
+            <e p="Maths.cs" t="Include" />
+            <e p="ParallelGroup.cs" t="Include" />
+            <e p="QueueTask.cs" t="Include" />
+            <e p="Reverser.cs" t="Include" />
+            <e p="RMB.cs" t="Include" />
+            <e p="SpeedTestMultiple.cs" t="Include" />
+            <e p="StrPlus.cs" t="Include" />
+            <e p="TimingTasks.cs" t="Include" />
+            <e p="WinService" t="Include">
+              <e p="BaseService.cs" t="Include" />
+              <e p="BaseTimingService.cs" t="Include" />
+            </e>
+            <e p="WinSocket" t="Include">
+              <e p="ClientSocket.cs" t="Include" />
+              <e p="ServerSocket.cs" t="Include" />
+              <e p="StateObject.cs" t="Include" />
+            </e>
+          </e>
+          <e p="Extends" t="Include">
+            <e p="ArrayExtend.cs" t="Include" />
+            <e p="BoolExtend.cs" t="Include" />
+            <e p="ConcurrentBagExtend.cs" t="Include" />
+            <e p="DataTableExtend.cs" t="Include" />
+            <e p="DateTimeExtend.cs" t="Include" />
+            <e p="DictionaryExtend.cs" t="Include" />
+            <e p="EntityExtend.cs" t="Include" />
+            <e p="ExpressionExtend.cs" t="Include" />
+            <e p="FuncExtend.cs" t="Include" />
+            <e p="IEnumerableUtilsExtend.cs" t="Include" />
+            <e p="IEnumeratorExtend.cs" t="Include" />
+            <e p="IListExtend.cs" t="Include" />
+            <e p="IOrderedQueryableExtend.cs" t="Include" />
+            <e p="IQueryableExtend.cs" t="Include" />
+            <e p="NumberExtend.cs" t="Include" />
+            <e p="StringExtend.cs" t="Include" />
+          </e>
+          <e p="Farseer.Net.Utils.csproj" t="IncludeRecursive" />
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Release" t="Include">
+              <e p="net461" t="Include">
+                <e p="Farseer.Net.Utils.AssemblyInfo.cs" t="Include" />
+              </e>
+              <e p="netstandard2.0" t="Include">
+                <e p="Farseer.Net.Utils.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+        </e>
+        <e p="Farseer.Net.Web.Mvc" t="IncludeRecursive">
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="ControllerConventionalRegistrar.cs" t="Include" />
+          <e p="Farseer.Net.Web.Mvc.csproj" t="IncludeRecursive" />
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Release" t="Include">
+              <e p="net461" t="Include">
+                <e p="Farseer.Net.Web.Mvc.AssemblyInfo.cs" t="Include" />
+              </e>
+              <e p="netstandard2.0" t="Include">
+                <e p="Farseer.Net.Web.Mvc.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+          <e p="WebMvcModule.cs" t="Include" />
+          <e p="WindsorControllerFactory.cs" t="Include" />
+        </e>
+      </e>
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="Tests" t="Include">
+        <e p="Farseer.net.AutoMapper.Test" t="IncludeRecursive">
+          <e p="bin" t="ExcludeRecursive" />
+          <e p="Entity" t="Include">
+            <e p="UserListVO.cs" t="Include" />
+            <e p="UserPO.cs" t="Include" />
+          </e>
+          <e p="Farseer.net.AutoMapper.Test.csproj" t="IncludeRecursive" />
+          <e p="ITest.cs" t="Include" />
+          <e p="obj" t="ExcludeRecursive">
+            <e p="Release" t="Include">
+              <e p="netcoreapp3.1" t="Include">
+                <e p="Farseer.net.AutoMapper.Test.AssemblyInfo.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+          <e p="Startup.cs" t="Include" />
+          <e p="Test.cs" t="Include" />
+          <e p="UnitTest1.cs" t="Include" />
+        </e>
+      </e>
+    </e>
+    <e p="$APPLICATION_CONFIG_DIR$/consoles/db" t="IncludeRecursive" />
+    <e p="$APPLICATION_CONFIG_DIR$/extensions" t="IncludeRecursive" />
+    <e p="$APPLICATION_CONFIG_DIR$/scratches" t="IncludeRecursive" />
+    <e p="$USER_HOME$/Library/Caches/JetBrains/Rider2020.1/extResources" t="IncludeRecursive" />
+    <e p="$USER_HOME$/Library/Caches/JetBrains/Rider2020.1/resharper-host/local/Transient/ReSharperHost/v201/SolutionCaches/_Farseer.Net.1606151492.00" t="ExcludeRecursive" />
+  </component>
+</project>

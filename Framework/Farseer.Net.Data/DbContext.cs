@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 using FS.Data.Cache;
+using FS.Data.Client;
 using FS.Data.Infrastructure;
 using FS.Data.Internal;
 using FS.Data.Map;
@@ -176,7 +177,7 @@ namespace FS.Data
                 if (!_internalContext.IsInitModelName)
                 {
                     // 初始化模型映射
-                    CreateModelInit(_internalContext.ContextMap.SetDataList.ToDictionary(o => o.Name));
+                    CreateModelInit(_internalContext.ContextMap.SetDataList.ToDictionary(o => o.TableName));
                     _internalContext.IsInitModelName = true;
                 }
                 return _internalContext;

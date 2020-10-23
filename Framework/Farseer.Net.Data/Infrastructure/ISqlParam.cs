@@ -11,9 +11,14 @@ namespace FS.Data.Infrastructure
     public interface ISqlParam : IDisposable
     {
         /// <summary>
+        ///     数据库名称
+        /// </summary>
+        string DbName { get; }
+
+        /// <summary>
         ///     表名/视图名
         /// </summary>
-        string Name { get; }
+        string TableName { get; }
 
         /// <summary>
         ///     当前生成的SQL语句

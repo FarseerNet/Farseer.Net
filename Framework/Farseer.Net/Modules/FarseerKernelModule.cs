@@ -34,16 +34,11 @@ namespace FS.Modules
         public override void Initialize()
         {
             foreach (var replaceAction in ((FarseerStartupConfiguration)Configuration).ServiceReplaceActions.Values) { replaceAction(); }
-#if CORE
 			IocManager.RegisterAssemblyByConvention(typeof(FarseerKernelModule).GetTypeInfo().Assembly, new ConventionalRegistrationConfig { InstallInstallers = false });
-#else
-			IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly(), new ConventionalRegistrationConfig { InstallInstallers = false });
-#endif
 		}
 
         public override void PostInitialize()
         {
-            ServicePointManager.DefaultConnectionLimit = 512;
         }
     }
 }
