@@ -5,6 +5,7 @@ using Nest;
 using FS.Core.Queue.Core;
 using FS.Core.Queue.Core.AsyncQueue;
 using FS.DI;
+using Microsoft.Extensions.Logging;
 
 namespace FS.ElasticSearch.Queue
 {
@@ -54,7 +55,7 @@ namespace FS.ElasticSearch.Queue
             }
             catch (Exception e)
             {
-                IocManager.Instance.Logger.Error(e.ToString(), e);
+                IocManager.Instance.Logger<AsyncQueueEs<T>>().LogError(e,e.ToString());
                 return false;
             }
         }

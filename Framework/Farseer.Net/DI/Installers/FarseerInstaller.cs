@@ -1,14 +1,17 @@
-﻿using Castle.MicroKernel.Registration;
+﻿using System;
+using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using FS.Configuration.Startup;
 using FS.Modules;
 using FS.Reflection;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace FS.DI.Installers
 {
     /// <summary>
-    ///     系统核心组件注册类
+    ///     系统核心组件注册类（所有组件最先执行的注册器）
     /// </summary>
     public class FarseerInstaller : IWindsorInstaller
     {
@@ -19,12 +22,27 @@ namespace FS.DI.Installers
         /// <param name="store"></param>
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
+            // 注册配置文件
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json",                                                                 optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true) //增加环境配置文件
+                .AddEnvironmentVariables()
+                .Build();
+            container.Register(Component.For<IConfigurationRoot>().Instance(configuration).LifestyleSingleton());
+            
+            // 注册默认日志组件
+            var loggerFactory = LoggerFactory.Create(o =>
+                o.AddConsole()
+                    .AddConfiguration(configuration.GetSection("Logging"))
+            );
+            container.Register(Component.For<ILoggerFactory>().Instance(loggerFactory).LifestyleSingleton());
+
             // 注册核心组件到依赖注入容器中，包括配置。
-            if (!IocManager.Instance.IsRegistered<IModuleConfigurations>()) { container.Register(Component.For<IModuleConfigurations, ModuleConfigurations>().ImplementedBy<ModuleConfigurations>().LifestyleSingleton()); }
-            if (!IocManager.Instance.IsRegistered<IFarseerStartupConfiguration>()) { container.Register(Component.For<IFarseerStartupConfiguration, FarseerStartupConfiguration>().ImplementedBy<FarseerStartupConfiguration>().LifestyleSingleton()); }
-            if (!IocManager.Instance.IsRegistered<ITypeFinder>()) { container.Register(Component.For<ITypeFinder, TypeFinder>().ImplementedBy<TypeFinder>().LifestyleSingleton()); }
-            if (!IocManager.Instance.IsRegistered<IFarseerModuleManager>()) { container.Register(Component.For<IFarseerModuleManager, FarseerModuleManager>().ImplementedBy<FarseerModuleManager>().LifestyleSingleton()); }
-            if (!IocManager.Instance.IsRegistered<IAssemblyFinder>()) { container.Register(Component.For<IAssemblyFinder, AssemblyFinder>().ImplementedBy<AssemblyFinder>().LifestyleSingleton()); }
+            if (!IocManager.Instance.IsRegistered<IModuleConfigurations>()) container.Register(Component.For<IModuleConfigurations, ModuleConfigurations>().ImplementedBy<ModuleConfigurations>().LifestyleSingleton());
+            if (!IocManager.Instance.IsRegistered<IFarseerStartupConfiguration>()) container.Register(Component.For<IFarseerStartupConfiguration, FarseerStartupConfiguration>().ImplementedBy<FarseerStartupConfiguration>().LifestyleSingleton());
+            if (!IocManager.Instance.IsRegistered<ITypeFinder>()) container.Register(Component.For<ITypeFinder, TypeFinder>().ImplementedBy<TypeFinder>().LifestyleSingleton());
+            if (!IocManager.Instance.IsRegistered<IFarseerModuleManager>()) container.Register(Component.For<IFarseerModuleManager, FarseerModuleManager>().ImplementedBy<FarseerModuleManager>().LifestyleSingleton());
+            if (!IocManager.Instance.IsRegistered<IAssemblyFinder>()) container.Register(Component.For<IAssemblyFinder, AssemblyFinder>().ImplementedBy<AssemblyFinder>().LifestyleSingleton());
         }
     }
 }

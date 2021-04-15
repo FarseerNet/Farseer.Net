@@ -3,6 +3,7 @@ using FS.Configuration;
 using FS.DI;
 using FS.Log.Configuration;
 using FS.Modules;
+using Microsoft.Extensions.Logging;
 
 namespace FS.Log
 {

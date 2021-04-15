@@ -4,11 +4,12 @@ using System.Reflection;
 using FS.Configuration;
 using FS.Configuration.Startup;
 using FS.DI;
+using Microsoft.Extensions.Logging;
 
 namespace FS.Modules
 {
     /// <summary>
-    ///     系统核心模块
+    ///     系统核心模块（初始化时，最先执行的模块）
     /// </summary>
     public sealed class FarseerKernelModule : FarseerModule
     {
@@ -18,14 +19,9 @@ namespace FS.Modules
         public override void PreInitialize()
         {
             // 如果Redis配置没有创建，则创建它
-            IocManager.AddConventionalRegistrar(new BasicConventionalRegistrar());
+            IocManager.AddConventionalRegistrar(new BasicConventionalRegistrarInstaller());
             ServicePointManager.DefaultConnectionLimit = 512;
             ServicePointManager.UseNagleAlgorithm = false;
-
-            // 读取Farseer..json的配置文件名称
-            string appSetting = ConfigurationManager.AppSettings["ConfigName"];
-            if (!string.IsNullOrWhiteSpace(appSetting)) SysPath.ConfigurationName = appSetting;
-            //todo:SystemConfigBuilder.LoadConfig();
         }
 
         /// <summary>
@@ -34,7 +30,7 @@ namespace FS.Modules
         public override void Initialize()
         {
             foreach (var replaceAction in ((FarseerStartupConfiguration)Configuration).ServiceReplaceActions.Values) { replaceAction(); }
-			IocManager.RegisterAssemblyByConvention(typeof(FarseerKernelModule).GetTypeInfo().Assembly, new ConventionalRegistrationConfig { InstallInstallers = false });
+			IocManager.RegisterAssemblyByConvention(this.GetType().GetTypeInfo().Assembly, new ConventionalRegistrationConfig { InstallInstallers = false });
 		}
 
         public override void PostInitialize()

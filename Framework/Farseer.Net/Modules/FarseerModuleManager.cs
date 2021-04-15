@@ -4,6 +4,7 @@ using System.Linq;
 using Castle.Core.Logging;
 using FS.Configuration.Startup;
 using FS.DI;
+using Microsoft.Extensions.Logging;
 
 namespace FS.Modules
 {
@@ -64,12 +65,12 @@ namespace FS.Modules
         {
             var sortedModules = _moduleCollection.GetListSortDependency();
 
-            _iocManager.Logger.Info($"模块加载完毕，开始启动{sortedModules.Count}个模块...");
+            _iocManager.Logger<FarseerModuleManager>().LogInformation($"模块加载完毕，开始启动{sortedModules.Count}个模块...");
             sortedModules.ForEach(module => module.Instance.PreInitialize());
             sortedModules.ForEach(module => module.Instance.Initialize());
             sortedModules.ForEach(module => module.Instance.PostInitialize());
 
-            _iocManager.Logger.Info("模块启动完毕...");
+            _iocManager.Logger<FarseerModuleManager>().LogInformation("模块启动完毕...");
         }
 
         /// <summary>
@@ -77,13 +78,13 @@ namespace FS.Modules
         /// </summary>
         public virtual void ShutdownModules()
         {
-            _iocManager.Logger.Info("开始关闭模块...");
+            _iocManager.Logger<FarseerModuleManager>().LogInformation("开始关闭模块...");
 
             var sortedModules = _moduleCollection.GetListSortDependency();
             sortedModules.Reverse();
             sortedModules.ForEach(sm => sm.Instance.Shutdown());
 
-            _iocManager.Logger.Info("模块已关闭...");
+            _iocManager.Logger<FarseerModuleManager>().LogInformation("模块已关闭...");
         }
 
         /// <summary>
@@ -93,7 +94,7 @@ namespace FS.Modules
         {
             var moduleTypes = FindAllModules();
 
-            _iocManager.Logger.Info($"总共找到 {moduleTypes.Count} 个模块");
+            _iocManager.Logger<FarseerModuleManager>().LogInformation($"总共找到 {moduleTypes.Count} 个模块");
 
             RegisterModules(moduleTypes);
             CreateModules(moduleTypes);
@@ -134,7 +135,7 @@ namespace FS.Modules
 
                 if (moduleType == _startupModuleType) StartupModule = moduleInfo;
 
-                _iocManager.Logger.InfoFormat($"已经加载模块: {moduleType.AssemblyQualifiedName}");
+                _iocManager.Logger<FarseerModuleManager>().LogInformation($"已经加载模块: {moduleType.AssemblyQualifiedName}");
             }
         }
 

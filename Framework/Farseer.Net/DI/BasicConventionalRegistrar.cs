@@ -7,7 +7,7 @@ namespace FS.DI
 	///     约定注册器
 	///     注册实现ITransientDependency、ISingletonDependency、IPerRequestDependency的类型
 	/// </summary>
-	public class BasicConventionalRegistrar : IConventionalDependencyRegistrar
+	public class BasicConventionalRegistrarInstaller : IConventionalDependencyRegistrar
 	{
 		/// <summary>
 		///     注册程序集

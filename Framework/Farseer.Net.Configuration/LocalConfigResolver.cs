@@ -29,7 +29,7 @@ namespace FS.Configuration
         /// <summary>
         ///     配置文件
         /// </summary>
-        private string ConfigFileName => $"{SysPath.AppData}{SysPath.ConfigurationName}{EnvName}{_configFormat.ExtensionName}";
+        private string ConfigFileName => $"{SysPath.AppData}Farseer.Net{EnvName}{_configFormat.ExtensionName}";
 
         /// <summary>
         ///     配置的最后一次写入时间

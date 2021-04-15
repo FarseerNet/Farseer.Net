@@ -32,8 +32,6 @@ namespace FS.Core
         {
             // 如果Redis配置没有创建，则创建它
             InitConfig(IocManager.Resolve<IConfigResolver>());
-            IocManager.AddConventionalRegistrar(new BasicConventionalRegistrar());
-            //todo:SystemConfigBuilder.LoadConfig();
         }
 
         /// <inheritdoc />

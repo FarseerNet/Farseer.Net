@@ -32,6 +32,7 @@
   <ItemGroup>
     <PackageReference Include="Castle.Core-NLog" Version="4.4.1" />
     <PackageReference Include="Castle.LoggingFacility" Version="5.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="NLog" Version="4.7.2" />
   </ItemGroup>
   

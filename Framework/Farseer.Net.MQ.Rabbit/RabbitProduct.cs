@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using FS.DI;
 using FS.MQ.RabbitMQ.Configuration;
+using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 
 namespace FS.MQ.RabbitMQ
@@ -94,7 +95,7 @@ namespace FS.MQ.RabbitMQ
             }
             catch (Exception e)
             {
-                IocManager.Instance.Logger.Error(e.ToString(), e);
+                IocManager.Instance.Logger<RabbitProduct>().LogError(e, e.ToString());
                 return false;
             }
             finally
@@ -134,7 +135,7 @@ namespace FS.MQ.RabbitMQ
             }
             catch (Exception e)
             {
-                IocManager.Instance.Logger.Error(e.ToString(), e);
+                IocManager.Instance.Logger<RabbitProduct>().LogError(e, e.ToString());
                 return false;
             }
             finally

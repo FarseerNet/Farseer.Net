@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FS.DI;
 using FS.MQ.RabbitMQ.Configuration;
+using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client.Exceptions;
@@ -100,7 +101,7 @@ namespace FS.MQ.RabbitMQ
             // 只获取一次
             var resp = _channel.BasicGet(_consumerConfig.QueueName, autoAck);
 
-            var result = false;
+            var result  = false;
             var message = Encoding.UTF8.GetString(resp.Body.ToArray());
             try
             {
@@ -108,7 +109,7 @@ namespace FS.MQ.RabbitMQ
             }
             catch (Exception e)
             {
-                IocManager.Instance.Logger.Error(e.Message);
+                IocManager.Instance.Logger<RabbitConsumer>().LogError(e, e.Message);
                 // 消费失败后处理
                 try
                 {
@@ -116,7 +117,7 @@ namespace FS.MQ.RabbitMQ
                 }
                 catch (Exception exception)
                 {
-                    IocManager.Instance.Logger.Error("失败处理出现异常：" +listener.GetType().FullName, exception);
+                    IocManager.Instance.Logger<RabbitConsumer>().LogError(exception, "失败处理出现异常：" + listener.GetType().FullName);
                     result = false;
                 }
             }
@@ -147,12 +148,12 @@ namespace FS.MQ.RabbitMQ
         private void Connect(IListenerMessage listener, bool autoAck = false)
         {
             Connect();
-            
+
             _channel.BasicQos(0, (ushort) _consumerConfig.ConsumeThreadNums, false);
             var consumer = new EventingBasicConsumer(_channel);
             consumer.Received += (model, ea) =>
             {
-                var result = false;
+                var result  = false;
                 var message = Encoding.UTF8.GetString(ea.Body.ToArray());
                 try
                 {
@@ -162,19 +163,19 @@ namespace FS.MQ.RabbitMQ
                 catch (AlreadyClosedException e) // rabbit被关闭了，重新打开链接
                 {
                     ReStart();
-                    IocManager.Instance.Logger.Error(listener.GetType().FullName, e);
+                    IocManager.Instance.Logger<RabbitConsumer>().LogError(e, listener.GetType().FullName);
                 }
                 catch (Exception e)
                 {
                     // 消费失败后处理
-                    IocManager.Instance.Logger.Error(listener.GetType().FullName, e);
+                    IocManager.Instance.Logger<RabbitConsumer>().LogError(e, listener.GetType().FullName);
                     try
                     {
                         result = listener.FailureHandling(message, model, ea);
                     }
                     catch (Exception exception)
                     {
-                        IocManager.Instance.Logger.Error("失败处理出现异常：" +listener.GetType().FullName, exception);
+                        IocManager.Instance.Logger<RabbitConsumer>().LogError(exception, "失败处理出现异常：" + listener.GetType().FullName);
                         result = false;
                     }
                 }

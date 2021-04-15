@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Reflection;
-using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
 using Castle.Windsor;
 
 namespace FS.DI
@@ -14,10 +14,11 @@ namespace FS.DI
         ///     依赖注入容器
         /// </summary>
         IWindsorContainer Container { get; }
+
         /// <summary>
         /// 日志接口
         /// </summary>
-        ILogger Logger { get; }
+        ILogger Logger<T>();
 
         /// <summary>
         ///     是否注册

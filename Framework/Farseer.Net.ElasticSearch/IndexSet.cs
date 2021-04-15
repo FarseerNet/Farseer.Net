@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using FS.DI;
 using FS.ElasticSearch.Internal;
 using FS.ElasticSearch.Map;
+using Microsoft.Extensions.Logging;
 using Nest;
+using Newtonsoft.Json;
 
 namespace FS.ElasticSearch
 {
@@ -62,7 +65,7 @@ namespace FS.ElasticSearch
             var result = Client.Index(new IndexRequest<TEntity>(model, SetMap.IndexName));
             if (!result.IsValid)
             {
-                //Logger.LogError($"索引失败：{model.ToJson()} \r\n" + result.OriginalException.Message);
+                IocManager.Instance.Logger<IndexSet<TEntity>>().LogError($"索引失败：{JsonConvert.SerializeObject(model)} \r\n" + result.OriginalException.Message);
             }
 
             return result.IsValid;

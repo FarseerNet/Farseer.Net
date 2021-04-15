@@ -5,6 +5,7 @@ using System.Reflection;
 using Castle.Core.Internal;
 using Castle.Core.Logging;
 using FS.DI;
+using Microsoft.Extensions.Logging;
 
 namespace FS.Reflection
 {
@@ -14,8 +15,8 @@ namespace FS.Reflection
     public class TypeFinder : ITypeFinder
     {
         private readonly IAssemblyFinder _assemblyFinder;
-        private readonly object _syncObj = new object();
-        private Type[] _types;
+        private readonly object          _syncObj = new object();
+        private          Type[]          _types;
 
         /// <summary>
         /// 构造函数
@@ -96,7 +97,7 @@ namespace FS.Reflection
                 }
                 catch (Exception ex)
                 {
-                    IocManager.Instance.Logger.Warn(ex.ToString(), ex);
+                    IocManager.Instance.Logger<TypeFinder>().LogWarning(ex, ex.ToString());
                 }
             }
 

@@ -8,6 +8,7 @@ using FS.MQ.RocketMQ.Configuration;
 using FS.MQ.RocketMQ.SDK.Http;
 using FS.MQ.RocketMQ.SDK.Http.Model;
 using FS.MQ.RocketMQ.SDK.Http.Model.exp;
+using Microsoft.Extensions.Logging;
 using Action = FS.MQ.RocketMQ.SDK.Action;
 
 namespace FS.MQ.RocketMQ
@@ -64,7 +65,7 @@ namespace FS.MQ.RocketMQ
                         {
                             if (exp is MessageNotExistException) continue;
 
-                            IocManager.Instance.Logger.Error("HttpRocketMQ拉取异常", exp);
+                            IocManager.Instance.Logger<HttpRocketMQConsumer>().LogError(exp,"HttpRocketMQ拉取异常");
                             Thread.Sleep(2000);
                         }
 
@@ -90,14 +91,14 @@ namespace FS.MQ.RocketMQ
                             {
                                 foreach (var errorItem in ackExp.ErrorItems)
                                 {
-                                    IocManager.Instance.Logger.Error($"Ack message fail, RequestId:{ackExp.RequestId}\tErrorHandle:{errorItem.ReceiptHandle},ErrorCode:{errorItem.ErrorCode},ErrorMsg:{errorItem.ErrorMessage}");
+                                    IocManager.Instance.Logger<HttpRocketMQConsumer>().LogError($"Ack message fail, RequestId:{ackExp.RequestId}\tErrorHandle:{errorItem.ReceiptHandle},ErrorCode:{errorItem.ErrorCode},ErrorMsg:{errorItem.ErrorMessage}");
                                 }
                             }
                         }
                     }
                     catch (Exception ex)
                     {
-                        IocManager.Instance.Logger.Error("HttpRocketMQ异常", ex);
+                        IocManager.Instance.Logger<HttpRocketMQConsumer>().LogError(ex,"HttpRocketMQ异常");
                         Thread.Sleep(2000);
                     }
                 }

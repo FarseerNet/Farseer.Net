@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Castle.Windsor.Installer;
@@ -18,12 +17,12 @@ namespace FS.DI
         /// <summary>
         ///     约定注册器列表（目前有：普用、MVC控制器）
         /// </summary>
-        private readonly List<IConventionalDependencyRegistrar> _conventionalRegistrars = new List<IConventionalDependencyRegistrar>();
+        private readonly List<IConventionalDependencyRegistrar> _conventionalRegistrars = new();
 
         /// <summary>
         /// 是否已注册过WindsorInstaller
         /// </summary>
-        private readonly Dictionary<Assembly, IWindsorInstaller> _isRegistrarWindsorInstaller = new Dictionary<Assembly, IWindsorInstaller>();
+        private readonly Dictionary<Assembly, IWindsorInstaller> _isRegistrarWindsorInstaller = new();
 
         /// <summary>
         ///     当前实例
@@ -33,8 +32,14 @@ namespace FS.DI
         /// <summary>
         /// 日志接口,没注册时，用默认的
         /// </summary>
-        public ILogger Logger => IsRegistered<ILogger>() ? Resolve<ILogger>() : new DefaultLogger(); // Microsoft.Extensions.Logging
-
+        public ILogger Logger<T>()
+        {
+            if (IsRegistered<ILogger<T>>()) return Resolve<ILogger<T>>();
+            var logger = Resolve<ILoggerFactory>().CreateLogger<T>();
+            Container.Register(Component.For<ILogger<T>>().Instance(logger).LifestyleSingleton());
+            return logger;
+        }
+        
         /// <summary>
         ///     构造函数
         /// </summary>

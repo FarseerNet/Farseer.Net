@@ -7,6 +7,7 @@ using FS.Core.Net;
 using FS.DI;
 using FS.Extends;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace FS
@@ -57,7 +58,7 @@ namespace FS
                     }
                     case { }:
                     {
-                        IocManager.Instance.Logger.Error($"{lst.ToString("\r\n")}\r\n{e.ToString()}");
+                        IocManager.Instance.Logger<ExceptionMiddleware>().LogError(e, $"{lst.ToString("\r\n")}\r\n{e}");
                         await HandleExceptionAsync(httpContext, "服务器开小差了", 500);
                         break;
                     }
