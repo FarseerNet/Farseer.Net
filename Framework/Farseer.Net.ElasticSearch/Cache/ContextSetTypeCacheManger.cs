@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using FS.Cache;
-using FS.Data.Internal;
+using FS.ElasticSearch.Internal;
 
-namespace FS.Data.Cache
+namespace FS.ElasticSearch.Cache
 {
     /// <summary>
     ///     保存派生Context的Set类型
@@ -15,7 +15,7 @@ namespace FS.Data.Cache
         /// <summary>
         ///     线程锁
         /// </summary>
-        private static readonly object LockObject = new object();
+        private static readonly object LockObject = new();
 
         private ContextSetTypeCacheManger(Type key) : base(key)
         {
@@ -27,11 +27,11 @@ namespace FS.Data.Cache
             {
                 if (CacheList.ContainsKey(Key)) { return CacheList[Key]; }
 
-                var dbContextParam = Expression.Parameter(typeof (DbContext), "_context");
+                var dbContextParam = Expression.Parameter(typeof (EsContext), "_context");
 
-                var initDelegates = new List<Action<DbContext>>();
+                var initDelegates = new List<Action<EsContext>>();
 
-                // 一个DbContext对象下的所有Set实体类型
+                // 一个EsContext对象下的所有Set实体类型
                 var setTypeList = new Dictionary<Type, List<string>>();
 
                 // 取得所有Set属性
@@ -40,7 +40,7 @@ namespace FS.Data.Cache
                     // 实体类型，Set的泛型类型
                     var entityType = entityMap.Value != null ? entityMap.Key.PropertyType.GetGenericArguments()[0] : null;
 
-                    // 查找这个Set类在当前DbContext中，出现过几次，并记录属性。
+                    // 查找这个Set类在当前EsContext中，出现过几次，并记录属性。
                     if (!setTypeList.TryGetValue(entityMap.Key.PropertyType, out var propertyName))
                     {
                         propertyName = new List<string>();
@@ -56,42 +56,22 @@ namespace FS.Data.Cache
                         MethodInfo setMethod = null;
                         switch (entityMap.Key.PropertyType.Name)
                         {
-                            case "TableSet`1":
-                                setMethod = SetInitializer.TableSetMethod.MakeGenericMethod(entityType);
-                                break;
-                            case "TableSetCache`1":
-                                setMethod = SetInitializer.TableSetCacheMethod.MakeGenericMethod(entityType);
-                                break;
-                            case "ViewSet`1":
-                                setMethod = SetInitializer.ViewSetMethod.MakeGenericMethod(entityType);
-                                break;
-                            case "ViewSetCache`1":
-                                setMethod = SetInitializer.ViewSetCacheMethod.MakeGenericMethod(entityType);
-                                break;
-                            case "ProcSet`1":
-                                setMethod = SetInitializer.ProcSetMethod.MakeGenericMethod(entityType);
-                                break;
-                            case "SqlSet`1":
-                                setMethod = SetInitializer.SqlSetMethod.MakeGenericMethod(entityType);
-                                break;
-                            case "SqlSet":
-                                setMethod = SetInitializer.SqlSetNonGenericMethod;
+                            case "IndexSet`1":
+                                setMethod = SetInitializer.IndexSetMethod.MakeGenericMethod(entityType);
                                 break;
                         }
 
                         // 取得实例化
-                        //var dbContextInitializer = typeof(DbContext).GetField("_dbContextInitializer", BindingFlags.NonPublic | BindingFlags.Instance);
-                        //var newExpression = Expression.Call(Expression.MakeMemberAccess(dbContextParam, dbContextInitializer), setMethod, Expression.Constant(entityMap.Key));
                         var newExpression = Expression.Call(dbContextParam, setMethod, Expression.Constant(entityMap.Key));
 
                         // 赋值
                         var setExpression = Expression.Call(Expression.Convert(dbContextParam, Key), setter, newExpression);
-                        initDelegates.Add(Expression.Lambda<Action<DbContext>>(setExpression, dbContextParam).Compile());
+                        initDelegates.Add(Expression.Lambda<Action<EsContext>>(setExpression, dbContextParam).Compile());
                     }
                 }
 
                 // 实体化所有Set属性
-                Action<DbContext> initializer = context => { foreach (var initer in initDelegates) { initer(context); } };
+                Action<EsContext> initializer = context => { foreach (var initer in initDelegates) { initer(context); } };
                 var setInfo = new SetTypesInitializersPair(setTypeList, initializer);
                 CacheList.Add(Key, setInfo);
                 return setInfo;

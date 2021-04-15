@@ -20,8 +20,8 @@ namespace FS.Configuration
         /// <returns></returns>
         public object this[string name]
         {
-            get { return CustomSettings.ContainsKey(name) ? CustomSettings[name] : null; }
-            set { CustomSettings[name] = value; }
+            get => CustomSettings.ContainsKey(name) ? CustomSettings[name] : null;
+            set => CustomSettings[name] = value;
         }
 
         /// <summary>

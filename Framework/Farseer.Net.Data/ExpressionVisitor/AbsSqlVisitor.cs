@@ -31,7 +31,7 @@ namespace FS.Data.ExpressionVisitor
         /// <summary>
         ///     当前字段
         /// </summary>
-        protected KeyValuePair<PropertyInfo, FieldMapState> CurrentField;
+        protected KeyValuePair<PropertyInfo, DbFieldMapState> CurrentField;
 
         /// <summary>
         ///     当前值参数
@@ -276,7 +276,7 @@ namespace FS.Data.ExpressionVisitor
         ///     加入字段到队列中
         /// </summary>
         /// <param name="keyValue">当前字段属性</param>
-        protected virtual void VisitMemberAccess(KeyValuePair<PropertyInfo, FieldMapState> keyValue)
+        protected virtual void VisitMemberAccess(KeyValuePair<PropertyInfo, DbFieldMapState> keyValue)
         {
             SqlList.Push(keyValue.Value.Field.IsFun ? keyValue.Value.Field.Name : DbProvider.KeywordAegis(keyValue.Value.Field.Name));
         }

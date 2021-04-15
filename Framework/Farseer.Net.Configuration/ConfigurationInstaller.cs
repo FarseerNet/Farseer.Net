@@ -1,7 +1,9 @@
-﻿using Castle.MicroKernel.Registration;
+﻿using System;
+using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using FS.Configuration.Format;
+using Microsoft.Extensions.Configuration;
 
 namespace FS.Configuration
 {
@@ -21,6 +23,14 @@ namespace FS.Configuration
             container.Register(
             Component.For<IConfigFormat, JsonConfigFormat>().ImplementedBy<JsonConfigFormat>().LifestyleSingleton(),
             Component.For<IConfigResolver, LocalConfigResolver>().ImplementedBy<LocalConfigResolver>().LifestyleSingleton().Named("LocalConfigResolver"));
+            
+            // 注册配置文件
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json",                                                                 optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true) //增加环境配置文件
+                .AddEnvironmentVariables()
+                .Build();
+            container.Register(Component.For<IConfigurationRoot>().Instance(configuration).LifestyleSingleton());
         }
     }
 }

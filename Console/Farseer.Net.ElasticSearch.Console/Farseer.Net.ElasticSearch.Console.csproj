@@ -1,19 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.0</TargetFramework>
         <OutputType>Exe</OutputType>
+        <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\..\Framework\Farseer.Net.Configuration\Farseer.Net.Configuration.csproj" />
-      <ProjectReference Include="..\..\Framework\Farseer.Net.MQ.RocketMQ\Farseer.Net.MQ.RocketMQ.csproj" />
+      <ProjectReference Include="..\..\Framework\Farseer.Net.ElasticSearch\Farseer.Net.ElasticSearch.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="App_Data\Farseer.Net.json">
+      <None Remove="appsettings.json" />
+      <Content Include="appsettings.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
+      </Content>
     </ItemGroup>
 
 </Project>

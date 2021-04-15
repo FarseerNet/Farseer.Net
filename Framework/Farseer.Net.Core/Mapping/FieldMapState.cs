@@ -32,10 +32,5 @@ namespace FS.Core.Mapping
         ///     正则
         /// </summary>
         public RegularExpressionAttribute RegularExpression { get; set; }
-
-        /// <summary>
-        ///     数据库字段设置
-        /// </summary>
-        public FieldAttribute Field { get; set; }
     }
 }

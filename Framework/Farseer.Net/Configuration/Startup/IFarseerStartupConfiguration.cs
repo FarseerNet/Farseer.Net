@@ -14,16 +14,6 @@ namespace FS.Configuration.Startup
         IIocManager IocManager { get; }
 
         /// <summary>
-        /// 默认的数据库连接字符串
-        /// </summary>
-        string DefaultNameOrConnectionString { get; set; }
-
-        /// <summary>
-        /// 模块配置接口
-        /// </summary>
-        IModuleConfigurations Modules { get; }
-
-        /// <summary>
         /// 替换服务类型
         /// </summary>
         /// <param name="type">要替换的类型</param>

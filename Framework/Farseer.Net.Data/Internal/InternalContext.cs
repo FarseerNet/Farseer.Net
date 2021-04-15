@@ -115,8 +115,6 @@ namespace FS.Data.Internal
 
             // 数据库提供者
             DbProvider = AbsDbProvider.CreateInstance(ContextConnection.DbType, ContextConnection.DataVer);
-
-            var dbconfig = IocManager.Instance.Resolve<IConfigResolver>().DbConfig();
             
             // 默认SQL执行者
             Executeor = new ExecuteSql(new DbExecutor(ContextConnection.ConnectionString, ContextConnection.DbType, ContextConnection.CommandTimeout, !IsUnitOfWork && DbProvider.IsSupportTransaction ? IsolationLevel.RepeatableRead : IsolationLevel.Unspecified), this);

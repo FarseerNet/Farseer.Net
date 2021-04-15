@@ -6,9 +6,9 @@
     public class ElasticSearchItemConfig
     {
         /// <summary> 集群名称 </summary>
-        public string Name = ".";
+        public string Name { get; set; }
 
         /// <summary> 集群地址,多个地址用逗号隔开 </summary>
-        public string Server = "";
+        public string Server { get; set; }
     }
 }

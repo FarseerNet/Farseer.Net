@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using FS.Core.Mapping;
 using FS.Data.Client;
-using FS.Data.Infrastructure;
 using FS.Data.Map;
 using FS.Utils.Common;
 
@@ -36,7 +35,7 @@ namespace FS.Data.ExpressionVisitor
         ///     加入字段到队列中
         /// </summary>
         /// <param name="keyValue">当前字段属性</param>
-        protected override void VisitMemberAccess(KeyValuePair<PropertyInfo, FieldMapState> keyValue)
+        protected override void VisitMemberAccess(KeyValuePair<PropertyInfo, DbFieldMapState> keyValue)
         {
             SqlList.Push(keyValue.Value.Field.IsFun ? CurrentFieldName + " as " + keyValue.Key.Name : DbProvider.KeywordAegis(CurrentFieldName));
         }

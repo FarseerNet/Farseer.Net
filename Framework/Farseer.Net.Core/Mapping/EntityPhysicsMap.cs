@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
-using FS.Core.Mapping.Attribute;
 
 namespace FS.Core.Mapping
 {
@@ -26,7 +25,7 @@ namespace FS.Core.Mapping
         /// <summary>
         ///     类型
         /// </summary>
-        internal Type Type { get; set; }
+        internal Type Type { get; }
 
         /// <summary>
         ///     关系映射
@@ -57,42 +56,37 @@ namespace FS.Core.Mapping
                 foreach (var item in vals)
                 {
                     // 字符串长度
-                    if (item is StringLengthAttribute)
+                    if (item is StringLengthAttribute stringLengthAtt)
                     {
-                        var att = (StringLengthAttribute)item;
-                        if (string.IsNullOrEmpty(att.ErrorMessage))
+                        if (string.IsNullOrEmpty(stringLengthAtt.ErrorMessage))
                         {
-                            if (att.MinimumLength > 0 && att.MaximumLength > 0) { att.ErrorMessage = $"{modelAtt.Display.Name}，长度范围必须为：{att.MinimumLength} - {att.MaximumLength} 个字符之间！"; }
-                            else if (att.MaximumLength > 0) { att.ErrorMessage = $"{modelAtt.Display.Name}，长度不能大于{att.MaximumLength}个字符！"; }
+                            if (stringLengthAtt.MinimumLength > 0 && stringLengthAtt.MaximumLength > 0) { stringLengthAtt.ErrorMessage = $"{modelAtt.Display.Name}，长度范围必须为：{stringLengthAtt.MinimumLength} - {stringLengthAtt.MaximumLength} 个字符之间！"; }
+                            else if (stringLengthAtt.MaximumLength > 0) { stringLengthAtt.ErrorMessage = $"{modelAtt.Display.Name}，长度不能大于{stringLengthAtt.MaximumLength}个字符！"; }
                             else
-                            { att.ErrorMessage = $"{modelAtt.Display.Name}，长度不能小于{att.MinimumLength}个字符！"; }
+                            { stringLengthAtt.ErrorMessage = $"{modelAtt.Display.Name}，长度不能小于{stringLengthAtt.MinimumLength}个字符！"; }
                         }
                     }
 
                     // 是否必填
-                    else if (item is RequiredAttribute)
+                    else if (item is RequiredAttribute requiredAtt)
                     {
-                        var att = (RequiredAttribute)item;
-                        if (string.IsNullOrEmpty(att.ErrorMessage))
+                        if (string.IsNullOrEmpty(requiredAtt.ErrorMessage))
                         {
-                            att.ErrorMessage = $"{modelAtt.Display.Name}，不能为空！";
+                            requiredAtt.ErrorMessage = $"{modelAtt.Display.Name}，不能为空！";
                         }
                     }
                     // 范围
-                    else if (item is RangeAttribute)
+                    else if (item is RangeAttribute rangeAtt)
                     {
-                        var att = (RangeAttribute)item;
-                        if (string.IsNullOrEmpty(att.ErrorMessage))
+                        if (string.IsNullOrEmpty(rangeAtt.ErrorMessage))
                         {
-                            decimal minnum;
-                            decimal.TryParse(att.Minimum.ToString(), out minnum);
-                            decimal maximum;
-                            decimal.TryParse(att.Minimum.ToString(), out maximum);
+                            decimal.TryParse(rangeAtt.Minimum.ToString(), out var minnum);
+                            decimal.TryParse(rangeAtt.Minimum.ToString(), out var maximum);
 
-                            if (minnum > 0 && maximum > 0) { att.ErrorMessage = $"{modelAtt.Display.Name}，的值范围必须为：{minnum} - {maximum} 之间！"; }
-                            else if (maximum > 0) { att.ErrorMessage = $"{modelAtt.Display.Name}，的值不能大于{maximum}！"; }
+                            if (minnum > 0 && maximum > 0) { rangeAtt.ErrorMessage = $"{modelAtt.Display.Name}，的值范围必须为：{minnum} - {maximum} 之间！"; }
+                            else if (maximum > 0) { rangeAtt.ErrorMessage = $"{modelAtt.Display.Name}，的值不能大于{maximum}！"; }
                             else
-                            { att.ErrorMessage = $"{modelAtt.Display.Name}，的值不能小于{minnum}！"; }
+                            { rangeAtt.ErrorMessage = $"{modelAtt.Display.Name}，的值不能小于{minnum}！"; }
                         }
                     }
                     modelAtt.ValidationList.Add((ValidationAttribute)item);

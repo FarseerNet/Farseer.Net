@@ -23,8 +23,7 @@ namespace FS.Configuration.Startup
         /// 模块配置
         /// </summary>
         public IModuleConfigurations Modules { get; private set; }
-
-
+        
         /// <summary>
         /// 需要替换服务的操作字典
         /// </summary>
