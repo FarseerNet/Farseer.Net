@@ -49,7 +49,10 @@ namespace FS.ElasticSearch
             WhenNotExistsAddIndex();
         }
 
-        protected IElasticClient Client { get; }
+        /// <summary>
+        /// ES客户端
+        /// </summary>
+        public IElasticClient Client { get; }
 
         /// <summary>
         /// 写入数据
