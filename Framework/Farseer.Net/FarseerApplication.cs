@@ -112,7 +112,7 @@ namespace FS
                 RegisterBootstrapper();
                 IocManager.Container.Install(new FarseerInstaller());
 
-                IocManager.Logger<FarseerApplication>().LogInformation("-------------------------------------------------");
+                //IocManager.Logger<FarseerApplication>().LogInformation("-------------------------------------------------");
                 IocManager.Logger<FarseerApplication>().LogInformation("注册系统核心组件");
 
                 IocManager.Resolve<FarseerStartupConfiguration>().Initialize();
@@ -120,7 +120,7 @@ namespace FS
                 _moduleManager.Initialize(StartupModule);
                 _moduleManager.StartModules();
                 IocManager.Logger<FarseerApplication>().LogInformation($"系统初始化完毕，耗时{(DateTime.Now - dt).TotalMilliseconds:n}ms");
-                IocManager.Logger<FarseerApplication>().LogInformation("-------------------------------------------------");
+                //IocManager.Logger<FarseerApplication>().LogInformation("-------------------------------------------------");
             }
             catch (Exception ex)
             {
