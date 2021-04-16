@@ -1,8 +1,11 @@
-﻿using Castle.MicroKernel.Registration;
+﻿using System.Linq;
+using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
+using FS.Cache.Redis.Configuration;
 using FS.Configuration;
 using FS.DI;
+using Microsoft.Extensions.Configuration;
 
 namespace FS.Cache.Redis
 {
@@ -32,22 +35,17 @@ namespace FS.Cache.Redis
         /// <param name="store"></param>
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
-            var localConfigResolver = IocManager.Instance.Resolve<IConfigResolver>();
-            InitRedisConfig(container, localConfigResolver);
-        }
-
-        private void InitRedisConfig(IWindsorContainer container, IConfigResolver localConfigResolver)
-        {
-            if (localConfigResolver.RedisConfig().Items.Count == 0) { return; }
-
-            localConfigResolver.RedisConfig().Items.ForEach(m =>
+            // 读取配置
+            var configurationSection = IocManager.Instance.Resolve<IConfigurationRoot>().GetSection("Redis");
+            var redisItemConfigs     = configurationSection.GetChildren().Select(o => o.Get<RedisItemConfig>());
+            foreach (var redisItemConfig in redisItemConfigs)
             {
                 // 注册Redis连接
-                container.Register(Component.For<IRedisConnectionWrapper>().Named($"{m.Name}_connection").ImplementedBy<RedisConnectionWrapper>().DependsOn(Dependency.OnValue(m.GetType(), m)).LifestyleSingleton());
+                container.Register(Component.For<IRedisConnectionWrapper>().Named($"{redisItemConfig.Name}_connection").ImplementedBy<RedisConnectionWrapper>().DependsOn(Dependency.OnValue(redisItemConfig.GetType(), redisItemConfig)).LifestyleSingleton());
 
                 // 注册Redis管理
-                container.Register(Component.For<IRedisCacheManager>().Named(m.Name).ImplementedBy<RedisCacheManager>().DependsOn(Dependency.OnValue(m.GetType(), m), Dependency.OnValue(typeof(IRedisConnectionWrapper), _iocResolver.Resolve<IRedisConnectionWrapper>($"{m.Name}_connection"))).LifestyleSingleton());
-            });
+                container.Register(Component.For<IRedisCacheManager>().Named(redisItemConfig.Name).ImplementedBy<RedisCacheManager>().DependsOn(Dependency.OnValue(redisItemConfig.GetType(), redisItemConfig), Dependency.OnValue(typeof(IRedisConnectionWrapper), _iocResolver.Resolve<IRedisConnectionWrapper>($"{redisItemConfig.Name}_connection"))).LifestyleSingleton());
+            }
         }
     }
 }
