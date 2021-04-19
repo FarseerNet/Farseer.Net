@@ -6,6 +6,7 @@ using Castle.Windsor;
 using FS.Configuration;
 using FS.DI;
 using FS.Log.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace FS.Log
 {
@@ -24,7 +25,7 @@ namespace FS.Log
         {
             _iocResolver = iocResolver;
         }
-
+        
         /// <summary>
         /// 通过IOC注册NLog管理接口
         /// </summary>
@@ -32,27 +33,12 @@ namespace FS.Log
         /// <param name="store"></param>
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
-            var localConfigResolver = IocManager.Instance.Resolve<IConfigResolver>();
-            if (localConfigResolver.NLogConfig()  == null) { return; }
-
-            container.AddFacility<LoggingFacility>(f => f.LogUsing(new ExtendedNLogFactory(NLogConfigrationProvider.CreateConfigration(localConfigResolver.NLogConfig()))));
+            // 读取配置
+            var configurationSection = container.Resolve<IConfigurationRoot>().GetSection("NLog");
+            var nLog                 = configurationSection.Get<NLogConfig>();
             
-            //container.Register(
-            //       Component.For<INLogManager>()
-            //           .Named(localConfigResolver.NLogConfig().Name)
-            //           .ImplementedBy<NLogManager>()
-            //           //.DependsOn(Dependency.OnValue(typeof(IConfigResolver), localConfigResolver.NLogConfig()))
-            //           .LifestyleSingleton());
-
-            //localConfigResolver.NLogConfig().Items.ForEach(m =>
-            //{
-            //    // 注册ES连接
-            //    container.Register(
-            //        Component.For<INLogManager>()
-            //            .Named(m.Name)
-            //            .ImplementedBy<NLogManager>()
-            //            .DependsOn(Dependency.OnValue(m.GetType(), m)).LifestyleSingleton());
-            //});
+            container.AddFacility<LoggingFacility>(f => f
+                .LogUsing(new ExtendedNLogFactory(NLogConfigrationProvider.CreateConfigration(nLog))));
         }
     }
 }

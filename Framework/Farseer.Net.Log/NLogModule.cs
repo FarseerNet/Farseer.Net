@@ -14,8 +14,6 @@ namespace FS.Log
         /// </summary>
         public override void PreInitialize()
         {
-            var configResolver = IocManager.Resolve<IConfigResolver>();
-            InitConfig(configResolver);
         }
 
         /// <summary>
@@ -25,16 +23,6 @@ namespace FS.Log
         {
             IocManager.Container.Install(new NLogInstaller(IocManager));
             IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly(), new ConventionalRegistrationConfig { InstallInstallers = false });
-        }
-
-        private static void InitConfig(IConfigResolver configResolver)
-        {
-            var config = configResolver.NLogConfig();
-            if (config == null || config.AppName == null)
-            {
-                configResolver.Set(new NLogConfig {AppName = "Default"} );
-                configResolver.Save();
-            }
         }
     }
 }
