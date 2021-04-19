@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Framework\Farseer.Net.Configuration\Farseer.Net.Configuration.csproj" />
-    <ProjectReference Include="..\..\Framework\Farseer.Net.MQ.RocketMQ\Farseer.Net.MQ.RocketMQ.csproj" />
+    <ProjectReference Include="..\..\Framework\Farseer.Net.MQ.Rocket\Farseer.Net.MQ.Rocket.csproj" />
     <ProjectReference Include="..\..\Framework\Farseer.Net.Utils\Farseer.Net.Utils.csproj" />
   </ItemGroup>
 

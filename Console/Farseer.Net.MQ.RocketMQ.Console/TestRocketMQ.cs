@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using FS.DI;
+using FS.MQ.Rocket;
 using FS.MQ.RocketMQ;
 using FS.MQ.RocketMQ.SDK;
 using Action = FS.MQ.RocketMQ.SDK.Action;
@@ -21,7 +22,7 @@ namespace Farseer.Net.MQ.RocketMQ.Console
         /// </summary>
         public static void SendMessage(string readLine)
         {
-            var rocket = IocManager.Instance.Resolve<IRocketMQManager>(readLine);
+            var rocket = IocManager.Instance.Resolve<IRocketManager>(readLine);
             try
             {
                 var startAt = DateTime.Now;
@@ -42,7 +43,7 @@ namespace Farseer.Net.MQ.RocketMQ.Console
         /// </summary>
         public static void Consumer(string readLine)
         {
-            var rocket = IocManager.Instance.Resolve<IRocketMQManager>(readLine);
+            var rocket = IocManager.Instance.Resolve<IRocketManager>(readLine);
             try
             {
                 rocket.Consumer.Start(SaveDbListener.Instance, "testTag");

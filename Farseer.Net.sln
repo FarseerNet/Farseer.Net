@@ -29,7 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Farseer.Net.ElasticSearch",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Farseer.Net.Web.Mvc", "Framework\Farseer.Net.Web.Mvc\Farseer.Net.Web.Mvc.csproj", "{F9E459E9-AD54-4166-869A-5A4C2E27855F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Farseer.Net.MQ.RocketMQ", "Framework\Farseer.Net.MQ.RocketMQ\Farseer.Net.MQ.RocketMQ.csproj", "{B6B866CD-0014-4763-B3E9-72F5EC4175D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Farseer.Net.MQ.Rocket", "Framework\Farseer.Net.MQ.Rocket\Farseer.Net.MQ.Rocket.csproj", "{B6B866CD-0014-4763-B3E9-72F5EC4175D2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Farseer.Net.MQ.Kafka", "Framework\Farseer.Net.MQ.Kafka\Farseer.Net.MQ.Kafka.csproj", "{BD2474BB-5430-49C2-9B8F-32968451CB71}"
 EndProject
