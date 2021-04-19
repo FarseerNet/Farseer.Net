@@ -23,6 +23,12 @@ namespace FS.Reflection
         {
             _moduleManager = moduleManager;
         }
+        
+        
+        /// <summary>
+        /// 找继承TType接口的实现类
+        /// </summary>
+        public Type[] GetType<TType>() => GetAllAssemblies().SelectMany(a => a.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(TType)))).ToArray();
 
         /// <summary>
         /// 获取所有的程序集
@@ -37,6 +43,7 @@ namespace FS.Reflection
                 assemblies.Add(module.Assembly);
                 assemblies.AddRange(module.Instance.GetAdditionalAssemblies());
             }
+
             assemblies.AddRange(GetAssembliesFromFolder());
 
             return assemblies.Distinct().ToList();
@@ -49,20 +56,35 @@ namespace FS.Reflection
         public List<Assembly> GetAssembliesFromFolder()
         {
             var assemblies = new List<Assembly>();
-            var files = Directory.GetFiles($"{AppContext.BaseDirectory}", "*.dll");
+            var files      = Directory.GetFiles($"{AppContext.BaseDirectory}", "*.dll");
             foreach (var file in files)
             {
-	            try
-	            {
+                try
+                {
                     assemblies.Add(Assembly.Load(AssemblyLoadContext.GetAssemblyName(file)));
                 }
-				catch (Exception)
+                catch (Exception)
                 {
                     // ignored 失败的原因是非托管程序
                 }
             }
 
             return assemblies;
+        }
+
+
+        /// <summary>
+        /// 从文件夹中获取所有的程序集
+        /// </summary>
+        /// <param name="folderPath"></param>
+        /// <param name="searchOption"></param>
+        public List<Assembly> GetAssembliesFromFolder(string folderPath, SearchOption searchOption)
+        {
+            var assemblyFiles = Directory
+                .EnumerateFiles(folderPath, "*.*", searchOption)
+                .Where(s => s.EndsWith(".dll") || s.EndsWith(".exe"));
+
+            return assemblyFiles.Select(o => Assembly.Load(AssemblyLoadContext.GetAssemblyName(o))).ToList();
         }
     }
 }

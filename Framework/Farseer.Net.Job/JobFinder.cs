@@ -16,16 +16,11 @@ namespace FS.Job
         internal static List<JobEntity> JobList = new List<JobEntity>();
 
         /// <summary>
-        /// 找继承IJob接口的实现类
-        /// </summary>
-        public Type[] FindJobType() => IocManager.Instance.Resolve<IAssemblyFinder>().GetAllAssemblies().SelectMany(a => a.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IJob)))).ToArray();
-
-        /// <summary>
         /// 注册实现继承IJob接口的实现类
         /// </summary>
         public void RegisterJob()
         {
-            var types = FindJobType();
+            var types = IocManager.Instance.Resolve<IAssemblyFinder>().GetType<IJob>();
             JobList.Clear();
             for (int i = 0; i < types.Length; i++)
             {

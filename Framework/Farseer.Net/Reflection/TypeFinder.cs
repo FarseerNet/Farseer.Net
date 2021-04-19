@@ -15,13 +15,12 @@ namespace FS.Reflection
     public class TypeFinder : ITypeFinder
     {
         private readonly IAssemblyFinder _assemblyFinder;
-        private readonly object          _syncObj = new object();
+        private readonly object          _syncObj = new();
         private          Type[]          _types;
 
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="assemblyFinder"></param>
         public TypeFinder(IAssemblyFinder assemblyFinder)
         {
             _assemblyFinder = assemblyFinder;
@@ -30,8 +29,6 @@ namespace FS.Reflection
         /// <summary>
         /// 查找类型
         /// </summary>
-        /// <param name="predicate"></param>
-        /// <returns></returns>
         public Type[] Find(Func<Type, bool> predicate)
         {
             return GetAllTypes().Where(predicate).ToArray();
@@ -40,13 +37,11 @@ namespace FS.Reflection
         /// <summary>
         /// 查找所有的类型
         /// </summary>
-        /// <returns></returns>
         public Type[] FindAll() => GetAllTypes().ToArray();
 
         /// <summary>
         /// 获取所有的类型
         /// </summary>
-        /// <returns></returns>
         private Type[] GetAllTypes()
         {
             if (_types == null)

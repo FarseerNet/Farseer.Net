@@ -34,19 +34,13 @@ namespace FS.Reflection
         /// <summary>
         ///     是否基元类型，包括Nullable类型
         /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
         public static bool IsPrimitiveExtendedIncludingNullable(Type type)
         {
             if (IsPrimitiveExtended(type)) return true;
 
             if (type.GetTypeInfo().IsGenericType && (type.GetGenericTypeDefinition() == typeof(Nullable<>)))
             {
-#if NET40
-                return IsPrimitiveExtended(type.GetGenericArguments()[0]);
-#else
                 return IsPrimitiveExtended(type.GenericTypeArguments[0]);
-#endif
             }
             return false;
         }
@@ -54,8 +48,6 @@ namespace FS.Reflection
         /// <summary>
         ///     是否基元类型
         /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
         private static bool IsPrimitiveExtended(Type type)
         {
             if (type.GetTypeInfo().IsPrimitive) return true;
