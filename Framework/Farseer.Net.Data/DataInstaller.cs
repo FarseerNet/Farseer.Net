@@ -7,7 +7,6 @@ using FS.Data.Client;
 using FS.Data.Configuration;
 using FS.Data.Infrastructure;
 using FS.Data.Internal;
-using FS.DI;
 using Microsoft.Extensions.Configuration;
 
 namespace FS.Data
@@ -18,20 +17,6 @@ namespace FS.Data
     public class DataInstaller : IWindsorInstaller
     {
         /// <summary>
-        /// 依赖获取接口
-        /// </summary>
-        private readonly IIocResolver _iocResolver;
-
-        /// <summary>
-        /// 构造函数
-        /// </summary>
-        /// <param name="iocResolver"></param>
-        public DataInstaller(IIocResolver iocResolver)
-        {
-            _iocResolver = iocResolver;
-        }
-
-        /// <summary>
         /// 注册依赖
         /// </summary>
         /// <param name="container"></param>
@@ -39,7 +24,7 @@ namespace FS.Data
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             // 读取配置
-            var configurationSection = IocManager.Instance.Resolve<IConfigurationRoot>().GetSection("Database");
+            var configurationSection = container.Resolve<IConfigurationRoot>().GetSection("Database");
             var dbConfig             = configurationSection.Get<DbConfig>();
             if (dbConfig.Items.Count == 0) { return; }
             dbConfig.Items.ForEach(m =>
@@ -54,7 +39,8 @@ namespace FS.Data
                         Dependency.OnValue(dbConnectionString.GetType(), dbConnectionString),
                         Dependency.OnValue(m.DataType.GetType(), m.DataType),
                         Dependency.OnValue(m.CommandTimeout.GetType(), m.CommandTimeout),
-                        Dependency.OnValue(m.DataType.GetType(), m.DataType)).LifestyleSingleton());
+                        Dependency.OnValue(m.DataType.GetType(), m.DataType))
+                    .LifestyleSingleton());
             });
 
             // 代理异常记录

@@ -1,6 +1,7 @@
 ﻿using FS.Data.Infrastructure;
 
-namespace FS.Data.Configuration {
+namespace FS.Data.Configuration
+{
     /// <summary> 数据库连接配置 </summary>
     public class DbItemConfig
     {

@@ -1,9 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
+using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
+using Castle.MicroKernel.Registration;
 using FS.Configuration;
+using FS.Data.Client;
 using FS.Data.Configuration;
+using FS.Data.Internal;
 using FS.DI;
 using FS.Modules;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Primitives;
 
 namespace FS.Data
 {
@@ -17,19 +24,16 @@ namespace FS.Data
         /// </summary>
         public override void PreInitialize()
         {
-            // 如果Db配置没有创建，则创建它
-            var configResolver = IocManager.Resolve<IConfigResolver>();
-            InitConfig(configResolver);
         }
-
-        private void InitConfig(IConfigResolver configResolver)
+        
+        public static void OnChange(Func<IChangeToken> changeTokenProducer, Action changeTokenConsumer)
         {
-            var config = configResolver.DbConfig();
-            if (config == null)
+            var token = changeTokenProducer();
+            token.RegisterChangeCallback(_ =>
             {
-                configResolver.Set(config = new DbConfig { Items = new List<DbItemConfig> { new DbItemConfig { Name = "testDb", Server = "127.0.0.1" } } });
-                configResolver.Save();
-            }
+                changeTokenConsumer();
+                OnChange(changeTokenProducer, changeTokenConsumer);
+            }, new object());
         }
 
         /// <summary>
@@ -37,7 +41,7 @@ namespace FS.Data
         /// </summary>
         public override void Initialize()
         {
-            IocManager.Container.Install(new DataInstaller(IocManager));
+            IocManager.Container.Install(new DataInstaller());
             IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly(), new ConventionalRegistrationConfig { InstallInstallers = false });
         }
     }

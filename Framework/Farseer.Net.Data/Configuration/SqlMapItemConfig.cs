@@ -1,6 +1,7 @@
 ﻿using System;
 
-namespace FS.Data.Configuration {
+namespace FS.Data.Configuration
+{
     /// <summary> SQL语句配置 </summary>
     [Serializable]
     public class SqlMapItemConfig

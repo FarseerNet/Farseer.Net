@@ -1,10 +1,12 @@
 ﻿using System.Data.Common;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using FS.Configuration;
 using FS.Data.Configuration;
 using FS.Data.Infrastructure;
 using FS.DI;
+using Microsoft.Extensions.Configuration;
 
 namespace FS.Data
 {
@@ -20,8 +22,10 @@ namespace FS.Data
             get
             {
                 if (_map != null) return _map;
-                var name = Context.ContextType.FullName + "." + SetMap.TableName;
-                return _map = IocManager.Instance.Resolve<IConfigResolver>().SqlMapConfig().Items.Find(o=>o.Name==name);
+                var name                 = Context.ContextType.FullName + "." + SetMap.TableName;
+                var configurationSection = IocManager.Instance.Resolve<IConfigurationRoot>().GetSection("SqlMap");
+                var sqlMapItemConfigs    = configurationSection.GetChildren().Select(o => o.Get<SqlMapItemConfig>()).ToList();
+                return _map = sqlMapItemConfigs.Find(o => o.Name == name);
             }
         }
 

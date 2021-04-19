@@ -1,6 +1,7 @@
 ﻿
 using System;
 using FS;
+using FS.DI;
 
 namespace Farseer.Net.ElasticSearch.Console
 {
