@@ -7,12 +7,13 @@ using System.Transactions;
 using FS;
 using FS.DI;
 using FS.MQ.Rabbit;
+using FS.MQ.Rabbit.Attr;
 using FS.Utils.Common;
 using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
 
 namespace Farseer.Net.MQ.RabbitMQ.Console
 {
+    [Rabbit]
     class Program
     {
         private static string queueName = "aaaa";
@@ -20,57 +21,20 @@ namespace Farseer.Net.MQ.RabbitMQ.Console
         static void Main(string[] args)
         {
             FarseerApplication.Run<StartupModule>().Initialize();
-            IocManager.Instance.Resolve<IRabbitManager>("test1").CreateQueue("aaaa1");
-            IocManager.Instance.Resolve<IRabbitManager>("test1").CreateQueue("aaaa2");
-            
-            System.Console.WriteLine("请输入：1）发送；2）消费");
-            switch (System.Console.ReadLine())
-            {
-                case "2":
-                {
-                    System.Console.Title = "消费";
-                    Consumer();
-                    break;
-                }
-                case "1":
-                {
-                    System.Console.Title = "发送";
-                    SendMessage();
-                    break;
-                }
-            }
+            Thread.Sleep(-1);
+            //SendMessage();
         }
 
         private static void SendMessage()
         {
-            //IocManager.Instance.Resolve<IRabbitManager>("test1").CreateQueue();
-
             Parallel.For(0, 10000000, new ParallelOptions {MaxDegreeOfParallelism = 64}, i =>
             {
                 var message = $"PID:{Process.GetCurrentProcess().Id} index:{i},Time：{DateTime.Now}";
 
-                if (i%2 == 0) IocManager.Instance.Resolve<IRabbitManager>("test1").Product.Send(message, "aaaa1");
-                else IocManager.Instance.Resolve<IRabbitManager>("test1").Product.Send(message, "aaaa2");
+                if (i%2 == 0) IocManager.Instance.Resolve<IRabbitManager>("test1").Product.Send(message, "");
+                else IocManager.Instance.Resolve<IRabbitManager>("test1").Product.Send(message, "");
                 System.Console.WriteLine(message);
             });
         }
-
-        public static void Consumer()
-        {
-            IocManager.Instance.Resolve<IRabbitManager>("aaaa1").Consumer.Start(new ListenMessage());
-            //IocManager.Instance.Resolve<IRabbitManager>("aaaa2").Consumer.Start(new ListenMessage());
-            Thread.Sleep(-1);
-        }
-    }
-
-    public class ListenMessage : IListenerMessage
-    {
-        public bool Consumer(string message, object sender, BasicDeliverEventArgs ea)
-        {
-            System.Console.WriteLine(ea.ConsumerTag + "接收到信息为:" + message);
-            return true;
-        }
-
-        public bool FailureHandling(string message, object sender, BasicDeliverEventArgs ea) => throw new NotImplementedException();
     }
 }

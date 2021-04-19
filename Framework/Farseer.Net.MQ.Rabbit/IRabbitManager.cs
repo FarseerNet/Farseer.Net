@@ -13,11 +13,6 @@ namespace FS.MQ.Rabbit
         IRabbitProduct Product { get; }
 
         /// <summary>
-        ///     消费普通消息
-        /// </summary>
-        IRabbitConsumer Consumer { get; }
-
-        /// <summary>
         /// 创建队列
         /// </summary>
         /// <param name="queueName">队列名称</param>

@@ -16,9 +16,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="App_Data\Farseer.Net.json">
+      <Content Include="appsettings.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
+      </Content>
     </ItemGroup>
 
 </Project>

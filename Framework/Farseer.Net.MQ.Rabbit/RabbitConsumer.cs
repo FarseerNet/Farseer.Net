@@ -63,9 +63,6 @@ namespace FS.MQ.Rabbit
             this._consumeThreadNums     = consumeThreadNums;
             this._queueName             = queueName;
             this._lastAckAt             = DateTime.Now;
-            
-            if (_lastAckTimeoutRestart == 0) _lastAckTimeoutRestart = 5 * 60;
-            if (_consumeThreadNums == 0) _consumeThreadNums         = 8;
         }
 
         /// <summary>
