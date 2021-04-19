@@ -1,9 +1,11 @@
-﻿using Castle.MicroKernel.Registration;
+﻿using System.Linq;
+using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using FS.Configuration;
 using FS.DI;
 using FS.MongoDB.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace FS.MongoDB
 {
@@ -30,10 +32,11 @@ namespace FS.MongoDB
         /// <param name="store"></param>
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
-            var localConfigResolver = IocManager.Instance.Resolve<IConfigResolver>();
-            if (localConfigResolver.MongoConfig().Items.Count == 0) { return; }
+            // 读取配置
+            var configurationSection = container.Resolve<IConfigurationRoot>().GetSection("Mongo");
+            var mongoItemConfigs     = configurationSection.GetChildren().Select(o => o.Get<MongoItemConfig>()).ToList();
 
-            localConfigResolver.MongoConfig().Items.ForEach(m =>
+            mongoItemConfigs.ForEach(m =>
             {
                 // 注册ES连接
                 container.Register(
