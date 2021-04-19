@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using FS.Configuration;
+﻿using System.Reflection;
 using FS.DI;
 using FS.Modules;
-using FS.MQ.RabbitMQ.Configuration;
 
 namespace FS.MQ.RabbitMQ
 {
@@ -15,34 +12,6 @@ namespace FS.MQ.RabbitMQ
         /// <inheritdoc />
         public override void PreInitialize()
         {
-            // 如果Redis配置没有创建，则创建它
-            var configResolver = IocManager.Resolve<IConfigResolver>();
-            InitConfig(configResolver);
-        }
-
-        /// <inheritdoc />
-        private void InitConfig(IConfigResolver configResolver)
-        {
-            var config = configResolver.RabbitConfig();
-            if (config == null || config.Items.Count == 0)
-            {
-                configResolver.Set(new RabbitConfig
-                {
-                    Items = new List<RabbitItemConfig>
-                    {
-                        new RabbitItemConfig
-                        {
-                            Server = "",
-                            UserName = "",
-                            Password = "",
-                            Port = 5672,
-                            Product = new List<ProductConfig>() {new ProductConfig() {Name = "test1", ExchangeName = "", RoutingKey = "", UseConfirmModel = false}},
-                            Consumer = new List<ConsumerConfig>() {new ConsumerConfig() {Name = "test2", QueueName = ""}},
-                        }
-                    }
-                });
-                configResolver.Save();
-            }
         }
 
         /// <inheritdoc />

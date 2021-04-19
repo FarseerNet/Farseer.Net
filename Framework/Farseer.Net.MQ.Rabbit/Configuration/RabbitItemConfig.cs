@@ -9,8 +9,5 @@ namespace FS.MQ.RabbitMQ.Configuration
     {
         /// <summary> 生产者配置 </summary>
         public List<ProductConfig> Product { get; set; }
-
-        /// <summary> 消费者配置 </summary>
-        public List<ConsumerConfig> Consumer { get; set; }
     }
 }

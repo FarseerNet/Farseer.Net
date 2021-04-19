@@ -22,26 +22,26 @@ namespace FS.MQ.RabbitMQ
         ///     生产消息
         /// </summary>
         private IRabbitProduct _product;
-
-        /// <summary>
-        ///     消费消息
-        /// </summary>
-        private IRabbitConsumer _consumer;
-
         /// <summary>
         /// 配置信息
         /// </summary>
         private readonly ProductConfig _productConfig;
-
-        /// <summary>
-        /// 配置信息
-        /// </summary>
-        private readonly ConsumerConfig _consumerConfig;
-
         /// <summary>
         /// Rabbit连接
         /// </summary>
         private readonly RabbitConnect _connect;
+        /// <summary>
+        /// 最后ACK多少秒超时则重连（默认5分钟）
+        /// </summary>
+        private readonly int _lastAckTimeoutRestart;
+        /// <summary>
+        /// 线程数（默认8）
+        /// </summary>
+        private readonly int _consumeThreadNums;
+        /// <summary>
+        /// 队列名称
+        /// </summary>
+        private readonly string _queueName;
 
         /// <summary> Rabbit管理器 </summary>
         public RabbitManager(RabbitConnect connect, ProductConfig productConfig)
@@ -51,10 +51,19 @@ namespace FS.MQ.RabbitMQ
         }
 
         /// <summary> Rabbit管理器 </summary>
-        public RabbitManager(RabbitConnect connect, ConsumerConfig consumerConfig)
+        /// <param name="connect"></param>
+        /// <param name="queueName">队列名称</param>
+        /// <param name="lastAckTimeoutRestart">最后ACK多少秒超时则重连（默认5分钟）</param>
+        /// <param name="consumeThreadNums">线程数（默认8）</param>
+        public RabbitManager(RabbitConnect connect, string queueName, int consumeThreadNums = 8, int lastAckTimeoutRestart = 5 * 60)
         {
-            _connect        = connect;
-            _consumerConfig = consumerConfig;
+            this._connect               = connect;
+            this._lastAckTimeoutRestart = lastAckTimeoutRestart;
+            this._consumeThreadNums     = consumeThreadNums;
+            this._queueName             = queueName;
+
+            if (_lastAckTimeoutRestart == 0) _lastAckTimeoutRestart = 5 * 60;
+            if (_consumeThreadNums == 0) _consumeThreadNums         = 8;
         }
 
         /// <summary>
@@ -64,7 +73,6 @@ namespace FS.MQ.RabbitMQ
         {
             get
             {
-                //if (_productConfig == null) throw new Exception("当前配置的是消费端的配置，你只可以使用Consumer属性");
                 if (_product != null) return _product;
                 lock (ObjLock)
                 {
@@ -72,22 +80,11 @@ namespace FS.MQ.RabbitMQ
                 }
             }
         }
-
+        
         /// <summary>
         ///     消费普通消息
         /// </summary>
-        public IRabbitConsumer Consumer
-        {
-            get
-            {
-                //if (_consumerConfig == null) throw new Exception("当前配置的是生产端的配置，你只可以使用Product属性");
-                if (_consumer != null) return _consumer;
-                lock (ObjLock)
-                {
-                    return _consumer ?? (_consumer = new RabbitConsumer(_connect, _consumerConfig));
-                }
-            }
-        }
+        public IRabbitConsumer Consumer => new RabbitConsumer(_connect, _queueName, _lastAckTimeoutRestart, _consumeThreadNums);
 
         /// <summary>
         /// 创建队列
@@ -97,15 +94,16 @@ namespace FS.MQ.RabbitMQ
         /// <param name="exclusive">是否排他队列（默认false）</param>
         /// <param name="autoDelete">是否自动删除（默认false）</param>
         /// <param name="arguments">队列参数</param>
-        public void CreateQueue(string queueName, bool durable = true, bool exclusive = false, bool autoDelete = false, IDictionary<string, object> arguments = null)
+        public void CreateQueue(string queueName, bool durable = true, bool exclusive = false, bool autoDelete = false,
+            IDictionary<string, object> arguments = null)
         {
             if (_connect.Connection == null || !_connect.Connection.IsOpen) _connect.Open();
             using (var channel = _connect.Connection.CreateModel())
             {
                 //声明一个队列
                 channel.QueueDeclare(
-                    queue: queueName,     //消息队列名称
-                    durable: durable,     //是否缓存
+                    queue: queueName, //消息队列名称
+                    durable: durable, //是否缓存
                     exclusive: exclusive, // 创建后删除
                     autoDelete: autoDelete,
                     arguments: arguments
@@ -114,19 +112,38 @@ namespace FS.MQ.RabbitMQ
         }
 
         /// <summary>
-        /// 创建交换器，并绑定到队列
+        /// 创建交换器
         /// </summary>
         /// <param name="exchangeName">交换器名称</param>
         /// <param name="exchangeType">交换器类型</param>
         /// <param name="durable">是否持久化（默认true）</param>
         /// <param name="autoDelete">是否自动删除（默认false）</param>
         /// <param name="arguments">参数</param>
-        public void CreateExchange(string exchangeName, eumExchangeType exchangeType, bool durable = true, bool autoDelete = false, IDictionary<string, object> arguments = null)
+        public void CreateExchange(string exchangeName, eumExchangeType exchangeType, bool durable = true,
+            bool autoDelete = false, IDictionary<string, object> arguments = null)
         {
             if (_connect.Connection == null || !_connect.Connection.IsOpen) _connect.Open();
             using (var channel = _connect.Connection.CreateModel())
             {
-                channel.ExchangeDeclare(exchangeName, exchangeType.ToString(), durable, autoDelete, arguments); // 声明fanout交换器
+                channel.ExchangeDeclare(exchangeName, exchangeType.ToString(), durable, autoDelete,
+                    arguments); // 声明fanout交换器
+            }
+        }
+
+        /// <summary>
+        /// 创建交换器
+        /// </summary>
+        /// <param name="exchangeType">交换器类型</param>
+        /// <param name="durable">是否持久化（默认true）</param>
+        /// <param name="autoDelete">是否自动删除（默认false）</param>
+        /// <param name="arguments">参数</param>
+        public void CreateExchange(eumExchangeType exchangeType, bool durable = true, bool autoDelete = false, IDictionary<string, object> arguments = null)
+        {
+            if (_connect.Connection == null || !_connect.Connection.IsOpen) _connect.Open();
+            using (var channel = _connect.Connection.CreateModel())
+            {
+                channel.ExchangeDeclare(_productConfig.ExchangeName, exchangeType.ToString(), durable, autoDelete,
+                    arguments); // 声明fanout交换器
             }
         }
 

@@ -56,5 +56,14 @@ namespace FS.MQ.RabbitMQ
         /// <param name="autoDelete">是否自动删除（默认false）</param>
         /// <param name="arguments">队列参数</param>
         void CreateQueueAndBind(string queueName, string exchangeName, string routingKey, bool durable = true, bool exclusive = false, bool autoDelete = false, IDictionary<string, object> arguments = null);
+
+        /// <summary>
+        /// 创建交换器
+        /// </summary>
+        /// <param name="exchangeType">交换器类型</param>
+        /// <param name="durable">是否持久化（默认true）</param>
+        /// <param name="autoDelete">是否自动删除（默认false）</param>
+        /// <param name="arguments">参数</param>
+        void CreateExchange(eumExchangeType exchangeType, bool durable = true, bool autoDelete = false, IDictionary<string, object> arguments = null);
     }
 }

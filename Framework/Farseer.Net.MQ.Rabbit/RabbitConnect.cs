@@ -9,7 +9,7 @@ namespace FS.MQ.RabbitMQ
     /// </summary>
     public class RabbitConnect
     {
-        private RabbitServerConfig _config;
+        private readonly RabbitServerConfig _config;
 
         /// <summary>
         ///     创建消息队列属性
