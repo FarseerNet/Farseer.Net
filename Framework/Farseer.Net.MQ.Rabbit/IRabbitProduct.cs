@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using RabbitMQ.Client;
 
-namespace FS.MQ.RabbitMQ
+namespace FS.MQ.Rabbit
 {
     public interface IRabbitProduct
     {

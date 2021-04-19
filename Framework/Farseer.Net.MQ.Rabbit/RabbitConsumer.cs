@@ -1,16 +1,14 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using FS.DI;
-using FS.MQ.RabbitMQ.Configuration;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client.Exceptions;
 
-namespace FS.MQ.RabbitMQ
+namespace FS.MQ.Rabbit
 {
     public class RabbitConsumer : IRabbitConsumer
     {

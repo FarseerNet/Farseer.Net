@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using FS.DI;
-using FS.MQ.RabbitMQ.Configuration;
+using FS.MQ.Rabbit.Configuration;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 
-namespace FS.MQ.RabbitMQ
+namespace FS.MQ.Rabbit
 {
     public class RabbitProduct : IRabbitProduct
     {

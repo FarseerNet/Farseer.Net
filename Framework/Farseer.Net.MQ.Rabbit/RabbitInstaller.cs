@@ -2,11 +2,10 @@
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using FS.Configuration;
-using FS.MQ.RabbitMQ.Configuration;
+using FS.MQ.Rabbit.Configuration;
 using Microsoft.Extensions.Configuration;
 
-namespace FS.MQ.RabbitMQ
+namespace FS.MQ.Rabbit
 {
     /// <summary>
     ///     RocketMQ的IOC注册

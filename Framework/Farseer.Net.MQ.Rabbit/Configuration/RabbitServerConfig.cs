@@ -1,4 +1,4 @@
-namespace FS.MQ.RabbitMQ.Configuration
+namespace FS.MQ.Rabbit.Configuration
 {
     public class RabbitServerConfig
     {

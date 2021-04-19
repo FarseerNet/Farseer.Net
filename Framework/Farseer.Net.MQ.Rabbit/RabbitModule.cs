@@ -2,7 +2,7 @@
 using FS.DI;
 using FS.Modules;
 
-namespace FS.MQ.RabbitMQ
+namespace FS.MQ.Rabbit
 {
     /// <summary>
     ///     RocketMQ模块

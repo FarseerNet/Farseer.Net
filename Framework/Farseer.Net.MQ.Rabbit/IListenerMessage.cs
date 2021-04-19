@@ -1,6 +1,6 @@
 using RabbitMQ.Client.Events;
 
-namespace FS.MQ.RabbitMQ
+namespace FS.MQ.Rabbit
 {
     /// <summary>
     /// Rabbit监听消费

@@ -1,6 +1,6 @@
 ﻿using FS.Configuration;
 using FS.Modules;
-using FS.MQ.RabbitMQ;
+using FS.MQ.Rabbit;
 
 namespace Farseer.Net.MQ.RabbitMQ.Console
 {

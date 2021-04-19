@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Transactions;
 using FS;
 using FS.DI;
-using FS.MQ.RabbitMQ;
+using FS.MQ.Rabbit;
 using FS.Utils.Common;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;

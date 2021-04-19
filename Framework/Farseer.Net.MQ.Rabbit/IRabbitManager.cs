@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FS.MQ.RabbitMQ
+namespace FS.MQ.Rabbit
 {
     /// <summary>
     ///     RocketMQ管理器

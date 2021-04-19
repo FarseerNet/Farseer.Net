@@ -1,8 +1,8 @@
 using System.Net;
-using FS.MQ.RabbitMQ.Configuration;
+using FS.MQ.Rabbit.Configuration;
 using RabbitMQ.Client;
 
-namespace FS.MQ.RabbitMQ
+namespace FS.MQ.Rabbit
 {
     /// <summary>
     /// Rabbit连接

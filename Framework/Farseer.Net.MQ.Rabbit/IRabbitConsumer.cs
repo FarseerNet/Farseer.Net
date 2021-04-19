@@ -1,4 +1,4 @@
-namespace FS.MQ.RabbitMQ
+namespace FS.MQ.Rabbit
 {
     public interface IRabbitConsumer
     {

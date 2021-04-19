@@ -12,13 +12,9 @@
         <Authors>steden</Authors>
         <PackageTags>RabbitMQ组件</PackageTags>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <RootNamespace>FS.MQ.RabbitMQ</RootNamespace>
+        <RootNamespace>FS.MQ.Rabbit</RootNamespace>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(TargetFramework)' == 'net461'">
-        <DefineConstants>net461</DefineConstants>
-    </PropertyGroup>
-    
     <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
         <DefineConstants>CORE</DefineConstants>
     </PropertyGroup>

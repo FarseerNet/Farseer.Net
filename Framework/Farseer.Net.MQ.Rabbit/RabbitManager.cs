@@ -3,13 +3,11 @@
 // 时间：2017-03-23 22:50
 // ********************************************
 
-using System;
 using System.Collections.Generic;
-using FS.Configuration;
-using FS.MQ.RabbitMQ.Configuration;
+using FS.MQ.Rabbit.Configuration;
 using RabbitMQ.Client;
 
-namespace FS.MQ.RabbitMQ
+namespace FS.MQ.Rabbit
 {
     /// <summary>
     ///     Rabbit管理器

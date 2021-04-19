@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FS.MQ.RabbitMQ.Configuration
+namespace FS.MQ.Rabbit.Configuration
 {
     /// <summary>
     ///     RocketMQ配置信息
