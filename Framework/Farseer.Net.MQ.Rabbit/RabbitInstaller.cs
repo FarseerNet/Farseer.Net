@@ -89,9 +89,15 @@ namespace FS.MQ.Rabbit
             if (consumerAttribute.AutoCreateAndBind)
             {
                 IocManager.Instance.Logger<RabbitInstaller>().LogInformation($"正在初始化：{consumer.Name}");
-                var rabbitManager = new RabbitManager(rabbitConnect);
+                var rabbitManager                                                                                       = new RabbitManager(rabbitConnect);
+                
+                // 配置死信参数
+                var arguments                                                                                           = new Dictionary<string, object>();
+                if (!string.IsNullOrWhiteSpace(consumerAttribute.DlxExchangeName)) arguments["x-dead-letter-exchange"]  = consumerAttribute.DlxExchangeName;
+                if (!string.IsNullOrWhiteSpace(consumerAttribute.DlxRoutingKey)) arguments["x-dead-letter-routing-key"] = consumerAttribute.DlxRoutingKey;
+                if (consumerAttribute.DlxTime > 0) arguments["x-message-ttl"]                                           = consumerAttribute.DlxTime;
                 rabbitManager.CreateExchange(consumerAttribute.ExchangeName, consumerAttribute.ExchangeType);
-                rabbitManager.CreateQueueAndBind(consumerAttribute.QueueName, consumerAttribute.ExchangeName, consumerAttribute.RoutingKey);
+                rabbitManager.CreateQueueAndBind(consumerAttribute.QueueName, consumerAttribute.ExchangeName, consumerAttribute.RoutingKey, arguments: arguments);
             }
 
             IocManager.Instance.Logger<RabbitInstaller>().LogInformation($"正在启动：{consumer.Name}");

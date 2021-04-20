@@ -3,14 +3,14 @@ using FS.MQ.Rabbit;
 using FS.MQ.Rabbit.Attr;
 using RabbitMQ.Client.Events;
 
-namespace Farseer.Net.MQ.Rabbit.Console
+namespace Farseer.Net.MQ.Rabbit.Console.Consumer
 {
-    [Consumer(Name = "default", ExchangeName = "test",QueueName = "test", ExchangeType = eumExchangeType.direct)]
-    public class ListenMessage : IListenerMessage
+    [Consumer(Enable = false, Name = "default", ExchangeName = "DeadLetter", QueueName = "DeadLetter", ExchangeType = eumExchangeType.direct)]
+    public class DeadLetterConsumer : IListenerMessage
     {
         public bool Consumer(string message, object sender, BasicDeliverEventArgs ea)
         {
-            System.Console.WriteLine(ea.ConsumerTag + "接收到信息为:" + message);
+            System.Console.WriteLine(ea.ConsumerTag + "死信消息:" + message);
             return true;
         }
 

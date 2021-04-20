@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
@@ -30,7 +31,10 @@ namespace Farseer.Net.MQ.Rabbit.Console
             Parallel.For(0, 10000000, new ParallelOptions {MaxDegreeOfParallelism = 8}, i =>
             {
                 var message = $"PID:{Process.GetCurrentProcess().Id} index:{i},Time：{DateTime.Now}";
-                IocManager.Instance.Resolve<IRabbitManager>("Test").Product.Send(message);
+                IocManager.Instance.Resolve<IRabbitManager>("Test").Product.Send(message, o =>
+                {
+                    o.Expiration = "1000";
+                });
             });
         }
     }
