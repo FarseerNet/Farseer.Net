@@ -13,5 +13,11 @@ namespace FS.MQ.Rabbit.Configuration
 
         /// <summary> 使用确认模式（默认关闭） </summary>
         public bool UseConfirmModel { get; set; }
+
+        /// <summary> 是否自动创建交换器 </summary>
+        public bool AutoCreateExchange { get; set; }
+
+        /// <summary> 交换器类型 </summary>
+        public eumExchangeType ExchangeType { get; set; }
     }
 }

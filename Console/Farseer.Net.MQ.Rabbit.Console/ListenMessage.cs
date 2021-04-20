@@ -3,9 +3,9 @@ using FS.MQ.Rabbit;
 using FS.MQ.Rabbit.Attr;
 using RabbitMQ.Client.Events;
 
-namespace Farseer.Net.MQ.RabbitMQ.Console
+namespace Farseer.Net.MQ.Rabbit.Console
 {
-    [Consumer(Name = "default", ExchangeName = "test",QueueName = "aaaa1", ExchangeType = eumExchangeType.direct)]
+    [Consumer(Name = "default", ExchangeName = "test",QueueName = "test", ExchangeType = eumExchangeType.direct)]
     public class ListenMessage : IListenerMessage
     {
         public bool Consumer(string message, object sender, BasicDeliverEventArgs ea)

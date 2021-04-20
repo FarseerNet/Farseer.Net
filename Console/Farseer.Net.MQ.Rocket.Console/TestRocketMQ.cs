@@ -13,7 +13,7 @@ using FS.MQ.RocketMQ;
 using FS.MQ.RocketMQ.SDK;
 using Action = FS.MQ.RocketMQ.SDK.Action;
 
-namespace Farseer.Net.MQ.RocketMQ.Console
+namespace Farseer.Net.MQ.Rocket.Console
 {
     public class TestRocketMQ
     {

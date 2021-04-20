@@ -2,7 +2,7 @@
 using FS.Modules;
 using FS.MQ.Rabbit;
 
-namespace Farseer.Net.MQ.RabbitMQ.Console
+namespace Farseer.Net.MQ.Rabbit.Console
 {
     /// <summary>
     /// 启动模块

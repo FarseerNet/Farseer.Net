@@ -38,20 +38,26 @@ namespace FS.MQ.Rabbit
                     // 按生产者遍历
                     foreach (var productConfig in rabbitItemConfig.Product)
                     {
+                        // 注册生产者
                         container.Register(Component.For<IRabbitManager>().Named(productConfig.Name).ImplementedBy<RabbitManager>().DependsOn(Dependency.OnValue<RabbitConnect>(rabbitConnect), Dependency.OnValue<ProductConfig>(productConfig)).LifestyleSingleton());
+                        // 自动创建交换器
+                        if (productConfig.AutoCreateExchange) container.Resolve<IRabbitManager>(productConfig.Name).CreateExchange();
                     }
                 }
             }
 
+            // 查找入口方法是否启用了Rabbit消费
             var rabbitAttribute = Assembly.GetEntryAssembly().EntryPoint.DeclaringType.GetCustomAttribute<RabbitAttribute>();
             if (rabbitAttribute != null && rabbitAttribute.Enable)
             {
+                // 查找消费实现
                 var types = container.Resolve<IAssemblyFinder>().GetType<IListenerMessage>();
 
                 try
                 {
                     foreach (var consumer in types)
                     {
+                        // 启动消费程序
                         RunConsumer(consumer, rabbitItemConfigs);
                     }
 

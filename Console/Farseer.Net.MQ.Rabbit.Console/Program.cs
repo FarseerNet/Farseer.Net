@@ -11,7 +11,7 @@ using FS.MQ.Rabbit.Attr;
 using FS.Utils.Common;
 using RabbitMQ.Client;
 
-namespace Farseer.Net.MQ.RabbitMQ.Console
+namespace Farseer.Net.MQ.Rabbit.Console
 {
     [Rabbit]
     class Program
@@ -21,19 +21,16 @@ namespace Farseer.Net.MQ.RabbitMQ.Console
         static void Main(string[] args)
         {
             FarseerApplication.Run<StartupModule>().Initialize();
+            Task.Run(SendMessage);
             Thread.Sleep(-1);
-            //SendMessage();
         }
 
         private static void SendMessage()
         {
-            Parallel.For(0, 10000000, new ParallelOptions {MaxDegreeOfParallelism = 64}, i =>
+            Parallel.For(0, 10000000, new ParallelOptions {MaxDegreeOfParallelism = 8}, i =>
             {
                 var message = $"PID:{Process.GetCurrentProcess().Id} index:{i},Time：{DateTime.Now}";
-
-                if (i%2 == 0) IocManager.Instance.Resolve<IRabbitManager>("test1").Product.Send(message, "");
-                else IocManager.Instance.Resolve<IRabbitManager>("test1").Product.Send(message, "");
-                System.Console.WriteLine(message);
+                IocManager.Instance.Resolve<IRabbitManager>("Test").Product.Send(message);
             });
         }
     }

@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using FS;
 
-namespace Farseer.Net.MQ.RocketMQ.Console
+namespace Farseer.Net.MQ.Rocket.Console
 {
     internal class Program
     {

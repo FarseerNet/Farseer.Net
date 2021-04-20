@@ -104,17 +104,16 @@ namespace FS.MQ.Rabbit
         /// <summary>
         /// 创建交换器
         /// </summary>
-        /// <param name="exchangeType">交换器类型</param>
         /// <param name="durable">是否持久化（默认true）</param>
         /// <param name="autoDelete">是否自动删除（默认false）</param>
         /// <param name="arguments">参数</param>
-        public void CreateExchange(eumExchangeType exchangeType, bool durable = true, bool autoDelete = false, IDictionary<string, object> arguments = null)
+        public void CreateExchange(bool durable = true, bool autoDelete = false, IDictionary<string, object> arguments = null)
         {
             if (_connect.Connection == null || !_connect.Connection.IsOpen) _connect.Open();
             using (var channel = _connect.Connection.CreateModel())
             {
                 // 声明fanout交换器
-                channel.ExchangeDeclare(_productConfig.ExchangeName, exchangeType.ToString(), durable, autoDelete, arguments);
+                channel.ExchangeDeclare(_productConfig.ExchangeName, _productConfig.ExchangeType.ToString(), durable, autoDelete, arguments);
             }
         }
 

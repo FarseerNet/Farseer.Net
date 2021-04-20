@@ -37,7 +37,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Farseer.Net.MongoDB", "Fram
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Console", "Console", "{BA9C8E90-5B9E-464C-B0CA-7988E2CA850B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.MQ.RocketMQ.Console", "Console\Farseer.Net.MQ.RocketMQ.Console\Farseer.Net.MQ.RocketMQ.Console.csproj", "{6D791307-BF1C-48A9-9A2C-48E4577D5F76}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.MQ.Rocket.Console", "Console\Farseer.Net.MQ.Rocket.Console\Farseer.Net.MQ.Rocket.Console.csproj", "{6D791307-BF1C-48A9-9A2C-48E4577D5F76}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Farseer.Net.Cache.Redis", "Framework\Farseer.Net.Cache.Redis\Farseer.Net.Cache.Redis.csproj", "{77834507-9F3D-45CA-B387-F44D67327C4E}"
 EndProject
@@ -49,7 +49,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.Job.Console", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestLinuxDisown", "Console\TestLinuxDisown\TestLinuxDisown.csproj", "{BB82FF77-D727-4A55-B7AD-0FCB4456FF4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.MQ.RabbitMQ.Console", "Console\Farseer.Net.MQ.RabbitMQ.Console\Farseer.Net.MQ.RabbitMQ.Console.csproj", "{E595ACDF-8435-42AD-87BB-534BA221A5DA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.MQ.Rabbit.Console", "Console\Farseer.Net.MQ.Rabbit.Console\Farseer.Net.MQ.Rabbit.Console.csproj", "{E595ACDF-8435-42AD-87BB-534BA221A5DA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.MQ.Rabbit", "Framework\Farseer.Net.MQ.Rabbit\Farseer.Net.MQ.Rabbit.csproj", "{B61422B8-3A55-42C7-963A-6D0E33A7E9A2}"
 EndProject
