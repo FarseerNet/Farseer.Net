@@ -6,7 +6,7 @@ using RabbitMQ.Client.Events;
 
 namespace Farseer.Net.MQ.Rabbit.Console.Consumer
 {
-    [Consumer(Enable = false, Name = "default", ExchangeName = "test", QueueName = "test", ExchangeType = eumExchangeType.direct, DlxExchangeName = "DeadLetter")]
+    [Consumer(Enable = false, Name = "default", ExchangeName = "test", QueueName = "test", ExchangeType = eumExchangeType.fanout, DlxExchangeName = "DeadLetter")]
     public class TestConsumer : IListenerMessage
     {
         public bool Consumer(string message, object sender, BasicDeliverEventArgs ea)

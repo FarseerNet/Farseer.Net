@@ -7,9 +7,9 @@
     <Product>缓存管理组件</Product>
     <Description>包括：Redis缓存、运行时缓存、多级缓存</Description>
     <PackageTags>Redis缓存、运行时缓存、多级缓存</PackageTags>
-    <AssemblyVersion>2.4.0</AssemblyVersion>
-    <FileVersion>2.4.0</FileVersion>
-    <Version>2.4.0</Version>
+    <AssemblyVersion>2.5.0</AssemblyVersion>
+    <FileVersion>2.5.0</FileVersion>
+    <Version>2.5.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RootNamespace>FS.Cache.Redis</RootNamespace>
   </PropertyGroup>
@@ -19,7 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="StackExchange.Redis" Version="2.1.30" />
+    <PackageReference Include="StackExchange.Redis" Version="2.2.4" />
   </ItemGroup>
 
   <ItemGroup>

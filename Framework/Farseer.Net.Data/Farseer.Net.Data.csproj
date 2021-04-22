@@ -7,9 +7,9 @@
     <Product>ORM组件</Product>
     <Description>包括：Farseer.NetORM组件</Description>
     <Authors>steden</Authors>
-    <AssemblyVersion>2.4.0</AssemblyVersion>
-    <FileVersion>2.4.0</FileVersion>
-    <Version>2.4.0</Version>
+    <AssemblyVersion>2.5.0</AssemblyVersion>
+    <FileVersion>2.5.0</FileVersion>
+    <Version>2.5.0</Version>
     <PackageTags>ORM</PackageTags>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -42,9 +42,6 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting">
-      <Version>3.6.0</Version>
-    </PackageReference>
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
     <Compile Remove="Client\OleDb\**" />
     <Compile Remove="Client\Oracle\**" />
@@ -56,6 +53,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.9.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
   </ItemGroup>
 </Project>

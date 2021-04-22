@@ -49,20 +49,26 @@ namespace FS.Mapper
                         // 注意的地址，映射到对方时，要取对方的属性名称（目标名称），AutoMapper要求
                         foreach (var propertyInfo in type.GetProperties())
                         {
+                            // 目标相同的名称成员
+                            var findTarget = System.Array.Find(targetType.GetProperties(), o => o.Name.ToLower() == propertyInfo.Name.ToLower());
+
                             var mapFieldAttribute = propertyInfo.GetCustomAttribute<MapFieldAttribute>();
-                            if (mapFieldAttribute == null) continue;
+                            if (mapFieldAttribute == null)
+                            {
+                                if (findTarget != null) mapFieldAttribute = findTarget.GetCustomAttribute<MapFieldAttribute>();
+                                if (mapFieldAttribute == null) continue;
+                            }
+
                             // 忽略当前字段
                             if (mapFieldAttribute.IsIgnore)
                             {
-                                // 目标相同的名称成员
-                                var findTarget = targetType.GetProperties().Find(o => o.Name.ToLower() == propertyInfo.Name.ToLower());
                                 if (findTarget != null) mappingExpression = mappingExpression.ForMember(findTarget.Name, opt => opt.Ignore());
                             }
 
                             // 转换实际的映射名称
                             if (!string.IsNullOrWhiteSpace(mapFieldAttribute.FromName))
                             {
-                                var findTarget = targetType.GetProperties().Find(o => o.Name.ToLower() == mapFieldAttribute.FromName.ToLower());
+                                findTarget = System.Array.Find(targetType.GetProperties(), o => o.Name.ToLower() == mapFieldAttribute.FromName.ToLower());
                                 if (findTarget != null) mappingExpression = mappingExpression.ForMember(findTarget.Name, opt => opt.MapFrom(propertyInfo.Name));
                             }
                         }
@@ -71,14 +77,14 @@ namespace FS.Mapper
                     if (autoMapToAttribute.Direction.HasFlag(EumMapDirection.From))
                     {
                         var mappingExpression = cfg.CreateMap(targetType, type);
-                        
+
                         // 找到源实体，是否有MapFieldAttribute特性
                         // 注意的地址，映射到对方时，要取对方的属性名称（目标名称），AutoMapper要求
-                        foreach (var propertyInfo in type.GetProperties())
+                        foreach (var propertyInfo in targetType.GetProperties())
                         {
                             var mapFieldAttribute = propertyInfo.GetCustomAttribute<MapFieldAttribute>();
                             if (mapFieldAttribute == null) continue;
-                            
+
                             // 忽略当前字段
                             if (mapFieldAttribute.IsIgnore)
                             {
@@ -88,7 +94,7 @@ namespace FS.Mapper
                             // 转换实际的映射名称
                             if (!string.IsNullOrWhiteSpace(mapFieldAttribute.FromName))
                             {
-                                var findTarget= targetType.GetProperties().Find(o => o.Name.ToLower() == mapFieldAttribute.FromName.ToLower());
+                                var findTarget = System.Array.Find(targetType.GetProperties(), o => o.Name.ToLower() == mapFieldAttribute.FromName.ToLower());
                                 if (findTarget != null) mappingExpression = mappingExpression.ForMember(propertyInfo.Name, opt => opt.MapFrom(findTarget.Name));
                             }
                         }
