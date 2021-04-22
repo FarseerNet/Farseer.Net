@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
@@ -11,7 +11,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Framework\Farseer.Net.Configuration\Farseer.Net.Configuration.csproj" />
       <ProjectReference Include="..\..\Framework\Farseer.Net.MQ.Rabbit\Farseer.Net.MQ.Rabbit.csproj" />
       <ProjectReference Include="..\..\Framework\Farseer.Net.Utils\Farseer.Net.Utils.csproj" />
     </ItemGroup>

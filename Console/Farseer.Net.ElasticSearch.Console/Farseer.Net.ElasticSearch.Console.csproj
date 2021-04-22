@@ -6,7 +6,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Framework\Farseer.Net.Configuration\Farseer.Net.Configuration.csproj" />
       <ProjectReference Include="..\..\Framework\Farseer.Net.ElasticSearch\Farseer.Net.ElasticSearch.csproj" />
     </ItemGroup>
 

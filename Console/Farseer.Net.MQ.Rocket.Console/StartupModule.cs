@@ -8,7 +8,7 @@ namespace Farseer.Net.MQ.Rocket.Console
     /// <summary>
     /// 启动模块
     /// </summary>
-    [DependsOn(typeof(ConfigurationModule),typeof(RocketModule))]
+    [DependsOn(typeof(RocketModule))]
     public class StartupModule : FarseerModule
     {
         public override void PreInitialize()

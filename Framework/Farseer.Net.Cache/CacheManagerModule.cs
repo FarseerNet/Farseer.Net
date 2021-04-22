@@ -18,18 +18,6 @@ namespace FS.Cache
         public override void PreInitialize()
         {
             // 如果Redis配置没有创建，则创建它
-            var configResolver = IocManager.Resolve<IConfigResolver>();
-            InitConfig(configResolver);
-        }
-
-        private void InitConfig(IConfigResolver configResolver)
-        {
-            var config = configResolver.CacheManagerConfig();
-            if (config == null || config.Items.Count == 0)
-            {
-                configResolver.Set(new CacheManagerConfig { Items = new List<CacheManagerItemConfig> { new CacheManagerItemConfig { Name = "test", RedisConfigName = "", CacheModel = EumCacheModel.Runtime } } });
-                configResolver.Save();
-            }
         }
 
         /// <summary>

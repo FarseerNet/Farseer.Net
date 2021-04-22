@@ -82,6 +82,12 @@ namespace FS.MQ.Rabbit
             if (consumerAttribute == null || !consumerAttribute.Enable) return;
             // 创建消费的实例
             var rabbitItemConfig = rabbitItemConfigs.Find(o => o.Name == consumerAttribute.Name);
+            if (rabbitItemConfig == null)
+            {
+                IocManager.Instance.Logger<RabbitInstaller>().LogWarning($"未找到：{consumer.FullName}的配置项：{consumerAttribute.Name}");
+                return;
+            }
+
             var rabbitConnect    = new RabbitConnect(rabbitItemConfig);
             var consumerInstance = new RabbitConsumer(rabbitConnect, consumerAttribute.QueueName, consumerAttribute.LastAckTimeoutRestart, consumerAttribute.ConsumeThreadNums);
 
@@ -89,8 +95,8 @@ namespace FS.MQ.Rabbit
             if (consumerAttribute.AutoCreateAndBind)
             {
                 IocManager.Instance.Logger<RabbitInstaller>().LogInformation($"正在初始化：{consumer.Name}");
-                var rabbitManager                                                                                       = new RabbitManager(rabbitConnect);
-                
+                var rabbitManager = new RabbitManager(rabbitConnect);
+
                 // 配置死信参数
                 var arguments                                                                                           = new Dictionary<string, object>();
                 if (!string.IsNullOrWhiteSpace(consumerAttribute.DlxExchangeName)) arguments["x-dead-letter-exchange"]  = consumerAttribute.DlxExchangeName;

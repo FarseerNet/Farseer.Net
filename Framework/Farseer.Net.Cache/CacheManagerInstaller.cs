@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using CacheManager.Core;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
@@ -6,6 +7,7 @@ using Castle.Windsor;
 using FS.Cache.Configuration;
 using FS.Configuration;
 using FS.DI;
+using Microsoft.Extensions.Configuration;
 
 namespace FS.Cache
 {
@@ -35,10 +37,11 @@ namespace FS.Cache
         /// <param name="store"></param>
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
-            var localConfigResolver = IocManager.Instance.Resolve<IConfigResolver>();
-            if (localConfigResolver.CacheManagerConfig().Items.Count == 0) { return; }
+            // 读取配置
+            var configurationSection    = IocManager.Instance.Resolve<IConfigurationRoot>().GetSection("Cache");
+            var cacheManagerItemConfigs = configurationSection.GetChildren().Select(o => o.Get<CacheManagerItemConfig>()).ToList();
 
-            localConfigResolver.CacheManagerConfig().Items.ForEach(m =>
+            cacheManagerItemConfigs.ForEach(m =>
             {
                 Action<ConfigurationBuilderCachePart> settings = null;
                 switch (m.CacheModel)

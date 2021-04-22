@@ -30,20 +30,6 @@ namespace FS.Core
         /// </summary>
         public override void PreInitialize()
         {
-            // 如果Redis配置没有创建，则创建它
-            InitConfig(IocManager.Resolve<IConfigResolver>());
-        }
-
-        /// <inheritdoc />
-        private void InitConfig(IConfigResolver configResolver)
-        {
-            // 全局配置
-            var globalConfig = configResolver.Get<GlobalConfig>();
-            if (globalConfig == null)
-            {
-                configResolver.Set(new GlobalConfig { AppName = "", ApiGatewayType = EumApiGatewayType.External });
-                configResolver.Save();
-            }
         }
 
         /// <summary>

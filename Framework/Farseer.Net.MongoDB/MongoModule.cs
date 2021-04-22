@@ -14,7 +14,6 @@ namespace FS.MongoDB
         /// </summary>
         public override void PreInitialize()
         {
-            var configResolver = IocManager.Resolve<IConfigResolver>();
         }
 
         /// <summary>

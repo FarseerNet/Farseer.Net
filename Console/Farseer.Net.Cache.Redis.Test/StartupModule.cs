@@ -7,7 +7,7 @@ namespace Farseer.Net.Cache.Redis.Test
     /// <summary>
     /// 启动模块
     /// </summary>
-    [DependsOn(typeof(ConfigurationModule),typeof(RedisModule))]
+    [DependsOn(typeof(RedisModule))]
     public class StartupModule : FarseerModule
     {
         public override void PreInitialize()
