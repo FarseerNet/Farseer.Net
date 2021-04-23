@@ -6,6 +6,9 @@ using RabbitMQ.Client.Events;
 
 namespace Farseer.Net.MQ.Rabbit.Console.Consumer
 {
+    /// <summary>
+    /// 消费客户端
+    /// </summary>
     [Consumer(Enable = false, Name = "default", ExchangeName = "test", QueueName = "test", ExchangeType = eumExchangeType.fanout, DlxExchangeName = "DeadLetter")]
     public class TestConsumer : IListenerMessage
     {
