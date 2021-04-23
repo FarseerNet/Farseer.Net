@@ -1,8 +1,9 @@
 ﻿using System.Reflection;
-using FS.Configuration;
 using FS.DI;
-using FS.Job.ActService;
+using FS.Job.Configuration;
 using FS.Modules;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace FS.Job
 {
@@ -15,6 +16,18 @@ namespace FS.Job
         {
         }
 
+        public override void PostInitialize()
+        {
+            var jobItemConfig = DI.IocManager.Instance.Resolve<IConfigurationRoot>().GetSection("Job").Get<JobItemConfig>();
+            
+            // 启动RPC服务
+            new GrpcServiceCreate().Start(jobItemConfig.GrpcServicePort);
+            
+            // 注册到服务端
+            new ServiceRegister().Register(jobItemConfig.Server);
+            
+        }
+
         /// <summary>
         ///     初始化
         /// </summary>
@@ -22,14 +35,6 @@ namespace FS.Job
         {
             IocManager.Container.Install(new JobInstaller(IocManager));
             IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly(), new ConventionalRegistrationConfig {InstallInstallers = false});
-            new JobFinder().RegisterJob();
-            new Menu().CreateMenu();
-            LazyExecute.Init();
-        }
-
-        public override void PostInitialize()
-        {
-            new JobManager().Run();
         }
     }
 }

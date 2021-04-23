@@ -1,0 +1,9 @@
+syntax = "proto3";
+import "Protos/Public/RpcResponse.proto";
+option csharp_namespace = "Farseer.Net.Job";
+package Farseer.Net.Job;
+
+service CallJob {
+    // 获取所有彩种列表
+    rpc Run (DefaultRequest) returns (RpcResponse);
+}

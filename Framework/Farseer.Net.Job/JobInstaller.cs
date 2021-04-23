@@ -22,7 +22,7 @@ namespace FS.Job
         }
 
         /// <summary>
-        /// 通过IOC注册NLog管理接口
+        /// 初始化IOC
         /// </summary>
         /// <param name="container"></param>
         /// <param name="store"></param>
