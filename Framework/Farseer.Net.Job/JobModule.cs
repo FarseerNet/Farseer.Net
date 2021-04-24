@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using FS.DI;
 using FS.Job.Configuration;
+using FS.Job.GrpcServer;
 using FS.Modules;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -18,14 +19,14 @@ namespace FS.Job
 
         public override void PostInitialize()
         {
-            var jobItemConfig = DI.IocManager.Instance.Resolve<IConfigurationRoot>().GetSection("Job").Get<JobItemConfig>();
-            
+            var jobItemConfig = IocManager.Resolve<IConfigurationRoot>().GetSection("Job").Get<JobItemConfig>();
+
             // 启动RPC服务
-            new GrpcServiceCreate().Start(jobItemConfig.GrpcServicePort);
-            
+            new GrpcServiceCreate().Start(jobItemConfig);
+
             // 注册到服务端
-            new ServiceRegister().Register(jobItemConfig.Server);
-            
+            var serviceRegister = IocManager.Resolve<ServiceRegister>();
+            serviceRegister.Register();
         }
 
         /// <summary>

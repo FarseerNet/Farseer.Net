@@ -1,0 +1,18 @@
+syntax = "proto3";
+option csharp_namespace = "FSS.GrpcService";
+package fss;
+
+// 能用出参
+message RpcResponse {
+    // 状态
+    bool Status = 1;
+    // 状态码
+    int32 StatusCode = 2;
+    // 提示信息
+    string StatusMessage = 3;
+    // 数据Josn
+    string Data = 4;
+}
+
+message DefaultRequest {
+}

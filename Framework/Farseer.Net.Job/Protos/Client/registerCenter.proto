@@ -1,0 +1,18 @@
+syntax = "proto3";
+option csharp_namespace = "FSS.GrpcService";
+import "Protos/Client/rpcResponse.proto";
+package fss;
+
+// 注册中心
+service RegisterCenter {
+  // 客户端注册
+  rpc Register (RegisterRequest) returns (RpcResponse);
+}
+
+// 注册入参
+message RegisterRequest {
+  // 客户端Id
+  string clientId = 1;
+  // 客户访问
+  string endpoint = 2;
+}

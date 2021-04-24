@@ -2,6 +2,8 @@
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using FS.DI;
+using FS.Job.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace FS.Job
 {
@@ -28,6 +30,9 @@ namespace FS.Job
         /// <param name="store"></param>
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
+            var jobItemConfig = container.Resolve<IConfigurationRoot>().GetSection("Job").Get<JobItemConfig>();
+            //container.Register(Component.For<ServiceRegister>().Instance(new ServiceRegister(SnowflakeId.GenerateId().ToString(), jobItemConfig)).LifestyleSingleton());
+            container.Register(Component.For<ServiceRegister>().DependsOn(Dependency.OnValue<string>(SnowflakeId.GenerateId().ToString()), Dependency.OnValue<JobItemConfig>(jobItemConfig)).LifestyleSingleton());
         }
     }
 }

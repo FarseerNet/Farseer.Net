@@ -13,9 +13,11 @@
         <PackageTags>Job组件</PackageTags>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <RootNamespace>FS.Job</RootNamespace>
+        <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Farseer.Net.Grpc\Farseer.Net.Grpc.csproj" />
         <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />
     </ItemGroup>
 
@@ -29,11 +31,14 @@
         <PackageReference Include="Google.Protobuf" Version="3.15.8" />
         <PackageReference Include="Grpc.Net.Client" Version="2.37.0" />
         <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
+        <PackageReference Include="Snowflake.Core" Version="2.0.0" />
         <PackageReference Include="System.ServiceProcess.ServiceController" Version="5.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <Protobuf Include="Protos\Public\RpcResponse.proto" GrpcServices="Server" />
-        <Protobuf Include="Protos\CallJob.proto" GrpcServices="Server" />
+        <Protobuf Include="Protos\Server\callJob.proto" GrpcServices="Server" />
+        <Protobuf Include="Protos\Server\rpcResponse.proto" GrpcServices="Server" />
+        <Protobuf Include="Protos\Client\registerCenter.proto" GrpcServices="Client" />
+        <Protobuf Include="Protos\Client\rpcResponse.proto" GrpcServices="Client" />
     </ItemGroup>
 </Project>
