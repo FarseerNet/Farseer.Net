@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Google.Protobuf" Version="3.15.8" />
+      <PackageReference Include="Grpc" Version="2.37.0" />
+      <PackageReference Include="Grpc.Core" Version="2.37.0" />
+      <PackageReference Include="Grpc.Net.Client" Version="2.37.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Farseer.Net.Core\Farseer.Net.Core.csproj" />
+      <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />
+    </ItemGroup>
+
+</Project>
