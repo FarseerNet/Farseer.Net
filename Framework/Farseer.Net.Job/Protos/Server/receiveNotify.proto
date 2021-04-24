@@ -3,14 +3,33 @@ import "Protos/Server/rpcResponse.proto";
 option csharp_namespace = "FSS.Client";
 package FSS.Client;
 
+
 // 接收通知服务
 service ReceiveNotify {
     // 获取
-    rpc JobInvoke (JobInvokeRequest) returns (RpcResponse);
+    rpc JobInvoke (JobInvokeRequest) returns (JobInvokeResponse);
 }
 
 // 任务调用请求
 message JobInvokeRequest {
     // 任务ID
     int32 TaskId = 1;
+    // 任务标题
+    string Caption = 2;
+    // 实现Job的特性名称（客户端识别哪个实现类）
+    string JobTypeName = 3;
+    // 任务开始时间
+    int64 StartAt = 9;
+}
+
+// 任务调用返回
+message JobInvokeResponse {
+    // 任务ID
+    int32 TaskId = 1;
+    // 下次执行时间
+    int64 NextAt = 2;
+    // 当前进度
+    int32 Progress = 3;
+    // 执行状态
+    int32 Status = 4;
 }

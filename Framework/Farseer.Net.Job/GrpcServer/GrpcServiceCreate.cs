@@ -1,6 +1,7 @@
 using System.Net;
 using FS.DI;
 using FS.Job.Configuration;
+using FSS.Client;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 
@@ -17,7 +18,7 @@ namespace FS.Job.GrpcServer
             {
                 Services =
                 {
-                    //CallJob.BindService(new ReceiveNotifyService())
+                    ReceiveNotify.BindService(new ReceiveNotifyService())
                 },
                 Ports    =
                 {

@@ -1,15 +1,19 @@
+using System;
 using System.Threading.Tasks;
 using FSS.Client;
 using Grpc.Core;
-using RpcResponse = FSS.Client.RpcResponse;
 
 namespace FS.Job.GrpcServer
 {
     public class ReceiveNotifyService : FSS.Client.ReceiveNotify.ReceiveNotifyBase
     {
-        public override Task<RpcResponse> JobInvoke(JobInvokeRequest request, ServerCallContext context)
+        public override Task<JobInvokeResponse> JobInvoke(JobInvokeRequest request, ServerCallContext context)
         {
-            return base.JobInvoke(request, context);
+            Console.WriteLine(request.Caption);
+            request.TaskId = 0;
+            return Task.FromResult(new JobInvokeResponse
+            {
+            });
         }
     }
 }
