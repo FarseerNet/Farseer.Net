@@ -18,7 +18,6 @@ namespace FS.Modules
         /// </summary>
         public override void PreInitialize()
         {
-            // 如果Redis配置没有创建，则创建它
             IocManager.AddConventionalRegistrar(new BasicConventionalRegistrarInstaller());
             ServicePointManager.DefaultConnectionLimit = 512;
             ServicePointManager.UseNagleAlgorithm = false;

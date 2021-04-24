@@ -4,12 +4,14 @@
 // ********************************************
 
 using System;
-using Castle.MicroKernel.Registration;
+using System.ComponentModel;
+using Castle.Windsor;
 using FS.Configuration.Startup;
 using FS.DI;
 using FS.DI.Installers;
 using FS.Modules;
 using Microsoft.Extensions.Logging;
+using Component = Castle.MicroKernel.Registration.Component;
 
 namespace FS
 {
@@ -78,7 +80,7 @@ namespace FS
         /// <param name="appName">应用名称</param>
         public static FarseerApplication Run<TStartupModule>(string appName = "") where TStartupModule : FarseerModule
         {
-            return new FarseerApplication(typeof(TStartupModule), DI.IocManager.Instance, appName);
+            return new(typeof(TStartupModule), DI.IocManager.Instance, appName);
         }
 
         /// <summary>
@@ -86,13 +88,13 @@ namespace FS
         /// </summary>
         /// <typeparam name="TStartupModule">模块</typeparam>
         /// <param name="iocManager">容器管理器</param>
-        public static FarseerApplication Run<TStartupModule>(IIocManager iocManager, string appName = "") where TStartupModule : FarseerModule => new FarseerApplication(typeof(TStartupModule), iocManager, appName);
+        public static FarseerApplication Run<TStartupModule>(IIocManager iocManager, string appName = "") where TStartupModule : FarseerModule => new(typeof(TStartupModule), iocManager, appName);
 
         /// <summary>
         ///     创建启动器
         /// </summary>
         /// <param name="startupModule">模块类型</param>
-        public static FarseerApplication Run(Type startupModule, string appName = "") => new FarseerApplication(startupModule, DI.IocManager.Instance, appName);
+        public static FarseerApplication Run(Type startupModule, string appName = "") => new(startupModule, DI.IocManager.Instance, appName);
 
         /// <summary>
         ///     创建启动器

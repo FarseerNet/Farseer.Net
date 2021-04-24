@@ -46,6 +46,8 @@ namespace FS.DI
         static IocManager()
         {
             Instance = new IocManager();
+            // 注册自己
+            Instance.RegisterSelf();
         }
 
         /// <summary>
@@ -55,8 +57,6 @@ namespace FS.DI
         {
             //Container = new WindsorContainer();
             //_conventionalRegistrars = new List<IConventionalDependencyRegistrar>();
-            //Register self!
-            Container.Register(Component.For<IocManager, IIocManager, IIocRegistrar, IIocResolver>().UsingFactoryMethod(() => this));
         }
 
         /// <summary>
@@ -152,6 +152,15 @@ namespace FS.DI
         /// <param name="lifeStyle"></param>
         public void Register(Type type, Type impl, string name = "", DependencyLifeStyle lifeStyle = DependencyLifeStyle.Singleton) => Container.Register(string.IsNullOrEmpty(name) ? ApplyLifestyle(Component.For(type, impl).ImplementedBy(impl), lifeStyle) : ApplyLifestyle(Component.For(type, impl).Named(name).ImplementedBy(impl), lifeStyle));
 
+        /// <summary>
+        /// 注册自己
+        /// </summary>
+        private void RegisterSelf()
+        { 
+            //Register self!
+            Container.Register(Component.For<IocManager, IIocManager, IIocRegistrar, IIocResolver>().UsingFactoryMethod(() => this));
+        }
+        
         /// <summary>
         ///     注册
         /// </summary>
