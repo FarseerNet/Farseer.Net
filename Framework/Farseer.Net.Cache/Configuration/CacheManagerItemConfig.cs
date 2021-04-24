@@ -2,6 +2,7 @@
 // 作者：何达贤（steden） QQ：11042427
 // 时间：2016-12-26 16:16
 // ********************************************
+
 namespace FS.Cache.Configuration
 {
     /// <summary>
@@ -10,12 +11,12 @@ namespace FS.Cache.Configuration
     public class CacheManagerItemConfig
     {
         /// <summary> 缓存名称 </summary> 
-        public string Name = ".";
+        public string Name { get; set; }
 
         /// <summary> 缓存模式 </summary> 
-        public EumCacheModel CacheModel = EumCacheModel.Runtime;
+        public EumCacheModel CacheModel { get; set; }
 
         /// <summary> Redis配置名称 </summary>
-        public string RedisConfigName = "";
+        public string RedisConfigName { get; set; }
     }
 }

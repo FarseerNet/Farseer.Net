@@ -10,20 +10,20 @@ namespace FS.Cache.Redis.Configuration
     public class RedisItemConfig
     {
         /// <summary> 集群名称 </summary>
-        public string Name = ".";
+        public string Name { get; set; }
 
         /// <summary> 集群IP:Port地址 </summary>
-        public string Server = "";
+        public string Server { get; set; }
 
         /// <summary> 命令类型（默认集群模式） </summary>
-        public EumCommandType CommandType = 0;
+        public EumCommandType CommandType { get; set; }
 
         /// <summary> 密码 </summary>
-        public string Password = "";
+        public string Password { get; set; }
 
         /// <summary> 哨兵模式下需要填写 </summary>
-        public string ServiceName = "";
+        public string ServiceName { get; set; }
 
-        public string TieBreaker = "";
+        public string TieBreaker { get; set; }
     }
 }

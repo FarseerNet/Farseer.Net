@@ -37,14 +37,21 @@ namespace FS.Cache.Redis
         {
             // 读取配置
             var configurationSection = IocManager.Instance.Resolve<IConfigurationRoot>().GetSection("Redis");
-            var redisItemConfigs     = configurationSection.GetChildren().Select(o => o.Get<RedisItemConfig>());
+            var redisItemConfigs     = configurationSection.GetChildren().Select(o => o.Get<RedisItemConfig>()).ToList();
+
             foreach (var redisItemConfig in redisItemConfigs)
             {
                 // 注册Redis连接
-                container.Register(Component.For<IRedisConnectionWrapper>().Named($"{redisItemConfig.Name}_connection").ImplementedBy<RedisConnectionWrapper>().DependsOn(Dependency.OnValue(redisItemConfig.GetType(), redisItemConfig)).LifestyleSingleton());
+                container.Register(Component.For<IRedisConnectionWrapper>().Named($"{redisItemConfig.Name}_connection").ImplementedBy<RedisConnectionWrapper>().DependsOn(Dependency.OnValue<RedisItemConfig>(redisItemConfig)).LifestyleSingleton());
 
                 // 注册Redis管理
-                container.Register(Component.For<IRedisCacheManager>().Named(redisItemConfig.Name).ImplementedBy<RedisCacheManager>().DependsOn(Dependency.OnValue(redisItemConfig.GetType(), redisItemConfig), Dependency.OnValue(typeof(IRedisConnectionWrapper), _iocResolver.Resolve<IRedisConnectionWrapper>($"{redisItemConfig.Name}_connection"))).LifestyleSingleton());
+                container.Register(Component.For<IRedisCacheManager>().Named(redisItemConfig.Name).ImplementedBy<RedisCacheManager>().DependsOn(Dependency.OnValue<RedisItemConfig>(redisItemConfig), Dependency.OnValue<IRedisConnectionWrapper>(_iocResolver.Resolve<IRedisConnectionWrapper>($"{redisItemConfig.Name}_connection"))).LifestyleSingleton());
+
+                // 当配置项为"default"，或者只有一项时，注册一个不带别名的实例
+                if (redisItemConfig.Name == "default" || redisItemConfigs.Count == 1)
+                {
+                    container.Register(Component.For<IRedisCacheManager>().ImplementedBy<RedisCacheManager>().DependsOn(Dependency.OnValue<RedisItemConfig>(redisItemConfig), Dependency.OnValue<IRedisConnectionWrapper>(_iocResolver.Resolve<IRedisConnectionWrapper>($"{redisItemConfig.Name}_connection"))).LifestyleSingleton());
+                }
             }
         }
     }

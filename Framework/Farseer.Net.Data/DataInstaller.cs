@@ -26,7 +26,7 @@ namespace FS.Data
             // 读取配置
             var configurationSection = container.Resolve<IConfigurationRoot>().GetSection("Database");
             var dbConfig             = configurationSection.Get<DbConfig>();
-            if (dbConfig.Items.Count == 0) { return; }
+            if (dbConfig==null || dbConfig.Items.Count == 0) return;
             dbConfig.Items.ForEach(m =>
             {
                 // 注册Db连接
