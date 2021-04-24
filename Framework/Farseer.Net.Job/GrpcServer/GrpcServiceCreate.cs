@@ -1,5 +1,4 @@
 using System.Net;
-using Farseer.Net.Job;
 using FS.DI;
 using FS.Job.Configuration;
 using Grpc.Core;
@@ -18,7 +17,7 @@ namespace FS.Job.GrpcServer
             {
                 Services =
                 {
-                    CallJob.BindService(new CallJobService())
+                    //CallJob.BindService(new ReceiveNotifyService())
                 },
                 Ports    =
                 {

@@ -36,7 +36,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Protobuf Include="Protos\Server\callJob.proto" GrpcServices="Server" />
+        <Protobuf Include="Protos\Server\receiveNotify.proto" GrpcServices="Server" />
         <Protobuf Include="Protos\Server\rpcResponse.proto" GrpcServices="Server" />
         <Protobuf Include="Protos\Client\registerCenter.proto" GrpcServices="Client" />
         <Protobuf Include="Protos\Client\rpcResponse.proto" GrpcServices="Client" />

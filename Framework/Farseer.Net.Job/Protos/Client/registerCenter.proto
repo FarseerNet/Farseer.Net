@@ -14,5 +14,5 @@ message RegisterRequest {
   // 客户端Id
   string clientId = 1;
   // 客户访问
-  string endpoint = 2;
+  int32 ReceiveNotifyPort = 2;
 }

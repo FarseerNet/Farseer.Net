@@ -5,10 +5,8 @@ using Farseer.Net.Grpc;
 using FS.DI;
 using FS.Job.Configuration;
 using FSS.GrpcService;
-using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Logging;
-using RpcResponse = FSS.GrpcService.RpcResponse;
 
 namespace FS.Job
 {
@@ -18,7 +16,7 @@ namespace FS.Job
     public class ServiceRegister
     {
         public IGrpcClient GrpcClient { get; set; }
-        public IIocManager  IocManager { get; set; }
+        public IIocManager IocManager { get; set; }
 
         /// <summary>
         /// 客户端ID
@@ -48,17 +46,19 @@ namespace FS.Job
                     try
                     {
                         var registerCenterClient = new RegisterCenter.RegisterCenterClient(GrpcChannel.ForAddress(_jobItemConfig.Server));
-                        var rpc =registerCenterClient.Register(new RegisterRequest
+                        var rpc = registerCenterClient.Register(new RegisterRequest
                         {
-                            ClientId = _clientId,
-                            Endpoint = $"http://localhost:{_jobItemConfig.GrpcServicePort}"
+                            ClientId          = _clientId,
+                            ReceiveNotifyPort = _jobItemConfig.GrpcServicePort
                         });
-                        IocManager.Logger<JobModule>().LogDebug($"注册到服务端,{_jobItemConfig.Server}");
+                        if (rpc.Status) IocManager.Logger<JobModule>().LogDebug($"注册到服务端,{_jobItemConfig.Server}");
+                        else IocManager.Logger<JobModule>().LogError($"注册到服务端,{_jobItemConfig.Server}失败");
                     }
                     catch (Exception e)
                     {
-                        IocManager.Logger<ServiceRegister>().LogError(e,e.ToString());
+                        IocManager.Logger<ServiceRegister>().LogError(e, $"注册到服务端,{_jobItemConfig.Server}失败：{e.ToString()}");
                     }
+
                     Thread.Sleep(_jobItemConfig.ConnectFssServerTime);
                 }
             });

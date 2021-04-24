@@ -1,0 +1,16 @@
+syntax = "proto3";
+import "Protos/Server/rpcResponse.proto";
+option csharp_namespace = "FSS.Client";
+package FSS.Client;
+
+// 接收通知服务
+service ReceiveNotify {
+    // 获取
+    rpc JobInvoke (JobInvokeRequest) returns (RpcResponse);
+}
+
+// 任务调用请求
+message JobInvokeRequest {
+    // 任务ID
+    int32 TaskId = 1;
+}

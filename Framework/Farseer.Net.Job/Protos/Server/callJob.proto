@@ -1,9 +1,0 @@
-syntax = "proto3";
-import "Protos/Server/rpcResponse.proto";
-option csharp_namespace = "Farseer.Net.Job";
-package Farseer.Net.Job;
-
-service CallJob {
-    // 获取
-    rpc Run (DefaultRequest) returns (RpcResponse);
-}
