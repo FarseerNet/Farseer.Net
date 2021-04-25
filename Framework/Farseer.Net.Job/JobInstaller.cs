@@ -5,6 +5,7 @@ using Castle.Windsor;
 using FS.DI;
 using FS.Job.Attr;
 using FS.Job.Configuration;
+using FS.Job.GrpcClient;
 using FS.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;

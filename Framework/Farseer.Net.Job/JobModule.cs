@@ -2,6 +2,7 @@
 using FS.DI;
 using FS.Job.Attr;
 using FS.Job.Configuration;
+using FS.Job.GrpcClient;
 using FS.Job.GrpcServer;
 using FS.Modules;
 using Microsoft.Extensions.Configuration;

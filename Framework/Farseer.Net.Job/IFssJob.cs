@@ -1,7 +1,9 @@
+using FS.Job.GrpcServer;
+
 namespace FS.Job
 {
     public interface IFssJob
     {
-        bool Invoke();
+        bool Execute(ReceiveContext context);
     }
 }

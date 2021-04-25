@@ -7,7 +7,7 @@ package FSS.Client;
 // 接收通知服务
 service ReceiveNotify {
     // 获取
-    rpc JobInvoke (JobInvokeRequest) returns (JobInvokeResponse);
+    rpc JobInvoke (JobInvokeRequest) returns (stream JobInvokeResponse);
 }
 
 // 任务调用请求

@@ -1,14 +1,17 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Castle.Windsor.Diagnostics.Extensions;
 using Farseer.Net.Grpc;
 using FS.DI;
 using FS.Job.Configuration;
 using FSS.GrpcService;
+using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Logging;
+using RpcResponse = FSS.GrpcService.RpcResponse;
 
-namespace FS.Job
+namespace FS.Job.GrpcClient
 {
     /// <summary>
     /// 注册到服务端
@@ -39,30 +42,48 @@ namespace FS.Job
         /// </summary>
         public void Register()
         {
-            Task.Run(() =>
+            IocManager.Logger<JobModule>().LogDebug($"尝试注册到FSS平台,{_jobItemConfig.Server}");
+            var rpc = AsyncDuplexStreamingCall();
+
+            Task.Run(async () =>
             {
-                IocManager.Logger<JobModule>().LogDebug($"尝试注册到FSS平台,{_jobItemConfig.Server}");
                 while (true)
                 {
                     try
                     {
-                        var registerCenterClient = new RegisterCenter.RegisterCenterClient(GrpcChannel.ForAddress(_jobItemConfig.Server));
-                        var rpc = registerCenterClient.Register(new RegisterRequest
+                        await rpc.RequestStream.WriteAsync(new RegisterRequest
                         {
                             ClientId          = _clientId,
                             ReceiveNotifyPort = _jobItemConfig.GrpcServicePort
                         });
-                        if (rpc.Status) IocManager.Logger<JobModule>().LogDebug($"成功注册到FSS平台,{_jobItemConfig.Server}");
-                        else IocManager.Logger<JobModule>().LogError($"注册失败");
                     }
                     catch (Exception e)
                     {
-                        IocManager.Logger<ServiceRegister>().LogError(e, $"注册失败：{e.ToString()}");
+                        var msg = e is RpcException rpcException ? rpcException.Status.Detail : e.Message;
+                        IocManager.Logger<ServiceRegister>().LogError($"注册失败：{msg}");
+                        rpc = AsyncDuplexStreamingCall();
                     }
 
                     Thread.Sleep(_jobItemConfig.ConnectFssServerTime);
                 }
             });
+        }
+
+        private AsyncDuplexStreamingCall<RegisterRequest, RpcResponse> AsyncDuplexStreamingCall()
+        {
+            var grpcChannel          = GrpcChannel.ForAddress(_jobItemConfig.Server);
+            var registerCenterClient = new RegisterCenter.RegisterCenterClient(grpcChannel);
+            var rpc= registerCenterClient.Register();
+
+            Task.Run(async () =>
+            {
+                while (await rpc.ResponseStream.MoveNext())
+                {
+                    if (rpc.ResponseStream.Current.Status) IocManager.Logger<JobModule>().LogDebug($"收到FSS平台的心跳应答,{_jobItemConfig.Server}");
+                    else IocManager.Logger<ServiceRegister>().LogWarning($"注册失败：{rpc.ResponseStream.Current.StatusMessage}");
+                }
+            });
+            return rpc;
         }
     }
 }
