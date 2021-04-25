@@ -35,7 +35,7 @@ namespace FS.Job
         /// <param name="store"></param>
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
-            var jobItemConfig = container.Resolve<IConfigurationRoot>().GetSection("Job").Get<JobItemConfig>();
+            var jobItemConfig = container.Resolve<IConfigurationRoot>().GetSection("FSS").Get<JobItemConfig>();
 
             // 服务注册
             container.Register(Component.For<ServiceRegister>().DependsOn(Dependency.OnValue<string>(SnowflakeId.GenerateId().ToString()), Dependency.OnValue<JobItemConfig>(jobItemConfig)).LifestyleSingleton());

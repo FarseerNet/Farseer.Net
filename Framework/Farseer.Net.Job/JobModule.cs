@@ -24,7 +24,7 @@ namespace FS.Job
             var fssAttribute = Assembly.GetEntryAssembly().EntryPoint.DeclaringType.GetCustomAttribute<FssAttribute>();
             if (fssAttribute is {Enable: true})
             {
-                var jobItemConfig = IocManager.Resolve<IConfigurationRoot>().GetSection("Job").Get<JobItemConfig>();
+                var jobItemConfig = IocManager.Resolve<IConfigurationRoot>().GetSection("FSS").Get<JobItemConfig>();
 
                 // 启动RPC服务
                 new GrpcServiceCreate(IocManager).Start(jobItemConfig);
