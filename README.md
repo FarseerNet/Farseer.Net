@@ -7,7 +7,7 @@
     我们所有组件的使用标准，均无偿开源在GitHub上，并提供Nuget下载
     
 ### 使用Rabbit组件的示例：
-```
+```c#
 [Rabbit]
 class Program
 {
@@ -51,7 +51,7 @@ public class TestConsumer : IListenerMessage
     并且在启动消费的时候，如果交换器、队列不存在时，会执行创建操作。
 
 ### 我们再来看另外的例子：数据库ORM操作：
-```
+```c#
 /// <summary> 数据库实体 </summary>
 public class TaskPO
 {
@@ -113,7 +113,7 @@ public class TaskServer : ITaskServer
     上面用到了数据库上下文的概念，并支持工作单元模式。在我们需要操作数据库方面是极为轻巧、简单的。
     关与数据库操作、模块化理念的实际使用，可以参考我另外一个开源项目：分布式调度平台，地址：[GitHub](https://github.com/FarseerNet/FarseerSchedulerService)
     当然，这里需要依赖DataModule模块：
-```
+```c#
 /// <summary> 启动模块 </summary>
 [DependsOn(typeof(DataModule),typeof(RabbitModule))]
 public class StartupModule : FarseerModule
