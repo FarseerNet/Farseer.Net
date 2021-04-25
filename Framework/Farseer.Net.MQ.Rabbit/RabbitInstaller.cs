@@ -48,7 +48,7 @@ namespace FS.MQ.Rabbit
 
             // 查找入口方法是否启用了Rabbit消费
             var rabbitAttribute = Assembly.GetEntryAssembly().EntryPoint.DeclaringType.GetCustomAttribute<RabbitAttribute>();
-            if (rabbitAttribute != null && rabbitAttribute.Enable)
+            if (rabbitAttribute is {Enable: true})
             {
                 // 查找消费实现
                 var types = container.Resolve<IAssemblyFinder>().GetType<IListenerMessage>();

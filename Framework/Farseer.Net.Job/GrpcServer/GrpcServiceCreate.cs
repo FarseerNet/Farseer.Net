@@ -12,13 +12,19 @@ namespace FS.Job.GrpcServer
     /// </summary>
     public class GrpcServiceCreate
     {
+        private readonly IIocManager _ioc;
+
+        public GrpcServiceCreate(IIocManager ioc)
+        {
+            _ioc = ioc;
+        }
         public void Start(JobItemConfig jobItemConfig)
         {
             Server server = new Server
             {
                 Services =
                 {
-                    ReceiveNotify.BindService(new ReceiveNotifyService())
+                    ReceiveNotify.BindService(new ReceiveNotifyService(_ioc))
                 },
                 Ports    =
                 {

@@ -41,6 +41,7 @@ namespace FS.Job
         {
             Task.Run(() =>
             {
+                IocManager.Logger<JobModule>().LogDebug($"尝试注册到FSS平台,{_jobItemConfig.Server}");
                 while (true)
                 {
                     try
@@ -51,12 +52,12 @@ namespace FS.Job
                             ClientId          = _clientId,
                             ReceiveNotifyPort = _jobItemConfig.GrpcServicePort
                         });
-                        if (rpc.Status) IocManager.Logger<JobModule>().LogDebug($"注册到服务端,{_jobItemConfig.Server}");
-                        else IocManager.Logger<JobModule>().LogError($"注册到服务端,{_jobItemConfig.Server}失败");
+                        if (rpc.Status) IocManager.Logger<JobModule>().LogDebug($"成功注册到FSS平台,{_jobItemConfig.Server}");
+                        else IocManager.Logger<JobModule>().LogError($"注册失败");
                     }
                     catch (Exception e)
                     {
-                        IocManager.Logger<ServiceRegister>().LogError(e, $"注册到服务端,{_jobItemConfig.Server}失败：{e.ToString()}");
+                        IocManager.Logger<ServiceRegister>().LogError(e, $"注册失败：{e.ToString()}");
                     }
 
                     Thread.Sleep(_jobItemConfig.ConnectFssServerTime);

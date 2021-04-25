@@ -1,9 +1,13 @@
-﻿using Castle.MicroKernel.Registration;
+﻿using System.Reflection;
+using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using FS.DI;
+using FS.Job.Attr;
 using FS.Job.Configuration;
+using FS.Reflection;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace FS.Job
 {
@@ -31,8 +35,19 @@ namespace FS.Job
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             var jobItemConfig = container.Resolve<IConfigurationRoot>().GetSection("Job").Get<JobItemConfig>();
-            //container.Register(Component.For<ServiceRegister>().Instance(new ServiceRegister(SnowflakeId.GenerateId().ToString(), jobItemConfig)).LifestyleSingleton());
+
+            // 服务注册
             container.Register(Component.For<ServiceRegister>().DependsOn(Dependency.OnValue<string>(SnowflakeId.GenerateId().ToString()), Dependency.OnValue<JobItemConfig>(jobItemConfig)).LifestyleSingleton());
+
+            // 业务job
+            var types = container.Resolve<IAssemblyFinder>().GetType<IFssJob>();
+            foreach (var jobType in types)
+            {
+                var fssJobAttribute = jobType.GetCustomAttribute<FssJobAttribute>();
+                if (fssJobAttribute == null || !fssJobAttribute.Enable) return;
+                IocManager.Instance.Logger<JobInstaller>().LogInformation($"初始化：【{jobType.Name}】- {fssJobAttribute.Name} 任务");
+                container.Register(Component.For<IFssJob>().ImplementedBy(jobType).Named(fssJobAttribute.Name));
+            }
         }
     }
 }

@@ -18,6 +18,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Farseer.Net.Grpc\Farseer.Net.Grpc.csproj" />
+        <ProjectReference Include="..\Farseer.Net.Utils\Farseer.Net.Utils.csproj" />
         <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />
     </ItemGroup>
 
