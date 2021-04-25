@@ -1,8 +1,6 @@
 syntax = "proto3";
-import "Protos/Server/rpcResponse.proto";
 option csharp_namespace = "FSS.Client";
 package FSS.Client;
-
 
 // 接收通知服务
 service ReceiveNotify {
@@ -19,7 +17,9 @@ message JobInvokeRequest {
     // 实现Job的特性名称（客户端识别哪个实现类）
     string JobTypeName = 3;
     // 任务开始时间
-    int64 StartAt = 9;
+    int64 StartAt = 4;
+    // 下次执行时间
+    int64 NextAt = 5;
 }
 
 // 任务调用返回
@@ -32,4 +32,15 @@ message JobInvokeResponse {
     int32 Progress = 3;
     // 执行状态
     int32 Status = 4;
+    // 日志
+    LogResponse Log = 5;
+}
+
+message LogResponse {
+    // 日志等级
+    int32 LogLevel = 1;
+    // 日志内容
+    string Log = 2;
+    // 日志时间
+    int64 CreateAt = 3;
 }

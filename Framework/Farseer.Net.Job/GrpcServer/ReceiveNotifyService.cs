@@ -27,7 +27,7 @@ namespace FS.Job.GrpcServer
             if (!isRegistered)
             {
                 _ioc.Logger<ReceiveNotifyService>().LogWarning($"未找到任务实现类：{message}");
-                return Task.FromResult(new JobInvokeResponse {TaskId = request.TaskId, NextAt = request.StartAt + (1000 * 60), Progress = 0, Status = 2});
+                return Task.FromResult(new JobInvokeResponse {TaskId = request.TaskId, NextAt = request.NextAt, Progress = 0, Status = 2});
             }
 
             // 上下文
@@ -40,27 +40,13 @@ namespace FS.Job.GrpcServer
 
                 // 执行JOB
                 var execute                          = fssJob.Execute(receiveContext);
-                if (execute) receiveContext.Progress = 100;
-
-                // 返回结果
-                return Task.FromResult(new JobInvokeResponse
-                {
-                    TaskId   = request.TaskId,
-                    NextAt   = receiveContext.NextAt,
-                    Progress = receiveContext.Progress,
-                    Status   = execute ? 3 : 2
-                });
+                return execute ? receiveContext.Success() : receiveContext.Fail();
             }
             catch (Exception e)
             {
                 _ioc.Logger<ReceiveNotifyService>().LogError(e, e.ToString());
-                return Task.FromResult(new JobInvokeResponse
-                {
-                    TaskId   = request.TaskId,
-                    NextAt   = 0,
-                    Progress = 0,
-                    Status   = 2
-                });
+                receiveContext.Logger(LogLevel.Error,e.ToString());
+                return receiveContext.Fail();
             }
         }
     }
