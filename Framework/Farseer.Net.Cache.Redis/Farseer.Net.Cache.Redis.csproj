@@ -14,10 +14,6 @@
     <RootNamespace>FS.Cache.Redis</RootNamespace>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <DefineConstants>$(DefineConstants);CORE</DefineConstants>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="StackExchange.Redis" Version="2.2.4" />
   </ItemGroup>

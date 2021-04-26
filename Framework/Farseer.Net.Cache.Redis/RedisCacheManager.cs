@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
 using StackExchange.Redis;
@@ -46,7 +47,7 @@ namespace FS.Cache.Redis
             foreach (var ep in _connectionWrapper.GetEndpoints())
             {
                 var server = _connectionWrapper.Server(ep);
-                var keys = server.Keys(pattern: "*" + pattern + "*");
+                var keys   = server.Keys(pattern: "*" + pattern + "*");
                 foreach (var key in keys) Db.KeyDelete(key);
             }
         }
@@ -59,7 +60,7 @@ namespace FS.Cache.Redis
             foreach (var ep in _connectionWrapper.GetEndpoints())
             {
                 var server = _connectionWrapper.Server(ep);
-                var keys = server.Keys();
+                var keys   = server.Keys();
                 foreach (var key in keys) Db.KeyDelete(key);
             }
         }
@@ -71,6 +72,26 @@ namespace FS.Cache.Redis
         {
             //if (_connectionWrapper != null)
             //    _connectionWrapper.Dispose();
+        }
+
+
+        /// <summary>
+        ///     事务，批量写入HASH
+        /// </summary>
+        public void HashSetTransaction<TEntity>(string key, List<TEntity> lst, Func<TEntity, object> funcDataKey, Func<TEntity, string> funcData = null)
+        {
+            if (lst == null || lst.Count == 0) return;
+            if (funcData == null) funcData = po => JsonConvert.SerializeObject(po);
+
+            var transaction = Db.CreateTransaction();
+            foreach (var po in lst)
+            {
+                var dataKey = funcDataKey(po).ToString();
+                var data    = funcData(po);
+                transaction.HashSetAsync(key, dataKey, data);
+            }
+
+            transaction.Execute();
         }
     }
 }

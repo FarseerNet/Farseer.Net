@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using StackExchange.Redis;
 
 namespace FS.Cache.Redis
@@ -23,5 +24,10 @@ namespace FS.Cache.Redis
         /// 清除所有缓存
         /// </summary>
         void Clear();
+
+        /// <summary>
+        ///     事务，批量写入HASH
+        /// </summary>
+        void HashSetTransaction<TEntity>(string key, List<TEntity> lst, Func<TEntity, object> funcDataKey, Func<TEntity, string> funcData = null);
     }
 }

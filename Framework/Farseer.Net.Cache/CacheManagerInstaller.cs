@@ -1,11 +1,8 @@
-﻿using System;
-using System.Linq;
-using CacheManager.Core;
+﻿using System.Linq;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using FS.Cache.Configuration;
-using FS.Configuration;
 using FS.DI;
 using Microsoft.Extensions.Configuration;
 
@@ -41,18 +38,6 @@ namespace FS.Cache
             var configurationSection    = IocManager.Instance.Resolve<IConfigurationRoot>().GetSection("Cache");
             var cacheManagerItemConfigs = configurationSection.GetChildren().Select(o => o.Get<CacheManagerItemConfig>()).ToList();
 
-            cacheManagerItemConfigs.ForEach(m =>
-            {
-                Action<ConfigurationBuilderCachePart> settings = null;
-                switch (m.CacheModel)
-                {
-                    case EumCacheModel.Runtime: { settings = (o) => o.WithMemoryCacheHandle("handleName"); break; }
-                    default: return;
-                }
-
-                // 注册
-                container.Register(Component.For<ICacheManager>().Named(m.Name).ImplementedBy<CacheManager>().DependsOn(Dependency.OnValue(settings.GetType(), settings)).LifestyleSingleton());
-            });
         }
     }
 }
