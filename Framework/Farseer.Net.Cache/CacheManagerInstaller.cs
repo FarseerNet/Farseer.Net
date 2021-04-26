@@ -2,7 +2,6 @@
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using FS.Cache.Configuration;
 using FS.DI;
 using Microsoft.Extensions.Configuration;
 
@@ -34,10 +33,6 @@ namespace FS.Cache
         /// <param name="store"></param>
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
-            // 读取配置
-            var configurationSection    = IocManager.Instance.Resolve<IConfigurationRoot>().GetSection("Cache");
-            var cacheManagerItemConfigs = configurationSection.GetChildren().Select(o => o.Get<CacheManagerItemConfig>()).ToList();
-
         }
     }
 }

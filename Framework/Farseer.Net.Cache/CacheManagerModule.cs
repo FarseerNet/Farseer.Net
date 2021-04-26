@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using FS.Cache.Configuration;
-using FS.Configuration;
+﻿using System.Reflection;
 using FS.DI;
 using FS.Modules;
 
@@ -17,7 +14,6 @@ namespace FS.Cache
         /// </summary>
         public override void PreInitialize()
         {
-            // 如果Redis配置没有创建，则创建它
         }
 
         /// <summary>
