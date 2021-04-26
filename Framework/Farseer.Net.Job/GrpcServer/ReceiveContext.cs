@@ -75,14 +75,15 @@ namespace FS.Job.GrpcServer
         /// 成功后执行
         /// </summary>
         /// <returns></returns>
-        internal Task Success()
+        internal Task Success(LogResponse log = null)
         {
             return _responseStream.WriteAsync(new JobInvokeResponse
             {
                 TaskId   = Request.TaskId,
                 NextAt   = NextAt,
                 Progress = 100,
-                Status   = 4
+                Status   = 3,
+                Log      = log
             });
         }
 
@@ -90,25 +91,27 @@ namespace FS.Job.GrpcServer
         /// 执行失败
         /// </summary>
         /// <returns></returns>
-        public Task Fail()
+        public Task Fail(LogResponse log = null)
         {
             return _responseStream.WriteAsync(new JobInvokeResponse
             {
                 TaskId   = Request.TaskId,
                 NextAt   = NextAt,
                 Progress = Progress,
-                Status   = 3
+                Status   = 2,
+                Log = log
             });
         }
 
-        private Task WriteAsync()
+        private Task WriteAsync(LogResponse log = null)
         {
             return _responseStream.WriteAsync(new JobInvokeResponse
             {
                 TaskId   = Request.TaskId,
                 NextAt   = NextAt,
                 Progress = Progress,
-                Status   = 1
+                Status   = 1,
+                Log      = log
             });
         }
     }

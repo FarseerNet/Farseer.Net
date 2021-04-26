@@ -284,8 +284,12 @@ namespace FS.Data
         public int Insert<T>(TEntity entity, out T identity)
         {
             Check.NotNull(entity, "插入操作时，entity参数不能为空！");
-
+            if (SetMap.PhysicsMap.DbGeneratedFields.Key == null)
+            {
+                throw new FarseerException($"{entity.GetType().Name}未设置DbGenerated特性，无法获取自增ID");
+            }
             var result = Insert(entity, true);
+            
             // 获取标识字段
             identity = ConvertHelper.ConvertType(PropertyGetCacheManger.Cache(SetMap.PhysicsMap.DbGeneratedFields.Key, entity), default(T));
             return result;

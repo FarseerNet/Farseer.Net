@@ -44,13 +44,13 @@ namespace FS.Cache.Redis
                 var redisConnectionWrapper = _iocResolver.Resolve<IRedisConnectionWrapper>($"{redisItemConfig.Name}_connection");
 
                 var redisCacheManager = new RedisCacheManager(redisItemConfig, redisConnectionWrapper);
-                
+                var cacheManager      = new CacheManager(new GetCacheByRedis(redisCacheManager));
+
                 // 注册Redis管理
-                container.Register(Component.For<IRedisCacheManager>().Named(redisItemConfig.Name).Instance(redisCacheManager).LifestyleSingleton());
-                
+                container.Register(Component.For<IRedisCacheManager>().Named($"redis_{redisItemConfig.Name}").Instance(redisCacheManager).LifestyleSingleton());
+
                 // 注册ICacheManager
-                var cacheManager    = new CacheManager(new GetCacheByRedis(redisCacheManager));
-                container.Register(Component.For<ICacheManager>().Named(redisItemConfig.Name).Instance(cacheManager).LifestyleSingleton());
+                container.Register(Component.For<ICacheManager>().Named($"cache_{redisItemConfig.Name}").Instance(cacheManager).LifestyleSingleton());
 
                 // 当配置项为"default"，或者只有一项时，注册一个不带别名的实例
                 if (redisItemConfig.Name == "default" || redisItemConfigs.Count == 1)

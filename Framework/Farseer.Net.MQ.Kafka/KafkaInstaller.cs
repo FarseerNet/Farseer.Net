@@ -26,7 +26,7 @@ namespace FS.MQ.Kafka
 
             //注册所有的消息队列的Topic消费者
             kafkaItemConfigs.ForEach(c => container.Register(Component.For<IKafkaManager>()
-                                                                           .Named(c.Name)
+                                                                           .Named($"kafka_{c.Name}")
                                                                            .ImplementedBy<KafkaManager>()
                                                                            .DependsOn(Dependency.OnValue<KafkaItemConfig>(c))
                                                                            .LifestyleSingleton()));

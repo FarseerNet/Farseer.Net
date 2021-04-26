@@ -60,7 +60,7 @@ namespace FS.Job.GrpcClient
                     catch (Exception e)
                     {
                         var msg = e is RpcException rpcException ? rpcException.Status.Detail : e.Message;
-                        IocManager.Logger<ServiceRegister>().LogError($"注册失败：{msg}");
+                        IocManager.Logger<ServiceRegister>().LogError($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} 注册失败：{msg}");
                         rpc = AsyncDuplexStreamingCall();
                     }
 
@@ -79,8 +79,8 @@ namespace FS.Job.GrpcClient
             {
                 while (await rpc.ResponseStream.MoveNext())
                 {
-                    if (rpc.ResponseStream.Current.Status) IocManager.Logger<JobModule>().LogDebug($"收到FSS平台的心跳应答,{_jobItemConfig.Server}");
-                    else IocManager.Logger<ServiceRegister>().LogWarning($"注册失败：{rpc.ResponseStream.Current.StatusMessage}");
+                    if (rpc.ResponseStream.Current.Status) IocManager.Logger<JobModule>().LogDebug($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} 收到FSS平台的心跳应答,{_jobItemConfig.Server}");
+                    else IocManager.Logger<ServiceRegister>().LogWarning($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} 注册失败：{rpc.ResponseStream.Current.StatusMessage}");
                 }
             });
             return rpc;

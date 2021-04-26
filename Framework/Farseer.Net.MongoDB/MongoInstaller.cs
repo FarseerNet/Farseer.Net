@@ -41,7 +41,7 @@ namespace FS.MongoDB
                 // 注册ES连接
                 container.Register(
                     Component.For<IMongoManager>()
-                        .Named(m.Name)
+                        .Named($"mongo_{m.Name}")
                         .ImplementedBy<MongoManager>()
                         .DependsOn(Dependency.OnValue(m.GetType(), m)).LifestyleSingleton());
             });

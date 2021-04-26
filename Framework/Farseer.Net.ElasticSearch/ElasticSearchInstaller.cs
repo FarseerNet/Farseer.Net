@@ -46,7 +46,7 @@ namespace FS.ElasticSearch
                 var settings = new ConnectionSettings(new StaticConnectionPool(lstUrls));
                 
                 // 注册ES实例
-                container.Register(Component.For<IElasticClient>().Named(elasticSearchItemConfig.Name).Instance(new ElasticClient(settings)).LifestyleSingleton());
+                container.Register(Component.For<IElasticClient>().Named($"es_{elasticSearchItemConfig.Name}").Instance(new ElasticClient(settings)).LifestyleSingleton());
             }
         }
     }

@@ -31,7 +31,6 @@
         /// </summary>
         public int? StatisticsIntervalMS { get; set; }
 
-
         /// <summary>
         /// offset自动重置
         /// </summary>

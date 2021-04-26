@@ -15,6 +15,6 @@ namespace FS.Data.Configuration
         public bool IsWriteSqlErrorLog { get; set; }
 
         /// <summary> 数据库连接配置列表 </summary>
-        public List<DbItemConfig> Items = new List<DbItemConfig>();
+        public List<DbItemConfig> Items { get; set; }
     }
 }

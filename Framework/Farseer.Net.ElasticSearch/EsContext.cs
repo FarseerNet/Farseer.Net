@@ -20,7 +20,7 @@ namespace FS.ElasticSearch
         /// <param name="configName">配置名称</param>
         protected EsContext(string configName)
         {
-            Client           = IocManager.Instance.Resolve<IElasticClient>(configName);
+            Client           = IocManager.Instance.Resolve<IElasticClient>($"es_{configName}");
             _internalContext = new InternalContext(this.GetType());
 
             // 实例化子类中，所有Set属性

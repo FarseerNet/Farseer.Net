@@ -29,7 +29,7 @@ namespace FS.Cache
         /// <param name="lst">数据源获取</param>
         /// <param name="getEntityId">实体的ID（必须是具有唯一性）</param>
         /// <param name="cacheOption">缓存配置项 </param>
-        void Save<TEntity>(string cacheKey, List<TEntity> lst, Func<TEntity, object> getEntityId, CacheOption cacheOption);
+        void Save<TEntity>(string cacheKey, List<TEntity> lst, Func<TEntity, object> getEntityId, CacheOption cacheOption =null);
 
         /// <summary>
         /// 保存列表到缓存中
@@ -38,6 +38,6 @@ namespace FS.Cache
         /// <param name="entity">数据源获取</param>
         /// <param name="getEntityId">实体的ID（必须是具有唯一性）</param>
         /// <param name="cacheOption">缓存配置项 </param>
-        void Save<TEntity>(string cacheKey, TEntity entity, Func<TEntity, object> getEntityId, CacheOption cacheOption);
+        void Save<TEntity>(string cacheKey, TEntity entity, object getEntityId, CacheOption cacheOption=null);
     }
 }

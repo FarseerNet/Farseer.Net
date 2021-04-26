@@ -26,21 +26,21 @@ namespace FS.Data
             // 读取配置
             var configurationSection = container.Resolve<IConfigurationRoot>().GetSection("Database");
             var dbConfig             = configurationSection.Get<DbConfig>();
-            if (dbConfig==null || dbConfig.Items.Count == 0) return;
+            if (dbConfig == null || dbConfig.Items.Count == 0) return;
             dbConfig.Items.ForEach(m =>
             {
                 // 注册Db连接
                 var dbConnectionString = AbsDbProvider.CreateInstance(m.DataType, m.DataVer).CreateDbConnstring(m.Server, m.Port, m.UserID, m.PassWord, m.Catalog, m.DataVer, m.Additional, m.ConnectTimeout, m.PoolMinSize, m.PoolMaxSize);
                 container.Register(
                     Component.For<IContextConnection>()
-                    .Named(m.Name)
-                    .ImplementedBy<ContextConnection>()
-                    .DependsOn(
-                        Dependency.OnValue(dbConnectionString.GetType(), dbConnectionString),
-                        Dependency.OnValue(m.DataType.GetType(), m.DataType),
-                        Dependency.OnValue(m.CommandTimeout.GetType(), m.CommandTimeout),
-                        Dependency.OnValue(m.DataType.GetType(), m.DataType))
-                    .LifestyleSingleton());
+                        .Named($"dbConnection_{m.Name}")
+                        .ImplementedBy<ContextConnection>()
+                        .DependsOn(
+                            Dependency.OnValue(dbConnectionString.GetType(), dbConnectionString),
+                            Dependency.OnValue(m.DataType.GetType(),         m.DataType),
+                            Dependency.OnValue(m.CommandTimeout.GetType(),   m.CommandTimeout),
+                            Dependency.OnValue(m.DataType.GetType(),         m.DataType))
+                        .LifestyleSingleton());
             });
 
             // 代理异常记录

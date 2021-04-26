@@ -39,9 +39,9 @@ namespace FS.MQ.Rabbit
                     foreach (var productConfig in rabbitItemConfig.Product)
                     {
                         // 注册生产者
-                        container.Register(Component.For<IRabbitManager>().Named(productConfig.Name).ImplementedBy<RabbitManager>().DependsOn(Dependency.OnValue<RabbitConnect>(rabbitConnect), Dependency.OnValue<ProductConfig>(productConfig)).LifestyleSingleton());
+                        container.Register(Component.For<IRabbitManager>().Named($"rabbit_{productConfig.Name}").ImplementedBy<RabbitManager>().DependsOn(Dependency.OnValue<RabbitConnect>(rabbitConnect), Dependency.OnValue<ProductConfig>(productConfig)).LifestyleSingleton());
                         // 自动创建交换器
-                        if (productConfig.AutoCreateExchange) container.Resolve<IRabbitManager>(productConfig.Name).CreateExchange();
+                        if (productConfig.AutoCreateExchange) container.Resolve<IRabbitManager>($"rabbit_{productConfig.Name}").CreateExchange();
                     }
                 }
             }

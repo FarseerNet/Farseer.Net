@@ -5,7 +5,7 @@ namespace FS.Cache
 {
     public class CacheManager : ICacheManager
     {
-        private readonly IGetCache   _getCache;
+        private readonly IGetCache _getCache;
 
         public CacheManager(IGetCache getCache)
         {
@@ -59,7 +59,7 @@ namespace FS.Cache
         /// <param name="lst">数据源获取</param>
         /// <param name="getEntityId">实体的ID（必须是具有唯一性）</param>
         /// <param name="cacheOption">缓存配置项 </param>
-        public void Save<TEntity>(string cacheKey, List<TEntity> lst, Func<TEntity, object> getEntityId, CacheOption cacheOption)
+        public void Save<TEntity>(string cacheKey, List<TEntity> lst, Func<TEntity, object> getEntityId, CacheOption cacheOption = null)
         {
             _getCache.Save(cacheKey, lst, getEntityId, cacheOption);
         }
@@ -71,9 +71,9 @@ namespace FS.Cache
         /// <param name="entity">数据源获取</param>
         /// <param name="getEntityId">实体的ID（必须是具有唯一性）</param>
         /// <param name="cacheOption">缓存配置项 </param>
-        public void Save<TEntity>(string cacheKey, TEntity entity, Func<TEntity, object> getEntityId, CacheOption cacheOption)
+        public void Save<TEntity>(string cacheKey, TEntity entity, object getEntityId, CacheOption cacheOption = null)
         {
-            _getCache.Save(cacheKey, entity, getEntityId, cacheOption);
+            _getCache.Save(cacheKey, entity, o => getEntityId, cacheOption);
         }
     }
 }

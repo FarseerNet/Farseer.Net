@@ -21,7 +21,7 @@ namespace FS.MQ.Rocket
 
             //注册所有的消息队列的Topic消费者
             rocketItemConfigs.ForEach(c =>
-                container.Register(Component.For<IRocketManager>().Named(c.Name).ImplementedBy<RocketManager>()
+                container.Register(Component.For<IRocketManager>().Named($"rocket_{c.Name}").ImplementedBy<RocketManager>()
                     .DependsOn(Dependency.OnValue<RocketItemConfig>(c)).LifestyleSingleton()));
         }
     }

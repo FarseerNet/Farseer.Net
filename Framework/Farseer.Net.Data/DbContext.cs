@@ -25,7 +25,9 @@ namespace FS.Data
         /// <param name="isUnitOfWork">是否工作单元模式</param>
         public DbContext(string name, bool isUnitOfWork = false) : this(isUnitOfWork)
         {
-            _internalContext.ContextConnection = IocManager.Instance.Resolve<IContextConnection>(name);
+            var dbConnectionName = $"dbConnection_{name}";
+            if (!IocManager.Instance.IsRegistered(dbConnectionName)) throw new FarseerException($"未找到数据库的配置：{name}");
+            _internalContext.ContextConnection = IocManager.Instance.Resolve<IContextConnection>(dbConnectionName);
         }
 
         /// <summary>
