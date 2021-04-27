@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using FS.DI;
 using FS.Extends;
@@ -14,6 +15,7 @@ namespace FS.Job.GrpcServer
     public class ReceiveContext
     {
         private readonly IServerStreamWriter<JobInvokeResponse> _responseStream;
+        private readonly Stopwatch                              _sw;
         private readonly IIocManager                            _ioc;
         public           int                                    Progress { get; internal set; }
         public           long                                   NextAt   { get; private set; }
@@ -23,22 +25,23 @@ namespace FS.Job.GrpcServer
         /// </summary>
         public JobInvokeRequest Request { get; set; }
 
-        public ReceiveContext(IIocManager ioc, JobInvokeRequest request, IServerStreamWriter<JobInvokeResponse> responseStream)
+        public ReceiveContext(IIocManager ioc, JobInvokeRequest request, IServerStreamWriter<JobInvokeResponse> responseStream, Stopwatch sw)
         {
             _ioc                 = ioc;
             this.Request         = request;
             this._responseStream = responseStream;
+            _sw             = sw;
             NextAt               = request.NextAt;
         }
 
         /// <summary>
         /// 返回进度0-100
         /// </summary>
-        public Task SetProgress(int rate)
+        public void SetProgress(int rate)
         {
             if (rate is < 0 or > 100) throw new Exception("ReceiveContext.SetProgress的rate只能是0-100");
             Progress = rate;
-            return WriteAsync();
+            Write();
         }
 
         /// <summary>
@@ -53,66 +56,70 @@ namespace FS.Job.GrpcServer
                 NextAt   = NextAt,
                 Progress = Progress,
                 Status   = 1,
+                RunSpeed = (int)_sw.ElapsedMilliseconds,
                 Log = new LogResponse
                 {
                     LogLevel = (int) logLevel,
                     Log      = log,
                     CreateAt = DateTime.Now.ToTimestamps()
                 }
-            });
+            }).Wait();
         }
 
         /// <summary>
         /// 设置下一次执行的时间
         /// </summary>
-        public Task SetNextAt(DateTime dt)
+        public void SetNextAt(DateTime dt)
         {
             NextAt = dt.ToTimestamps();
-            return WriteAsync();
+            Write();
         }
 
         /// <summary>
         /// 成功后执行
         /// </summary>
         /// <returns></returns>
-        internal Task Success(LogResponse log = null)
+        internal void Success(LogResponse log = null)
         {
-            return _responseStream.WriteAsync(new JobInvokeResponse
+            _responseStream.WriteAsync(new JobInvokeResponse
             {
                 TaskId   = Request.TaskId,
                 NextAt   = NextAt,
                 Progress = 100,
                 Status   = 3,
+                RunSpeed = (int)_sw.ElapsedMilliseconds,
                 Log      = log
-            });
+            }).Wait();
         }
 
         /// <summary>
         /// 执行失败
         /// </summary>
         /// <returns></returns>
-        public Task Fail(LogResponse log = null)
+        public void Fail(LogResponse log = null)
         {
-            return _responseStream.WriteAsync(new JobInvokeResponse
+            _responseStream.WriteAsync(new JobInvokeResponse
             {
                 TaskId   = Request.TaskId,
                 NextAt   = NextAt,
                 Progress = Progress,
                 Status   = 2,
-                Log = log
-            });
+                RunSpeed = (int)_sw.ElapsedMilliseconds,
+                Log      = log
+            }).Wait();
         }
 
-        private Task WriteAsync(LogResponse log = null)
+        private void Write(LogResponse log = null)
         {
-            return _responseStream.WriteAsync(new JobInvokeResponse
+            _responseStream.WriteAsync(new JobInvokeResponse
             {
                 TaskId   = Request.TaskId,
                 NextAt   = NextAt,
                 Progress = Progress,
                 Status   = 1,
+                RunSpeed = (int)_sw.ElapsedMilliseconds,
                 Log      = log
-            });
+            }).Wait();
         }
     }
 }

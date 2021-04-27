@@ -47,7 +47,7 @@ namespace FS.Job
                 var fssJobAttribute = jobType.GetCustomAttribute<FssJobAttribute>();
                 if (fssJobAttribute == null || !fssJobAttribute.Enable) return;
                 IocManager.Instance.Logger<JobInstaller>().LogInformation($"初始化：【{jobType.Name}】- {fssJobAttribute.Name} 任务");
-                container.Register(Component.For<IFssJob>().ImplementedBy(jobType).Named($"fss_{fssJobAttribute.Name}"));
+                container.Register(Component.For<IFssJob>().ImplementedBy(jobType).Named($"fss_{fssJobAttribute.Name}").LifestyleTransient());
             }
         }
     }

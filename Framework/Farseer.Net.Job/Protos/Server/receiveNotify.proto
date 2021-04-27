@@ -32,8 +32,10 @@ message JobInvokeResponse {
     int32 Progress = 3;
     // 执行状态
     int32 Status = 4;
+    // 客户端运行耗时
+    int32 RunSpeed = 5;
     // 日志
-    LogResponse Log = 5;
+    LogResponse Log = 6;
 }
 
 message LogResponse {
