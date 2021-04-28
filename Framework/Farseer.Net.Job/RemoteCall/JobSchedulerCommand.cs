@@ -29,7 +29,7 @@ namespace FS.Job.RemoteCall
             var message = $"（{task.JobTypeName}） 任务ID：{task.TaskId}、 任务：{task.Caption}、 执行时间：{task.NextAt.ToTimestamps():yyyy-MM-dd HH:mm:ss}";
 
             // 创建同步JOB状态的请求
-            var jobInvokeClient = new JobInvokeClient(client, task.TaskId, task.ClientHost);
+            var jobInvokeClient = new JobInvokeClient(client, task.TaskGroupId, task.TaskId, task.ClientHost);
             var rpcJobInvoke    = jobInvokeClient.JobInvoke();
             // JOB执行耗时计数器
             var sw = new Stopwatch();

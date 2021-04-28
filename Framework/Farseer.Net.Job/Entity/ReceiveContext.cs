@@ -78,7 +78,7 @@ namespace FS.Job.Entity
             {
                 NextAt   = NextAt,
                 Progress = 100,
-                Status   = 3,
+                Status   = 4,
                 RunSpeed = (int) _sw.ElapsedMilliseconds,
                 Log      = log
             });
@@ -94,7 +94,7 @@ namespace FS.Job.Entity
             {
                 NextAt   = NextAt,
                 Progress = Progress,
-                Status   = 2,
+                Status   = 3,
                 RunSpeed = (int) _sw.ElapsedMilliseconds,
                 Log      = log
             });

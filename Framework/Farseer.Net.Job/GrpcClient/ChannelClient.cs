@@ -17,7 +17,10 @@ namespace FS.Job.GrpcClient
     /// </summary>
     public class ChannelClient
     {
-        public IIocManager IocManager { get; set; }
+        public  IIocManager                                               IocManager { get; set; }
+        private GrpcChannel                                               _grpcChannel;
+        private FssServer.FssServerClient                                 _registerCenterClient;
+        private AsyncDuplexStreamingCall<ChannelRequest, CommandResponse> _rpc; //, DateTime.UtcNow.AddSeconds(5)
 
         /// <summary>
         /// 配置
@@ -44,6 +47,7 @@ namespace FS.Job.GrpcClient
                         try
                         {
                             IocManager.Logger<JobModule>().LogInformation($"正在连接FSS平台{server}，注册 {arrJob} 任务");
+                            // 这里是阻塞的
                             await AsyncDuplexStreamingCall(server, arrJob);
                         }
                         catch (Exception e)
@@ -54,28 +58,30 @@ namespace FS.Job.GrpcClient
                             {
                                 if (!string.IsNullOrWhiteSpace(rpcException.Status.Detail)) msg = rpcException.Status.Detail;
                             }
-                            
+
                             IocManager.Logger<ChannelClient>().LogError($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} 注册失败：{msg}");
                         }
-
+                        finally
+                        {
+                            Close();
+                        }
                         Thread.Sleep(3000);
                     }
                 });
             }
         }
 
-        private async Task<AsyncDuplexStreamingCall<ChannelRequest, CommandResponse>> AsyncDuplexStreamingCall(string server, string arrJob)
+        private async Task AsyncDuplexStreamingCall(string server, string arrJob)
         {
-            var grpcChannel          = GrpcChannel.ForAddress(server);
-            var registerCenterClient = new FssServer.FssServerClient(grpcChannel);
-            var rpc = registerCenterClient.Channel(new Metadata
+            _grpcChannel          = GrpcChannel.ForAddress(server);
+            _registerCenterClient = new FssServer.FssServerClient(_grpcChannel);
+            _rpc = _registerCenterClient.Channel(new Metadata
             {
                 {"client_ip", "127.0.0.1"} // 客户端IP
-            }, DateTime.UtcNow.AddSeconds(5));
+            });
 
-            
             // 请求注册
-            await rpc.RequestStream.WriteAsync(new ChannelRequest
+            await _rpc.RequestStream.WriteAsync(new ChannelRequest
             {
                 Command   = "Register",
                 RequestAt = DateTime.Now.ToTimestamps(),
@@ -83,17 +89,21 @@ namespace FS.Job.GrpcClient
             });
 
             // 持续读取服务端流
-            while (await rpc.ResponseStream.MoveNext())
+            while (await _rpc.ResponseStream.MoveNext())
             {
-                var iocName = $"fss_client_{rpc.ResponseStream.Current.Command}";
+                var iocName = $"fss_client_{_rpc.ResponseStream.Current.Command}";
                 if (!IocManager.IsRegistered(iocName))
-                    IocManager.Logger<ChannelClient>().LogWarning($"未知命令：{rpc.ResponseStream.Current.Command}");
+                    IocManager.Logger<ChannelClient>().LogWarning($"未知命令：{_rpc.ResponseStream.Current.Command}");
                 else
                     // 交由具体功能处理实现执行
-                    await IocManager.Resolve<IRemoteCommand>(iocName).InvokeAsync(registerCenterClient, rpc.RequestStream, rpc.ResponseStream);
+                    await IocManager.Resolve<IRemoteCommand>(iocName).InvokeAsync(_registerCenterClient, _rpc.RequestStream, _rpc.ResponseStream);
             }
+        }
 
-            return rpc;
+        private void Close()
+        {
+            if (_rpc != null) _rpc.Dispose();
+            if (_grpcChannel != null) _grpcChannel.Dispose();
         }
     }
 }
