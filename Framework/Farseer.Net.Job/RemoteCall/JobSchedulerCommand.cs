@@ -30,7 +30,9 @@ namespace FS.Job.RemoteCall
 
             // 创建同步JOB状态的请求
             var jobInvokeClient = new JobInvokeClient(client, task.TaskGroupId, task.TaskId, task.ClientHost);
-            var rpcJobInvoke    = jobInvokeClient.JobInvoke();
+            
+            var rpcJobInvoke = jobInvokeClient.JobInvoke();
+            
             // JOB执行耗时计数器
             var sw = new Stopwatch();
             // 上下文

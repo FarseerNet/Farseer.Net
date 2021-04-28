@@ -31,11 +31,14 @@ namespace FS.Job.Entity
         /// <summary>
         /// 返回进度0-100
         /// </summary>
-        public Task SetProgressAsync(int rate)
+        public async Task SetProgressAsync(int rate)
         {
             if (rate is < 0 or > 100) throw new Exception("ReceiveContext.SetProgress的rate只能是0-100");
             Progress = rate;
-            return WriteAsync();
+            var sw1 = new Stopwatch();
+            sw1.Start();
+            await WriteAsync();
+            Console.WriteLine($"SetProgressAsync，{sw1.ElapsedMilliseconds}");
         }
 
         /// <summary>
@@ -48,7 +51,7 @@ namespace FS.Job.Entity
             {
                 NextAt   = NextAt,
                 Progress = Progress,
-                Status   = 1,
+                Status   = 2,
                 RunSpeed = (int) _sw.ElapsedMilliseconds,
                 Log = new LogResponse
                 {
@@ -62,10 +65,13 @@ namespace FS.Job.Entity
         /// <summary>
         /// 设置下一次执行的时间
         /// </summary>
-        public Task SetNextAtAsync(DateTime dt)
+        public async Task SetNextAtAsync(DateTime dt)
         {
             NextAt = dt.ToTimestamps();
-            return WriteAsync();
+            var sw1 = new Stopwatch();
+            sw1.Start();
+            await WriteAsync();
+            Console.WriteLine($"SetProgressAsync，{sw1.ElapsedMilliseconds}");
         }
 
         /// <summary>
@@ -106,7 +112,7 @@ namespace FS.Job.Entity
             {
                 NextAt   = NextAt,
                 Progress = Progress,
-                Status   = 1,
+                Status   = 2,
                 RunSpeed = (int) _sw.ElapsedMilliseconds,
                 Log      = log
             });
