@@ -1,9 +1,10 @@
-using FS.Job.GrpcServer;
+using System.Threading.Tasks;
+using FS.Job.Entity;
 
 namespace FS.Job
 {
     public interface IFssJob
     {
-        bool Execute(ReceiveContext context);
+        Task<bool> Execute(ReceiveContext context);
     }
 }

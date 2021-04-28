@@ -29,11 +29,11 @@ namespace FS.DI.Installers
                 .AddEnvironmentVariables()
                 .Build();
             container.Register(Component.For<IConfigurationRoot>().Instance(configuration).LifestyleSingleton());
-            
+
             // 注册默认日志组件
             var loggerFactory = LoggerFactory.Create(o =>
                 o.AddConsole()
-                    .AddConfiguration(configuration.GetSection("Logging"))
+                 .AddConfiguration(configuration.GetSection("Logging"))
             );
             container.Register(Component.For<ILoggerFactory>().Instance(loggerFactory).LifestyleSingleton());
 

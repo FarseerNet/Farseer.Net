@@ -1,9 +1,10 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Linq;
+using System.Reflection;
 using FS.DI;
 using FS.Job.Attr;
 using FS.Job.Configuration;
 using FS.Job.GrpcClient;
-using FS.Job.GrpcServer;
 using FS.Modules;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -24,14 +25,9 @@ namespace FS.Job
             var fssAttribute = Assembly.GetEntryAssembly().EntryPoint.DeclaringType.GetCustomAttribute<FssAttribute>();
             if (fssAttribute is {Enable: true})
             {
-                var jobItemConfig = IocManager.Resolve<IConfigurationRoot>().GetSection("FSS").Get<JobItemConfig>();
-
-                // 启动RPC服务
-                new GrpcServiceCreate(IocManager).Start(jobItemConfig);
-
                 // 注册到服务端
-                var serviceRegister = IocManager.Resolve<ServiceRegister>();
-                serviceRegister.Register();
+                var serviceRegister = IocManager.Resolve<ChannelClient>();
+                serviceRegister.Channel(JobInstaller.JobImpList.Keys.Select(o => o).ToArray());
             }
         }
 

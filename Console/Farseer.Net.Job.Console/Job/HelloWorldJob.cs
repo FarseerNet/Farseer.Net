@@ -1,7 +1,9 @@
 using System;
+using System.Threading.Tasks;
 using FS.Job;
 using FS.Job.Attr;
-using FS.Job.GrpcServer;
+using FS.Job.Entity;
+using FS.Job.GrpcClient;
 using Microsoft.Extensions.Logging;
 
 namespace Farseer.Net.Job.Console.Job
@@ -12,16 +14,16 @@ namespace Farseer.Net.Job.Console.Job
         /// <summary>
         /// 执行任务
         /// </summary>
-        public bool Execute(ReceiveContext context)
+        public async Task<bool> Execute(ReceiveContext context)
         {
             // 告诉FSS平台，当前进度执行了 20%
-            context.SetProgress(20);
+            await context.SetProgressAsync(20);
             
             // 让FSS平台，记录日志
-            context.Logger(LogLevel.Information, "你好，世界！");
+            await context.LoggerAsync(LogLevel.Information, "你好，世界！");
             
             // 下一次执行时间为10秒后（如果不设置，则使用任务组设置的时间）
-            context.SetNextAt(DateTime.Now.AddSeconds(10));
+            await context.SetNextAtAsync(DateTime.Now.AddSeconds(10));
             
             // 任务执行成功
             return true;
