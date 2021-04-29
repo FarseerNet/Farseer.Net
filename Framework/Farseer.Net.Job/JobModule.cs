@@ -25,9 +25,14 @@ namespace FS.Job
             var fssAttribute = Assembly.GetEntryAssembly().EntryPoint.DeclaringType.GetCustomAttribute<FssAttribute>();
             if (fssAttribute is {Enable: true})
             {
+                var jobItemConfig = IocManager.Resolve<IConfigurationRoot>().GetSection("FSS").Get<JobItemConfig>();
+
                 // 注册到服务端
-                var serviceRegister = IocManager.Resolve<ChannelClient>();
-                serviceRegister.Channel(JobInstaller.JobImpList.Keys.Select(o => o).ToArray());
+                var jobs = JobInstaller.JobImpList.Keys.Select(o => o).ToArray();
+                foreach (var server in jobItemConfig.Server.Split(','))
+                {
+                    IocManager.Resolve<ChannelClient>().Channel(server, jobs);
+                }
             }
         }
 

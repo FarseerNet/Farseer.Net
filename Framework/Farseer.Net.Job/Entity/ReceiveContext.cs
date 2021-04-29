@@ -35,10 +35,7 @@ namespace FS.Job.Entity
         {
             if (rate is < 0 or > 100) throw new Exception("ReceiveContext.SetProgress的rate只能是0-100");
             Progress = rate;
-            var sw1 = new Stopwatch();
-            sw1.Start();
             await WriteAsync();
-            Console.WriteLine($"SetProgressAsync，{sw1.ElapsedMilliseconds}");
         }
 
         /// <summary>
@@ -68,10 +65,7 @@ namespace FS.Job.Entity
         public async Task SetNextAtAsync(DateTime dt)
         {
             NextAt = dt.ToTimestamps();
-            var sw1 = new Stopwatch();
-            sw1.Start();
             await WriteAsync();
-            Console.WriteLine($"SetProgressAsync，{sw1.ElapsedMilliseconds}");
         }
 
         /// <summary>

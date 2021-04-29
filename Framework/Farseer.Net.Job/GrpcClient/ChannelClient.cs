@@ -36,40 +36,44 @@ namespace FS.Job.GrpcClient
         /// <summary>
         /// 向服务端注册客户端连接
         /// </summary>
-        public void Channel(string[] jobs)
+        public void Channel(string server, string[] jobs)
         {
             var arrJob = string.Join(",", jobs);
-            foreach (var server in _jobItemConfig.Server.Split(','))
+            ThreadPool.QueueUserWorkItem(async state =>
             {
-                ThreadPool.QueueUserWorkItem(async state =>
+                while (true)
                 {
-                    while (true)
+                    try
                     {
-                        try
-                        {
-                            IocManager.Logger<JobModule>().LogInformation($"正在连接FSS平台{server}，注册 {arrJob} 任务");
-                            // 这里是阻塞的
-                            await AsyncDuplexStreamingCall(server, arrJob);
-                        }
-                        catch (Exception e)
-                        {
-                            if (e.InnerException != null) e = e.InnerException;
-                            var msg                         = e.Message;
-                            if (e is RpcException rpcException)
-                            {
-                                if (!string.IsNullOrWhiteSpace(rpcException.Status.Detail)) msg = rpcException.Status.Detail;
-                            }
-
-                            IocManager.Logger<ChannelClient>().LogError($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} 注册失败：{msg}");
-                        }
-                        finally
-                        {
-                            Close();
-                        }
-                        Thread.Sleep(3000);
+                        IocManager.Logger<JobModule>().LogInformation($"正在连接FSS平台{server}，注册 {arrJob} 任务");
+                        // 这里是阻塞的
+                        await AsyncDuplexStreamingCall(server, arrJob);
                     }
-                });
-            }
+                    catch (Exception e)
+                    {
+                        if (e.InnerException != null) e = e.InnerException;
+                        var msg                         = e.Message;
+                        if (e is RpcException rpcException)
+                        {
+                            if (!string.IsNullOrWhiteSpace(rpcException.Status.Detail))
+                            {
+                                msg = rpcException.Status.Detail;
+                            }
+                            IocManager.Logger<ChannelClient>().LogWarning($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} {server}，注册失败：{msg}");
+                        }
+                        else
+                            IocManager.Logger<ChannelClient>().LogError($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} {server}，注册失败：{msg}");
+
+                        Thread.Sleep(1000 * 10);
+                    }
+                    finally
+                    {
+                        Close();
+                    }
+
+                    Thread.Sleep(3000);
+                }
+            });
         }
 
         private async Task AsyncDuplexStreamingCall(string server, string arrJob)
@@ -110,7 +114,7 @@ namespace FS.Job.GrpcClient
                     }
                 }
             });
-            
+
             // 持续读取服务端流
             while (await _rpc.ResponseStream.MoveNext())
             {

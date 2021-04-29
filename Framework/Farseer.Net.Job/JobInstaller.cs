@@ -43,7 +43,7 @@ namespace FS.Job
             var jobItemConfig = container.Resolve<IConfigurationRoot>().GetSection("FSS").Get<JobItemConfig>();
 
             // 服务注册
-            container.Register(Component.For<ChannelClient>().DependsOn(Dependency.OnValue<string>(SnowflakeId.GenerateId().ToString()), Dependency.OnValue<JobItemConfig>(jobItemConfig)).LifestyleSingleton());
+            container.Register(Component.For<ChannelClient>().DependsOn(Dependency.OnValue<string>(SnowflakeId.GenerateId().ToString()), Dependency.OnValue<JobItemConfig>(jobItemConfig)).LifestyleTransient());
 
             // 业务job
             var types = container.Resolve<IAssemblyFinder>().GetType<IFssJob>();
