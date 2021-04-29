@@ -5,6 +5,7 @@ using FS.DI;
 using FS.Extends;
 using FS.Job.Abstract;
 using FS.Job.Configuration;
+using FS.Utils.Common;
 using FSS.GrpcService;
 using Grpc.Core;
 using Grpc.Net.Client;
@@ -77,7 +78,7 @@ namespace FS.Job.GrpcClient
             _registerCenterClient = new FssServer.FssServerClient(_grpcChannel);
             _rpc = _registerCenterClient.Channel(new Metadata
             {
-                {"client_ip", "127.0.0.1"} // 客户端IP
+                {"client_ip", IpHelper.GetIps()[0].Address.MapToIPv4().ToString()} // 客户端IP
             });
 
             // 请求注册
@@ -88,6 +89,28 @@ namespace FS.Job.GrpcClient
                 Data      = arrJob
             });
 
+            // 向服务器发送心跳,2S一次
+            ThreadPool.QueueUserWorkItem(async state =>
+            {
+                while (true)
+                {
+                    try
+                    {
+                        // 请求注册
+                        await _rpc.RequestStream.WriteAsync(new ChannelRequest
+                        {
+                            Command   = "Heartbeat",
+                            RequestAt = DateTime.Now.ToTimestamps()
+                        });
+                        await Task.Delay(5000);
+                    }
+                    catch
+                    {
+                        return;
+                    }
+                }
+            });
+            
             // 持续读取服务端流
             while (await _rpc.ResponseStream.MoveNext())
             {

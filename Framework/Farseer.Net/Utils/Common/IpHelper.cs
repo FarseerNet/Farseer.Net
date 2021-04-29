@@ -1,4 +1,7 @@
-﻿using System.Net;
+﻿using System.Linq;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 
 namespace FS.Utils.Common
 {
@@ -17,6 +20,22 @@ namespace FS.Utils.Common
             var ipHost = Dns.GetHostEntry(strHostName);
             foreach (var item in ipHost.AddressList) { if (item.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) { ip = item.ToString(); } }
             return ip;
+        }
+
+        /// <summary>
+        /// 获取IP
+        /// </summary>
+        /// <returns></returns>
+        public static UnicastIPAddressInformation[] GetIps()
+        {
+            return NetworkInterface
+                .GetAllNetworkInterfaces()
+                .Where(network => network.OperationalStatus == OperationalStatus.Up)
+                .Select(network => network.GetIPProperties())
+                .OrderByDescending(properties => properties.GatewayAddresses.Count)
+                .SelectMany(properties => properties.UnicastAddresses)
+                .Where(address => !IPAddress.IsLoopback(address.Address) && address.Address.AddressFamily == AddressFamily.InterNetwork)
+                .ToArray();
         }
     }
 }
