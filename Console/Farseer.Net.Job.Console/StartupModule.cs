@@ -1,6 +1,4 @@
-﻿using System;
-using Farseer.Net.Grpc;
-using FS.Job;
+﻿using FS.Job;
 using FS.Modules;
 
 namespace Farseer.Net.Job.Console
