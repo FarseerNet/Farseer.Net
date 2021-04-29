@@ -19,9 +19,9 @@ namespace FS.Data.Client.SqlServer
         public override bool IsSupportTransaction => true;
         public override string CreateDbConnstring(string server, string port, string userID, string passWord = null, string catalog = null, string dataVer = null, string additional = null, int connectTimeout = 60, int poolMinSize = 16, int poolMaxSize = 100)
         {
+            if (!string.IsNullOrWhiteSpace(port) && !server.Contains(",")) server=$"{server},{port}";
             var sb = new StringBuilder($"Data Source='{server}';Initial Catalog='{catalog}';");
-            if (!string.IsNullOrWhiteSpace(port)) { sb.Append($"Port='{port}';"); }
-
+            
             // 启用Windows验证方式登陆
             if (string.IsNullOrWhiteSpace(userID) && string.IsNullOrWhiteSpace(passWord)) { sb.Append("Pooling=true;Integrated Security=True;"); }
             else { sb.Append($"User ID='{userID}';Password='{passWord}';"); }
