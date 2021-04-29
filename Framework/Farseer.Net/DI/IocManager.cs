@@ -29,6 +29,8 @@ namespace FS.DI
         /// </summary>
         public static IocManager Instance { get; }
 
+        private static object objLock = new();
+
         /// <summary>
         /// 日志接口,没注册时，用默认的
         /// </summary>
@@ -36,7 +38,11 @@ namespace FS.DI
         {
             if (IsRegistered<ILogger<T>>()) return Resolve<ILogger<T>>();
             var logger = Resolve<ILoggerFactory>().CreateLogger<T>();
-            Container.Register(Component.For<ILogger<T>>().Instance(logger).LifestyleSingleton());
+            lock (objLock)
+            {
+                if (IsRegistered<ILogger<T>>()) return Resolve<ILogger<T>>();
+                Container.Register(Component.For<ILogger<T>>().Instance(logger).LifestyleSingleton());
+            }
             return logger;
         }
         
