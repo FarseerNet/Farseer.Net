@@ -35,5 +35,18 @@ namespace FS.Cache
         /// <param name="getEntityId">实体的ID（必须是具有唯一性）</param>
         /// <param name="cacheOption">缓存配置项 </param>
         void Save<TEntity>(string key, List<TEntity> lst, Func<TEntity, object> getEntityId, CacheOption cacheOption);
+
+        /// <summary>
+        /// 删除缓存item
+        /// </summary>
+        /// <param name="cacheKey">缓存KEY</param>
+        /// <param name="fieldKey">缓存Field</param>
+        void Remove(string cacheKey, string fieldKey);
+
+        /// <summary>
+        /// 删除整个缓存
+        /// </summary>
+        /// <param name="cacheKey">缓存KEY</param>
+        void Remove(string cacheKey);
     }
 }

@@ -59,5 +59,24 @@ namespace FS.Cache.Redis
         {
             _redisCacheManager.HashSetTransaction(key, lst, getEntityId);
         }
+        
+        /// <summary>
+        /// 删除缓存item
+        /// </summary>
+        /// <param name="cacheKey">缓存KEY</param>
+        /// <param name="fieldKey">缓存Field</param>
+        public void Remove(string cacheKey, string fieldKey)
+        {
+            _redisCacheManager.Db.HashDelete(cacheKey, fieldKey);
+        }
+
+        /// <summary>
+        /// 删除整个缓存
+        /// </summary>
+        /// <param name="cacheKey">缓存KEY</param>
+        public void Remove(string cacheKey)
+        {
+            _redisCacheManager.Db.KeyDelete(cacheKey);
+        }
     }
 }
