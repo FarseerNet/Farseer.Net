@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using FS.DI;
@@ -17,38 +18,45 @@ namespace FS.Job.Entity
         private readonly Stopwatch                                                   _sw;
         private readonly IIocManager                                                 _ioc;
         private readonly AsyncClientStreamingCall<JobInvokeRequest, CommandResponse> _rpc;
-        public           int                                                         Progress { get; internal set; }
-        public           long                                                        NextAt   { get; private set; }
+        internal         int                                                         Progress { get; set; }
+        private          long                                                        _nextAt;
+        private readonly Queue<UploadJobProgress>                                    _logQueue = new();
+        private          TimeSpan?                                                   _ts;
 
-        public ReceiveContext(IIocManager ioc, AsyncClientStreamingCall<JobInvokeRequest, CommandResponse> rpc, long nextAt, Stopwatch sw)
+        public ReceiveContext(IIocManager ioc, AsyncClientStreamingCall<JobInvokeRequest, CommandResponse> rpc, Stopwatch sw)
         {
-            _ioc   = ioc;
-            _rpc   = rpc;
-            _sw    = sw;
-            NextAt = nextAt;
+            _ioc = ioc;
+            _rpc = rpc;
+            _sw  = sw;
         }
 
         /// <summary>
         /// 返回进度0-100
         /// </summary>
-        public async Task SetProgressAsync(int rate)
+        public void SetProgress(int rate)
         {
             if (rate is < 0 or > 100) throw new Exception("ReceiveContext.SetProgress的rate只能是0-100");
             Progress = rate;
-            await WriteAsync();
+        }
+
+        /// <summary>
+        /// 本次执行完后，下一次执行的间隔时间
+        /// </summary>
+        public void SetNextAt(TimeSpan ts)
+        {
+            _ts = ts;
         }
 
         /// <summary>
         /// 写入到FSS平台的日志
         /// </summary>
-        public Task LoggerAsync(LogLevel logLevel, string log)
+        public void Logger(LogLevel logLevel, string log)
         {
             _ioc.Logger<ReceiveContext>().Log(logLevel, log);
-            return _rpc.RequestStream.WriteAsync(new JobInvokeRequest
+            _logQueue.Enqueue(new UploadJobProgress
             {
-                NextAt   = NextAt,
+                NextAt   = _nextAt,
                 Progress = Progress,
-                Status   = 2,
                 RunSpeed = (int) _sw.ElapsedMilliseconds,
                 Log = new LogResponse
                 {
@@ -60,23 +68,18 @@ namespace FS.Job.Entity
         }
 
         /// <summary>
-        /// 设置下一次执行的时间
-        /// </summary>
-        public async Task SetNextAtAsync(DateTime dt)
-        {
-            NextAt = dt.ToTimestamps();
-            await WriteAsync();
-        }
-
-        /// <summary>
         /// 成功后执行
         /// </summary>
-        /// <returns></returns>
-        internal Task SuccessAsync(LogResponse log = null)
+        internal async Task SuccessAsync(LogResponse log = null)
         {
-            return _rpc.RequestStream.WriteAsync(new JobInvokeRequest
+            await UploadQueueAsync();
+
+            // 如果本次有动态设计时间
+            if (_ts.HasValue) _nextAt = DateTime.Now.Add(_ts.GetValueOrDefault()).ToTimestamps();
+
+            await _rpc.RequestStream.WriteAsync(new JobInvokeRequest
             {
-                NextAt   = NextAt,
+                NextAt   = _nextAt,
                 Progress = 100,
                 Status   = 4,
                 RunSpeed = (int) _sw.ElapsedMilliseconds,
@@ -87,12 +90,16 @@ namespace FS.Job.Entity
         /// <summary>
         /// 执行失败
         /// </summary>
-        /// <returns></returns>
-        public Task FailAsync(LogResponse log = null)
+        public async Task FailAsync(LogResponse log = null)
         {
-            return _rpc.RequestStream.WriteAsync(new JobInvokeRequest
+            await UploadQueueAsync();
+
+            // 如果本次有动态设计时间
+            if (_ts.HasValue) _nextAt = DateTime.Now.Add(_ts.GetValueOrDefault()).ToTimestamps();
+
+            await _rpc.RequestStream.WriteAsync(new JobInvokeRequest
             {
-                NextAt   = NextAt,
+                NextAt   = _nextAt,
                 Progress = Progress,
                 Status   = 3,
                 RunSpeed = (int) _sw.ElapsedMilliseconds,
@@ -100,16 +107,42 @@ namespace FS.Job.Entity
             });
         }
 
-        private Task WriteAsync(LogResponse log = null)
+        /// <summary>
+        /// 上传队列中的数据
+        /// </summary>
+        internal async Task UploadAsync()
         {
-            return _rpc.RequestStream.WriteAsync(new JobInvokeRequest
+            // 队列没有数据时，提交下当前进度信息
+            if (_logQueue.Count == 0 && Progress > 0)
             {
-                NextAt   = NextAt,
-                Progress = Progress,
-                Status   = 2,
-                RunSpeed = (int) _sw.ElapsedMilliseconds,
-                Log      = log
-            });
+                await _rpc.RequestStream.WriteAsync(new JobInvokeRequest
+                {
+                    NextAt   = _nextAt,
+                    Progress = Progress,
+                    Status   = 2,
+                    RunSpeed = (int) _sw.ElapsedMilliseconds,
+                });
+            }
+            else await UploadQueueAsync();
+        }
+
+        /// <summary>
+        /// 上传队列中所有数据
+        /// </summary>
+        private async Task UploadQueueAsync()
+        {
+            while (_logQueue.Count > 0)
+            {
+                var log = _logQueue.Dequeue();
+                await _rpc.RequestStream.WriteAsync(new JobInvokeRequest
+                {
+                    NextAt   = _nextAt,
+                    Progress = log.Progress,
+                    Status   = 2,
+                    RunSpeed = log.RunSpeed,
+                    Log      = log.Log
+                });
+            }
         }
     }
 }

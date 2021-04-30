@@ -26,7 +26,7 @@ namespace FS.Job.RemoteCall
         public async Task InvokeAsync(FssServer.FssServerClient client, IClientStreamWriter<ChannelRequest> requestStream, IAsyncStreamReader<CommandResponse> responseStream)
         {
             var task    = JsonConvert.DeserializeObject<JobSchedulerVO>(responseStream.Current.Data);
-            var message = $"（{task.JobTypeName}） 任务ID：{task.TaskId}、 任务：{task.Caption}、 执行时间：{task.NextAt.ToTimestamps():yyyy-MM-dd HH:mm:ss}";
+            var message = $"（{task.JobTypeName}） 任务ID：{task.TaskId}、 任务：{task.Caption}";
 
             // 创建同步JOB状态的请求
             var jobInvokeClient = new JobInvokeClient(client, task.TaskGroupId, task.TaskId);
@@ -35,8 +35,9 @@ namespace FS.Job.RemoteCall
             // JOB执行耗时计数器
             var sw = new Stopwatch();
             // 上下文
-            var receiveContext = new ReceiveContext(IocManager, rpcJobInvoke, task.NextAt.ToTimestamps(), sw);
-            await receiveContext.LoggerAsync(LogLevel.Information, $"客户端收到请求，开始处理。");
+            var receiveContext = new ReceiveContext(IocManager, rpcJobInvoke, sw);
+            receiveContext.Logger(LogLevel.Information, $"客户端收到请求，开始处理。");
+            await receiveContext.UploadAsync();
 
             // 业务是否有该调度任务的实现
             var isRegistered = IocManager.IsRegistered($"fss_job_{task.JobTypeName}");

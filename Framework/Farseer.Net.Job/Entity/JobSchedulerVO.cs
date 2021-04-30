@@ -29,11 +29,6 @@ namespace FS.Job.Entity
         /// 开始时间
         /// </summary>
         public DateTime StartAt { get; set; }
-
-        /// <summary>
-        /// 下次执行时间
-        /// </summary>
-        public DateTime NextAt { get; set; }
         
         /// <summary>
         /// 客户端
