@@ -30,7 +30,7 @@ namespace FS.Job.RemoteCall
 
             // 创建同步JOB状态的请求
             var jobInvokeClient = new JobInvokeClient(client, task.TaskGroupId, task.TaskId);
-            var rpcJobInvoke = jobInvokeClient.JobInvoke();
+            var rpcJobInvoke    = jobInvokeClient.JobInvoke();
 
             // JOB执行耗时计数器
             var sw = new Stopwatch();
@@ -54,15 +54,35 @@ namespace FS.Job.RemoteCall
 
             try
             {
-                // 执行业务JOB
-                var fssJob = IocManager.Resolve<IFssJob>($"fss_job_{task.JobTypeName}");
+                var         result = false;
+                LogResponse log    = null;
+                try
+                {
+                    // 执行业务JOB
+                    var fssJob = IocManager.Resolve<IFssJob>($"fss_job_{task.JobTypeName}");
+                    sw.Start();
+                    result = await fssJob.Execute(receiveContext);
+                }
+                catch (Exception e)
+                {
+                    IocManager.Logger<JobSchedulerCommand>().LogError(e, e.ToString());
+                    log = new LogResponse
+                    {
+                        LogLevel = (int) LogLevel.Error,
+                        Log      = e.ToString(),
+                        CreateAt = DateTime.Now.ToTimestamps()
+                    };
+                }
+                finally
+                {
+                    sw.Stop();
+                }
 
-                sw.Start();
-                // 执行JOB
-                var execute = await fssJob.Execute(receiveContext);
-                sw.Stop();
-                if (execute) await receiveContext.SuccessAsync();
-                else await receiveContext.FailAsync();
+                // 通知服务端，当前客户端执行结果
+                if (result) await receiveContext.SuccessAsync();
+                else await receiveContext.FailAsync(log);
+
+                // 告诉服务端，我已处理完
                 await rpcJobInvoke.RequestStream.CompleteAsync();
 
                 // 等待服务端返回结果
@@ -72,12 +92,6 @@ namespace FS.Job.RemoteCall
             catch (Exception e)
             {
                 IocManager.Logger<JobSchedulerCommand>().LogError(e, e.ToString());
-                await receiveContext.FailAsync(new LogResponse
-                {
-                    LogLevel = (int) LogLevel.Error,
-                    Log      = e.ToString(),
-                    CreateAt = DateTime.Now.ToTimestamps()
-                });
             }
         }
     }
