@@ -30,17 +30,17 @@ namespace FS.Job.RemoteCall
 
             // 创建同步JOB状态的请求
             var jobInvokeClient = new JobInvokeClient(client, task.TaskGroupId, task.TaskId);
-            
             var rpcJobInvoke = jobInvokeClient.JobInvoke();
-            
+
             // JOB执行耗时计数器
             var sw = new Stopwatch();
             // 上下文
             var receiveContext = new ReceiveContext(IocManager, rpcJobInvoke, task.NextAt.ToTimestamps(), sw);
+            await receiveContext.LoggerAsync(LogLevel.Information, $"客户端收到请求，开始处理。");
 
             // 业务是否有该调度任务的实现
             var isRegistered = IocManager.IsRegistered($"fss_job_{task.JobTypeName}");
-            if (!isRegistered)
+            if (isRegistered is false)
             {
                 IocManager.Logger<JobSchedulerCommand>().LogWarning($"未找到任务实现类：{message}");
                 await receiveContext.FailAsync(new LogResponse
