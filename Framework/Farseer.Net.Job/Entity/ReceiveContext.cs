@@ -75,7 +75,7 @@ namespace FS.Job.Entity
             await UploadQueueAsync();
 
             // 如果本次有动态设计时间
-            if (_ts.HasValue) _nextAt = DateTime.Now.Add(_ts.GetValueOrDefault()).ToTimestamps();
+            if (_ts.HasValue) _nextAt = (int)_ts.GetValueOrDefault().TotalMilliseconds;
 
             await _rpc.RequestStream.WriteAsync(new JobInvokeRequest
             {
@@ -95,7 +95,7 @@ namespace FS.Job.Entity
             await UploadQueueAsync();
 
             // 如果本次有动态设计时间
-            if (_ts.HasValue) _nextAt = DateTime.Now.Add(_ts.GetValueOrDefault()).ToTimestamps();
+            if (_ts.HasValue) _nextAt = (int)_ts.GetValueOrDefault().TotalMilliseconds;
 
             await _rpc.RequestStream.WriteAsync(new JobInvokeRequest
             {
