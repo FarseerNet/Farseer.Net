@@ -19,7 +19,7 @@ namespace FS.Job.Entity
         private readonly IIocManager                                                 _ioc;
         private readonly AsyncClientStreamingCall<JobInvokeRequest, CommandResponse> _rpc;
         internal         int                                                         Progress { get; set; }
-        private          long                                                        _nextAt;
+        private          long                                                        _nextTimespan;
         private readonly Queue<UploadJobProgress>                                    _logQueue = new();
         private          TimeSpan?                                                   _ts;
 
@@ -55,7 +55,7 @@ namespace FS.Job.Entity
             _ioc.Logger<ReceiveContext>().Log(logLevel, log);
             _logQueue.Enqueue(new UploadJobProgress
             {
-                NextAt   = _nextAt,
+                NextTimespan   = _nextTimespan,
                 Progress = Progress,
                 RunSpeed = (int) _sw.ElapsedMilliseconds,
                 Log = new LogResponse
@@ -75,11 +75,11 @@ namespace FS.Job.Entity
             await UploadQueueAsync();
 
             // 如果本次有动态设计时间
-            if (_ts.HasValue) _nextAt = (int)_ts.GetValueOrDefault().TotalMilliseconds;
+            if (_ts.HasValue) _nextTimespan = (int)_ts.GetValueOrDefault().TotalMilliseconds;
 
             await _rpc.RequestStream.WriteAsync(new JobInvokeRequest
             {
-                NextAt   = _nextAt,
+                NextTimespan   = _nextTimespan,
                 Progress = 100,
                 Status   = 4,
                 RunSpeed = (int) _sw.ElapsedMilliseconds,
@@ -95,11 +95,11 @@ namespace FS.Job.Entity
             await UploadQueueAsync();
 
             // 如果本次有动态设计时间
-            if (_ts.HasValue) _nextAt = (int)_ts.GetValueOrDefault().TotalMilliseconds;
+            if (_ts.HasValue) _nextTimespan = (int)_ts.GetValueOrDefault().TotalMilliseconds;
 
             await _rpc.RequestStream.WriteAsync(new JobInvokeRequest
             {
-                NextAt   = _nextAt,
+                NextTimespan   = _nextTimespan,
                 Progress = Progress,
                 Status   = 3,
                 RunSpeed = (int) _sw.ElapsedMilliseconds,
@@ -117,10 +117,10 @@ namespace FS.Job.Entity
             {
                 await _rpc.RequestStream.WriteAsync(new JobInvokeRequest
                 {
-                    NextAt   = _nextAt,
-                    Progress = Progress,
-                    Status   = 2,
-                    RunSpeed = (int) _sw.ElapsedMilliseconds,
+                    NextTimespan = _nextTimespan,
+                    Progress     = Progress,
+                    Status       = 2,
+                    RunSpeed     = (int) _sw.ElapsedMilliseconds,
                 });
             }
             else await UploadQueueAsync();
@@ -136,11 +136,11 @@ namespace FS.Job.Entity
                 var log = _logQueue.Dequeue();
                 await _rpc.RequestStream.WriteAsync(new JobInvokeRequest
                 {
-                    NextAt   = _nextAt,
-                    Progress = log.Progress,
-                    Status   = 2,
-                    RunSpeed = log.RunSpeed,
-                    Log      = log.Log
+                    NextTimespan = _nextTimespan,
+                    Progress     = log.Progress,
+                    Status       = 2,
+                    RunSpeed     = log.RunSpeed,
+                    Log          = log.Log
                 });
             }
         }

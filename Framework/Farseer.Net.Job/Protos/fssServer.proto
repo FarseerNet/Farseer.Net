@@ -32,7 +32,7 @@ message CommandResponse {
 // 实时同步JOB执行情况
 message JobInvokeRequest{
     // 下次执行时间
-    int64 NextAt = 1;
+    int64 NextTimespan = 1;
     // 当前进度
     int32 Progress = 2;
     // 执行状态

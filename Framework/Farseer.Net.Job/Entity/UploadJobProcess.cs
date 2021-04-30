@@ -21,7 +21,7 @@ namespace FS.Job.Entity
         /// <summary>
         /// 下次执行时间
         /// </summary>
-        public long NextAt { get; set; }
+        public long NextTimespan { get; set; }
 
         /// <summary>
         /// 当前进度
