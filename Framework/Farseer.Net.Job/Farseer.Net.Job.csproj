@@ -7,9 +7,9 @@
         <Authors>steden</Authors>
         <Product>Job组件</Product>
         <Description>FSS分布式平台客户端</Description>
-        <AssemblyVersion>2.5.1</AssemblyVersion>
-        <FileVersion>2.5.1</FileVersion>
-        <Version>2.5.1</Version>
+        <AssemblyVersion>2.5.2</AssemblyVersion>
+        <FileVersion>2.5.2</FileVersion>
+        <Version>2.5.2</Version>
         <PackageTags>FSS、Farseer.Net、Job、Task</PackageTags>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <RootNamespace>FS.Job</RootNamespace>
