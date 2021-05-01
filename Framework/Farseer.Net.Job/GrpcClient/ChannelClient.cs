@@ -59,10 +59,10 @@ namespace FS.Job.GrpcClient
                             {
                                 msg = rpcException.Status.Detail;
                             }
-                            IocManager.Logger<ChannelClient>().LogWarning($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} {server}，注册失败：{msg}");
+                            IocManager.Logger<ChannelClient>().LogWarning($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} {server}，断开连接：{msg}");
                         }
                         else
-                            IocManager.Logger<ChannelClient>().LogError($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} {server}，注册失败：{msg}");
+                            IocManager.Logger<ChannelClient>().LogError($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} {server}，断开连接：{msg}");
 
                         Thread.Sleep(1000 * 10);
                     }
@@ -94,26 +94,26 @@ namespace FS.Job.GrpcClient
             });
 
             // 向服务器发送心跳,2S一次
-            ThreadPool.QueueUserWorkItem(async state =>
-            {
-                while (true)
-                {
-                    try
-                    {
-                        // 请求注册
-                        await _rpc.RequestStream.WriteAsync(new ChannelRequest
-                        {
-                            Command   = "Heartbeat",
-                            RequestAt = DateTime.Now.ToTimestamps()
-                        });
-                        await Task.Delay(5000);
-                    }
-                    catch
-                    {
-                        return;
-                    }
-                }
-            });
+            //ThreadPool.QueueUserWorkItem(async state =>
+            //{
+            //    while (true)
+            //    {
+            //        try
+            //        {
+            //            // 请求注册
+            //            await _rpc.RequestStream.WriteAsync(new ChannelRequest
+            //            {
+            //                Command   = "Heartbeat",
+            //                RequestAt = DateTime.Now.ToTimestamps()
+            //            });
+            //            await Task.Delay(5000);
+            //        }
+            //        catch
+            //        {
+            //            return;
+            //        }
+            //    }
+            //});
 
             // 持续读取服务端流
             while (await _rpc.ResponseStream.MoveNext())

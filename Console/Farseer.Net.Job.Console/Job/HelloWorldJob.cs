@@ -22,7 +22,7 @@ namespace Farseer.Net.Job.Console.Job
             context.Logger(LogLevel.Information, "你好，世界！");
 
             // 下一次执行时间为10秒后（如果不设置，则使用任务组设置的时间）
-            context.SetNextAt(TimeSpan.FromSeconds(10));
+            context.SetNextAt(TimeSpan.FromSeconds(1));
 
             // 任务执行成功
             return Task.FromResult(true);
