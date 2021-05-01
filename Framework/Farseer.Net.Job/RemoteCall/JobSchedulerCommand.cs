@@ -6,6 +6,7 @@ using FS.Extends;
 using FS.Job.Abstract;
 using FS.Job.Entity;
 using FS.Job.GrpcClient;
+using FS.Utils.Common;
 using FSS.GrpcService;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
@@ -36,7 +37,7 @@ namespace FS.Job.RemoteCall
             var sw = new Stopwatch();
             // 上下文
             var receiveContext = new ReceiveContext(IocManager, rpcJobInvoke, sw);
-            receiveContext.Logger(LogLevel.Information, $"客户端收到请求，开始处理。");
+            receiveContext.Logger(LogLevel.Information, $"客户端（{IpHelper.GetIps()[0].Address.MapToIPv4().ToString()}）收到请求，开始处理。");
             await receiveContext.UploadAsync();
 
             // 业务是否有该调度任务的实现
