@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace FS.Cache
 {
+    /// <summary>
+    /// 支持缓存不存在，则写入
+    /// </summary>
     public interface ICacheManager
     {
         /// <summary>
