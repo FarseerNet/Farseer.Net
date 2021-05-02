@@ -1,11 +1,10 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
 using FS.DI;
-using FS.Job.Attr;
 using FS.Job.Configuration;
 using FS.Job.GrpcClient;
 using FS.Modules;
+using Grpc.Core.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -26,6 +25,11 @@ namespace FS.Job
             if (fssAttribute is {Enable: true})
             {
                 var jobItemConfig = IocManager.Resolve<IConfigurationRoot>().GetSection("FSS").Get<JobItemConfig>();
+                if (jobItemConfig == null)
+                {
+                    IocManager.Logger<JobModule>().LogWarning($"未找到FSS配置，无法注册到FSS平台");
+                    return;
+                }
 
                 // 注册到服务端
                 var jobs = JobInstaller.JobImpList.Keys.Select(o => o).ToArray();

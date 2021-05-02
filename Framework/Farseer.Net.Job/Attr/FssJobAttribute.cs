@@ -1,6 +1,7 @@
 using System;
 
-namespace FS.Job.Attr
+// ReSharper disable once CheckNamespace
+namespace FS.Job
 {
     /// <summary>
     /// JOB配置

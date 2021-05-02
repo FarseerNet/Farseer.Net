@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace FS.Job.Entity
@@ -24,6 +25,11 @@ namespace FS.Job.Entity
         /// 实现Job的特性名称（客户端识别哪个实现类）
         /// </summary>
         public string JobTypeName { get; set; }
+        
+        /// <summary>
+        /// 对Data的修改将会同步到服务端
+        /// </summary>
+        public Dictionary<string,string> Data { get; set; }
 
         /// <summary>
         /// 开始时间

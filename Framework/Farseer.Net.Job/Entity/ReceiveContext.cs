@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using FS.DI;
 using FS.Extends;
 using FSS.GrpcService;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace FS.Job.Entity
 {
@@ -23,10 +25,16 @@ namespace FS.Job.Entity
         private readonly Queue<UploadJobProgress>                                    _logQueue = new();
         private          TimeSpan?                                                   _ts;
 
-        public ReceiveContext(IIocManager ioc, AsyncClientStreamingCall<JobInvokeRequest, CommandResponse> rpc, Stopwatch sw)
+        /// <summary>
+        /// 任务组的参数
+        /// </summary>
+        public JobSchedulerVO Meta { get; }
+
+        public ReceiveContext(IIocManager ioc, AsyncClientStreamingCall<JobInvokeRequest, CommandResponse> rpc, JobSchedulerVO task, Stopwatch sw)
         {
             _ioc = ioc;
             _rpc = rpc;
+            Meta = task;
             _sw  = sw;
         }
 
@@ -55,9 +63,9 @@ namespace FS.Job.Entity
             _ioc.Logger<ReceiveContext>().Log(logLevel, log);
             _logQueue.Enqueue(new UploadJobProgress
             {
-                NextTimespan   = _nextTimespan,
-                Progress = Progress,
-                RunSpeed = (int) _sw.ElapsedMilliseconds,
+                NextTimespan = _nextTimespan,
+                Progress     = Progress,
+                RunSpeed     = (int) _sw.ElapsedMilliseconds,
                 Log = new LogResponse
                 {
                     LogLevel = (int) logLevel,
@@ -75,15 +83,16 @@ namespace FS.Job.Entity
             await UploadQueueAsync();
 
             // 如果本次有动态设计时间
-            if (_ts.HasValue) _nextTimespan = (int)_ts.GetValueOrDefault().TotalMilliseconds;
+            if (_ts.HasValue) _nextTimespan = (int) _ts.GetValueOrDefault().TotalMilliseconds;
 
             await _rpc.RequestStream.WriteAsync(new JobInvokeRequest
             {
-                NextTimespan   = _nextTimespan,
-                Progress = 100,
-                Status   = 4,
-                RunSpeed = (int) _sw.ElapsedMilliseconds,
-                Log      = log
+                NextTimespan = _nextTimespan,
+                Progress     = 100,
+                Status       = 4,
+                RunSpeed     = (int) _sw.ElapsedMilliseconds,
+                Log          = log,
+                Data         = await JsonConvert.SerializeObjectAsync(Meta.Data)
             });
         }
 
@@ -95,15 +104,15 @@ namespace FS.Job.Entity
             await UploadQueueAsync();
 
             // 如果本次有动态设计时间
-            if (_ts.HasValue) _nextTimespan = (int)_ts.GetValueOrDefault().TotalMilliseconds;
+            if (_ts.HasValue) _nextTimespan = (int) _ts.GetValueOrDefault().TotalMilliseconds;
 
             await _rpc.RequestStream.WriteAsync(new JobInvokeRequest
             {
-                NextTimespan   = _nextTimespan,
-                Progress = Progress,
-                Status   = 3,
-                RunSpeed = (int) _sw.ElapsedMilliseconds,
-                Log      = log
+                NextTimespan = _nextTimespan,
+                Progress     = Progress,
+                Status       = 3,
+                RunSpeed     = (int) _sw.ElapsedMilliseconds,
+                Log          = log
             });
         }
 

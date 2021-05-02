@@ -6,7 +6,6 @@ using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using FS.DI;
 using FS.Job.Abstract;
-using FS.Job.Attr;
 using FS.Job.Configuration;
 using FS.Job.GrpcClient;
 using FS.Job.RemoteCall;

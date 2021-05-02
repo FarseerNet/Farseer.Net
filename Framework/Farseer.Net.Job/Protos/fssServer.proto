@@ -41,6 +41,8 @@ message JobInvokeRequest{
     int32 RunSpeed = 4;
     // 日志
     LogResponse Log = 5;
+    // 客户端要更新的数据
+    string Data = 6;
 }
 
 message LogResponse {
