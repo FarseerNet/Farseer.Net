@@ -15,10 +15,9 @@ namespace FS.Cache.Redis
         IDatabase Db { get; }
 
         /// <summary>
-        /// 根据patten移除项
+        /// 支持缓存不存在，则写入
         /// </summary>
-        /// <param name="pattern">pattern</param>
-        void RemoveByPattern(string pattern);
+        ICacheManager CacheManager { get; }
 
         /// <summary>
         /// 清除所有缓存

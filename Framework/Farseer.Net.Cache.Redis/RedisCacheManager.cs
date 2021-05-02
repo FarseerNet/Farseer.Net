@@ -26,6 +26,11 @@ namespace FS.Cache.Redis
         ///     数据库
         /// </summary>
         public IDatabase Db => _db ?? (_db = _connectionWrapper.Database());
+        
+        /// <summary>
+        /// 支持缓存不存在，则写入
+        /// </summary>
+        public ICacheManager CacheManager { get; internal set; }
 
         /// <summary>
         ///     构造函数
@@ -36,20 +41,6 @@ namespace FS.Cache.Redis
         {
             Check.NotNull(config.Server, "Redis连接字符串为空");
             _connectionWrapper = connectionWrapper;
-        }
-
-        /// <summary>
-        ///     根据pattern移除项
-        /// </summary>
-        /// <param name="pattern">pattern</param>
-        public virtual void RemoveByPattern(string pattern)
-        {
-            foreach (var ep in _connectionWrapper.GetEndpoints())
-            {
-                var server = _connectionWrapper.Server(ep);
-                var keys   = server.Keys(pattern: "*" + pattern + "*");
-                foreach (var key in keys) Db.KeyDelete(key);
-            }
         }
 
         /// <summary>
