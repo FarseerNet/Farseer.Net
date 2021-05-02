@@ -52,7 +52,7 @@ namespace FS.MQ.Rabbit
                 if (_product != null) return _product;
                 lock (ObjLock)
                 {
-                    return _product ?? (_product = new RabbitProduct(_connect, _productConfig));
+                    return _product ??= new RabbitProduct(_connect, _productConfig);
                 }
             }
         }

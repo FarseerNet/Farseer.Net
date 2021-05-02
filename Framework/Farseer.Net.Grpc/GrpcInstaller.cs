@@ -21,7 +21,7 @@ namespace Farseer.Net.Grpc
 
             foreach (var grpcItemConfig in grpcItemConfigs)
             {
-                container.Register(Component.For<IGrpcClient>().Named($"grpc_{grpcItemConfig.Name}").ImplementedBy<GrpcClient>().DependsOn(Dependency.OnValue<GrpcItemConfig>(grpcItemConfig)).LifestyleSingleton());
+                container.Register(Component.For<IGrpcClient>().Named(grpcItemConfig.Name).ImplementedBy<GrpcClient>().DependsOn(Dependency.OnValue<GrpcItemConfig>(grpcItemConfig)).LifestyleSingleton());
             }
         }
     }
