@@ -1,9 +1,6 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using FS;
-using FS.Extends;
 using FS.Job;
-using FS.Job.Attr;
 
 namespace Farseer.Net.Job.Console
 {
