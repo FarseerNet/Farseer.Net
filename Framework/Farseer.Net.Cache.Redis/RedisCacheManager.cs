@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using FS.Cache.Redis.Configuration;
@@ -65,7 +66,6 @@ namespace FS.Cache.Redis
             //    _connectionWrapper.Dispose();
         }
 
-
         /// <summary>
         ///     事务，批量写入HASH
         /// </summary>
@@ -75,14 +75,35 @@ namespace FS.Cache.Redis
             if (funcData == null) funcData = po => JsonConvert.SerializeObject(po);
 
             var transaction = Db.CreateTransaction();
+            var tasks       = new List<Task>();
             foreach (var po in lst)
             {
                 var dataKey = funcDataKey(po).ToString();
                 var data    = funcData(po);
-                transaction.HashSetAsync(key, dataKey, data);
+                tasks.Add(transaction.HashSetAsync(key, dataKey, data));
             }
-
             transaction.Execute();
+            Task.WaitAll(tasks.ToArray());
+        }
+
+        /// <summary>
+        ///     事务，批量写入HASH
+        /// </summary>
+        public Task HashSetTransactionAsync<TEntity>(string key, List<TEntity> lst, Func<TEntity, object> funcDataKey, Func<TEntity, string> funcData = null)
+        {
+            if (lst == null || lst.Count == 0) return Task.FromResult(0);
+            if (funcData == null) funcData = po => JsonConvert.SerializeObject(po);
+
+            var transaction = Db.CreateTransaction();
+            var tasks       = new List<Task>();
+            foreach (var po in lst)
+            {
+                var dataKey = funcDataKey(po).ToString();
+                var data    = funcData(po);
+                tasks.Add(transaction.HashSetAsync(key, dataKey, data));
+            }
+            transaction.Execute();
+            return Task.WhenAll(tasks.ToArray());
         }
     }
 }

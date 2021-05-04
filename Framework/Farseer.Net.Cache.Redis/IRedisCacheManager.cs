@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using StackExchange.Redis;
 
 namespace FS.Cache.Redis
@@ -28,5 +29,10 @@ namespace FS.Cache.Redis
         ///     事务，批量写入HASH
         /// </summary>
         void HashSetTransaction<TEntity>(string key, List<TEntity> lst, Func<TEntity, object> funcDataKey, Func<TEntity, string> funcData = null);
+
+        /// <summary>
+        ///     事务，批量写入HASH
+        /// </summary>
+        Task HashSetTransactionAsync<TEntity>(string key, List<TEntity> lst, Func<TEntity, object> funcDataKey, Func<TEntity, string> funcData = null);
     }
 }
