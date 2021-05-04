@@ -91,7 +91,6 @@ namespace FS.Job.GrpcClient
                 RequestAt = DateTime.Now.ToTimestamps(),
                 Data      = arrJob
             });
-            await Task.Delay(100);
 
             // 持续读取服务端流
             while (await _rpc.ResponseStream.MoveNext())
