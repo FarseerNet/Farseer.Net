@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 using FS.DI;
 using FS.Job.Configuration;
@@ -35,7 +36,11 @@ namespace FS.Job
                 var jobs = JobInstaller.JobImpList.Keys.Select(o => o).ToArray();
                 foreach (var server in jobItemConfig.Server.Split(','))
                 {
-                    IocManager.Resolve<ChannelClient>().Channel(server, jobs);
+                    var arrJob = string.Join(",", jobs);
+                    for (int i = 0; i < Environment.ProcessorCount; i++)
+                    {
+                        IocManager.Resolve<ChannelClient>().Channel(server, arrJob);
+                    }
                 }
             }
         }

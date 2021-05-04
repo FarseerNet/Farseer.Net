@@ -36,9 +36,8 @@ namespace FS.Job.GrpcClient
         /// <summary>
         /// 向服务端注册客户端连接
         /// </summary>
-        public void Channel(string server, string[] jobs)
+        public void Channel(string server, string arrJob)
         {
-            var arrJob = string.Join(",", jobs);
             ThreadPool.QueueUserWorkItem(async state =>
             {
                 while (true)
@@ -92,28 +91,7 @@ namespace FS.Job.GrpcClient
                 RequestAt = DateTime.Now.ToTimestamps(),
                 Data      = arrJob
             });
-
-            // 向服务器发送心跳,2S一次
-            //ThreadPool.QueueUserWorkItem(async state =>
-            //{
-            //    while (true)
-            //    {
-            //        try
-            //        {
-            //            // 请求注册
-            //            await _rpc.RequestStream.WriteAsync(new ChannelRequest
-            //            {
-            //                Command   = "Heartbeat",
-            //                RequestAt = DateTime.Now.ToTimestamps()
-            //            });
-            //            await Task.Delay(5000);
-            //        }
-            //        catch
-            //        {
-            //            return;
-            //        }
-            //    }
-            //});
+            await Task.Delay(100);
 
             // 持续读取服务端流
             while (await _rpc.ResponseStream.MoveNext())

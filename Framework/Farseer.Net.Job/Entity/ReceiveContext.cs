@@ -32,10 +32,11 @@ namespace FS.Job.Entity
 
         public ReceiveContext(IIocManager ioc, AsyncClientStreamingCall<JobInvokeRequest, CommandResponse> rpc, JobSchedulerVO task, Stopwatch sw)
         {
-            _ioc = ioc;
-            _rpc = rpc;
-            Meta = task;
-            _sw  = sw;
+            _ioc      =   ioc;
+            _rpc      =   rpc;
+            Meta      =   task;
+            _sw       =   sw;
+            Meta.Data ??= new();
         }
 
         /// <summary>
@@ -92,7 +93,7 @@ namespace FS.Job.Entity
                 Status       = 4,
                 RunSpeed     = (int) _sw.ElapsedMilliseconds,
                 Log          = log,
-                Data         = await JsonConvert.SerializeObjectAsync(Meta.Data)
+                Data         = JsonConvert.SerializeObject(Meta.Data)
             });
         }
 
@@ -112,7 +113,8 @@ namespace FS.Job.Entity
                 Progress     = Progress,
                 Status       = 3,
                 RunSpeed     = (int) _sw.ElapsedMilliseconds,
-                Log          = log
+                Log          = log,
+                Data         = JsonConvert.SerializeObject(Meta.Data)
             });
         }
 
@@ -130,6 +132,7 @@ namespace FS.Job.Entity
                     Progress     = Progress,
                     Status       = 2,
                     RunSpeed     = (int) _sw.ElapsedMilliseconds,
+                    Data         = JsonConvert.SerializeObject(Meta.Data)
                 });
             }
             else await UploadQueueAsync();
@@ -149,7 +152,8 @@ namespace FS.Job.Entity
                     Progress     = log.Progress,
                     Status       = 2,
                     RunSpeed     = log.RunSpeed,
-                    Log          = log.Log
+                    Log          = log.Log,
+                    Data         = JsonConvert.SerializeObject(Meta.Data)
                 });
             }
         }
