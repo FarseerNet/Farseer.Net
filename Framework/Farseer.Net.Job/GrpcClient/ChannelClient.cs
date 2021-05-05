@@ -1,4 +1,5 @@
 using System;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using FS.DI;
@@ -8,6 +9,7 @@ using FS.Job.Configuration;
 using FS.Utils.Common;
 using FSS.GrpcService;
 using Grpc.Core;
+using Grpc.Core.Interceptors;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Logging;
 
@@ -58,6 +60,7 @@ namespace FS.Job.GrpcClient
                             {
                                 msg = rpcException.Status.Detail;
                             }
+
                             IocManager.Logger<ChannelClient>().LogWarning($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} {server}，断开连接：{msg}");
                         }
                         else
@@ -77,7 +80,14 @@ namespace FS.Job.GrpcClient
 
         private async Task AsyncDuplexStreamingCall(string server, string arrJob)
         {
-            _grpcChannel          = GrpcChannel.ForAddress(server);
+            _grpcChannel = GrpcChannel.ForAddress(server, new GrpcChannelOptions
+            {
+                // 不检查服务端的http2有效性
+                HttpHandler = new HttpClientHandler()
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                }
+            });
             _registerCenterClient = new FssServer.FssServerClient(_grpcChannel);
             _rpc = _registerCenterClient.Channel(new Metadata
             {
