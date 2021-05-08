@@ -9,7 +9,9 @@ using Castle.Windsor;
 using FS.Configuration.Startup;
 using FS.DI;
 using FS.DI.Installers;
+using FS.Log;
 using FS.Modules;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Component = Castle.MicroKernel.Registration.Component;
 
@@ -106,15 +108,15 @@ namespace FS
         /// <summary>
         ///     初始化系统
         /// </summary>
-        public void Initialize()
+        public void Initialize(Action<ILoggingBuilder> configure = null)
         {
             try
             {
                 var dt = DateTime.Now;
                 RegisterBootstrapper();
+                IocManager.Container.Install(new LoggerInstaller(configure));
                 IocManager.Container.Install(new FarseerInstaller());
 
-                //IocManager.Logger<FarseerApplication>().LogInformation("-------------------------------------------------");
                 IocManager.Logger<FarseerApplication>().LogInformation("注册系统核心组件");
 
                 IocManager.Resolve<FarseerStartupConfiguration>().Initialize();
@@ -122,7 +124,6 @@ namespace FS
                 _moduleManager.Initialize(StartupModule);
                 _moduleManager.StartModules();
                 IocManager.Logger<FarseerApplication>().LogInformation($"系统初始化完毕，耗时{(DateTime.Now - dt).TotalMilliseconds:n}ms");
-                //IocManager.Logger<FarseerApplication>().LogInformation("-------------------------------------------------");
             }
             catch (Exception ex)
             {

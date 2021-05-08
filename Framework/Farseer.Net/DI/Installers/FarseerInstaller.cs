@@ -5,8 +5,6 @@ using Castle.Windsor;
 using FS.Configuration.Startup;
 using FS.Modules;
 using FS.Reflection;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace FS.DI.Installers
 {
@@ -22,21 +20,6 @@ namespace FS.DI.Installers
         /// <param name="store"></param>
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
-            // 注册配置文件
-            var configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json",                                                                 optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true) //增加环境配置文件
-                .AddEnvironmentVariables()
-                .Build();
-            container.Register(Component.For<IConfigurationRoot>().Instance(configuration).LifestyleSingleton());
-
-            // 注册默认日志组件
-            var loggerFactory = LoggerFactory.Create(o =>
-                o.AddConsole()
-                 .AddConfiguration(configuration.GetSection("Logging"))
-            );
-            container.Register(Component.For<ILoggerFactory>().Instance(loggerFactory).LifestyleSingleton());
-
             // 注册核心组件到依赖注入容器中，包括配置。
             if (!IocManager.Instance.IsRegistered<IModuleConfigurations>()) container.Register(Component.For<IModuleConfigurations, ModuleConfigurations>().ImplementedBy<ModuleConfigurations>().LifestyleSingleton());
             if (!IocManager.Instance.IsRegistered<IFarseerStartupConfiguration>()) container.Register(Component.For<IFarseerStartupConfiguration, FarseerStartupConfiguration>().ImplementedBy<FarseerStartupConfiguration>().LifestyleSingleton());
