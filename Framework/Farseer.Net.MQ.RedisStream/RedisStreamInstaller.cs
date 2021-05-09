@@ -111,7 +111,7 @@ namespace FS.MQ.RedisStream
             if (consumerAttribute.AutoCreateGroup)
             {
                 var streamGroupInfos = redisCacheManager.Db.StreamGroupInfo(consumerAttribute.QueueName);
-                var existsGroup      = streamGroupInfos.Any(o => o.Name == consumerAttribute.QueueName);
+                var existsGroup      = streamGroupInfos.Any(o => o.Name == consumerAttribute.GroupName);
                 if (!existsGroup)
                     redisCacheManager.Db.StreamCreateConsumerGroup(consumerAttribute.QueueName, consumerAttribute.GroupName);
             }
