@@ -21,6 +21,8 @@ namespace FS.ElasticSearch
         /// </summary>
         private static readonly Dictionary<string, bool> IndexCache = new();
 
+        private static object objLock = new();
+
         /// <summary>
         ///     数据库上下文
         /// </summary>
@@ -93,9 +95,12 @@ namespace FS.ElasticSearch
         {
             if (!IndexCache.ContainsKey(SetMap.IndexName) || !IndexCache[SetMap.IndexName])
             {
-                if (!Client.Indices.Exists(SetMap.IndexName).Exists)
+                lock (objLock)
                 {
-                    IndexCache[SetMap.IndexName] = CreateIndex();
+                    if (!Client.Indices.Exists(SetMap.IndexName).Exists)
+                    {
+                        IndexCache[SetMap.IndexName] = CreateIndex();
+                    }
                 }
             }
         }
