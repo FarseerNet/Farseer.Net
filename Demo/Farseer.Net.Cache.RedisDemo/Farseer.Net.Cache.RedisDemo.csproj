@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Framework\Farseer.Net.Cache.Redis\Farseer.Net.Cache.Redis.csproj" />
+      <ProjectReference Include="..\..\Framework\Farseer.Net\Farseer.Net.csproj" />
+    </ItemGroup>
+
+</Project>
