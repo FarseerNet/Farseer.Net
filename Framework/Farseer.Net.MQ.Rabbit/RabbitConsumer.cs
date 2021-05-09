@@ -10,40 +10,53 @@ using RabbitMQ.Client.Exceptions;
 
 namespace FS.MQ.Rabbit
 {
-    public class RabbitConsumer : IRabbitConsumer
+    internal class RabbitConsumer
     {
+        /// <summary>
+        /// ioc
+        /// </summary>
+        private readonly IIocManager _iocManager;
+
+        /// <summary>
+        /// 消费监听
+        /// </summary>
+        private string _consumerType;
+
         /// <summary>
         /// 创建消息队列属性
         /// </summary>
         private readonly RabbitConnect _connect;
+
         /// <summary>
         /// 创建连接会话对象
         /// </summary>
         private IModel _channel;
+
         /// <summary>
         /// 后台定时检查连接状态
         /// </summary>
         private Task _checkConnectStatsTask;
+
         /// <summary>
         /// 最后一次ACK确认时间
         /// </summary>
         private DateTime _lastAckAt;
-        /// <summary>
-        /// 消费监听
-        /// </summary>
-        private IListenerMessage _listener;
+
         /// <summary>
         /// 是否自动ack
         /// </summary>
         private bool _autoAck;
+
         /// <summary>
         /// 最后ACK多少秒超时则重连（默认5分钟）
         /// </summary>
         private readonly int _lastAckTimeoutRestart;
+
         /// <summary>
         /// 线程数（默认8）
         /// </summary>
         private readonly int _consumeThreadNums;
+
         /// <summary>
         /// 队列名称
         /// </summary>
@@ -52,12 +65,16 @@ namespace FS.MQ.Rabbit
         /// <summary>
         /// 消费客户端
         /// </summary>
+        /// <param name="iocManager">IOC</param>
+        /// <param name="consumerType">消费端Type</param>
         /// <param name="connect"></param>
         /// <param name="queueName">队列名称</param>
         /// <param name="lastAckTimeoutRestart">最后ACK多少秒超时则重连（默认5分钟）</param>
         /// <param name="consumeThreadNums">线程数（默认8）</param>
-        public RabbitConsumer(RabbitConnect connect, string queueName, int lastAckTimeoutRestart, int consumeThreadNums)
+        public RabbitConsumer(IIocManager iocManager, string consumerType, RabbitConnect connect, string queueName, int lastAckTimeoutRestart, int consumeThreadNums)
         {
+            this._iocManager            = iocManager;
+            this._consumerType          = consumerType;
             this._connect               = connect;
             this._lastAckTimeoutRestart = lastAckTimeoutRestart;
             this._consumeThreadNums     = consumeThreadNums;
@@ -70,11 +87,10 @@ namespace FS.MQ.Rabbit
         /// </summary>
         /// <param name="listener">消费事件</param>
         /// <param name="autoAck">是否自动确认，默认false</param>
-        public void Start(IListenerMessage listener, bool autoAck = false)
+        public void Start(bool autoAck = false)
         {
-            _listener = listener;
-            _autoAck  = autoAck;
-            Connect(_listener, _autoAck);
+            _autoAck = autoAck;
+            Connect(_autoAck);
             CheckStatsAndConnect();
         }
 
@@ -84,7 +100,7 @@ namespace FS.MQ.Rabbit
         private void ReStart()
         {
             Close();
-            Connect(_listener, _autoAck);
+            Connect(_autoAck);
         }
 
         /// <summary>
@@ -161,7 +177,7 @@ namespace FS.MQ.Rabbit
         /// <summary>
         /// 持续消费，并检查连接状态并自动恢复
         /// </summary>
-        private void Connect(IListenerMessage listener, bool autoAck = false)
+        private void Connect(bool autoAck = false)
         {
             Connect();
 
@@ -169,8 +185,9 @@ namespace FS.MQ.Rabbit
             var consumer = new EventingBasicConsumer(_channel);
             consumer.Received += (model, ea) =>
             {
-                var result  = false;
-                var message = Encoding.UTF8.GetString(ea.Body.ToArray());
+                var listener = _iocManager.Resolve<IListenerMessage>(_consumerType);
+                var result   = false;
+                var message  = Encoding.UTF8.GetString(ea.Body.ToArray());
                 try
                 {
                     result     = listener.Consumer(message, model, ea);

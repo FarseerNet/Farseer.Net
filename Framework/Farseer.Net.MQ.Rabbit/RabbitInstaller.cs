@@ -55,10 +55,10 @@ namespace FS.MQ.Rabbit
 
                 try
                 {
-                    foreach (var consumer in types)
+                    foreach (var consumerType in types)
                     {
                         // 启动消费程序
-                        RunConsumer(consumer, rabbitItemConfigs);
+                        RunConsumer(container, consumerType, rabbitItemConfigs);
                     }
 
                     IocManager.Instance.Logger<RabbitInstaller>().LogInformation("全部消费启动完成!");
@@ -73,29 +73,30 @@ namespace FS.MQ.Rabbit
         /// <summary>
         /// 启动消费程序
         /// </summary>
-        /// <param name="consumer"></param>
+        /// <param name="consumerType"></param>
         /// <param name="rabbitItemConfigs"> </param>
-        private static void RunConsumer(Type consumer, List<RabbitItemConfig> rabbitItemConfigs)
+        private static void RunConsumer(IWindsorContainer container, Type consumerType, List<RabbitItemConfig> rabbitItemConfigs)
         {
             // 没有使用consumerAttribute特性的，不启用
-            var consumerAttribute = consumer.GetCustomAttribute<ConsumerAttribute>();
+            var consumerAttribute = consumerType.GetCustomAttribute<ConsumerAttribute>();
             if (consumerAttribute is {Enable: false}) return;
-            
+
             // 创建消费的实例
             var rabbitItemConfig = rabbitItemConfigs.Find(o => o.Name == consumerAttribute.Name);
             if (rabbitItemConfig == null)
             {
-                IocManager.Instance.Logger<RabbitInstaller>().LogWarning($"未找到：{consumer.FullName}的配置项：{consumerAttribute.Name}");
+                IocManager.Instance.Logger<RabbitInstaller>().LogWarning($"未找到：{consumerType.FullName}的配置项：{consumerAttribute.Name}");
                 return;
             }
 
+            var iocManager       = container.Resolve<IIocManager>();
             var rabbitConnect    = new RabbitConnect(rabbitItemConfig);
-            var consumerInstance = new RabbitConsumer(rabbitConnect, consumerAttribute.QueueName, consumerAttribute.LastAckTimeoutRestart, consumerAttribute.ConsumeThreadNums);
+            var consumerInstance = new RabbitConsumer(iocManager, consumerType.FullName, rabbitConnect, consumerAttribute.QueueName, consumerAttribute.LastAckTimeoutRestart, consumerAttribute.ConsumeThreadNums);
 
             // 启用启动绑定时，要创建交换器、队列，并绑定
             if (consumerAttribute.AutoCreateAndBind)
             {
-                IocManager.Instance.Logger<RabbitInstaller>().LogInformation($"正在初始化：{consumer.Name}");
+                IocManager.Instance.Logger<RabbitInstaller>().LogInformation($"正在初始化：{consumerType.Name}");
                 var rabbitManager = new RabbitManager(rabbitConnect);
 
                 // 配置死信参数
@@ -107,8 +108,10 @@ namespace FS.MQ.Rabbit
                 rabbitManager.CreateQueueAndBind(consumerAttribute.QueueName, consumerAttribute.ExchangeName, consumerAttribute.RoutingKey, arguments: arguments);
             }
 
-            IocManager.Instance.Logger<RabbitInstaller>().LogInformation($"正在启动：{consumer.Name}");
-            consumerInstance.Start((IListenerMessage) Activator.CreateInstance(consumer));
+            IocManager.Instance.Logger<RabbitInstaller>().LogInformation($"正在启动：{consumerType.Name}");
+            
+            container.Register(Component.For<IListenerMessage>().ImplementedBy(consumerType).Named(consumerType.FullName).LifestyleTransient());
+            consumerInstance.Start();
         }
     }
 }
