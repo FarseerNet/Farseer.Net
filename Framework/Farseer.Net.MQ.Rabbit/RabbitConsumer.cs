@@ -209,7 +209,7 @@ namespace FS.MQ.Rabbit
         }
 
         /// <summary>
-        ///     关闭生产者
+        ///     关闭
         /// </summary>
         public void Close()
         {

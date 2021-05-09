@@ -27,7 +27,7 @@ namespace FS.MQ.Rabbit
             var configurationSection = container.Resolve<IConfigurationRoot>().GetSection("Rabbit");
             var rabbitItemConfigs    = configurationSection.GetChildren().Select(o => o.Get<RabbitItemConfig>()).ToList();
 
-            //注册所有的消息队列的Topic消费者
+            // 注册生产者
             foreach (var rabbitItemConfig in rabbitItemConfigs)
             {
                 // 每个Item，建立一个tcp连接
@@ -79,7 +79,8 @@ namespace FS.MQ.Rabbit
         {
             // 没有使用consumerAttribute特性的，不启用
             var consumerAttribute = consumer.GetCustomAttribute<ConsumerAttribute>();
-            if (consumerAttribute == null || !consumerAttribute.Enable) return;
+            if (consumerAttribute is {Enable: false}) return;
+            
             // 创建消费的实例
             var rabbitItemConfig = rabbitItemConfigs.Find(o => o.Name == consumerAttribute.Name);
             if (rabbitItemConfig == null)
