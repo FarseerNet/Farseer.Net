@@ -65,10 +65,10 @@ namespace FS.MQ.RedisStream
 
                 try
                 {
-                    foreach (var consumer in types)
+                    foreach (var consumerType in types)
                     {
                         // 启动消费程序
-                        RunConsumer(container, consumer, redisStreamConfigs);
+                        RunConsumer(container, consumerType, redisStreamConfigs);
                     }
 
                     IocManager.Instance.Logger<RedisStreamInstaller>().LogInformation("全部消费启动完成!");

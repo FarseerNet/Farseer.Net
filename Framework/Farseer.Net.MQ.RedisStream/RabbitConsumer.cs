@@ -10,12 +10,16 @@ using StackExchange.Redis;
 
 namespace FS.MQ.RedisStream
 {
-    public class RedisStreamConsumer
+    internal class RedisStreamConsumer
     {
+        /// <summary>
+        /// ioc
+        /// </summary>
+        private readonly IIocManager _iocManager;
         /// <summary>
         /// 消费监听
         /// </summary>
-        private string _consumerType;
+        private readonly string _consumerType;
 
         /// <summary>
         /// 线程数（默认8）
@@ -46,11 +50,6 @@ namespace FS.MQ.RedisStream
         /// 每次拉取数据的数量
         /// </summary>
         private readonly int _pullCount;
-
-        /// <summary>
-        /// ioc
-        /// </summary>
-        private readonly IIocManager _iocManager;
 
         /// <summary>
         /// 消费客户端
