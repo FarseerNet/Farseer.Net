@@ -33,31 +33,35 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Farseer.Net.MQ.Kafka", "Fra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Farseer.Net.MongoDB", "Framework\Farseer.Net.MongoDB\Farseer.Net.MongoDB.csproj", "{56BF00F1-BEBC-49A8-BB62-13C21B4E1184}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Console", "Console", "{BA9C8E90-5B9E-464C-B0CA-7988E2CA850B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.MQ.Rocket.Console", "Console\Farseer.Net.MQ.Rocket.Console\Farseer.Net.MQ.Rocket.Console.csproj", "{6D791307-BF1C-48A9-9A2C-48E4577D5F76}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demo", "Demo", "{BA9C8E90-5B9E-464C-B0CA-7988E2CA850B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Farseer.Net.Cache.Redis", "Framework\Farseer.Net.Cache.Redis\Farseer.Net.Cache.Redis.csproj", "{77834507-9F3D-45CA-B387-F44D67327C4E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.Data.Console", "Console\Farseer.Net.Data.Console\Farseer.Net.Data.Console.csproj", "{3A1A3A49-0A8E-429E-A8D3-2197938A6A30}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.DataDemo", "Demo\Farseer.Net.DataDemo\Farseer.Net.DataDemo.csproj", "{3A1A3A49-0A8E-429E-A8D3-2197938A6A30}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.Job", "Framework\Farseer.Net.Job\Farseer.Net.Job.csproj", "{7B9E3921-22FC-4032-B933-2EA44579DA1E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.Job.Console", "Console\Farseer.Net.Job.Console\Farseer.Net.Job.Console.csproj", "{7D96EE9D-33A3-4510-B178-D63ADFF989DD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.JobDemo", "Demo\Farseer.Net.JobDemo\Farseer.Net.JobDemo.csproj", "{7D96EE9D-33A3-4510-B178-D63ADFF989DD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.MQ.Rabbit.Console", "Console\Farseer.Net.MQ.Rabbit.Console\Farseer.Net.MQ.Rabbit.Console.csproj", "{E595ACDF-8435-42AD-87BB-534BA221A5DA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.MQ.RabbitDemo", "Demo\Farseer.Net.MQ.RabbitDemo\Farseer.Net.MQ.RabbitDemo.csproj", "{E595ACDF-8435-42AD-87BB-534BA221A5DA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.MQ.Rabbit", "Framework\Farseer.Net.MQ.Rabbit\Farseer.Net.MQ.Rabbit.csproj", "{B61422B8-3A55-42C7-963A-6D0E33A7E9A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.Cache.Redis.Test", "Console\Farseer.Net.Cache.Redis.Test\Farseer.Net.Cache.Redis.Test.csproj", "{9D50705E-B3A9-4ED7-A167-3AA38E5F5F20}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.Cache.RedisDemo", "Demo\Farseer.Net.Cache.RedisDemo\Farseer.Net.Cache.RedisDemo.csproj", "{9D50705E-B3A9-4ED7-A167-3AA38E5F5F20}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.net.AutoMapper.Test", "Tests\Farseer.net.AutoMapper.Test\Farseer.net.AutoMapper.Test.csproj", "{42A0AC9C-6373-4EF0-AFE8-C5F48668A1A3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.AspNetCore", "Framework\Farseer.Net.AspNetCore\Farseer.Net.AspNetCore.csproj", "{78D67F74-A4BD-4237-81ED-B247ED24E77F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.ElasticSearch.Console", "Console\Farseer.Net.ElasticSearch.Console\Farseer.Net.ElasticSearch.Console.csproj", "{0A26DA1D-1E33-4B67-B1FE-DF1B0649AA87}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.ElasticSearchDemo", "Demo\Farseer.Net.ElasticSearchDemo\Farseer.Net.ElasticSearchDemo.csproj", "{0A26DA1D-1E33-4B67-B1FE-DF1B0649AA87}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.Grpc", "Framework\Farseer.Net.Grpc\Farseer.Net.Grpc.csproj", "{9AE8DB39-022F-4A76-A660-2D2E42E76E9B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.MQ.RedisStream", "Framework\Farseer.Net.MQ.RedisStream\Farseer.Net.MQ.RedisStream.csproj", "{7091D804-E12C-4FE8-9E0B-3FA2D8B31828}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.MQ.RocketDemo", "Demo\Farseer.Net.MQ.RocketDemo\Farseer.Net.MQ.RocketDemo.csproj", "{01C1F107-1AB5-497D-B33A-E3AAFA120505}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.MQ.RedisStreamDemo", "Demo\Farseer.Net.MQ.RedisStreamDemo\Farseer.Net.MQ.RedisStreamDemo.csproj", "{8B13002D-C58B-4374-9EF5-A6FC58A6DE9E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -169,14 +173,6 @@ Global
 		{56BF00F1-BEBC-49A8-BB62-13C21B4E1184}.Release|Any CPU.Build.0 = Release|Any CPU
 		{56BF00F1-BEBC-49A8-BB62-13C21B4E1184}.Release|x64.ActiveCfg = Release|Any CPU
 		{56BF00F1-BEBC-49A8-BB62-13C21B4E1184}.Release|x64.Build.0 = Release|Any CPU
-		{6D791307-BF1C-48A9-9A2C-48E4577D5F76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6D791307-BF1C-48A9-9A2C-48E4577D5F76}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6D791307-BF1C-48A9-9A2C-48E4577D5F76}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{6D791307-BF1C-48A9-9A2C-48E4577D5F76}.Debug|x64.Build.0 = Debug|Any CPU
-		{6D791307-BF1C-48A9-9A2C-48E4577D5F76}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6D791307-BF1C-48A9-9A2C-48E4577D5F76}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6D791307-BF1C-48A9-9A2C-48E4577D5F76}.Release|x64.ActiveCfg = Release|Any CPU
-		{6D791307-BF1C-48A9-9A2C-48E4577D5F76}.Release|x64.Build.0 = Release|Any CPU
 		{77834507-9F3D-45CA-B387-F44D67327C4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{77834507-9F3D-45CA-B387-F44D67327C4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77834507-9F3D-45CA-B387-F44D67327C4E}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -265,6 +261,30 @@ Global
 		{9AE8DB39-022F-4A76-A660-2D2E42E76E9B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9AE8DB39-022F-4A76-A660-2D2E42E76E9B}.Release|x64.ActiveCfg = Release|Any CPU
 		{9AE8DB39-022F-4A76-A660-2D2E42E76E9B}.Release|x64.Build.0 = Release|Any CPU
+		{7091D804-E12C-4FE8-9E0B-3FA2D8B31828}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7091D804-E12C-4FE8-9E0B-3FA2D8B31828}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7091D804-E12C-4FE8-9E0B-3FA2D8B31828}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7091D804-E12C-4FE8-9E0B-3FA2D8B31828}.Debug|x64.Build.0 = Debug|Any CPU
+		{7091D804-E12C-4FE8-9E0B-3FA2D8B31828}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7091D804-E12C-4FE8-9E0B-3FA2D8B31828}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7091D804-E12C-4FE8-9E0B-3FA2D8B31828}.Release|x64.ActiveCfg = Release|Any CPU
+		{7091D804-E12C-4FE8-9E0B-3FA2D8B31828}.Release|x64.Build.0 = Release|Any CPU
+		{01C1F107-1AB5-497D-B33A-E3AAFA120505}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01C1F107-1AB5-497D-B33A-E3AAFA120505}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01C1F107-1AB5-497D-B33A-E3AAFA120505}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{01C1F107-1AB5-497D-B33A-E3AAFA120505}.Debug|x64.Build.0 = Debug|Any CPU
+		{01C1F107-1AB5-497D-B33A-E3AAFA120505}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01C1F107-1AB5-497D-B33A-E3AAFA120505}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01C1F107-1AB5-497D-B33A-E3AAFA120505}.Release|x64.ActiveCfg = Release|Any CPU
+		{01C1F107-1AB5-497D-B33A-E3AAFA120505}.Release|x64.Build.0 = Release|Any CPU
+		{8B13002D-C58B-4374-9EF5-A6FC58A6DE9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B13002D-C58B-4374-9EF5-A6FC58A6DE9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B13002D-C58B-4374-9EF5-A6FC58A6DE9E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8B13002D-C58B-4374-9EF5-A6FC58A6DE9E}.Debug|x64.Build.0 = Debug|Any CPU
+		{8B13002D-C58B-4374-9EF5-A6FC58A6DE9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B13002D-C58B-4374-9EF5-A6FC58A6DE9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B13002D-C58B-4374-9EF5-A6FC58A6DE9E}.Release|x64.ActiveCfg = Release|Any CPU
+		{8B13002D-C58B-4374-9EF5-A6FC58A6DE9E}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -283,7 +303,6 @@ Global
 		{B6B866CD-0014-4763-B3E9-72F5EC4175D2} = {33414C74-7920-4F78-8480-44BE2184D5E1}
 		{BD2474BB-5430-49C2-9B8F-32968451CB71} = {33414C74-7920-4F78-8480-44BE2184D5E1}
 		{56BF00F1-BEBC-49A8-BB62-13C21B4E1184} = {33414C74-7920-4F78-8480-44BE2184D5E1}
-		{6D791307-BF1C-48A9-9A2C-48E4577D5F76} = {BA9C8E90-5B9E-464C-B0CA-7988E2CA850B}
 		{77834507-9F3D-45CA-B387-F44D67327C4E} = {33414C74-7920-4F78-8480-44BE2184D5E1}
 		{3A1A3A49-0A8E-429E-A8D3-2197938A6A30} = {BA9C8E90-5B9E-464C-B0CA-7988E2CA850B}
 		{7B9E3921-22FC-4032-B933-2EA44579DA1E} = {33414C74-7920-4F78-8480-44BE2184D5E1}
@@ -295,6 +314,9 @@ Global
 		{78D67F74-A4BD-4237-81ED-B247ED24E77F} = {33414C74-7920-4F78-8480-44BE2184D5E1}
 		{0A26DA1D-1E33-4B67-B1FE-DF1B0649AA87} = {BA9C8E90-5B9E-464C-B0CA-7988E2CA850B}
 		{9AE8DB39-022F-4A76-A660-2D2E42E76E9B} = {33414C74-7920-4F78-8480-44BE2184D5E1}
+		{7091D804-E12C-4FE8-9E0B-3FA2D8B31828} = {33414C74-7920-4F78-8480-44BE2184D5E1}
+		{01C1F107-1AB5-497D-B33A-E3AAFA120505} = {BA9C8E90-5B9E-464C-B0CA-7988E2CA850B}
+		{8B13002D-C58B-4374-9EF5-A6FC58A6DE9E} = {BA9C8E90-5B9E-464C-B0CA-7988E2CA850B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {22E81E03-33DB-418D-90D2-FD1B560FEF14}

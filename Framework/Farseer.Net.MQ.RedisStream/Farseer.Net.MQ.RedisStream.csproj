@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <Company>steden</Company>
+        <Copyright>http://www.fsgit.com</Copyright>
+        <Product>RedisMQ组件</Product>
+        <Description>包括：RedisMQ组件</Description>
+        <AssemblyVersion>2.5.0</AssemblyVersion>
+        <FileVersion>2.5.0</FileVersion>
+        <Version>2.5.0</Version>
+        <Authors>steden</Authors>
+        <PackageTags>RedisMQ组件</PackageTags>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <RootNamespace>FS.MQ.RedisStream</RootNamespace>
+        <LangVersion>latest</LangVersion>
+        <DefineConstants>CORE</DefineConstants>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Farseer.Net.Cache.Redis\Farseer.Net.Cache.Redis.csproj" />
+    </ItemGroup>
+
+</Project>
