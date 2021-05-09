@@ -37,7 +37,7 @@ namespace FS.ElasticSearch
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             // 读取配置
-            var configurationSection     = IocManager.Instance.Resolve<IConfigurationRoot>().GetSection("ElasticSearch");
+            var configurationSection     = _iocResolver.Resolve<IConfigurationRoot>().GetSection("ElasticSearch");
             var elasticSearchItemConfigs = configurationSection.GetChildren().Select(o => o.Get<ElasticSearchItemConfig>());
 
             foreach (var elasticSearchItemConfig in elasticSearchItemConfigs)

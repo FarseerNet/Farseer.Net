@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading.Tasks;
 using FS.DI;
 using FS.ElasticSearch.Internal;
 using FS.ElasticSearch.Map;
@@ -63,6 +64,20 @@ namespace FS.ElasticSearch
         public virtual bool Insert(TEntity model)
         {
             var result = Client.Index(new IndexRequest<TEntity>(model, SetMap.IndexName));
+            if (!result.IsValid)
+            {
+                IocManager.Instance.Logger<IndexSet<TEntity>>().LogError($"索引失败：{JsonConvert.SerializeObject(model)} \r\n" + result.OriginalException.Message);
+            }
+
+            return result.IsValid;
+        }
+
+        /// <summary>
+        /// 写入数据
+        /// </summary>
+        public virtual async Task<bool> InsertAsync(TEntity model)
+        {
+            var result = await Client.IndexAsync(new IndexRequest<TEntity>(model, SetMap.IndexName));
             if (!result.IsValid)
             {
                 IocManager.Instance.Logger<IndexSet<TEntity>>().LogError($"索引失败：{JsonConvert.SerializeObject(model)} \r\n" + result.OriginalException.Message);
