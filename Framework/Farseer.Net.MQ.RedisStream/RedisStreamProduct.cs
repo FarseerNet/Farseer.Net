@@ -9,7 +9,7 @@ namespace FS.MQ.RedisStream
     {
         private readonly ProductItemConfig  _productItemConfig;
         private readonly IRedisCacheManager _redisCacheManager;
-        
+
 
         public RedisStreamProduct(IRedisCacheManager redisCacheManager, ProductItemConfig productItemConfig)
         {
@@ -24,7 +24,7 @@ namespace FS.MQ.RedisStream
         /// <param name="message">消息主体</param>
         public bool Send(string message, string field = "data")
         {
-            var redisValue = _redisCacheManager.Db.StreamAdd(_productItemConfig.QueueName, field, message);
+            var redisValue = _redisCacheManager.Db.StreamAdd(_productItemConfig.QueueName, field, message, maxLength: _productItemConfig.MaxLength, useApproximateMaxLength: true);
             return redisValue.HasValue;
         }
 
@@ -36,7 +36,7 @@ namespace FS.MQ.RedisStream
         public bool Send(object entity, string field = "data")
         {
             var json       = JsonConvert.SerializeObject(entity);
-            var redisValue = _redisCacheManager.Db.StreamAdd(_productItemConfig.QueueName, field, json);
+            var redisValue = _redisCacheManager.Db.StreamAdd(_productItemConfig.QueueName, field, json, maxLength: _productItemConfig.MaxLength, useApproximateMaxLength: true);
             return redisValue.HasValue;
         }
 
@@ -47,7 +47,7 @@ namespace FS.MQ.RedisStream
         /// <param name="message">消息主体</param>
         public async Task<bool> SendAsync(string message, string field = "data")
         {
-            var redisValue = await _redisCacheManager.Db.StreamAddAsync(_productItemConfig.QueueName, field, message);
+            var redisValue = await _redisCacheManager.Db.StreamAddAsync(_productItemConfig.QueueName, field, message, maxLength: _productItemConfig.MaxLength, useApproximateMaxLength: true);
             return redisValue.HasValue;
         }
 
@@ -59,7 +59,7 @@ namespace FS.MQ.RedisStream
         public async Task<bool> SendAsync(object entity, string field = "data")
         {
             var json       = JsonConvert.SerializeObject(entity);
-            var redisValue = await _redisCacheManager.Db.StreamAddAsync(_productItemConfig.QueueName, field, json);
+            var redisValue = await _redisCacheManager.Db.StreamAddAsync(_productItemConfig.QueueName, field, json, maxLength: _productItemConfig.MaxLength, useApproximateMaxLength: true);
             return redisValue.HasValue;
         }
     }
