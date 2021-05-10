@@ -35,7 +35,7 @@ namespace FS.Log
         {
             options ??= _ =>
             {
-                _.UseUtcTimestamp = true;
+                _.UseUtcTimestamp = false;
                 _.TimestampFormat = "yyyy-MM-dd HH:mm:ss";
             };
             //添加控制台输出
