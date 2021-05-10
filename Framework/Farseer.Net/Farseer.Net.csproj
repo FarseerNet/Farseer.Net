@@ -8,9 +8,9 @@
     <Authors>steden</Authors>
     <Description>包括：IOC框架、模块化思想、模块启动器、配置文件接口</Description>
     <PackageTags>IOC框架、模块化思想、模块启动器、配置文件接口</PackageTags>
-    <AssemblyVersion>2.5.2</AssemblyVersion>
-    <FileVersion>2.5.2</FileVersion>
-    <Version>2.5.2</Version>
+    <AssemblyVersion>2.5.3</AssemblyVersion>
+    <FileVersion>2.5.3</FileVersion>
+    <Version>2.5.3</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RootNamespace>FS</RootNamespace>
     <LangVersion>latest</LangVersion>
