@@ -9,12 +9,5 @@ namespace Farseer.Net.MQ.RedisStreamDemo
     [DependsOn(typeof(RedisStreamModule))]
     public class StartupModule : FarseerModule
     {
-        public override void PreInitialize()
-        {
-        }
-
-        public override void PostInitialize()
-        {
-        }
     }
 }
