@@ -16,11 +16,7 @@ namespace FS.Log
             if (services == null) throw new ArgumentNullException(nameof(services));
             services.AddLogging(logging =>
             {
-                logging.AddFarseerJsonConsole(opt =>
-                {
-                    opt.UseUtcTimestamp = true;
-                    opt.TimestampFormat = "yyyy-MM-dd HH:mm:ss";
-                });
+                logging.AddFarseerJsonConsole();
                 
                 // 非生产环境下添加调试输出
                 if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "" && Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Production") logging.AddDebug();
@@ -37,12 +33,11 @@ namespace FS.Log
         /// <returns></returns>
         public static ILoggingBuilder AddFarseerJsonConsole(this ILoggingBuilder builder, Action<JsonConsoleFormatterOptions> options = null)
         {
-            options ??= _ => new JsonConsoleFormatterOptions
+            options ??= _ =>
             {
-                UseUtcTimestamp = true,
-                TimestampFormat = "yyyy-MM-dd HH:mm:ss"
+                _.UseUtcTimestamp = true;
+                _.TimestampFormat = "yyyy-MM-dd HH:mm:ss";
             };
-
             //添加控制台输出
             builder.AddConsoleFormatter<FarseerJsonConsole, JsonConsoleFormatterOptions>(_ => options(_));
 
