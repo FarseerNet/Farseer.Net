@@ -37,7 +37,7 @@ namespace FS.Job.RemoteCall
             var sw = new Stopwatch();
             // 上下文
             var receiveContext = new ReceiveContext(IocManager, rpcJobInvoke, task, sw);
-            receiveContext.Logger(LogLevel.Information, $"客户端（{IpHelper.GetIps()[0].Address.MapToIPv4().ToString()}）收到{message}请求，开始处理。");
+            IocManager.Resolve<IRemoteCommand>("fss_client_Print").Invoke($"客户端（{IpHelper.GetIps()[0].Address.MapToIPv4().ToString()}）收到{message}请求，开始处理。");
             await receiveContext.UploadAsync();
 
             // 业务是否有该调度任务的实现
@@ -89,12 +89,14 @@ namespace FS.Job.RemoteCall
 
                 // 等待服务端返回结果
                 var rsp = await rpcJobInvoke.ResponseAsync;
-                IocManager.Logger<ChannelClient>().LogInformation(rsp.Data);
+                IocManager.Resolve<IRemoteCommand>("fss_client_Print").Invoke(rsp.Data);
             }
             catch (Exception e)
             {
-                IocManager.Logger<JobSchedulerCommand>().LogError(e, e.ToString());
+                IocManager.Logger<JobSchedulerCommand>().LogError(e.Message);
             }
         }
+
+        public void Invoke(string data) => throw new NotImplementedException();
     }
 }
