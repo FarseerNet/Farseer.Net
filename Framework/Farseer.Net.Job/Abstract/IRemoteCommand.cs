@@ -16,5 +16,10 @@ namespace FS.Job.Abstract
         /// <param name="requestStream">请求流</param>
         /// <param name="responseStream">响应流</param>
         Task InvokeAsync(FssServer.FssServerClient client, IClientStreamWriter<ChannelRequest> requestStream, IAsyncStreamReader<CommandResponse> responseStream);
+
+        /// <summary>
+        /// 处理
+        /// </summary>
+        void Invoke(string data);
     }
 }

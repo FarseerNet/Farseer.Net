@@ -16,8 +16,17 @@ namespace FS.Job.RemoteCall
 
         public Task InvokeAsync(FssServer.FssServerClient client, IClientStreamWriter<ChannelRequest> requestStream, IAsyncStreamReader<CommandResponse> responseStream)
         {
-            IocManager.Logger<PrintCommand>().LogInformation(responseStream.Current.Data);
+            Invoke(responseStream.Current.Data);
             return Task.FromResult(0);
+        } 
+
+        
+        /// <summary>
+        /// 处理
+        /// </summary>
+        public void Invoke(string data)
+        {
+            IocManager.Logger<PrintCommand>().LogInformation(data);
         }
     }
 }
