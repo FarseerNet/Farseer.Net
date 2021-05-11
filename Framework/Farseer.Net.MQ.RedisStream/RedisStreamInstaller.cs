@@ -110,6 +110,10 @@ namespace FS.MQ.RedisStream
             // 自动创建消费组
             if (consumerAttribute.AutoCreateGroup)
             {
+                // 先判断队列是否存在，不存在则创建
+                var isExistsQueue = redisCacheManager.Db.KeyExists(consumerAttribute.QueueName);
+                if (!isExistsQueue) redisCacheManager.Db.StreamAdd(consumerAttribute.QueueName, "data", "init create queue");
+                
                 var streamGroupInfos = redisCacheManager.Db.StreamGroupInfo(consumerAttribute.QueueName);
                 var existsGroup      = streamGroupInfos.Any(o => o.Name == consumerAttribute.GroupName);
                 if (!existsGroup)
