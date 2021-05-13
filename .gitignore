@@ -1,6 +1,5 @@
 *.suo
 *.user
-!db.config
 bin
 obj
 packages
