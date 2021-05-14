@@ -17,7 +17,7 @@ namespace FS.Job
 {
     public class JobModule : FarseerModule
     {
-        private static Dictionary<string, AsyncDuplexStreamingCall<ChannelRequest, CommandResponse>> dic = new();
+        private static Dictionary<string, List<AsyncDuplexStreamingCall<ChannelRequest, CommandResponse>>> dic = new();
 
         /// <summary>
         ///     初始化之前
@@ -42,10 +42,11 @@ namespace FS.Job
                 var jobs = JobInstaller.JobImpList.Keys.Select(o => o).ToArray();
                 foreach (var server in jobItemConfig.Server.Split(','))
                 {
+                    dic[server] = new();
                     var arrJob = string.Join(",", jobs);
                     for (int i = 0; i < Environment.ProcessorCount; i++)
                     {
-                        dic[server] = IocManager.Resolve<ChannelClient>().Channel(server, arrJob);
+                        dic[server].Add(IocManager.Resolve<ChannelClient>().Channel(server, arrJob));
                     }
                 }
 
@@ -57,27 +58,30 @@ namespace FS.Job
                         
                         foreach (var rpc in dic)
                         {
-                            try
+                            for (var index = 0; index < rpc.Value.Count; index++)
                             {
-                                // 尝试发送心跳，看连接是否正常
-                                await rpc.Value.RequestStream.WriteAsync(new ChannelRequest
+                                var call = rpc.Value[index];
+                                try
                                 {
-                                    Command   = "Heartbeat",
-                                    RequestAt = DateTime.Now.ToTimestamps(),
-                                    Data      = ""
-                                });
-                                
-                                IocManager.Logger<JobModule>().LogDebug($"发送心跳===> {rpc.Key} 心跳");
-                            }
-                            catch (Exception e)
-                            {
-                                IocManager.Logger<JobModule>().LogDebug($"{rpc.Key}，未连接，尝试重新注册...");
+                                    // 尝试发送心跳，看连接是否正常
+                                    await call.RequestStream.WriteAsync(new ChannelRequest
+                                    {
+                                        Command   = "Heartbeat",
+                                        RequestAt = DateTime.Now.ToTimestamps(),
+                                        Data      = ""
+                                    });
 
-                                var arrJob = string.Join(",", jobs);
-                                dic[rpc.Key] = IocManager.Resolve<ChannelClient>().Channel(rpc.Key, arrJob);
+                                    IocManager.Logger<JobModule>().LogDebug($"发送心跳===> {rpc.Key} 心跳");
+                                }
+                                catch (Exception e)
+                                {
+                                    IocManager.Logger<JobModule>().LogDebug($"{rpc.Key}，未连接，尝试重新注册...");
+
+                                    var arrJob = string.Join(",", jobs);
+                                    dic[rpc.Key][index] = IocManager.Resolve<ChannelClient>().Channel(rpc.Key, arrJob);
+                                }
                             }
                         }
-
                     }
                 });
             }
