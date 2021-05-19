@@ -73,7 +73,7 @@ namespace FS.Job
 
                                     IocManager.Logger<JobModule>().LogDebug($"发送心跳===> {rpc.Key} 心跳");
                                 }
-                                catch (Exception e)
+                                catch (Exception)
                                 {
                                     IocManager.Logger<JobModule>().LogDebug($"{rpc.Key}，未连接，尝试重新注册...");
 

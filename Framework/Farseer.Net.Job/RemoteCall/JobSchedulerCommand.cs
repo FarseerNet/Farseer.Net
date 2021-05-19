@@ -37,7 +37,7 @@ namespace FS.Job.RemoteCall
             var sw = new Stopwatch();
             // 上下文
             var receiveContext = new ReceiveContext(IocManager, rpcJobInvoke, task, sw);
-            IocManager.Resolve<IRemoteCommand>("fss_client_Print").Invoke($"客户端（{IpHelper.GetIps()[0].Address.MapToIPv4().ToString()}）收到{message}请求，开始处理。");
+            IocManager.Logger<PrintCommand>().LogDebug($"客户端（{IpHelper.GetIps()[0].Address.MapToIPv4().ToString()}）收到{message}请求，开始处理。");
             await receiveContext.UploadAsync();
 
             // 业务是否有该调度任务的实现

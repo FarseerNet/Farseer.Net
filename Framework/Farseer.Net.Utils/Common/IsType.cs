@@ -62,7 +62,8 @@ namespace FS.Utils.Common
         /// <returns></returns>
         public static bool IsNumber(string number, string tag = "")
         {
-            return Regex.IsMatch(Regex.Replace(number, tag, "", RegexOptions.IgnoreCase), @"[1-9]+[\d.][0-9]");
+            number = Regex.Replace(number, tag, "", RegexOptions.IgnoreCase);
+            return Regex.IsMatch(number, @"[1-9]+[\d.][0-9]");
         }
 
         /// <summary>
@@ -76,7 +77,7 @@ namespace FS.Utils.Common
         }
 
         /// <summary>
-        ///     是否为整型
+        ///     是否为正整数
         /// </summary>
         /// <param name="number">第一位，不能为0，不带小数点</param>
         /// <returns></returns>
@@ -112,7 +113,11 @@ namespace FS.Utils.Common
         /// <returns></returns>
         public static bool IsMobile(string mobile)
         {
-            if (string.IsNullOrEmpty(mobile)) { return false; }
+            if (string.IsNullOrEmpty(mobile))
+            {
+                return false;
+            }
+
             return new Regex(@"^(1(([34578][0-9])|(47)|[8][01236789]))\d{8}$").IsMatch(mobile.Trim());
         }
 
