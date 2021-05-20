@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using FS.DI;
 using FS.Extends;
 using FS.Job.Configuration;
+using FS.Job.Entity;
 using FS.Job.GrpcClient;
 using FS.Modules;
 using FSS.GrpcService;
@@ -38,8 +40,36 @@ namespace FS.Job
                     return;
                 }
 
-                // 注册到服务端
+                // 当前客户端支持的job
                 var jobs = JobInstaller.JobImpList.Keys.Select(o => o).ToArray();
+                // 开启本地调试状态
+                if (jobItemConfig.Debug)
+                {
+                    IocManager.Logger<JobModule>().LogInformation($"开启Debug模式");
+                    string[] debugJobs = jobItemConfig.DebugJobs.ToLower() == "all" ? jobs : jobItemConfig.DebugJobs.Split(',');
+                    foreach (var debugJob in debugJobs)
+                    {
+                        IocManager.Logger<JobModule>().LogInformation($"Debug：启动{debugJob}。");
+                        
+                        var sw = Stopwatch.StartNew();
+                        try
+                        {
+                            IocManager.Resolve<IFssJob>($"fss_job_{debugJob}").Execute(new ReceiveContext(IocManager, sw));
+                        }
+                        catch (Exception e)
+                        {
+                            IocManager.Logger<JobModule>().LogError(e,e.Message);
+                        }
+                        finally
+                        {
+                            IocManager.Logger<JobModule>().LogInformation($"Debug：{debugJob} 耗时 {sw.ElapsedMilliseconds} ms");
+                        }
+                    }
+                    return;
+                }
+
+
+                // 注册到服务端
                 foreach (var server in jobItemConfig.Server.Split(','))
                 {
                     dic[server] = new();
@@ -47,6 +77,7 @@ namespace FS.Job
                     for (int i = 0; i < Environment.ProcessorCount; i++)
                     {
                         dic[server].Add(IocManager.Resolve<ChannelClient>().Channel(server, arrJob));
+                        break;
                     }
                 }
 
@@ -55,7 +86,7 @@ namespace FS.Job
                     while (true)
                     {
                         Thread.Sleep(5000);
-                        
+
                         foreach (var rpc in dic)
                         {
                             for (var index = 0; index < rpc.Value.Count; index++)

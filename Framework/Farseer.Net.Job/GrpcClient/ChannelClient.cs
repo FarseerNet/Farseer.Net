@@ -98,16 +98,25 @@ namespace FS.Job.GrpcClient
                 RequestAt = DateTime.Now.ToTimestamps(),
                 Data      = arrJob
             });
-            
-            // 持续读取服务端流
-            while (await _rpc.ResponseStream.MoveNext())
+
+            try
             {
-                var iocName = $"fss_client_{_rpc.ResponseStream.Current.Command}";
-                if (!IocManager.IsRegistered(iocName))
-                    IocManager.Logger<ChannelClient>().LogWarning($"未知命令：{_rpc.ResponseStream.Current.Command}");
-                else
-                    // 交由具体功能处理实现执行
-                    await IocManager.Resolve<IRemoteCommand>(iocName).InvokeAsync(_registerCenterClient, _rpc.RequestStream, _rpc.ResponseStream);
+
+                // 持续读取服务端流
+                while (await _rpc.ResponseStream.MoveNext())
+                {
+                    var iocName = $"fss_client_{_rpc.ResponseStream.Current.Command}";
+                    if (!IocManager.IsRegistered(iocName))
+                        IocManager.Logger<ChannelClient>().LogWarning($"未知命令：{_rpc.ResponseStream.Current.Command}");
+                    else
+                        // 交由具体功能处理实现执行
+                        await IocManager.Resolve<IRemoteCommand>(iocName).InvokeAsync(_registerCenterClient, _rpc.RequestStream, _rpc.ResponseStream);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
 

@@ -24,7 +24,10 @@ namespace FS.Job.Entity
         private          long                                                        _nextTimespan;
         private readonly Queue<UploadJobProgress>                                    _logQueue = new();
         private          TimeSpan?                                                   _ts;
-
+        /// <summary>
+        /// 是否为本地Debug模式
+        /// </summary>
+        private          bool                                                        _isDebug;
         /// <summary>
         /// 任务组的参数
         /// </summary>
@@ -38,6 +41,17 @@ namespace FS.Job.Entity
             _sw       =   sw;
             Meta.Data ??= new();
         }
+        
+        /// <summary>
+        /// DEBUG模式
+        /// </summary>
+        internal ReceiveContext(IIocManager ioc, Stopwatch sw)
+        {
+            _ioc      =   ioc;
+            _isDebug  =   true;
+            _sw       =   sw;
+        }
+        
 
         /// <summary>
         /// 返回进度0-100
