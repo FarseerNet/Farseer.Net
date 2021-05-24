@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using FS.Core.Entity;
 
 namespace FS.Utils.Component
@@ -14,7 +15,7 @@ namespace FS.Utils.Component
         /// <param name="arguments"></param>
         /// <param name="actReceiveOutput">外部第一时间，处理拿到的消息 </param>
         /// <param name="workingDirectory">设定Shell的工作目录 </param>
-        public static RunShellResult Run(string cmd, string arguments, Action<string> actReceiveOutput, string workingDirectory = null)
+        public static async Task<RunShellResult> Run(string cmd, string arguments, Action<string> actReceiveOutput, string workingDirectory = null)
         {
             try
             {
@@ -33,18 +34,39 @@ namespace FS.Utils.Component
                 {
                     proc.EnableRaisingEvents = true;
 
-                    void ProcOnOutputDataReceived(object sender, DataReceivedEventArgs args)
+                    // void ProcOnOutputDataReceived(object sender, DataReceivedEventArgs args)
+                    // {
+                    //     if (string.IsNullOrWhiteSpace(args.Data)) return;
+                    //     runShellResult.Output.Add(args.Data);
+                    //     // 外部第一时间，处理拿到的消息
+                    //     if (actReceiveOutput != null) actReceiveOutput(args.Data);
+                    // }
+                    //
+                    // proc.OutputDataReceived += ProcOnOutputDataReceived;
+                    // proc.ErrorDataReceived  += ProcOnOutputDataReceived;
+                    // proc.BeginOutputReadLine();
+                    // proc.BeginErrorReadLine();
+
+                    //开始读取
+                    while (!proc.StandardOutput.EndOfStream)
                     {
-                        if (string.IsNullOrWhiteSpace(args.Data)) return;
-                        runShellResult.Output.Add(args.Data);
+                        var output = await proc.StandardOutput.ReadLineAsync();
+                        if (string.IsNullOrWhiteSpace(output)) continue;
+                        runShellResult.Output.Add(output);
+
                         // 外部第一时间，处理拿到的消息
-                        if (actReceiveOutput != null) actReceiveOutput(args.Data);
+                        if (actReceiveOutput != null) actReceiveOutput(output);
                     }
 
-                    proc.OutputDataReceived += ProcOnOutputDataReceived;
-                    proc.ErrorDataReceived  += ProcOnOutputDataReceived;
-                    proc.BeginOutputReadLine();
-                    proc.BeginErrorReadLine();
+                    while (!proc.StandardError.EndOfStream)
+                    {
+                        var output = await proc.StandardError.ReadLineAsync();
+                        if (string.IsNullOrWhiteSpace(output)) continue;
+                        runShellResult.Output.Add(output);
+
+                        // 外部第一时间，处理拿到的消息
+                        if (actReceiveOutput != null) actReceiveOutput(output);
+                    }
 
                     // 等待退出
                     proc.WaitForExit();
@@ -55,28 +77,9 @@ namespace FS.Utils.Component
             }
             catch (Exception e)
             {
+                if (actReceiveOutput != null) actReceiveOutput(e.Message);
                 return new RunShellResult() {IsError = true, Output = new List<string>() {e.Message}};
             }
         }
     }
 }
-
-
-//开始读取
-//while (!proc.StandardOutput.EndOfStream)
-//{
-//    var output = await proc.StandardOutput.ReadLineAsync();
-//    runShellResult.Output.Add(output);
-//
-//    // 外部第一时间，处理拿到的消息
-//    if (actReceiveOutput != null) actReceiveOutput(output);
-//}
-//
-//while (!proc.StandardError.EndOfStream)
-//{
-//    var output = await proc.StandardError.ReadLineAsync();
-//    runShellResult.Output.Add(output);
-//
-//    // 外部第一时间，处理拿到的消息
-//    if (actReceiveOutput != null) actReceiveOutput(output);
-//}
