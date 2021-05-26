@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
+using FS.DI;
+using Microsoft.Extensions.Logging;
 
 namespace FS.Cache
 {
@@ -59,7 +62,7 @@ namespace FS.Cache
         /// <param name="getEntityId">实体的ID（必须是具有唯一性）</param>
         public async Task<List<TEntity>> GetListAsync<TEntity>(string cacheKey, Func<CacheOption, Task<List<TEntity>>> get, Func<TEntity, object> getEntityId)
         {
-            var lst = await _getCache.ToListAsync<TEntity>(cacheKey);
+            var       lst    = await _getCache.ToListAsync<TEntity>(cacheKey);
             if (lst != null && lst.Count != 0) return lst;
 
             // 缓存没有，则通过get委托获取（一般是数据库的数据源）
