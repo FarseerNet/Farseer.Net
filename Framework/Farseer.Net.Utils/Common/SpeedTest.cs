@@ -6,12 +6,12 @@ using System.Threading;
 namespace FS.Utils.Common
 {
     /// <summary>
-    /// ĞÔÄÜ²âÊÔ
+    /// æ€§èƒ½æµ‹è¯•
     /// </summary>
     public class SpeedTest
     {
         /// <summary>
-        ///     ³õÊ¼»¯½ø³Ì
+        ///     åˆå§‹åŒ–è¿›ç¨‹
         /// </summary>
         public static void Initialize()
         {
@@ -20,26 +20,26 @@ namespace FS.Utils.Common
         }
 
         /// <summary>
-        ///     ¼ÆËãÔËĞĞ·½·¨ºÄÊ±Çé¿ö
+        ///     è®¡ç®—è¿è¡Œæ–¹æ³•è€—æ—¶æƒ…å†µ
         /// </summary>
-        /// <param name="name">±¾´Î¼ÆËãµÄÃû³Æ</param>
-        /// <param name="iteration">¼ÆËã´ÎÊı</param>
-        /// <param name="action">Òª¼ÆËãµÄ·½·¨</param>
+        /// <param name="name">æœ¬æ¬¡è®¡ç®—çš„åç§°</param>
+        /// <param name="iteration">è®¡ç®—æ¬¡æ•°</param>
+        /// <param name="action">è¦è®¡ç®—çš„æ–¹æ³•</param>
         public static void ConsoleTime(string name, int iteration, Action action)
         {
             if (String.IsNullOrWhiteSpace(name)) { return; }
 
-            // ÉèÖÃ¿ØÖÆÌ¨Ç°¾°É«
+            // è®¾ç½®æ§åˆ¶å°å‰æ™¯è‰²
             var currentForeColor = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine(name);
 
-            // Ç¿ÖÆ½øÈ¥À¬»ø»ØÊÕ
+            // å¼ºåˆ¶è¿›å»åƒåœ¾å›æ”¶
             GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
             var gcCounts = new int[GC.MaxGeneration + 1];
             for (var i = 0; i <= GC.MaxGeneration; i++) { gcCounts[i] = GC.CollectionCount(i); }
 
-            // ¿ªÊ¼¼ÆÊ±
+            // å¼€å§‹è®¡æ—¶
             var watch = new Stopwatch();
             watch.Start();
             var cycleCount = GetCycleCount();
@@ -47,12 +47,12 @@ namespace FS.Utils.Common
             var cpuCycles = GetCycleCount() - cycleCount;
             watch.Stop();
 
-            // Êä³ö¼ÆÊ±½á¹û
+            // è¾“å‡ºè®¡æ—¶ç»“æœ
             Console.ForegroundColor = currentForeColor;
             Console.WriteLine("\tTime Elapsed:\t" + watch.ElapsedMilliseconds.ToString("N0") + "ms");
             Console.WriteLine("\tCPU Cycles:\t" + cpuCycles.ToString("N0"));
 
-            // Êä³öÀ¬»ø»ØÊÕ½á¹û
+            // è¾“å‡ºåƒåœ¾å›æ”¶ç»“æœ
             for (var i = 0; i <= GC.MaxGeneration; i++)
             {
                 var count = GC.CollectionCount(i) - gcCounts[i];
@@ -63,7 +63,7 @@ namespace FS.Utils.Common
         }
 
         /// <summary>
-        /// WEBÖĞ²âÊÔ
+        /// WEBä¸­æµ‹è¯•
         /// </summary>
         /// <param name="key"></param>
         /// <param name="count"></param>

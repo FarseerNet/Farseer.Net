@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using FS.DI;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace FS.Cache.Redis
@@ -105,7 +107,7 @@ namespace FS.Cache.Redis
         {
             return _redisCacheManager.HashSetTransactionAsync(key, lst, getEntityId);
         }
-        
+
         /// <summary>
         /// 删除缓存item
         /// </summary>
@@ -115,7 +117,7 @@ namespace FS.Cache.Redis
         {
             _redisCacheManager.Db.HashDelete(cacheKey, fieldKey);
         }
-        
+
         /// <summary>
         /// 删除缓存item
         /// </summary>

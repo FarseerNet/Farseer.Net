@@ -7,19 +7,19 @@ using FS.Extends;
 namespace FS.Utils.Common
 {
     /// <summary>
-    ///     ¼ÓÃÜ¹¤¾ß
+    ///     åŠ å¯†å·¥å…·
     /// </summary>
     public abstract class Encrypt
     {
         /// <summary>
-        ///     MD5º¯Êı
+        ///     MD5å‡½æ•°
         /// </summary>
-        /// <param name="str">Ô­Ê¼×Ö·û´®</param>
-        /// <param name="isReverse">ÊÇ·ñ¼ÓÃÜºó·´×ª×Ö·û´®</param>
-        /// <param name="encoding">Ä¬ÈÏ±àÂëEncoding.Default</param>
-        /// <param name="toUpper">ÊÇ·ñ¼ÓÃÜºó×ªÎª´óĞ´</param>
-        /// <param name="count">¼ÓÃÜ´ÎÊı</param>
-        /// <returns>MD5½á¹û</returns>
+        /// <param name="str">åŸå§‹å­—ç¬¦ä¸²</param>
+        /// <param name="isReverse">æ˜¯å¦åŠ å¯†ååè½¬å­—ç¬¦ä¸²</param>
+        /// <param name="encoding">é»˜è®¤ç¼–ç Encoding.Default</param>
+        /// <param name="toUpper">æ˜¯å¦åŠ å¯†åè½¬ä¸ºå¤§å†™</param>
+        /// <param name="count">åŠ å¯†æ¬¡æ•°</param>
+        /// <returns>MD5ç»“æœ</returns>
         public static string MD5(string str, Encoding encoding = null, bool toUpper = false, bool isReverse = false, int count = 1)
         {
             if (encoding == null) { encoding = Encoding.Default; }
@@ -36,14 +36,14 @@ namespace FS.Utils.Common
             return MD5(md5, encoding, toUpper, isReverse, --count);
         }
         /// <summary>
-        ///     MD5ºó·µ»ØBase64Stringº¯Êı
+        ///     MD5åè¿”å›Base64Stringå‡½æ•°
         /// </summary>
-        /// <param name="str">Ô­Ê¼×Ö·û´®</param>
-        /// <param name="isReverse">ÊÇ·ñ¼ÓÃÜºó·´×ª×Ö·û´®</param>
-        /// <param name="encoding">Ä¬ÈÏ±àÂëEncoding.Default</param>
-        /// <param name="toUpper">ÊÇ·ñ¼ÓÃÜºó×ªÎª´óĞ´</param>
-        /// <param name="count">¼ÓÃÜ´ÎÊı</param>
-        /// <returns>MD5½á¹û</returns>
+        /// <param name="str">åŸå§‹å­—ç¬¦ä¸²</param>
+        /// <param name="isReverse">æ˜¯å¦åŠ å¯†ååè½¬å­—ç¬¦ä¸²</param>
+        /// <param name="encoding">é»˜è®¤ç¼–ç Encoding.Default</param>
+        /// <param name="toUpper">æ˜¯å¦åŠ å¯†åè½¬ä¸ºå¤§å†™</param>
+        /// <param name="count">åŠ å¯†æ¬¡æ•°</param>
+        /// <returns>MD5ç»“æœ</returns>
         public static string MD5Base64String(string str, Encoding encoding = null, bool toUpper = false, bool isReverse = false, int count = 1)
         {
             if (encoding == null) { encoding = Encoding.UTF8; }
@@ -59,33 +59,33 @@ namespace FS.Utils.Common
         }
 
         /// <summary>
-        ///     SHA256º¯Êı
+        ///     SHA256å‡½æ•°
         /// </summary>
         /// ///
-        /// <param name="str">Ô­Ê¼×Ö·û´®</param>
-        /// <returns>SHA256½á¹û</returns>
+        /// <param name="str">åŸå§‹å­—ç¬¦ä¸²</param>
+        /// <returns>SHA256ç»“æœ</returns>
         public static string Sha256(string str)
         {
             var sha256Data = Encoding.UTF8.GetBytes(str);
             var sha256 = new SHA256Managed();
             var result = sha256.ComputeHash(sha256Data);
-            return Convert.ToBase64String(result); //·µ»Ø³¤¶ÈÎª44×Ö½ÚµÄ×Ö·û´®
+            return Convert.ToBase64String(result); //è¿”å›é•¿åº¦ä¸º44å­—èŠ‚çš„å­—ç¬¦ä¸²
         }
 
         /// <summary>
-        ///     ¼ÓÃÜ
+        ///     åŠ å¯†
         /// </summary>
         public class AES
         {
-            //Ä¬ÈÏÃÜÔ¿ÏòÁ¿
+            //é»˜è®¤å¯†é’¥å‘é‡
             private static readonly byte[] Keys = { 0x41, 0x72, 0x65, 0x79, 0x6F, 0x75, 0x6D, 0x79, 0x53, 0x6E, 0x6F, 0x77, 0x6D, 0x61, 0x6E, 0x3F };
 
             /// <summary>
-            ///     AES¼ÓÃÜ×Ö·û´®
+            ///     AESåŠ å¯†å­—ç¬¦ä¸²
             /// </summary>
-            /// <param name="encryptString">´ı¼ÓÃÜµÄ×Ö·û´®</param>
-            /// <param name="encryptKey">¼ÓÃÜÃÜÔ¿,ÒªÇóÎª8Î»</param>
-            /// <returns>¼ÓÃÜ³É¹¦·µ»Ø¼ÓÃÜºóµÄ×Ö·û´®,Ê§°Ü·µ»ØÔ´´®</returns>
+            /// <param name="encryptString">å¾…åŠ å¯†çš„å­—ç¬¦ä¸²</param>
+            /// <param name="encryptKey">åŠ å¯†å¯†é’¥,è¦æ±‚ä¸º8ä½</param>
+            /// <returns>åŠ å¯†æˆåŠŸè¿”å›åŠ å¯†åçš„å­—ç¬¦ä¸²,å¤±è´¥è¿”å›æºä¸²</returns>
             public static string Encode(string encryptString, string encryptKey)
             {
                 encryptKey = encryptKey.SubString(0, 32);
@@ -101,11 +101,11 @@ namespace FS.Utils.Common
             }
 
             /// <summary>
-            ///     AES½âÃÜ×Ö·û´®
+            ///     AESè§£å¯†å­—ç¬¦ä¸²
             /// </summary>
-            /// <param name="decryptString">´ı½âÃÜµÄ×Ö·û´®</param>
-            /// <param name="decryptKey">½âÃÜÃÜÔ¿,ÒªÇóÎª8Î»,ºÍ¼ÓÃÜÃÜÔ¿ÏàÍ¬</param>
-            /// <returns>½âÃÜ³É¹¦·µ»Ø½âÃÜºóµÄ×Ö·û´®,Ê§°Ü·µÔ´´®</returns>
+            /// <param name="decryptString">å¾…è§£å¯†çš„å­—ç¬¦ä¸²</param>
+            /// <param name="decryptKey">è§£å¯†å¯†é’¥,è¦æ±‚ä¸º8ä½,å’ŒåŠ å¯†å¯†é’¥ç›¸åŒ</param>
+            /// <returns>è§£å¯†æˆåŠŸè¿”å›è§£å¯†åçš„å­—ç¬¦ä¸²,å¤±è´¥è¿”æºä¸²</returns>
             public static string Decode(string decryptString, string decryptKey)
             {
                 try
@@ -129,19 +129,19 @@ namespace FS.Utils.Common
         }
 
         /// <summary>
-        ///     ¼ÓÃÜ
+        ///     åŠ å¯†
         /// </summary>
         public class DES
         {
-            //Ä¬ÈÏÃÜÔ¿ÏòÁ¿
+            //é»˜è®¤å¯†é’¥å‘é‡
             private static readonly byte[] Keys = { 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF };
 
             /// <summary>
-            ///     DES¼ÓÃÜ×Ö·û´®
+            ///     DESåŠ å¯†å­—ç¬¦ä¸²
             /// </summary>
-            /// <param name="encryptString">´ı¼ÓÃÜµÄ×Ö·û´®</param>
-            /// <param name="encryptKey">¼ÓÃÜÃÜÔ¿,ÒªÇóÎª8Î»</param>
-            /// <returns>¼ÓÃÜ³É¹¦·µ»Ø¼ÓÃÜºóµÄ×Ö·û´®,Ê§°Ü·µ»ØÔ´´®</returns>
+            /// <param name="encryptString">å¾…åŠ å¯†çš„å­—ç¬¦ä¸²</param>
+            /// <param name="encryptKey">åŠ å¯†å¯†é’¥,è¦æ±‚ä¸º8ä½</param>
+            /// <returns>åŠ å¯†æˆåŠŸè¿”å›åŠ å¯†åçš„å­—ç¬¦ä¸²,å¤±è´¥è¿”å›æºä¸²</returns>
             public static string Encode(string encryptString, string encryptKey)
             {
                 encryptKey = encryptKey.SubString(0, 8);
@@ -158,11 +158,11 @@ namespace FS.Utils.Common
             }
 
             /// <summary>
-            ///     DES½âÃÜ×Ö·û´®
+            ///     DESè§£å¯†å­—ç¬¦ä¸²
             /// </summary>
-            /// <param name="decryptString">´ı½âÃÜµÄ×Ö·û´®</param>
-            /// <param name="decryptKey">½âÃÜÃÜÔ¿,ÒªÇóÎª8Î»,ºÍ¼ÓÃÜÃÜÔ¿ÏàÍ¬</param>
-            /// <returns>½âÃÜ³É¹¦·µ»Ø½âÃÜºóµÄ×Ö·û´®,Ê§°Ü·µÔ´´®</returns>
+            /// <param name="decryptString">å¾…è§£å¯†çš„å­—ç¬¦ä¸²</param>
+            /// <param name="decryptKey">è§£å¯†å¯†é’¥,è¦æ±‚ä¸º8ä½,å’ŒåŠ å¯†å¯†é’¥ç›¸åŒ</param>
+            /// <returns>è§£å¯†æˆåŠŸè¿”å›è§£å¯†åçš„å­—ç¬¦ä¸²,å¤±è´¥è¿”æºä¸²</returns>
             public static string Decode(string decryptString, string decryptKey)
             {
                 try

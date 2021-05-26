@@ -4,14 +4,14 @@ using System.Xml.Serialization;
 namespace FS.Utils.Common
 {
     /// <summary>
-    ///     SerializationHelper µÄÕªÒªËµÃ÷¡£
+    ///     SerializationHelper çš„æ‘˜è¦è¯´æ˜ã€‚
     /// </summary>
     public abstract class Serialized<T>
     {
         /// <summary>
-        ///     ·´ĞòÁĞ»¯
+        ///     ååºåˆ—åŒ–
         /// </summary>
-        /// <param name="filePath">ÎÄ¼şÂ·¾¶</param>
+        /// <param name="filePath">æ–‡ä»¶è·¯å¾„</param>
         /// <returns></returns>
         public static T Load(string filePath)
         {
@@ -29,14 +29,14 @@ namespace FS.Utils.Common
 
 
         /// <summary>
-        ///     ĞòÁĞ»¯
+        ///     åºåˆ—åŒ–
         /// </summary>
-        /// <param name="t">¶ÔÏó</param>
-        /// <param name="filePath">ÎÄ¼şÂ·¾¶</param>
+        /// <param name="t">å¯¹è±¡</param>
+        /// <param name="filePath">æ–‡ä»¶è·¯å¾„</param>
         public static bool Save(T t, string filePath)
         {
-            var succeed = false;
-            FileStream fs = null;
+            var        succeed = false;
+            FileStream fs      = null;
             try
             {
                 Directory.CreateDirectory(filePath);

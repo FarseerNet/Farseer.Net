@@ -7,33 +7,33 @@ using System.Text;
 namespace FS.Utils.Common
 {
     /// <summary>
-    ///     Ñ¹Ëõ×Ö·û´®
+    ///     å‹ç¼©å­—ç¬¦ä¸²
     /// </summary>
     public class Compress
     {
         /// <summary>
-        ///     Ñ¹Ëõ
+        ///     å‹ç¼©
         /// </summary>
-        /// <param name="str">×Ö·û´®</param>
+        /// <param name="str">å­—ç¬¦ä¸²</param>
         public static string EnString(string str)
         {
-            //ÒòÊäÈëµÄ×Ö·û´®²»ÊÇBase64ËùÒÔ×ª»»ÎªBase64,ÒòÎªHTTPÈç¹û²»´«µİBase64Ôò»á·¢Éúhttp 400´íÎó
+            //å› è¾“å…¥çš„å­—ç¬¦ä¸²ä¸æ˜¯Base64æ‰€ä»¥è½¬æ¢ä¸ºBase64,å› ä¸ºHTTPå¦‚æœä¸ä¼ é€’Base64åˆ™ä¼šå‘ç”Ÿhttp 400é”™è¯¯
             return Convert.ToBase64String(EnBytes(Convert.FromBase64String(Convert.ToBase64String(Encoding.Default.GetBytes(str)))));
         }
 
         /// <summary>
-        ///     ½âÑ¹
+        ///     è§£å‹
         /// </summary>
-        /// <param name="str">×Ö·û´®</param>
+        /// <param name="str">å­—ç¬¦ä¸²</param>
         public static string DnString(string str)
         {
             return Encoding.Default.GetString(DeBytes(Convert.FromBase64String(str)));
         }
 
         /// <summary>
-        ///     Ñ¹Ëõ
+        ///     å‹ç¼©
         /// </summary>
-        /// <param name="bytes">×Ö½Ú×é</param>
+        /// <param name="bytes">å­—èŠ‚ç»„</param>
         public static byte[] EnBytes(byte[] bytes)
         {
             using (var ms = new MemoryStream())
@@ -46,9 +46,9 @@ namespace FS.Utils.Common
         }
 
         /// <summary>
-        ///     ½âÑ¹
+        ///     è§£å‹
         /// </summary>
-        /// <param name="bytes">×Ö½Ú×é</param>
+        /// <param name="bytes">å­—èŠ‚ç»„</param>
         public static byte[] DeBytes(byte[] bytes)
         {
             using (var tempMs = new MemoryStream())
@@ -64,25 +64,25 @@ namespace FS.Utils.Common
         }
 
         /// <summary>
-        ///     ½âÑ¹ÎÄ¼ş
+        ///     è§£å‹æ–‡ä»¶
         /// </summary>
-        /// <param name="rarPath">½â¾öÑ¹ËõÎÄ¼ş°²×°³ÌĞòÂ·¾¶</param>
-        /// <param name="filePath">Ñ¹Ëõ°üÎÄ¼şÂ·¾¶</param>
-        /// <param name="toPath">½âÑ¹µ½Â·¾¶</param>
+        /// <param name="rarPath">è§£å†³å‹ç¼©æ–‡ä»¶å®‰è£…ç¨‹åºè·¯å¾„</param>
+        /// <param name="filePath">å‹ç¼©åŒ…æ–‡ä»¶è·¯å¾„</param>
+        /// <param name="toPath">è§£å‹åˆ°è·¯å¾„</param>
         /// <returns></returns>
         public static bool DeRar(string filePath, string toPath, string rarPath)
         {
-            //È¡µÃÏµÍ³ÁÙÊ±Ä¿Â¼
+            //å–å¾—ç³»ç»Ÿä¸´æ—¶ç›®å½•
             //string sysTempDir = Path.GetTempPath();
 
-            //Òª½âÑ¹µÄÎÄ¼şÂ·¾¶£¬Çë×ÔĞĞÉèÖÃ
+            //è¦è§£å‹çš„æ–‡ä»¶è·¯å¾„ï¼Œè¯·è‡ªè¡Œè®¾ç½®
             //string rarFilePath = @"d:\test.rar";
 
-            //È·¶¨Òª½âÑ¹µ½µÄÄ¿Â¼£¬ÊÇÏµÍ³ÁÙÊ±ÎÄ¼ş¼ĞÏÂ£¬ÓëÔ­Ñ¹ËõÎÄ¼şÍ¬ÃûµÄÄ¿Â¼Àï
+            //ç¡®å®šè¦è§£å‹åˆ°çš„ç›®å½•ï¼Œæ˜¯ç³»ç»Ÿä¸´æ—¶æ–‡ä»¶å¤¹ä¸‹ï¼Œä¸åŸå‹ç¼©æ–‡ä»¶åŒåçš„ç›®å½•é‡Œ
             // string unrarDestPath = Path.Combine(sysTempDir,
             //     Path.GetFileNameWithoutExtension(rarFilePath));
 
-            //×éºÏ³öĞèÒªshellµÄÍêÕû¸ñÊ½
+            //ç»„åˆå‡ºéœ€è¦shellçš„å®Œæ•´æ ¼å¼
             //string shellArguments = string.Format("x -o+ \"{0}\" \"{1}\\\"",
             //    rarFilePath, unrarDestPath);
 
@@ -90,25 +90,25 @@ namespace FS.Utils.Common
 
             var shellArguments = $"x -o+ \"{filePath}\" \"{toPath}\\\"";
 
-            //ÓÃProcessµ÷ÓÃ
+            //ç”¨Processè°ƒç”¨
             using (var unrar = new Process())
             {
                 unrar.StartInfo.FileName = rarPath;
                 unrar.StartInfo.Arguments = shellArguments;
-                //Òş²Ørar±¾ÉíµÄ´°¿Ú
+                //éšè—raræœ¬èº«çš„çª—å£
                 unrar.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                 unrar.Start();
-                //µÈ´ı½âÑ¹Íê³É
+                //ç­‰å¾…è§£å‹å®Œæˆ
                 unrar.WaitForExit();
                 unrar.Close();
             }
             return true;
 
 
-            //Í³¼Æ½âÑ¹ºóµÄÄ¿Â¼ºÍÎÄ¼şÊı
+            //ç»Ÿè®¡è§£å‹åçš„ç›®å½•å’Œæ–‡ä»¶æ•°
             //DirectoryInfo di = new DirectoryInfo(unrarDestPath);
 
-            //MessageBox.Show(string.Format("½âÑ¹Íê³É£¬¹²½âÑ¹³ö£º{0}¸öÄ¿Â¼£¬{1}¸öÎÄ¼ş",
+            //MessageBox.Show(string.Format("è§£å‹å®Œæˆï¼Œå…±è§£å‹å‡ºï¼š{0}ä¸ªç›®å½•ï¼Œ{1}ä¸ªæ–‡ä»¶",
             //    di.GetDirectories().Length, di.GetFiles().Length));
         }
     }
