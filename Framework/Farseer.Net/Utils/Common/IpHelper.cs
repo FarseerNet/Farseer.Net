@@ -11,16 +11,21 @@ namespace FS.Utils.Common
     public static class IpHelper
     {
         /// <summary>
-        /// 获取网络IP
+        /// 获取当前节点IP
         /// </summary>
-        public static string GetIP()
-        {
-            var ip = "127.0.0.1";
-            var strHostName = Dns.GetHostName();
-            var ipHost = Dns.GetHostEntry(strHostName);
-            foreach (var item in ipHost.AddressList) { if (item.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) { ip = item.ToString(); } }
-            return ip;
-        }
+        public static string GetIp = IpHelper.GetIps().Select(o => o.Address.MapToIPv4().ToString()).FirstOrDefault();
+        
+        // /// <summary>
+        // /// 获取网络IP
+        // /// </summary>
+        // public static string GetIP()
+        // {
+        //     var ip = "127.0.0.1";
+        //     var strHostName = Dns.GetHostName();
+        //     var ipHost = Dns.GetHostEntry(strHostName);
+        //     foreach (var item in ipHost.AddressList) { if (item.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) { ip = item.ToString(); } }
+        //     return ip;
+        // }
 
         /// <summary>
         /// 获取IP
