@@ -35,12 +35,12 @@ namespace FS.Job.RemoteCall
                 if (task.StartAt > DateTime.Now)
                 {
                     var taskStartAt = task.StartAt - DateTime.Now;
-                    IocManager.Logger<PrintCommand>().LogDebug($"客户端（{IpHelper.GetIps()[0].Address.MapToIPv4().ToString()}）收到{message}请求，等待{taskStartAt.TotalMilliseconds} ms后处理...");
+                    IocManager.Logger<PrintCommand>().LogDebug($"客户端（{IpHelper.GetIp}）收到{message}请求，等待{taskStartAt.TotalMilliseconds} ms后处理...");
                     Thread.Sleep(taskStartAt);
                 }
                 else
                 {
-                    IocManager.Logger<PrintCommand>().LogDebug($"客户端（{IpHelper.GetIps()[0].Address.MapToIPv4().ToString()}）收到{message}请求，立即处理。");
+                    IocManager.Logger<PrintCommand>().LogDebug($"客户端（{IpHelper.GetIp}）收到{message}请求，立即处理。");
                 }
 
                 // 创建同步JOB状态的请求

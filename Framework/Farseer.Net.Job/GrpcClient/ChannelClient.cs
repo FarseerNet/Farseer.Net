@@ -51,7 +51,7 @@ namespace FS.Job.GrpcClient
             _registerCenterClient = new FssServer.FssServerClient(_grpcChannel);
             _rpc = _registerCenterClient.Channel(new Metadata
             {
-                {"client_ip", IpHelper.GetIps()[0].Address.MapToIPv4().ToString()} // 客户端IP
+                {"client_ip", IpHelper.GetIp} // 客户端IP
             });
 
             ThreadPool.QueueUserWorkItem(async state =>
