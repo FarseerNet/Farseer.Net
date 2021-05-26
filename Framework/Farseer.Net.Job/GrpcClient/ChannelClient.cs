@@ -37,7 +37,7 @@ namespace FS.Job.GrpcClient
         /// <summary>
         /// 向服务端注册客户端连接
         /// </summary>
-        public AsyncDuplexStreamingCall<ChannelRequest, CommandResponse> Channel(string server, string arrJob)
+        public AsyncDuplexStreamingCall<ChannelRequest, CommandResponse> Channel(string server, string job)
         {
             // 建立连接
             _grpcChannel = GrpcChannel.ForAddress(server, new GrpcChannelOptions
@@ -59,7 +59,7 @@ namespace FS.Job.GrpcClient
                 try
                 {
                     // 这里是阻塞的
-                    await AsyncDuplexStreamingCall(server, arrJob);
+                    await AsyncDuplexStreamingCall(server, job);
                 }
                 catch (Exception e)
                 {
@@ -87,16 +87,16 @@ namespace FS.Job.GrpcClient
             return _rpc;
         }
 
-        private async Task AsyncDuplexStreamingCall(string server, string arrJob)
+        private async Task AsyncDuplexStreamingCall(string server, string job)
         {
-            IocManager.Logger<JobModule>().LogInformation($"正在连接FSS平台{server}，注册 {arrJob} 任务");
+            IocManager.Logger<JobModule>().LogInformation($"正在连接FSS平台{server}，注册 {job} 任务");
 
             // 请求注册
             await _rpc.RequestStream.WriteAsync(new ChannelRequest
             {
                 Command   = "Register",
                 RequestAt = DateTime.Now.ToTimestamps(),
-                Data      = arrJob
+                Data      = job
             });
 
             try
