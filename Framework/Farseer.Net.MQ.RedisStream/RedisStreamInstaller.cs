@@ -70,8 +70,6 @@ namespace FS.MQ.RedisStream
                         // 启动消费程序
                         RunConsumer(container, consumerType, redisStreamConfigs);
                     }
-
-                    IocManager.Instance.Logger<RedisStreamInstaller>().LogInformation("全部Redis消费启动完成!");
                 }
                 catch (Exception e)
                 {
@@ -125,7 +123,6 @@ namespace FS.MQ.RedisStream
 
             var iocManager       = container.Resolve<IIocManager>();
             var consumerInstance = new RedisStreamConsumer(iocManager, consumerType.FullName, redisCacheManager, consumerAttribute.QueueName, consumerAttribute.LastAckTimeoutRestart, consumerAttribute.ConsumeThreadNums, consumerAttribute.GroupName, consumerAttribute.PullCount);
-
 
             // 注册消费端
             container.Register(Component.For<IListenerMessage>().ImplementedBy(consumerType).Named(consumerType.FullName).LifestyleTransient());
