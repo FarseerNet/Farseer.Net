@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using FS.DI;
 using StackExchange.Redis;
 
 namespace FS.MQ.RedisStream
@@ -6,7 +7,7 @@ namespace FS.MQ.RedisStream
     /// <summary>
     /// 监听消费
     /// </summary>
-    public interface IListenerMessage
+    public interface IListenerMessage: ITransientDependency
     {
         /// <summary>
         /// 消费

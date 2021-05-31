@@ -4,6 +4,7 @@
 // ********************************************
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using Castle.Windsor;
 using FS.Configuration.Startup;
@@ -47,6 +48,9 @@ namespace FS
         /// </summary>
         public static string AppName { get; set; }
 
+        private static List<Action> InitCallback { get; set; } = new();
+
+        public static void AddInitCallback(Action act) => InitCallback.Add(act);
         /// <summary>
         ///     构造函数
         /// </summary>
@@ -103,7 +107,7 @@ namespace FS
         /// </summary>
         /// <param name="startupModule"></param>
         /// <param name="iocManager"></param>
-        public static FarseerApplication Run(Type startupModule, IIocManager iocManager, string appName = "") => new FarseerApplication(startupModule, iocManager, appName);
+        public static FarseerApplication Run(Type startupModule, IIocManager iocManager, string appName = "") => new(startupModule, iocManager, appName);
 
         /// <summary>
         ///     初始化系统
@@ -123,6 +127,12 @@ namespace FS
                 _moduleManager = IocManager.Resolve<IFarseerModuleManager>();
                 _moduleManager.Initialize(StartupModule);
                 _moduleManager.StartModules();
+                
+                IocManager.Logger<FarseerApplication>().LogInformation("启动初始化回调");
+                foreach (var action in InitCallback)
+                {
+                    action();
+                }
                 IocManager.Logger<FarseerApplication>().LogInformation($"系统初始化完毕，耗时{(DateTime.Now - dt).TotalMilliseconds:n}ms");
             }
             catch (Exception ex)

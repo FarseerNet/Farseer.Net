@@ -170,7 +170,7 @@ namespace FS.MQ.RedisStream
                 {
                     MessageIds = streamEntries.Select(o => o.Id.ToString()).ToArray()
                 };
-                _lastMessageId = consumeContext.MessageIds.Last();
+                //_lastMessageId = consumeContext.MessageIds.Last();
 
                 var listener = _iocManager.Resolve<IListenerMessage>(_consumerType);
                 var result   = false;
