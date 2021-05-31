@@ -108,10 +108,14 @@ namespace FS.MQ.Rabbit
                 rabbitManager.CreateQueueAndBind(consumerAttribute.QueueName, consumerAttribute.ExchangeName, consumerAttribute.RoutingKey, arguments: arguments);
             }
 
-            IocManager.Instance.Logger<RabbitInstaller>().LogInformation($"正在启动：{consumerType.Name}");
-            
             container.Register(Component.For<IListenerMessage>().ImplementedBy(consumerType).Named(consumerType.FullName).LifestyleTransient());
-            consumerInstance.Start();
+
+            // 注册消费端            
+            FarseerApplication.AddInitCallback(() =>
+            {
+                IocManager.Instance.Logger<RabbitInstaller>().LogInformation($"正在启动：{consumerType.Name} Redis消费");
+                consumerInstance.Start();
+            });
         }
     }
 }
