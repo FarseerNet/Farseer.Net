@@ -160,7 +160,7 @@ namespace FS.MQ.RedisStream
                 var streamEntries = await _redisCacheManager.Db.StreamReadAsync(_queueName, _lastMessageId, _pullCount);
                 if (streamEntries.Length == 0)
                 {
-                    await Task.Delay(300);
+                    await Task.Delay(100);
                     continue;
                 }
 
@@ -170,7 +170,7 @@ namespace FS.MQ.RedisStream
                 {
                     MessageIds = streamEntries.Select(o => o.Id.ToString()).ToArray()
                 };
-                _lastMessageId = consumeContext.MessageIds.Last();
+                //_lastMessageId = consumeContext.MessageIds.Last();
 
                 var listener = _iocManager.Resolve<IListenerMessage>(_consumerType);
                 var result   = false;
