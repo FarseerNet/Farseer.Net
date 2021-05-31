@@ -5,9 +5,6 @@
 
 using System.Runtime.Serialization;
 using System.ServiceModel;
-using System.ServiceModel.Channels;
-using FS.Core.Fabric;
-using FS.Core.Net.Gateway;
 
 namespace FS.Core.Exception
 {
@@ -49,8 +46,8 @@ namespace FS.Core.Exception
         {
             StatusCode = statusCode;
             ResultValue = returnVal?.ToString() ?? "";
-            SystemName = RegisterInfomation.Register?.SystemName;
-            NodeName = RegisterInfomation.Register?.NodeName;
+            //SystemName = RegisterInfomation.Register?.SystemName;
+            //NodeName = RegisterInfomation.Register?.NodeName;
         }
 
         /// <summary>

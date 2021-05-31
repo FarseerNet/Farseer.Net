@@ -5,7 +5,6 @@
 
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
-using FS.Core.Fabric;
 
 namespace FS.Core.Net
 {
@@ -86,8 +85,8 @@ namespace FS.Core.Net
                 StatusCode = 200,
                 ResultValue = returnVal?.ToString(),
                 Data = data,
-                SystemName = RegisterInfomation.Register?.SystemName,
-                NodeName = RegisterInfomation.Register?.NodeName
+                //SystemName = RegisterInfomation.Register?.SystemName,
+                //NodeName = RegisterInfomation.Register?.NodeName
             };
         }
 
@@ -115,8 +114,8 @@ namespace FS.Core.Net
                 StatusMessage = statusMessage,
                 StatusCode = statusCode,
                 ResultValue = returnVal?.ToString(),
-                SystemName = systemName ?? RegisterInfomation.Register?.SystemName,
-                NodeName = nodeName ?? RegisterInfomation.Register?.NodeName
+                //SystemName = systemName ?? RegisterInfomation.Register?.SystemName,
+                //NodeName = nodeName ?? RegisterInfomation.Register?.NodeName
             };
         }
 
