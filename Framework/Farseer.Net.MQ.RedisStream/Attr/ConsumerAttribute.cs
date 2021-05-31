@@ -16,7 +16,7 @@ namespace FS.MQ.RedisStream.Attr
         public string RedisName { get; set; }
 
         /// <summary>
-        /// 消费组
+        /// 消费组（为空时，走非消费组）
         /// </summary>
         public string GroupName { get; set; }
 

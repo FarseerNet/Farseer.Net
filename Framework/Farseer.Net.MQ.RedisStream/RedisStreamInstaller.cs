@@ -71,7 +71,7 @@ namespace FS.MQ.RedisStream
                         RunConsumer(container, consumerType, redisStreamConfigs);
                     }
 
-                    IocManager.Instance.Logger<RedisStreamInstaller>().LogInformation("全部消费启动完成!");
+                    IocManager.Instance.Logger<RedisStreamInstaller>().LogInformation("全部Redis消费启动完成!");
                 }
                 catch (Exception e)
                 {
@@ -113,17 +113,20 @@ namespace FS.MQ.RedisStream
                 // 先判断队列是否存在，不存在则创建
                 var isExistsQueue = redisCacheManager.Db.KeyExists(consumerAttribute.QueueName);
                 if (!isExistsQueue) redisCacheManager.Db.StreamAdd(consumerAttribute.QueueName, "data", "init create queue");
-                
-                var streamGroupInfos = redisCacheManager.Db.StreamGroupInfo(consumerAttribute.QueueName);
-                var existsGroup      = streamGroupInfos.Any(o => o.Name == consumerAttribute.GroupName);
-                if (!existsGroup)
-                    redisCacheManager.Db.StreamCreateConsumerGroup(consumerAttribute.QueueName, consumerAttribute.GroupName);
+
+                if (!string.IsNullOrWhiteSpace(consumerAttribute.GroupName))
+                {
+                    var streamGroupInfos = redisCacheManager.Db.StreamGroupInfo(consumerAttribute.QueueName);
+                    var existsGroup      = streamGroupInfos.Any(o => o.Name == consumerAttribute.GroupName);
+                    if (!existsGroup)
+                        redisCacheManager.Db.StreamCreateConsumerGroup(consumerAttribute.QueueName, consumerAttribute.GroupName);
+                }
             }
 
             var iocManager       = container.Resolve<IIocManager>();
             var consumerInstance = new RedisStreamConsumer(iocManager, consumerType.FullName, redisCacheManager, consumerAttribute.QueueName, consumerAttribute.LastAckTimeoutRestart, consumerAttribute.ConsumeThreadNums, consumerAttribute.GroupName, consumerAttribute.PullCount);
 
-            IocManager.Instance.Logger<RedisStreamInstaller>().LogInformation($"正在启动：{consumerType.Name}");
+            IocManager.Instance.Logger<RedisStreamInstaller>().LogInformation($"正在启动：{consumerType.Name} Redis消费");
 
             // 注册消费端
             container.Register(Component.For<IListenerMessage>().ImplementedBy(consumerType).Named(consumerType.FullName).LifestyleTransient());

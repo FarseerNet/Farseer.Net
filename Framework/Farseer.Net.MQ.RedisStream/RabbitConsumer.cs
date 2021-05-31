@@ -16,6 +16,7 @@ namespace FS.MQ.RedisStream
         /// ioc
         /// </summary>
         private readonly IIocManager _iocManager;
+
         /// <summary>
         /// 消费监听
         /// </summary>
@@ -51,6 +52,8 @@ namespace FS.MQ.RedisStream
         /// </summary>
         private readonly int _pullCount;
 
+        private string _lastMessageId = "0";
+
         /// <summary>
         /// 消费客户端
         /// </summary>
@@ -80,43 +83,44 @@ namespace FS.MQ.RedisStream
         /// <summary>
         /// 监控消费
         /// </summary>
-        /// <param name="listener">消费事件</param>
         public void Start()
         {
             // 开启多线程消费
             for (var i = 0; i < _consumeThreadNums; i++)
             {
-                ThreadPool.QueueUserWorkItem(async _ => { await ConnectAsync(); });
+                // 如果消费组没有填写，则以广播模式消费
+                if (string.IsNullOrWhiteSpace(_groupName))
+                    ThreadPool.QueueUserWorkItem(async _ => { await ConnectAsync(); });
+                else ThreadPool.QueueUserWorkItem(async _ => { await ConnectGroupAsync(); });
             }
         }
 
         /// <summary>
-        /// 持续消费，并检查连接状态并自动恢复
+        /// 持续消费
         /// </summary>
-        private async Task ConnectAsync()
+        private async Task ConnectGroupAsync()
         {
             while (true)
             {
-                var streamEntries = await _redisCacheManager.Db.StreamReadGroupAsync(_queueName, _groupName, _hostName, count: _pullCount);
+                var streamEntries = await _redisCacheManager.Db.StreamReadGroupAsync(_queueName, _groupName, _hostName, _pullCount);
                 if (streamEntries.Length == 0)
                 {
-                    Thread.Sleep(10);
+                    await Task.Delay(300);
                     continue;
                 }
 
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
-                var consumeContext = new ConsumeContext
+                var consumeContext = new ConsumeContext(_redisCacheManager, _queueName)
                 {
                     MessageIds = streamEntries.Select(o => o.Id.ToString()).ToArray()
                 };
-                var messages = streamEntries.Select(o => o.Values[0].Value.ToString()).ToArray();
 
                 var listener = _iocManager.Resolve<IListenerMessage>(_consumerType);
                 var result   = false;
                 try
                 {
-                    result = await listener.Consumer(messages, consumeContext);
+                    result = await listener.Consumer(streamEntries, consumeContext);
                 }
                 catch (Exception e)
                 {
@@ -124,7 +128,7 @@ namespace FS.MQ.RedisStream
                     _iocManager.Logger<RedisStreamConsumer>().LogError(e, listener.GetType().FullName);
                     try
                     {
-                        result = await listener.FailureHandling(messages, consumeContext);
+                        result = await listener.FailureHandling(streamEntries, consumeContext);
                     }
                     catch (Exception exception)
                     {
@@ -142,6 +146,51 @@ namespace FS.MQ.RedisStream
                     else
                         // 消费失败时，把pending队列的消息重新放回队列
                         _redisCacheManager.Db.StreamClaim(_queueName, _groupName, _groupName, sw.ElapsedMilliseconds, ids);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 持续消费
+        /// </summary>
+        private async Task ConnectAsync()
+        {
+            while (true)
+            {
+                var streamEntries = await _redisCacheManager.Db.StreamReadAsync(_queueName, _lastMessageId, _pullCount);
+                if (streamEntries.Length == 0)
+                {
+                    await Task.Delay(300);
+                    continue;
+                }
+
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                var consumeContext = new ConsumeContext(_redisCacheManager, _queueName)
+                {
+                    MessageIds = streamEntries.Select(o => o.Id.ToString()).ToArray()
+                };
+                _lastMessageId = consumeContext.MessageIds.Last();
+
+                var listener = _iocManager.Resolve<IListenerMessage>(_consumerType);
+                var result   = false;
+                try
+                {
+                    result = await listener.Consumer(streamEntries, consumeContext);
+                }
+                catch (Exception e)
+                {
+                    // 消费失败后处理
+                    _iocManager.Logger<RedisStreamConsumer>().LogError(e, listener.GetType().FullName);
+                    try
+                    {
+                        result = await listener.FailureHandling(streamEntries, consumeContext);
+                    }
+                    catch (Exception exception)
+                    {
+                        _iocManager.Logger<RedisStreamConsumer>().LogError(exception, "失败处理出现异常：" + listener.GetType().FullName);
+                        result = false;
+                    }
                 }
             }
         }

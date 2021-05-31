@@ -15,6 +15,7 @@ namespace FS.MQ.RedisStream
         {
             this._redisCacheManager = redisCacheManager;
             this._productItemConfig = productItemConfig;
+            if (this._productItemConfig.MaxLength == 0) this._productItemConfig.MaxLength = 9999999;
         }
 
         /// <summary>
