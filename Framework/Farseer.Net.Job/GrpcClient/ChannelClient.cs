@@ -110,7 +110,7 @@ namespace FS.Job.GrpcClient
                         IocManager.Logger<ChannelClient>().LogWarning($"未知命令：{_rpc.ResponseStream.Current.Command}");
                     else
                         // 交由具体功能处理实现执行
-                        await IocManager.Resolve<IRemoteCommand>(iocName).InvokeAsync(_registerCenterClient, _rpc.RequestStream, _rpc.ResponseStream);
+                        IocManager.Resolve<IRemoteCommand>(iocName).InvokeAsync(_registerCenterClient, _rpc.RequestStream, _rpc.ResponseStream);
                 }
             }
             catch (Exception e)

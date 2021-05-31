@@ -25,18 +25,18 @@ namespace FS.Job.RemoteCall
         /// <summary>
         /// 执行本地JOB
         /// </summary>
-        public Task InvokeAsync(FssServer.FssServerClient client, IClientStreamWriter<ChannelRequest> requestStream, IAsyncStreamReader<CommandResponse> responseStream)
+        public async Task InvokeAsync(FssServer.FssServerClient client, IClientStreamWriter<ChannelRequest> requestStream, IAsyncStreamReader<CommandResponse> responseStream)
         {
             var task    = JsonConvert.DeserializeObject<JobSchedulerVO>(responseStream.Current.Data);
             var message = $"任务组：TaskGroupId={task.TaskGroupId}，Caption={task.Caption}，JobName={task.JobTypeName}，TaskId={task.TaskId}";
 
-            ThreadPool.QueueUserWorkItem(async state =>
+            //ThreadPool.QueueUserWorkItem(async state =>
             {
                 if (task.StartAt > DateTime.Now)
                 {
                     var taskStartAt = task.StartAt - DateTime.Now;
                     IocManager.Logger<PrintCommand>().LogDebug($"客户端（{IpHelper.GetIp}）收到{message}请求，等待{taskStartAt.TotalMilliseconds} ms后处理...");
-                    Thread.Sleep(taskStartAt);
+                    await Task.Delay(taskStartAt);
                 }
                 else
                 {
@@ -108,9 +108,9 @@ namespace FS.Job.RemoteCall
                 {
                     IocManager.Logger<JobSchedulerCommand>().LogError(e.Message);
                 }
-            });
+            }//);
 
-            return Task.FromResult(0);
+            //return Task.FromResult(0);
         }
 
         public void Invoke(string data) => throw new NotImplementedException();
