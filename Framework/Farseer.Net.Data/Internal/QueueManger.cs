@@ -19,11 +19,6 @@ namespace FS.Data.Internal
         }
 
         /// <summary>
-        ///     当前所有持久化列表
-        /// </summary>
-        //private readonly List<Queue> _groupQueueList = new List<Queue>();
-
-        /// <summary>
         ///     数据库上下文
         /// </summary>
         private InternalContext ContextProvider { get; }
@@ -41,47 +36,6 @@ namespace FS.Data.Internal
         {
             return _queue ?? (_queue = new Queue(ContextProvider, map));
         }
-/*
-        /// <summary>
-        ///     延迟执行数据库交互，并提交到队列
-        /// </summary>
-        /// <param name="act">要延迟操作的委托</param>
-        /// <param name="map">字段映射</param>
-        /// <param name="joinSoftDeleteCondition">是否加入逻辑删除数据过滤</param>
-        internal int CommitLazy(SetDataMap map, Func<Queue, int> act, bool joinSoftDeleteCondition)
-        {
-            if (ContextProvider.IsUnitOfWork || ContextProvider.Executeor.DataBase.IsTransaction) { return Commit(map, act, joinSoftDeleteCondition); }
-            try
-            {
-                var queue = CreateQueue(map);
-                if (joinSoftDeleteCondition) { queue.ExpBuilder.DeleteSortCondition(); }
-                queue.LazyAct = act;
-                _groupQueueList.Add(_queue);
-                return 0;
-            }
-            finally { Clear(); }
-        }
-
-        /// <summary>
-        ///     延迟执行数据库交互，并提交到队列
-        /// </summary>
-        /// <param name="act">要延迟操作的委托</param>
-        /// <param name="map">字段映射</param>
-        /// <param name="joinSoftDeleteCondition">是否加入逻辑删除数据过滤</param>
-        internal async Task<int> CommitLazyAsync(SetDataMap map, Func<Queue, int> act, bool joinSoftDeleteCondition)
-        {
-            if (ContextProvider.IsUnitOfWork || ContextProvider.Executeor.DataBase.IsTransaction) return await CommitAsync(map, act, joinSoftDeleteCondition);
-            try
-            {
-                var queue = CreateQueue(map);
-                if (joinSoftDeleteCondition) { queue.ExpBuilder.DeleteSortCondition(); }
-                queue.LazyAct = act;
-                _groupQueueList.Add(_queue);
-                return 0;
-            }
-            finally { Clear(); }
-        }
-        */
 
         /// <summary>
         ///     立即执行
@@ -94,7 +48,6 @@ namespace FS.Data.Internal
             try
             {
                 // 立即删除时，先提交队列中的数据
-                //ContextProvider.QueueManger.CommitAll();
                 var queue = CreateQueue(map);
                 if (joinSoftDeleteCondition) { queue.ExpBuilder.DeleteSortCondition(); }
                 return act(queue);
@@ -127,82 +80,6 @@ namespace FS.Data.Internal
             }
         }
 
-        ///// <summary>
-        /////     立即执行
-        ///// </summary>
-        ///// <param name="act">要延迟操作的委托</param>
-        ///// <param name="map">字段映射</param>
-        ///// <param name="joinSoftDeleteCondition">是否加入逻辑删除数据过滤</param>
-        //internal async Task<TReturn> CommitAsync<TReturn>(SetDataMap map, Func<Queue, Task<TReturn>> act, bool joinSoftDeleteCondition)
-        //{
-        //    try
-        //    {
-        //        // 立即删除时，先提交队列中的数据
-        //        //var commitAllAsync = ContextProvider.QueueManger.CommitAllAsync();
-        //        var queue = CreateQueue(map);
-        //        if (joinSoftDeleteCondition) { queue.ExpBuilder.DeleteSortCondition(); }
-
-        //        //await commitAllAsync;
-        //        return await act(queue);
-        //    }
-        //    finally
-        //    {
-        //        Clear();
-        //        if (ContextProvider.IsUnitOfWork) { ContextProvider.Executeor.DataBase.Close(true); }
-        //    }
-        //}
-
-        ///// <summary>
-        /////     提交所有Queue
-        ///// </summary>
-        //internal int CommitAll()
-        //{
-        //    // 单元模式下，不需要执行当前方法
-        //    if (ContextProvider.IsUnitOfWork) { return 0; }
-
-        //    var result = 0;
-        //    try
-        //    {
-        //        foreach (var queue in _groupQueueList)
-        //        {
-        //            // 查看是否延迟执行
-        //            if (queue.LazyAct != null) { result += queue.LazyAct(queue); }
-        //            // 清除队列
-        //            queue.Dispose();
-        //        }
-        //    }
-        //    finally
-        //    {
-        //        // 清除队列
-        //        _groupQueueList.Clear();
-        //    }
-        //    return result;
-        //}
-
-        ///// <summary>
-        /////     提交所有Queue
-        ///// </summary>
-        //internal Task<int> CommitAllAsync() => Task.Run(() => CommitAll());
-
-        ///// <summary>
-        /////     清除所有Queue
-        ///// </summary>
-        //internal void ClearAll()
-        //{
-        //    // 单元模式下，不需要执行当前方法
-        //    if (ContextProvider.IsUnitOfWork) { return; }
-        //    try
-        //    {
-        //        // 清除队列
-        //        _groupQueueList.ForEach(o => o.Dispose());
-        //    }
-        //    finally
-        //    {
-        //        // 清除队列
-        //        _groupQueueList.Clear();
-        //    }
-        //}
-
         /// <summary>
         ///     清除当前队列
         /// </summary>
@@ -222,7 +99,6 @@ namespace FS.Data.Internal
             //释放托管资源
             if (disposing)
             {
-                //_groupQueueList.Clear();
             }
         }
 

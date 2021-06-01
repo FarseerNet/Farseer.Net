@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Linq;
 using System.Runtime.Serialization;
 using FS.Configuration;
 using FS.Data.Log.Default.Entity;
+using FS.DI;
+using Microsoft.Extensions.Logging;
 
 namespace FS.Data.Log.Default
 {
@@ -16,26 +19,6 @@ namespace FS.Data.Log.Default
         /// 日志写入器
         /// </summary>
         private static readonly LogWrite Writer = new LogWrite(EumLogType.Error, SysPath.SqlErrorPath, 5);
-
-        /// <summary> 执行对象 </summary>
-        [DataMember]
-        public CommandType CmdType { get; set; }
-
-        /// <summary> 数据库名称 </summary>
-        [DataMember]
-        public string DbName { get; set; }
-
-        /// <summary> 执行表名称 </summary>
-        [DataMember]
-        public string TableName { get; set; }
-
-        /// <summary> 执行SQL </summary>
-        [DataMember]
-        public string Sql { get; set; }
-
-        /// <summary> 执行参数 </summary>
-        [DataMember]
-        public List<SqlParam> SqlParamList { get; set; }
 
         /// <summary> SQL异常记录写入 </summary>
         /// <param name="dbName">数据库名称 </param>
@@ -66,6 +49,14 @@ namespace FS.Data.Log.Default
         public void Write()
         {
             Writer.Add(this);
+        }
+
+        /// <summary>
+        /// 打印日志
+        /// </summary>
+        public void Print()
+        {
+            IocManager.Instance.Logger<SqlRunLog>().LogError($"db={DbName},table={TableName},cmd={CmdType.ToString()},sql={Sql},sqlParam={string.Join("|", SqlParamList.Select(o=>$"{o.Name}={o.Value}"))}");
         }
     }
 }

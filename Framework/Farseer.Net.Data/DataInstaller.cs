@@ -43,10 +43,11 @@ namespace FS.Data
                         .LifestyleSingleton());
             });
 
-            // 代理异常记录
-            if (dbConfig.IsWriteSqlErrorLog) container.Register(Component.For<ISqlMonitor>().ImplementedBy<MonitorSqlExceptionLog>().LifestyleTransient());
-            // 代理SQL记录
-            if (dbConfig.IsWriteSqlRunLog) container.Register(Component.For<ISqlMonitor>().ImplementedBy<MonitorSqlLog>().LifestyleTransient());
+            // 记录SQL日志
+            if (dbConfig.IsWriteSqlRunLog) container.Register(Component.For<ISqlMonitor>().ImplementedBy<WriteSqlMonitor>().LifestyleTransient());
+            
+            // 打印SQL日志
+            if (dbConfig.IsPrintSqlLog) container.Register(Component.For<ISqlMonitor>().ImplementedBy<PrintSqlMonitor>().LifestyleTransient());
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -34,6 +36,26 @@ namespace FS.Data.Log.Default.Entity
         /// <summary> 异常消息 </summary>
         [DataMember]
         public string Message { get; set; }
+
+        /// <summary> 数据库名称 </summary>
+        [DataMember]
+        public string DbName { get; set; }
+
+        /// <summary> 执行表名称 </summary>
+        [DataMember]
+        public string TableName { get; set; }
+
+        /// <summary> 执行SQL </summary>
+        [DataMember]
+        public string Sql { get; set; }
+
+        /// <summary> 执行对象 </summary>
+        [DataMember]
+        public CommandType CmdType { get; set; }
+
+        /// <summary> 执行参数 </summary>
+        [DataMember]
+        public List<SqlParam> SqlParamList { get; set; }
 
         /// <summary>
         ///     记录执行时的方法及文件
