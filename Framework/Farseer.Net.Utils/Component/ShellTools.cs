@@ -15,7 +15,7 @@ namespace FS.Utils.Component
         /// <param name="arguments"></param>
         /// <param name="actReceiveOutput">外部第一时间，处理拿到的消息 </param>
         /// <param name="workingDirectory">设定Shell的工作目录 </param>
-        public static async Task<RunShellResult> Run(string cmd, string arguments, Action<string> actReceiveOutput, string workingDirectory = null)
+        public static async Task<RunShellResult> Run(string cmd, string arguments, Action<string> actReceiveOutput, Dictionary<string, string> environment, string workingDirectory = null)
         {
             try
             {
@@ -25,27 +25,22 @@ namespace FS.Utils.Component
                     RedirectStandardOutput = true,
                     RedirectStandardError  = true,
                     UseShellExecute        = false,
-                    WorkingDirectory       = workingDirectory
+                    WorkingDirectory       = workingDirectory,
                 };
 
+                // 添加环境变量
+                if (environment != null)
+                {
+                    foreach (var env in environment)
+                    {
+                        psi.Environment.Add(env);
+                    }
+                }
                 var runShellResult = new RunShellResult {IsError = false, Output = new List<string>()};
 
                 using (var proc = Process.Start(psi))
                 {
                     proc.EnableRaisingEvents = true;
-
-                    // void ProcOnOutputDataReceived(object sender, DataReceivedEventArgs args)
-                    // {
-                    //     if (string.IsNullOrWhiteSpace(args.Data)) return;
-                    //     runShellResult.Output.Add(args.Data);
-                    //     // 外部第一时间，处理拿到的消息
-                    //     if (actReceiveOutput != null) actReceiveOutput(args.Data);
-                    // }
-                    //
-                    // proc.OutputDataReceived += ProcOnOutputDataReceived;
-                    // proc.ErrorDataReceived  += ProcOnOutputDataReceived;
-                    // proc.BeginOutputReadLine();
-                    // proc.BeginErrorReadLine();
 
                     //开始读取
                     while (!proc.StandardOutput.EndOfStream)
