@@ -83,7 +83,7 @@ namespace FS.Utils.Common
         /// <returns></returns>
         public static bool IsInt(string number)
         {
-            return Regex.IsMatch(number, @"[1-9]+[0-9]*");
+            return Regex.IsMatch(number, @"^[1-9]+[0-9]*$");
         }
 
         /// <summary>
