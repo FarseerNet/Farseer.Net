@@ -6,6 +6,20 @@ namespace FS.Core.Entity
     public class RunShellResult
     {
         /// <summary>
+        /// 立即返回错误的结果
+        /// </summary>
+        /// <param name="isError"></param>
+        /// <param name="output"></param>
+        public RunShellResult(bool isError,string output)
+        {
+            IsError = isError;
+            Output  = new List<string>() {output};
+        }
+        public RunShellResult()
+        {
+        }
+
+        /// <summary>
         /// 是否有错
         /// </summary>
         public bool IsError { get; set; }
