@@ -57,105 +57,33 @@ namespace FS.Utils.Common
         }
 
         /// <summary>
-        ///     建立文件夹
+        /// 复制源文件夹下的所有内容到新文件夹
         /// </summary>
-        /// <param name="path">路径</param>
-        /// <returns></returns>
-        public static void CreateDir(string path)
+        /// <param name="sources">源文件夹路径</param>
+        /// <param name="dest">新文件夹路径</param>
+        public static void CopyFolder(string sources, string dest)
         {
-            path = ConvertPath(path);
-            if (string.IsNullOrWhiteSpace(path) || path.Trim() == "\\") { return; }
-
-            if (!Directory.Exists(path)) { Directory.CreateDirectory(path); }
-        }
-
-        ///// <summary>
-        /////     智能创建文件目录(任何级别目录)
-        ///// </summary>
-        ///// <param name="dirPath">路径</param>
-        //public static bool CreateDirs(string dirPath)
-        //{
-        //    dirPath = ConvertPath(dirPath);
-
-        //    if (Directory.Exists(dirPath))
-        //    {
-        //        return true;
-        //    }
-
-        //    var lstPath = dirPath.ToList(string.Empty, "\\");
-        //    if (lstPath.GetLast().IndexOf('.') > -1 || lstPath.GetLast().IsNullOrEmpty())
-        //    {
-        //        lstPath.RemoveAt(lstPath.Count - 1);
-        //    }
-
-        //    var path = new StringBuilder();
-        //    foreach (var str in lstPath)
-        //    {
-        //        path.Append(str + "\\");
-        //        if (!Directory.Exists(path.ToString()))
-        //        {
-        //            CreateDir(path.ToString());
-        //        }
-        //    }
-        //    return true;
-        //}
-
-        /// <summary>
-        ///     删除目录,同时删除子目录所有文件
-        /// </summary>
-        /// <param name="path">路径</param>
-        /// <returns></returns>
-        public static List<string> DeleteDir(string path)
-        {
-            var lst = new List<string>() {path};
-            if (!Directory.Exists(path)) { return lst; }
-
-            var files = Directory.GetFiles(path);
-            var dirs = Directory.GetDirectories(path);
-            foreach (var file in files)
+            DirectoryInfo dinfo = new DirectoryInfo(sources);
+            //注，这里面传的是路径，并不是文件，所以不能包含带后缀的文件                
+            foreach (FileSystemInfo f in dinfo.GetFileSystemInfos())
             {
-                File.SetAttributes(file, FileAttributes.Normal);
-                File.Delete(file);
-                lst.Add(file);
-            }
-            foreach (var dir in dirs) { lst.AddRange(DeleteDir(dir)); }
-            Directory.Delete(path, false);
-            return lst;
-        }
-
-        /// <summary>
-        ///     复制文件夹内的文件到指定路径
-        /// </summary>
-        /// <param name="srcPath">源文件夹</param>
-        /// <param name="aimPath">目录文件夹</param>
-        /// <param name="isCopySubDir">true:复制子文件夹;false:只复制根文件夹下的文件</param>
-        /// <param name="overCopy">是复制覆盖</param>
-        /// <param name="filterExtension">后缀名过滤，格式："svn|aspx|asp|exe"</param>
-        public static void CopyDir(string srcPath, string aimPath, bool isCopySubDir = true, bool overCopy = true, string filterExtension = "")
-        {
-            aimPath = ConvertPath(aimPath);
-            if (!aimPath.EndsWith("\\")) { aimPath += "\\"; }
-
-            if (!Directory.Exists(aimPath)) { Directory.CreateDirectory(aimPath); }
-
-            var lstFilter = filterExtension.ToList(string.Empty, "|");
-
-            var fileList = Directory.GetFileSystemEntries(srcPath);
-
-            // 遍历所有的文件和目录
-            foreach (var file in fileList)
-            {
-                if (lstFilter.Exists(o => o == Path.GetExtension(file))) { continue; }
-
-                if (Directory.Exists(file) && !isCopySubDir) { continue; }
-
-                if (Directory.Exists(file) && isCopySubDir) { CopyDir(file, aimPath + Path.GetFileName(file), isCopySubDir, overCopy, filterExtension); }
-
+                //目标路径destName = 新文件夹路径 + 源文件夹下的子文件(或文件夹)名字                
+                //Path.Combine(string a ,string b) 为合并两个字符串                     
+                string destName = Path.Combine(dest, f.Name);
+                if (f is FileInfo)
+                {
+                    //如果是文件就复制       
+                    File.Copy(f.FullName, destName, true); //true代表可以覆盖同名文件                     
+                }
                 else
-                { File.Copy(file, aimPath + Path.GetFileName(file), overCopy); }
+                {
+                    //如果是文件夹就创建文件夹，然后递归复制              
+                    Directory.CreateDirectory(destName);
+                    CopyFolder(f.FullName, destName);
+                }
             }
         }
-
+        
         /// <summary>
         ///     生成文件
         /// </summary>
