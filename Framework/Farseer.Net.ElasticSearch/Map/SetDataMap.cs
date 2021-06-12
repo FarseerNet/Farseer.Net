@@ -57,7 +57,7 @@ namespace FS.ElasticSearch.Map
             this.IndexName     = indexName.ToLower();
             this.ShardsCount   = shardsCount;
             this.ReplicasCount = replicasCount;
-            this.AliasNames    = aliasNames.Select(aliasName => aliasName.ToLower()).ToArray();
+            if (aliasNames is {Length: > 0}) this.AliasNames    = aliasNames.Select(aliasName => aliasName.ToLower()).ToArray();
             return this;
         }
     }
