@@ -15,11 +15,6 @@ namespace FS.Configuration.Startup
         public IIocManager IocManager { get; private set; }
 
         /// <summary>
-        /// 默认的数据库连接字符串
-        /// </summary>
-        public string DefaultNameOrConnectionString { get; set; }
-
-        /// <summary>
         /// 模块配置
         /// </summary>
         public IModuleConfigurations Modules { get; private set; }

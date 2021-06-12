@@ -6,7 +6,7 @@ namespace FS.Data.Configuration
 {
     /// <summary> 数据库连接配置 </summary>
     [Serializable]
-    public class DbConfig : IFarseerConfig
+    public class DbConfig
     {
         /// <summary> 是否把输出SQL记录 </summary>
         public bool IsWriteSqlRunLog { get; set; }
