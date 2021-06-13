@@ -183,14 +183,14 @@ namespace FS.MQ.Rabbit
 
             _channel.BasicQos(0, (ushort) _consumeThreadNums, false);
             var consumer = new EventingBasicConsumer(_channel);
-            consumer.Received += (model, ea) =>
+            consumer.Received += async (model, ea) =>
             {
                 var listener = _iocManager.Resolve<IListenerMessage>(_consumerType);
                 var result   = false;
                 var message  = Encoding.UTF8.GetString(ea.Body.ToArray());
                 try
                 {
-                    result     = listener.Consumer(message, model, ea);
+                    result     = await listener.Consumer(message, model, ea);
                     _lastAckAt = DateTime.Now;
                 }
                 catch (AlreadyClosedException e) // rabbit被关闭了，重新打开链接
@@ -204,7 +204,7 @@ namespace FS.MQ.Rabbit
                     IocManager.Instance.Logger<RabbitConsumer>().LogError(e, listener.GetType().FullName);
                     try
                     {
-                        result = listener.FailureHandling(message, model, ea);
+                        result = await listener.FailureHandling(message, model, ea);
                     }
                     catch (Exception exception)
                     {
