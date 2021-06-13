@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using FS.MQ.Rabbit;
 using FS.MQ.Rabbit.Attr;
 using RabbitMQ.Client.Events;
@@ -11,12 +12,12 @@ namespace Farseer.Net.MQ.RabbitDemo.Consumer
     [Consumer(Enable = false, Name = "default", ExchangeName = "test", QueueName = "test", ExchangeType = eumExchangeType.fanout, DlxExchangeName = "DeadLetter")]
     public class TestConsumer : IListenerMessage
     {
-        public bool Consumer(string message, object sender, BasicDeliverEventArgs ea)
+        public Task<bool> Consumer(string message, object sender, BasicDeliverEventArgs ea)
         {
             System.Console.WriteLine(ea.ConsumerTag + "接收到信息为:" + message);
-            return true;
+            return Task.FromResult(true);
         }
 
-        public bool FailureHandling(string message, object sender, BasicDeliverEventArgs ea) => throw new NotImplementedException();
+        public Task<bool> FailureHandling(string message, object sender, BasicDeliverEventArgs ea) => throw new NotImplementedException();
     }
 }
