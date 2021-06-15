@@ -39,7 +39,7 @@ namespace FS.ElasticSearch
             // 读取配置
             var configurationSection     = _iocResolver.Resolve<IConfigurationRoot>().GetSection("ElasticSearch");
             var elasticSearchItemConfigs = configurationSection.GetChildren().Select(o => o.Get<ElasticSearchItemConfig>());
-
+            if (elasticSearchItemConfigs == null || !elasticSearchItemConfigs.Any()) return;
             foreach (var elasticSearchItemConfig in elasticSearchItemConfigs)
             {
                 var lstUrls  = elasticSearchItemConfig.Server.Split(',').Select(o => new Uri(o)).ToList();
