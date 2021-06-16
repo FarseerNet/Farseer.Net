@@ -71,7 +71,6 @@ namespace FS.ElasticSearch
         {
             SetContext(context, pInfo);
             Client = _esContext.Client;
-            WhenNotExistsAddIndex();
         }
 
         /// <summary>
@@ -137,6 +136,7 @@ namespace FS.ElasticSearch
         /// </summary>
         public virtual bool Insert(TDocument model)
         {
+            WhenNotExistsAddIndex();
             var result = Client.Index(new IndexRequest<TDocument>(model, SetMap.IndexName));
             if (!result.IsValid)
             {
@@ -151,6 +151,7 @@ namespace FS.ElasticSearch
         /// </summary>
         public virtual async Task<bool> InsertAsync(TDocument model)
         {
+            WhenNotExistsAddIndex();
             var result = await Client.IndexAsync(new IndexRequest<TDocument>(model, SetMap.IndexName));
             if (!result.IsValid)
             {
@@ -160,10 +161,10 @@ namespace FS.ElasticSearch
             return result.IsValid;
         }
 
-        /// <summary>
-        /// 获取全部数据列表
+            /// <summary>
+        /// 获取全部数据列表（支持获取全部数据）
         /// </summary>
-        public List<TDocument> ToList()
+        public List<TDocument> ToScrollList()
         {
             var size       = 1000;
             var scrollTime = new Time(TimeSpan.FromSeconds(30));
@@ -213,9 +214,9 @@ namespace FS.ElasticSearch
         }
 
         /// <summary>
-        /// 获取全部数据列表
+        /// 获取全部数据列表（支持获取全部数据）
         /// </summary>
-        public async Task<List<TDocument>> ToListAsync()
+        public async Task<List<TDocument>> ToScrollListAsync()
         {
             var size       = 1000;
             var scrollTime = new Time(TimeSpan.FromSeconds(30));
@@ -227,12 +228,6 @@ namespace FS.ElasticSearch
                 if (_selectFields != null) searchDescriptor = searchDescriptor.Source(s => s.Includes(i => i.Fields(_selectFields)));
                 return searchDescriptor;
             });
-
-            if (!searchResponse.IsValid)
-            {
-                if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return null;
-                throw searchResponse.OriginalException;
-            }
 
             async Task<List<TDocument>> ScrollAsync()
             {
@@ -261,7 +256,17 @@ namespace FS.ElasticSearch
 
             return await ScrollAsync();
         }
+        
+        /// <summary>
+        /// 获取全部数据列表（支持取10000条以内）
+        /// </summary>
+        public List<TDocument> ToList() => ToList(10000);
 
+        /// <summary>
+        /// 获取全部数据列表（支持取10000条以内）
+        /// </summary>
+        public Task<List<TDocument>> ToListAsync() => ToListAsync(10000);
+        
         /// <summary>
         /// 获取数据列表
         /// </summary>
