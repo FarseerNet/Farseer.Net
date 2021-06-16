@@ -113,7 +113,7 @@ namespace FS.MQ.Rabbit
             // 注册消费端            
             FarseerApplication.AddInitCallback(() =>
             {
-                IocManager.Instance.Logger<RabbitInstaller>().LogInformation($"正在启动：{consumerType.Name} Redis消费");
+                IocManager.Instance.Logger<RabbitInstaller>().LogInformation($"正在启动：{consumerType.Name} Rabbit消费");
                 consumerInstance.Start();
             });
         }
