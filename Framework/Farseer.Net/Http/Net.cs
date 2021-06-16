@@ -18,9 +18,10 @@ namespace FS.Http
 {
     public class Net
     {
-        private static readonly HttpClient httpClient = new HttpClient(new HttpClientHandler()
+        private static readonly HttpClient httpClient = new(new HttpClientHandler()
         {
             UseProxy = true,
+            ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
         });
 
         static Net()
