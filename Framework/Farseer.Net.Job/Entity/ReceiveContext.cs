@@ -45,8 +45,15 @@ namespace FS.Job.Entity
         /// <summary>
         /// DEBUG模式
         /// </summary>
-        internal ReceiveContext(IIocManager ioc, Stopwatch sw)
+        internal ReceiveContext(IIocManager ioc, Stopwatch sw, Dictionary<string,string> debugMetaData)
         {
+            Meta = new JobSchedulerVO
+            {
+                Caption     = "调试",
+                JobTypeName = null,
+                Data        = debugMetaData,
+            };
+            
             _ioc      =   ioc;
             _isDebug  =   true;
             _sw       =   sw;

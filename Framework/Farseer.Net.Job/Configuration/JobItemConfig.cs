@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace FS.Job.Configuration
 {
     public class JobItemConfig
@@ -14,5 +16,9 @@ namespace FS.Job.Configuration
         /// 开启调试状态后要启动的job
         /// </summary>
         public string DebugJobs { get; set; }
+        /// <summary>
+        /// 开启调试状态后要启动的job
+        /// </summary>
+        public Dictionary<string,string> DebugMetaData { get; set; }
     }
 }

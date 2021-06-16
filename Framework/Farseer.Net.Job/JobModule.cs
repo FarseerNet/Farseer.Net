@@ -45,26 +45,30 @@ namespace FS.Job
                 // 开启本地调试状态
                 if (jobItemConfig.Debug)
                 {
-                    IocManager.Logger<JobModule>().LogInformation($"开启Debug模式");
-                    string[] debugJobs = jobItemConfig.DebugJobs.ToLower() == "all" ? jobs : jobItemConfig.DebugJobs.Split(',');
-                    foreach (var debugJob in debugJobs)
+                    // 待系统初始化完后执行
+                    FarseerApplication.AddInitCallback(()=>
                     {
-                        IocManager.Logger<JobModule>().LogInformation($"Debug：启动{debugJob}。");
+                        IocManager.Logger<JobModule>().LogInformation($"开启Debug模式");
+                        string[] debugJobs = jobItemConfig.DebugJobs.ToLower() == "all" ? jobs : jobItemConfig.DebugJobs.Split(',');
+                        foreach (var debugJob in debugJobs)
+                        {
+                            IocManager.Logger<JobModule>().LogInformation($"Debug：启动{debugJob}。");
                         
-                        var sw = Stopwatch.StartNew();
-                        try
-                        {
-                            IocManager.Resolve<IFssJob>($"fss_job_{debugJob}").Execute(new ReceiveContext(IocManager, sw));
+                            var sw = Stopwatch.StartNew();
+                            try
+                            {
+                                IocManager.Resolve<IFssJob>($"fss_job_{debugJob}").Execute(new ReceiveContext(IocManager, sw, jobItemConfig.DebugMetaData));
+                            }
+                            catch (Exception e)
+                            {
+                                IocManager.Logger<JobModule>().LogError(e, e.Message);
+                            }
+                            finally
+                            {
+                                IocManager.Logger<JobModule>().LogInformation($"Debug：{debugJob} 耗时 {sw.ElapsedMilliseconds} ms");
+                            }
                         }
-                        catch (Exception e)
-                        {
-                            IocManager.Logger<JobModule>().LogError(e,e.Message);
-                        }
-                        finally
-                        {
-                            IocManager.Logger<JobModule>().LogInformation($"Debug：{debugJob} 耗时 {sw.ElapsedMilliseconds} ms");
-                        }
-                    }
+                    });
                     return;
                 }
 
