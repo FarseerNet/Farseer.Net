@@ -34,7 +34,7 @@ namespace FS.Cache.Redis
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             // 读取配置
-            var configurationSection = IocManager.Instance.Resolve<IConfigurationRoot>().GetSection("Redis");
+            var configurationSection = _iocResolver.Resolve<IConfigurationRoot>().GetSection("Redis");
             var redisItemConfigs     = configurationSection.GetChildren().Select(o => o.Get<RedisItemConfig>()).ToList();
 
             foreach (var redisItemConfig in redisItemConfigs)
