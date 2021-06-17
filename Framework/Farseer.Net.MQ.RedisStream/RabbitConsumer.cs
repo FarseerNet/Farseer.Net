@@ -145,7 +145,7 @@ namespace FS.MQ.RedisStream
                     {
                         await _redisCacheManager.Db.StreamAcknowledgeAsync(_queueName, _groupName, ids);
                     }
-                    else
+                    else if (ids.Length > 0)
                         // 消费失败时，把pending队列的消息重新放回队列
                         _redisCacheManager.Db.StreamClaim(_queueName, _groupName, _groupName, sw.ElapsedMilliseconds, ids);
                 }
