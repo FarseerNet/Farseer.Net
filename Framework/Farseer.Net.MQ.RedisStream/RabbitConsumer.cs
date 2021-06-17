@@ -102,24 +102,26 @@ namespace FS.MQ.RedisStream
         {
             while (true)
             {
-                var streamEntries = await _redisCacheManager.Db.StreamReadGroupAsync(_queueName, _groupName, _hostName, _pullCount);
-                if (streamEntries.Length == 0)
-                {
-                    await Task.Delay(300);
-                    continue;
-                }
-
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
-                var consumeContext = new ConsumeContext(_redisCacheManager, _queueName)
-                {
-                    MessageIds = streamEntries.Select(o => o.Id.ToString()).ToArray()
-                };
-
-                var listener = _iocManager.Resolve<IListenerMessage>(_consumerType);
-                var result   = false;
+                var            result         = false;
+                var            listener       = _iocManager.Resolve<IListenerMessage>(_consumerType);
+                StreamEntry[]  streamEntries  = null;
+                ConsumeContext consumeContext = null;
+                Stopwatch      sw             = new Stopwatch();
                 try
                 {
+                    streamEntries = await _redisCacheManager.Db.StreamReadGroupAsync(_queueName, _groupName, _hostName, _pullCount);
+                    if (streamEntries.Length == 0)
+                    {
+                        await Task.Delay(300);
+                        continue;
+                    }
+
+                    sw.Restart();
+                    consumeContext = new ConsumeContext(_redisCacheManager, _queueName)
+                    {
+                        MessageIds = streamEntries.Select(o => o.Id.ToString()).ToArray()
+                    };
+
                     result = await listener.Consumer(streamEntries, consumeContext);
                 }
                 catch (Exception e)
@@ -179,7 +181,7 @@ namespace FS.MQ.RedisStream
                     result = await listener.Consumer(streamEntries, consumeContext);
                     if (result)
                     {
-                        await _redisCacheManager.Db.StreamDeleteAsync(_queueName, consumeContext.MessageIds.Select(o=>(RedisValue)o).ToArray());
+                        await _redisCacheManager.Db.StreamDeleteAsync(_queueName, consumeContext.MessageIds.Select(o => (RedisValue) o).ToArray());
                     }
                 }
                 catch (Exception e)
@@ -191,7 +193,7 @@ namespace FS.MQ.RedisStream
                         result = await listener.FailureHandling(streamEntries, consumeContext);
                         if (result)
                         {
-                            await _redisCacheManager.Db.StreamDeleteAsync(_queueName, consumeContext.MessageIds.Select(o=>(RedisValue)o).ToArray());
+                            await _redisCacheManager.Db.StreamDeleteAsync(_queueName, consumeContext.MessageIds.Select(o => (RedisValue) o).ToArray());
                         }
                     }
                     catch (Exception exception)
