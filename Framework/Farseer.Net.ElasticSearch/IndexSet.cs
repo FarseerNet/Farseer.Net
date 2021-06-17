@@ -160,6 +160,36 @@ namespace FS.ElasticSearch
 
             return result.IsValid;
         }
+        
+        /// <summary>
+        /// 批量写入数据
+        /// </summary>
+        public virtual bool Insert(List<TDocument> lst)
+        {
+            WhenNotExistsAddIndex();
+            var result = Client.IndexMany(lst, SetMap.IndexName);
+            if (!result.IsValid)
+            {
+                IocManager.Instance.Logger<IndexSet<TDocument>>().LogError($"索引失败：{JsonConvert.SerializeObject(lst)} \r\n" + result.OriginalException.Message);
+            }
+
+            return result.IsValid;
+        }
+        
+        /// <summary>
+        /// 批量写入数据
+        /// </summary>
+        public virtual async Task<bool> InsertAsync(List<TDocument> lst)
+        {
+            WhenNotExistsAddIndex();
+            var result = await Client.IndexManyAsync(lst, SetMap.IndexName);
+            if (!result.IsValid)
+            {
+                IocManager.Instance.Logger<IndexSet<TDocument>>().LogError($"索引失败：{JsonConvert.SerializeObject(lst)} \r\n" + result.OriginalException.Message);
+            }
+
+            return result.IsValid;
+        }
 
             /// <summary>
         /// 获取全部数据列表（支持获取全部数据）
