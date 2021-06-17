@@ -76,7 +76,6 @@ namespace FS.MQ.RedisStream
             this._pullCount         = pullCount;
             this._queueName         = queueName;
 
-            _hostName = Environment.GetEnvironmentVariable("HOSTNAME");
             _hostName = $"{_queueName}_{_groupName}";
         }
 
@@ -109,7 +108,7 @@ namespace FS.MQ.RedisStream
                 Stopwatch      sw             = new Stopwatch();
                 try
                 {
-                    streamEntries = await _redisCacheManager.Db.StreamReadGroupAsync(_queueName, _groupName, _hostName, _pullCount);
+                    streamEntries = await _redisCacheManager.Db.StreamReadGroupAsync(_queueName, _groupName, _hostName, count:_pullCount);
                     if (streamEntries.Length == 0)
                     {
                         await Task.Delay(300);
