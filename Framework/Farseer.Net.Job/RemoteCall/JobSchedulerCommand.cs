@@ -76,7 +76,7 @@ namespace FS.Job.RemoteCall
                 }
                 catch (Exception e)
                 {
-                    IocManager.Logger<JobSchedulerCommand>().LogError(e, e.ToString());
+                    IocManager.Logger<JobSchedulerCommand>().LogError(e, $"taskGroupId={receiveContext.Meta.TaskGroupId},caption={receiveContext.Meta.Caption}：{e.Message}");
                     log = new LogResponse
                     {
                         LogLevel = (int) LogLevel.Error,
