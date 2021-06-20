@@ -170,7 +170,6 @@ namespace FS.MQ.RedisStream
                 {
                     MessageIds = streamEntries.Select(o => o.Id.ToString()).ToArray()
                 };
-                _lastMessageId = consumeContext.MessageIds.Last();
 
                 var listener = _iocManager.Resolve<IListenerMessage>(_consumerType);
                 var result   = false;
@@ -179,7 +178,8 @@ namespace FS.MQ.RedisStream
                     result = await listener.Consumer(streamEntries, consumeContext);
                     if (result)
                     {
-                        await _redisCacheManager.Db.StreamDeleteAsync(_queueName, consumeContext.MessageIds.Select(o => (RedisValue) o).ToArray());
+                        //await _redisCacheManager.Db.StreamDeleteAsync(_queueName, consumeContext.MessageIds.Select(o => (RedisValue) o).ToArray());
+                        _lastMessageId = consumeContext.MessageIds.Last();
                     }
                 }
                 catch (Exception e)
@@ -191,7 +191,8 @@ namespace FS.MQ.RedisStream
                         result = await listener.FailureHandling(streamEntries, consumeContext);
                         if (result)
                         {
-                            await _redisCacheManager.Db.StreamDeleteAsync(_queueName, consumeContext.MessageIds.Select(o => (RedisValue) o).ToArray());
+                            //await _redisCacheManager.Db.StreamDeleteAsync(_queueName, consumeContext.MessageIds.Select(o => (RedisValue) o).ToArray());
+                            _lastMessageId = consumeContext.MessageIds.Last();
                         }
                     }
                     catch (Exception exception)
