@@ -52,8 +52,6 @@ namespace FS.MQ.RedisStream
         /// </summary>
         private readonly int _pullCount;
 
-        private string _lastMessageId = "0";
-
         /// <summary>
         /// 消费客户端
         /// </summary>
@@ -108,7 +106,7 @@ namespace FS.MQ.RedisStream
                 Stopwatch      sw             = new Stopwatch();
                 try
                 {
-                    streamEntries = await _redisCacheManager.Db.StreamReadGroupAsync(_queueName, _groupName, _hostName, count:_pullCount);
+                    streamEntries = await _redisCacheManager.Db.StreamReadGroupAsync(_queueName, _groupName, _hostName, count: _pullCount);
                     if (streamEntries.Length == 0)
                     {
                         await Task.Delay(300);
@@ -156,6 +154,7 @@ namespace FS.MQ.RedisStream
         /// </summary>
         private async Task ConnectAsync()
         {
+            string _lastMessageId = "0";
             while (true)
             {
                 var streamEntries = await _redisCacheManager.Db.StreamReadAsync(_queueName, _lastMessageId, _pullCount);
@@ -171,7 +170,7 @@ namespace FS.MQ.RedisStream
                 {
                     MessageIds = streamEntries.Select(o => o.Id.ToString()).ToArray()
                 };
-                //_lastMessageId = consumeContext.MessageIds.Last();
+                _lastMessageId = consumeContext.MessageIds.Last();
 
                 var listener = _iocManager.Resolve<IListenerMessage>(_consumerType);
                 var result   = false;
