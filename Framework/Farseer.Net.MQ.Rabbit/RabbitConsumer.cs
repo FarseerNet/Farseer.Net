@@ -126,7 +126,7 @@ namespace FS.MQ.Rabbit
         /// </summary>
         /// <param name="listener">消费事件</param>
         /// <param name="autoAck">是否自动确认，默认false</param>
-        public void StartSignle(IListenerMessageSingle listener, bool autoAck = false)
+        public void StartSingle(IListenerMessageSingle listener, bool autoAck = false)
         {
             Connect();
 
