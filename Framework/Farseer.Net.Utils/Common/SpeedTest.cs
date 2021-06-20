@@ -25,7 +25,7 @@ namespace FS.Utils.Common
         /// <param name="name">本次计算的名称</param>
         /// <param name="iteration">计算次数</param>
         /// <param name="action">要计算的方法</param>
-        public static void ConsoleTime(string name, int iteration, Action action)
+        public static void ConsoleTime(string name, int iteration, Action<int> action)
         {
             if (String.IsNullOrWhiteSpace(name)) { return; }
 
@@ -43,7 +43,7 @@ namespace FS.Utils.Common
             var watch = new Stopwatch();
             watch.Start();
             var cycleCount = GetCycleCount();
-            for (var i = 0; i < iteration; i++) action();
+            for (var i = 0; i < iteration; i++) action(i);
             var cpuCycles = GetCycleCount() - cycleCount;
             watch.Stop();
 
@@ -70,20 +70,18 @@ namespace FS.Utils.Common
         /// <param name="act"></param>
         /// <param name="outPut"></param>
         /// <returns></returns>
-        public static string WebTime(string key, int count, Action act, bool outPut = true)
+        public static string WebTime(string key, int count, Action<int> act, bool outPut = true)
         {
             GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
 
             var watch = new Stopwatch();
             watch.Start();
-            for (var i = 0; i < count; i++) act();
+            for (var i = 0; i < count; i++) act(i);
             watch.Stop();
             var result = $"{key}: {watch.ElapsedMilliseconds}ms";
             if (outPut)
             {
-#if IsWeb
-                System.Web.HttpContext.Current.Response.Write(result + "<br />"); 
-#endif
+                Console.WriteLine(result);
             }
             return result;
         }
