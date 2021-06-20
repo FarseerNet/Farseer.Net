@@ -7,7 +7,14 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Framework\Farseer.Net.Cache.Redis\Farseer.Net.Cache.Redis.csproj" />
+      <ProjectReference Include="..\..\Framework\Farseer.Net.Utils\Farseer.Net.Utils.csproj" />
       <ProjectReference Include="..\..\Framework\Farseer.Net\Farseer.Net.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="appsettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>
