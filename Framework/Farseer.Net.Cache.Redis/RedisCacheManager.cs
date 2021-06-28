@@ -95,15 +95,13 @@ namespace FS.Cache.Redis
             if (funcData == null) funcData = po => JsonConvert.SerializeObject(po);
 
             var transaction = Db.CreateTransaction();
-            var tasks       = new List<Task>();
             foreach (var po in lst)
             {
                 var dataKey = funcDataKey(po).ToString();
                 var data    = funcData(po);
-                tasks.Add(transaction.HashSetAsync(key, dataKey, data));
+                transaction.HashSetAsync(key, dataKey, data);
             }
-            transaction.Execute();
-            return Task.WhenAll(tasks.ToArray());
+            return transaction.ExecuteAsync();
         }
     }
 }
