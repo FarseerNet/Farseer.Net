@@ -6,6 +6,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
+using Castle.Core;
+using Castle.Core.Internal;
 using Castle.Windsor;
 using FS.Configuration.Startup;
 using FS.DI;
@@ -51,6 +55,7 @@ namespace FS
         private static List<Action> InitCallback { get; set; } = new();
 
         public static void AddInitCallback(Action act) => InitCallback.Add(act);
+
         /// <summary>
         ///     构造函数
         /// </summary>
@@ -127,13 +132,25 @@ namespace FS
                 _moduleManager = IocManager.Resolve<IFarseerModuleManager>();
                 _moduleManager.Initialize(StartupModule);
                 _moduleManager.StartModules();
-                
+
                 IocManager.Logger<FarseerApplication>().LogInformation("启动初始化回调");
                 foreach (var action in InitCallback)
                 {
                     action();
                 }
+
                 IocManager.Logger<FarseerApplication>().LogInformation($"系统初始化完毕，耗时{(DateTime.Now - dt).TotalMilliseconds:n}ms");
+
+                // 获取业务实现类
+                var lstModel = IocManager.GetCustomComponent();
+                Console.WriteLine($"共有{lstModel.Count}个业务实例注册到容器");
+                for (int index = 0; index < lstModel.Count; index++)
+                {
+                    var model        = lstModel[index];
+                    var name         = model.Name != model.Implementation.FullName ? $"{model.Name} ==>" : "";
+                    var interfaceCom = model.Services.FirstOrDefault(o => o.IsInterface) ?? model.Services.FirstOrDefault();
+                    Console.WriteLine(interfaceCom.IsInterface ? $"{index + 1}、{name} {model.Implementation.Name} ==> {interfaceCom.Name}" : $"{index + 1}、{name} {model.Implementation.Name}");
+                }
             }
             catch (Exception ex)
             {

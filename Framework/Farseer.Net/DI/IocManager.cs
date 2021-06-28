@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Castle.Core;
 using Microsoft.Extensions.Logging;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Castle.Windsor.Installer;
+using FS.Modules;
 
 namespace FS.DI
 {
@@ -43,9 +45,10 @@ namespace FS.DI
                 if (IsRegistered<ILogger<T>>()) return Resolve<ILogger<T>>();
                 Container.Register(Component.For<ILogger<T>>().Instance(logger).LifestyleSingleton());
             }
+
             return logger;
         }
-        
+
         /// <summary>
         ///     构造函数
         /// </summary>
@@ -162,11 +165,11 @@ namespace FS.DI
         /// 注册自己
         /// </summary>
         private void RegisterSelf()
-        { 
+        {
             //Register self!
             Container.Register(Component.For<IocManager, IIocManager, IIocRegistrar, IIocResolver>().UsingFactoryMethod(() => this));
         }
-        
+
         /// <summary>
         ///     注册
         /// </summary>
@@ -255,5 +258,16 @@ namespace FS.DI
                     return registration;
             }
         }
+
+        /// <summary>
+        /// 获取当前业务注册的IOC
+        /// </summary>
+        /// <returns></returns>
+        public List<ComponentModel> GetCustomComponent() => Container.Kernel.GraphNodes.Cast<ComponentModel>()
+            .Where(model => !model.Implementation.Assembly.FullName.StartsWith("Farseer.Net") &&
+                            !model.Implementation.Assembly.FullName.StartsWith("Castle.") &&
+                            !model.Implementation.Assembly.FullName.StartsWith("Microsoft.") &&
+                            !model.Implementation.Assembly.FullName.StartsWith("System.") &&
+                            model.Implementation.BaseType != typeof(FarseerModule)).ToList();
     }
 }

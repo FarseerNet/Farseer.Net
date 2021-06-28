@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
+using Castle.Core;
 using Microsoft.Extensions.Logging;
 using Castle.Windsor;
 
@@ -45,5 +47,11 @@ namespace FS.DI
         /// <param name="name"></param>
         /// <returns></returns>
         bool IsRegistered(string name);
+
+        /// <summary>
+        /// 获取当前业务注册的IOC
+        /// </summary>
+        /// <returns></returns>
+        List<ComponentModel> GetCustomComponent();
     }
 }
