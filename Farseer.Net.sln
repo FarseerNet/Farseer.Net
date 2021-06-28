@@ -63,6 +63,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.MQ.RocketDemo",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.MQ.RedisStreamDemo", "Demo\Farseer.Net.MQ.RedisStreamDemo\Farseer.Net.MQ.RedisStreamDemo.csproj", "{8B13002D-C58B-4374-9EF5-A6FC58A6DE9E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.Demo", "Demo\Farseer.Net.Demo\Farseer.Net.Demo.csproj", "{AE0779E5-4B3B-4F6C-8A2C-7DE55F147727}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -285,6 +287,14 @@ Global
 		{8B13002D-C58B-4374-9EF5-A6FC58A6DE9E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8B13002D-C58B-4374-9EF5-A6FC58A6DE9E}.Release|x64.ActiveCfg = Release|Any CPU
 		{8B13002D-C58B-4374-9EF5-A6FC58A6DE9E}.Release|x64.Build.0 = Release|Any CPU
+		{AE0779E5-4B3B-4F6C-8A2C-7DE55F147727}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE0779E5-4B3B-4F6C-8A2C-7DE55F147727}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE0779E5-4B3B-4F6C-8A2C-7DE55F147727}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{AE0779E5-4B3B-4F6C-8A2C-7DE55F147727}.Debug|x64.Build.0 = Debug|Any CPU
+		{AE0779E5-4B3B-4F6C-8A2C-7DE55F147727}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE0779E5-4B3B-4F6C-8A2C-7DE55F147727}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE0779E5-4B3B-4F6C-8A2C-7DE55F147727}.Release|x64.ActiveCfg = Release|Any CPU
+		{AE0779E5-4B3B-4F6C-8A2C-7DE55F147727}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -317,6 +327,7 @@ Global
 		{7091D804-E12C-4FE8-9E0B-3FA2D8B31828} = {33414C74-7920-4F78-8480-44BE2184D5E1}
 		{01C1F107-1AB5-497D-B33A-E3AAFA120505} = {BA9C8E90-5B9E-464C-B0CA-7988E2CA850B}
 		{8B13002D-C58B-4374-9EF5-A6FC58A6DE9E} = {BA9C8E90-5B9E-464C-B0CA-7988E2CA850B}
+		{AE0779E5-4B3B-4F6C-8A2C-7DE55F147727} = {BA9C8E90-5B9E-464C-B0CA-7988E2CA850B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {22E81E03-33DB-418D-90D2-FD1B560FEF14}
