@@ -17,4 +17,8 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="test.cs" />
+    </ItemGroup>
+
 </Project>

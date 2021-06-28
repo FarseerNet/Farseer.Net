@@ -1,4 +1,5 @@
-﻿using FS.Cache.Redis;
+﻿using System.Reflection;
+using FS.Cache.Redis;
 using FS.Modules;
 
 namespace Farseer.Net.Cache.RedisDemo
@@ -15,6 +16,7 @@ namespace Farseer.Net.Cache.RedisDemo
 
         public override void PostInitialize()
         {
+            IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly());
         }
     }
 }
