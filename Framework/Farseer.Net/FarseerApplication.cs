@@ -28,6 +28,10 @@ namespace FS
     public sealed class FarseerApplication : IDisposable
     {
         /// <summary>
+        /// 系统初始化时间
+        /// </summary>
+        public static DateTime StartupAt { get; private set; }
+        /// <summary>
         /// 模块管理器
         /// </summary>
         private IFarseerModuleManager _moduleManager;
@@ -121,7 +125,7 @@ namespace FS
         {
             try
             {
-                var dt = DateTime.Now;
+                StartupAt = DateTime.Now;
                 RegisterBootstrapper();
                 IocManager.Container.Install(new LoggerInstaller(configure));
                 IocManager.Container.Install(new FarseerInstaller());
@@ -139,8 +143,6 @@ namespace FS
                     action();
                 }
 
-                IocManager.Logger<FarseerApplication>().LogInformation($"系统初始化完毕，耗时{(DateTime.Now - dt).TotalMilliseconds:n}ms");
-
                 // 获取业务实现类
                 var lstModel = IocManager.GetCustomComponent();
                 Console.WriteLine($"共有{lstModel.Count}个业务实例注册到容器");
@@ -151,6 +153,7 @@ namespace FS
                     var interfaceCom = model.Services.FirstOrDefault(o => o.IsInterface) ?? model.Services.FirstOrDefault();
                     Console.WriteLine(interfaceCom.IsInterface ? $"{index + 1}、{name} {model.Implementation.Name} ==> {interfaceCom.Name}" : $"{index + 1}、{name} {model.Implementation.Name}");
                 }
+                IocManager.Logger<FarseerApplication>().LogInformation($"系统初始化完毕，耗时{(DateTime.Now - StartupAt).TotalMilliseconds:n}ms");
             }
             catch (Exception ex)
             {
