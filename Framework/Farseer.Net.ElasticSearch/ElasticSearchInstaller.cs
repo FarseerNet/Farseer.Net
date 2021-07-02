@@ -44,7 +44,9 @@ namespace FS.ElasticSearch
             {
                 var lstUrls  = elasticSearchItemConfig.Server.Split(',').Select(o => new Uri(o)).ToList();
                 var settings = new ConnectionSettings(new StaticConnectionPool(lstUrls));
-                
+                // 如果设置了用户名，则附加鉴权设置
+                if (!string.IsNullOrWhiteSpace(elasticSearchItemConfig.Username) || !string.IsNullOrWhiteSpace(elasticSearchItemConfig.Password))
+                    settings.BasicAuthentication(elasticSearchItemConfig.Username, elasticSearchItemConfig.Password);
                 // 注册ES实例
                 container.Register(Component.For<IElasticClient>().Named(elasticSearchItemConfig.Name).Instance(new ElasticClient(settings)).LifestyleSingleton());
             }
