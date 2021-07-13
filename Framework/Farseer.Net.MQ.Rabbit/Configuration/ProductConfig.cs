@@ -19,5 +19,11 @@ namespace FS.MQ.Rabbit.Configuration
 
         /// <summary> 交换器类型 </summary>
         public eumExchangeType ExchangeType { get; set; }
+        
+        /// <summary> 最低频道连接池（推荐设为8）</summary>
+        public int MinFreeChannelPool { get; set; }
+        
+        /// <summary> 最大频道连接池（推荐设为10）</summary>
+        public int MaxFreeChannelPool { get; set; }
     }
 }

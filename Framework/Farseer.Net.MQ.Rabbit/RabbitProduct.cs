@@ -1,6 +1,10 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using FS.Core.LinkTrack;
 using FS.DI;
 using FS.MQ.Rabbit.Configuration;
 using Microsoft.Extensions.Logging;
@@ -10,6 +14,7 @@ namespace FS.MQ.Rabbit
 {
     public class RabbitProduct : IRabbitProduct
     {
+        private readonly ConcurrentQueue<IModel> Stacks = new();
         /// <summary>
         /// 配置信息
         /// </summary>
@@ -20,10 +25,55 @@ namespace FS.MQ.Rabbit
         /// </summary>
         private readonly RabbitConnect _connect;
 
+        private static readonly object objLock = new();
+
         public RabbitProduct(RabbitConnect connect, ProductConfig productConfig)
         {
+            if (productConfig.MinFreeChannelPool == 0) productConfig.MinFreeChannelPool = 8;
+            if (productConfig.MaxFreeChannelPool == 0) productConfig.MaxFreeChannelPool = 10;
             _connect       = connect;
             _productConfig = productConfig;
+
+            _connect.Open();
+
+            // 启动后，后台立即创建10个频道
+            KeepFeeChannelCount();
+        }
+
+        /// <summary>
+        /// 保持最低空闲频道数量
+        /// </summary>
+        private void KeepFeeChannelCount()
+        {
+            Task.Factory.StartNew(() =>
+            {
+                while (true)
+                {
+                    // 当低于最低空闲的频道池时，快速创建到指定数量
+                    while (Stacks.Count < _productConfig.MinFreeChannelPool)
+                    {
+                        var channel = _connect.Connection.CreateModel();
+                        if (_productConfig.UseConfirmModel) channel.ConfirmSelect();
+                        Stacks.Enqueue(channel);
+                    }
+
+                    // 当超出最大空闲频道池时，则释放到指定的最大空闲频道
+                    while (Stacks.Count > _productConfig.MaxFreeChannelPool)
+                    {
+                        // 从池中取出频道
+                        var tryPop = Stacks.TryDequeue(out var channel);
+
+                        // 取出失败，说明没有可用频道，需要创建新的
+                        if (tryPop && channel is {IsClosed: false})
+                        {
+                            channel.Close();
+                            channel.Dispose();
+                        }
+                    }
+
+                    Thread.Sleep(TimeSpan.FromSeconds(3));
+                }
+            });
         }
 
         /// <summary>
@@ -33,9 +83,19 @@ namespace FS.MQ.Rabbit
         {
             // 如果连接断开，则要重连
             if (_connect.Connection == null || !_connect.Connection.IsOpen) _connect.Open();
-            var channel = _connect.Connection.CreateModel();
-            if (_productConfig.UseConfirmModel) channel.ConfirmSelect();
-            return channel;
+
+            lock (objLock)
+            {
+                // 从池中取出频道
+                var tryPop = Stacks.TryDequeue(out var channel);
+
+                // 取出失败，说明没有可用频道，需要创建新的
+                if (tryPop && channel is {IsClosed: false}) return channel;
+
+                channel = _connect.Connection.CreateModel();
+                if (_productConfig.UseConfirmModel) channel.ConfirmSelect();
+                return channel;
+            }
         }
 
         /// <summary>
@@ -43,9 +103,7 @@ namespace FS.MQ.Rabbit
         /// </summary>
         public void Close(IModel channel)
         {
-            channel.Close();
-            channel.Dispose();
-            channel = null;
+            Stacks.Enqueue(channel);
         }
 
         /// <summary>
@@ -77,6 +135,8 @@ namespace FS.MQ.Rabbit
         /// <param name="funcBasicProperties">属性</param>
         public bool Send(string message, string routingKey, string exchange = "", Action<IBasicProperties> funcBasicProperties = null)
         {
+            FsLinkTrack.TrackMq("Rabbit.Send");
+            
             IModel channel = null;
             try
             {
@@ -113,6 +173,8 @@ namespace FS.MQ.Rabbit
         /// <param name="funcBasicProperties">属性</param>
         public bool Send(IEnumerable<string> message, string routingKey, string exchange = "", Action<IBasicProperties> funcBasicProperties = null)
         {
+            FsLinkTrack.TrackMq("Rabbit.Send");
+            
             IModel channel = null;
             try
             {

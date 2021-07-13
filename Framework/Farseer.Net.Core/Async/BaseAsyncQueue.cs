@@ -14,15 +14,22 @@ namespace FS.Core.Async
     public abstract class BaseAsyncQueue<T>
     {
         /// <summary>并发队列</summary>
-        private readonly ConcurrentQueue<T> _concurrentQueue = new ConcurrentQueue<T>();
+        private readonly ConcurrentQueue<T> _concurrentQueue = new();
+
         /// <summary>出队列任务</summary>
         private Task _dequeueTask;
+
         /// <summary>队列最大长度</summary>
         private readonly int _maxQueueSize;
+
         /// <summary>出队的数据</summary>
         private readonly List<T> _callBackList;
+
         /// <summary> 下一次回调的时间间隔(毫秒) </summary>
         protected int NextCallBackIntervalMs;
+
+        private int _sleepMs;
+
         /// <summary> 队列数据元素个数 </summary>
         public int QueueCount => _concurrentQueue.Count;
 
@@ -31,24 +38,25 @@ namespace FS.Core.Async
         /// </summary>
         /// <param name="maxQueueSize">队列最大长度,溢出则丢失</param>
         /// <param name="callBackListCapacity">每次回调出队最大数量</param>
-        protected BaseAsyncQueue(int maxQueueSize = 5000, int callBackListCapacity = 10)
+        protected BaseAsyncQueue(int maxQueueSize = 5000, int callBackListCapacity = 10, int sleepMs = 5)
         {
             _maxQueueSize = maxQueueSize;
             _callBackList = new List<T>(callBackListCapacity);
+            _sleepMs      = sleepMs;
         }
 
         /// <summary>入队,满了就丢掉新数据</summary>
-        public bool Enqueue(T tobj)
+        public bool Enqueue(T obj)
         {
             if (QueueCount >= _maxQueueSize) return false;
-            _concurrentQueue.Enqueue(tobj);
+            _concurrentQueue.Enqueue(obj);
             return true;
         }
 
         /// <summary>开始异步出队</summary>
-        public void StartDequeue(CancellationToken cancellationTokentoken)
+        public void StartDequeue(CancellationToken cancellationToken)
         {
-            _dequeueTask = new Task(() => LoopDequeue(cancellationTokentoken), TaskCreationOptions.LongRunning);
+            _dequeueTask = new Task(() => LoopDequeue(cancellationToken), TaskCreationOptions.LongRunning);
             _dequeueTask.Start();
         }
 
@@ -72,7 +80,11 @@ namespace FS.Core.Async
                 {
                     DeQueue(_callBackList); //队列数据出队保存到回调数据列表
                     NextCallBackIntervalMs = 0;
-                    OnDequeue(_callBackList, QueueCount); //交由用户处理
+                    if (_callBackList.Count > 0)
+                    {
+                        OnDequeue(_callBackList, QueueCount); //交由用户处理
+                    }
+
                     SafeSleep(token);
                 }
                 catch (System.Exception e)
@@ -93,11 +105,16 @@ namespace FS.Core.Async
             if (callbackList == null) throw new System.Exception("回调数据队列为Null");
             callbackList.Clear();
             for (var i = 0; i < maxSize; i++)
-                if (_concurrentQueue.TryDequeue(out T tempObj)) { callbackList.Add(tempObj); }
+            {
+                if (_concurrentQueue.TryDequeue(out T tempObj))
+                {
+                    callbackList.Add(tempObj);
+                }
                 else
                 {
                     break;
                 }
+            }
         }
 
         /// <summary>
@@ -108,18 +125,19 @@ namespace FS.Core.Async
             try
             {
                 long leftSleep = NextCallBackIntervalMs;
-                var start = Environment.TickCount;
+                var  start     = Environment.TickCount;
                 while (true)
                 {
                     ct.ThrowIfCancellationRequested(); //检测取消令牌,取消执行
 
-                    if (leftSleep < 5)
+                    if (leftSleep < _sleepMs)
                     {
-                        if (leftSleep >= 0) Thread.Sleep((int)leftSleep);
+                        if (leftSleep >= 0) Thread.Sleep((int) leftSleep);
                         else Thread.Sleep(1);
                         return;
                     }
-                    Thread.Sleep(5);
+
+                    Thread.Sleep(_sleepMs);
                     var stop = Environment.TickCount;
                     leftSleep = NextCallBackIntervalMs - (stop - start);
                 }

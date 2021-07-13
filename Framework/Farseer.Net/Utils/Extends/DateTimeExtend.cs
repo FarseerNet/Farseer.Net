@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 // ReSharper disable once CheckNamespace
 
@@ -7,7 +8,7 @@ namespace FS.Extends
     /// <summary>
     ///     其它扩展，夫归类的扩展
     /// </summary>
-    public static partial class UtilsExtend
+    public static partial class Extend
     {
         /// <summary>
         ///     日期转换成时间戳（秒）

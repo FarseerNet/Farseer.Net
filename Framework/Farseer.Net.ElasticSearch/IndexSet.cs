@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 using Castle.Core.Internal;
+using FS.Core.LinkTrack;
 using FS.DI;
 using FS.ElasticSearch.Internal;
 using FS.ElasticSearch.Map;
@@ -136,6 +137,8 @@ namespace FS.ElasticSearch
         /// </summary>
         public virtual bool Insert(TDocument model)
         {
+            FsLinkTrack.TrackElasticsearch("Insert");
+            
             WhenNotExistsAddIndex();
             var result = Client.Index(new IndexRequest<TDocument>(model, SetMap.IndexName));
             if (!result.IsValid)
@@ -151,6 +154,7 @@ namespace FS.ElasticSearch
         /// </summary>
         public virtual async Task<bool> InsertAsync(TDocument model)
         {
+            FsLinkTrack.TrackElasticsearch("InsertAsync");
             WhenNotExistsAddIndex();
             var result = await Client.IndexAsync(new IndexRequest<TDocument>(model, SetMap.IndexName));
             if (!result.IsValid)
@@ -166,6 +170,8 @@ namespace FS.ElasticSearch
         /// </summary>
         public virtual bool Insert(List<TDocument> lst)
         {
+            FsLinkTrack.TrackElasticsearch("Insert");
+            
             WhenNotExistsAddIndex();
             var result = Client.IndexMany(lst, SetMap.IndexName);
             if (!result.IsValid)
@@ -181,6 +187,8 @@ namespace FS.ElasticSearch
         /// </summary>
         public virtual async Task<bool> InsertAsync(List<TDocument> lst)
         {
+            FsLinkTrack.TrackElasticsearch("InsertAsync");
+            
             WhenNotExistsAddIndex();
             var result = await Client.IndexManyAsync(lst, SetMap.IndexName);
             if (!result.IsValid)
@@ -196,6 +204,8 @@ namespace FS.ElasticSearch
         /// </summary>
         public List<TDocument> ToScrollList()
         {
+            FsLinkTrack.TrackElasticsearch("ToScrollList");
+            
             var size       = 1000;
             var scrollTime = new Time(TimeSpan.FromSeconds(30));
             var searchResponse = Client.Search<TDocument>(s =>
@@ -248,6 +258,8 @@ namespace FS.ElasticSearch
         /// </summary>
         public async Task<List<TDocument>> ToScrollListAsync()
         {
+            FsLinkTrack.TrackElasticsearch("ToScrollListAsync");
+            
             var size       = 1000;
             var scrollTime = new Time(TimeSpan.FromSeconds(30));
             var searchResponse = await Client.SearchAsync<TDocument>(s =>
@@ -303,6 +315,8 @@ namespace FS.ElasticSearch
         /// <param name="top">显示前多少条数据</param>
         public List<TDocument> ToList(int top)
         {
+            FsLinkTrack.TrackElasticsearch("ToList");
+            
             var searchResponse = Client.Search<TDocument>(s =>
             {
                 var searchDescriptor                        = s.Index(SetMap.AliasNames);
@@ -328,6 +342,8 @@ namespace FS.ElasticSearch
         /// <param name="top">显示前多少条数据</param>
         public async Task<List<TDocument>> ToListAsync(int top)
         {
+            FsLinkTrack.TrackElasticsearch("ToListAsync");
+            
             var searchResponse = await Client.SearchAsync<TDocument>(s =>
             {
                 var searchDescriptor                        = s.Index(SetMap.AliasNames);
@@ -355,6 +371,8 @@ namespace FS.ElasticSearch
         /// <param name="recordCount">命中的总记录数 </param>
         public List<TDocument> ToList(int pageSize, int pageIndex, out long recordCount)
         {
+            FsLinkTrack.TrackElasticsearch("ToList");
+            
             recordCount = 0;
             var from                = 0;
             if (pageIndex > 1) from = (pageIndex - 1) * pageSize;
@@ -383,6 +401,8 @@ namespace FS.ElasticSearch
         /// </summary>
         public TValue GetValue<TValue>(Expression<Func<TDocument, object>> select)
         {
+            FsLinkTrack.TrackElasticsearch("GetValue");
+            
             var searchResponse = Client.Search<TDocument>(s =>
             {
                 var searchDescriptor                        = s.Index(SetMap.AliasNames).Size(1).Source(s => s.Includes(i => i.Fields(select)));
@@ -406,6 +426,8 @@ namespace FS.ElasticSearch
         /// </summary>
         public async Task<TValue> GetValueAsync<TValue>(Expression<Func<TDocument, object>> select)
         {
+            FsLinkTrack.TrackElasticsearch("GetValueAsync");
+            
             var searchResponse = await Client.SearchAsync<TDocument>(s =>
             {
                 var searchDescriptor                 = s.Index(SetMap.AliasNames).Size(1).Source(s => s.Includes(i => i.Fields(select)));
@@ -429,6 +451,8 @@ namespace FS.ElasticSearch
         /// </summary>
         public TDocument ToEntity()
         {
+            FsLinkTrack.TrackElasticsearch("ToEntity");
+            
             var searchResponse = Client.Search<TDocument>(s =>
             {
                 var searchDescriptor                        = s.Index(SetMap.AliasNames).Size(1);
@@ -452,6 +476,8 @@ namespace FS.ElasticSearch
         /// </summary>
         public async Task<TDocument> ToEntityAsync()
         {
+            FsLinkTrack.TrackElasticsearch("ToEntityAsync");
+            
             var searchResponse = await Client.SearchAsync<TDocument>(s =>
             {
                 var searchDescriptor                        = s.Index(SetMap.AliasNames).Size(1);
@@ -475,6 +501,8 @@ namespace FS.ElasticSearch
         /// </summary>
         public bool IsExists()
         {
+            FsLinkTrack.TrackElasticsearch("IsExists");
+            
             var searchResponse = Client.Count<TDocument>(s =>
             {
                 var searchDescriptor                 = s.Index(SetMap.AliasNames);
@@ -497,6 +525,8 @@ namespace FS.ElasticSearch
         /// </summary>
         public async Task<bool> IsExistsAsync()
         {
+            FsLinkTrack.TrackElasticsearch("IsExistsAsync");
+            
             var searchResponse = await Client.CountAsync<TDocument>(s =>
             {
                 var searchDescriptor                 = s.Index(SetMap.AliasNames);
@@ -519,6 +549,8 @@ namespace FS.ElasticSearch
         /// </summary>
         public long Count()
         {
+            FsLinkTrack.TrackElasticsearch("Count");
+            
             var searchResponse = Client.Count<TDocument>(s =>
             {
                 var searchDescriptor                 = s.Index(SetMap.AliasNames);
@@ -541,6 +573,8 @@ namespace FS.ElasticSearch
         /// </summary>
         public async Task<long> CountAsync()
         {
+            FsLinkTrack.TrackElasticsearch("CountAsync");
+            
             var searchResponse = await Client.CountAsync<TDocument>(s =>
             {
                 var searchDescriptor                 = s.Index(SetMap.AliasNames);
@@ -563,6 +597,8 @@ namespace FS.ElasticSearch
         /// </summary>
         public bool Update(string id, TDocument entity)
         {
+            FsLinkTrack.TrackElasticsearch("Update");
+            
             var result = Client.Update<TDocument>(id, s =>s.Index(SetMap.IndexName).Doc(entity));
             return result.IsValid;
         }
@@ -572,6 +608,8 @@ namespace FS.ElasticSearch
         /// </summary>
         public async Task<bool> UpdateAsync(string id, TDocument entity)
         {
+            FsLinkTrack.TrackElasticsearch("Update");
+            
             var result = await Client.UpdateAsync<TDocument>(id, s =>s.Index(SetMap.IndexName).Doc(entity));
             return result.IsValid;
         }
@@ -581,6 +619,8 @@ namespace FS.ElasticSearch
         /// </summary>
         public bool Update(object entity, bool firstCharToLower = true)
         {
+            FsLinkTrack.TrackElasticsearch("Update");
+            
             var result = Client.UpdateByQuery<TDocument>(o =>
             {
                 var searchDescriptor                 = o.Index(SetMap.AliasNames);
@@ -596,6 +636,8 @@ namespace FS.ElasticSearch
         /// </summary>
         public async Task<bool> UpdateAsync(object entity, bool firstCharToLower = true)
         {
+            FsLinkTrack.TrackElasticsearch("UpdateAsync");
+            
             var result = await Client.UpdateByQueryAsync<TDocument>(s =>
             {
                 var searchDescriptor                 = s.Index(SetMap.AliasNames);
@@ -641,6 +683,8 @@ namespace FS.ElasticSearch
         /// </summary>
         public bool Delete(string id)
         {
+            FsLinkTrack.TrackElasticsearch("Delete");
+            
             var searchResponse = Client.Delete<TDocument>(id);
             return searchResponse.IsValid;
         }
@@ -650,6 +694,8 @@ namespace FS.ElasticSearch
         /// </summary>
         public async Task<bool> DeleteAsync(string id)
         {
+            FsLinkTrack.TrackElasticsearch("DeleteAsync");
+            
             var searchResponse = await Client.DeleteAsync<TDocument>(id);
             return searchResponse.IsValid;
         }
@@ -659,6 +705,8 @@ namespace FS.ElasticSearch
         /// </summary>
         public bool Delete()
         {
+            FsLinkTrack.TrackElasticsearch("Delete");
+            
             var searchResponse = Client.DeleteByQuery<TDocument>(s=>
             {
                 var searchDescriptor                 = s.Index(SetMap.AliasNames);
@@ -673,6 +721,8 @@ namespace FS.ElasticSearch
         /// </summary>
         public async Task<bool> DeleteAsync()
         {
+            FsLinkTrack.TrackElasticsearch("DeleteAsync");
+            
             var searchResponse = await Client.DeleteByQueryAsync<TDocument>(s=>
             {
                 var searchDescriptor                 = s.Index(SetMap.AliasNames);
@@ -757,6 +807,8 @@ namespace FS.ElasticSearch
         /// </summary>
         protected bool CreateIndex()
         {
+            FsLinkTrack.TrackElasticsearch("CreateIndex");
+            
             var rsp = Client.Indices.Create(SetMap.IndexName, c => c
                 .Map<TDocument>(m => m.AutoMap())
                 .Aliases(des =>

@@ -3,11 +3,16 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using FS.Core;
+using FS.Core.Entity;
+using FS.Core.LinkTrack;
 using FS.Data.Data;
 using FS.Data.Infrastructure;
 using FS.DI;
+using FS.Extends;
+using FS.Utils.Common;
 
 namespace FS.Data.Internal
 {
@@ -15,6 +20,7 @@ namespace FS.Data.Internal
     internal sealed class ExecuteSqlMonitorProxy : IExecuteSql
     {
         private readonly IExecuteSql _dbExecutor;
+
         /// <summary>SQL执行监控 </summary>
         private readonly ISqlMonitor[] _sqlMonitors;
 
@@ -24,7 +30,7 @@ namespace FS.Data.Internal
         /// <param name="db">数据库执行者</param>
         internal ExecuteSqlMonitorProxy(IExecuteSql db)
         {
-            _dbExecutor = db;
+            _dbExecutor  = db;
             _sqlMonitors = IocManager.Instance.ResolveAll<ISqlMonitor>();
         }
 
@@ -137,26 +143,65 @@ namespace FS.Data.Internal
         /// <summary>
         ///     计算执行时间
         /// </summary>
-        private TReturn SpeedTest<TReturn>(string methodName,string dbName, string tableName, CommandType cmdType, string sql, IEnumerable<DbParameter> param, Func<TReturn> func)
+        private TReturn SpeedTest<TReturn>(string methodName, string dbName, string tableName, CommandType cmdType, string sql, IEnumerable<DbParameter> param, Func<TReturn> func)
         {
-            var timer = new Stopwatch();
+            // 调用链上下文
+            var callLink = new LinkTrackDetail
+            {
+                CallType = EumCallType.Database,
+                DbLinkTrackDetail = new DbLinkTrackDetail
+                {
+                    DataBaseName = dbName,
+                    TableName    = tableName,
+                    CommandType  = cmdType,
+                    Sql          = sql,
+                    SqlParam     = param.ToDictionary(o => o.ParameterName, o => o.Value.ToString())
+                }
+            };
+
             try
             {
                 // 执行前
-                foreach (var sqlMonitor in _sqlMonitors) { sqlMonitor.PreExecute(methodName, dbName, tableName, cmdType, sql, param); }
+                if (_sqlMonitors != null)
+                {
+                    foreach (var sqlMonitor in _sqlMonitors)
+                    {
+                        sqlMonitor.PreExecute(methodName, dbName, tableName, cmdType, sql, param);
+                    }
+                }
 
-                timer.Start();
+                // 记录调用链执行时间
+                callLink.StartTs = DateTime.Now.ToTimestamps();
                 var val = func();
-                timer.Stop();
+                callLink.EndTs = DateTime.Now.ToTimestamps();
 
                 // 执行后
-                foreach (var sqlMonitor in _sqlMonitors) { sqlMonitor.Executed(methodName, dbName, tableName, cmdType, sql, param, timer.ElapsedMilliseconds, val); }
+                if (_sqlMonitors != null)
+                {
+                    foreach (var sqlMonitor in _sqlMonitors)
+                    {
+                        sqlMonitor.Executed(methodName, dbName, tableName, cmdType, sql, param, callLink.UseTs, val);
+                    }
+                }
+
                 return val;
             }
             catch (Exception e)
             {
-                foreach (var sqlMonitor in _sqlMonitors) { sqlMonitor.ExecuteException(methodName, dbName, tableName, cmdType, sql, param, timer.ElapsedMilliseconds, e); }
+                if (_sqlMonitors != null)
+                {
+                    foreach (var sqlMonitor in _sqlMonitors)
+                    {
+                        sqlMonitor.ExecuteException(methodName, dbName, tableName, cmdType, sql, param, callLink.UseTs, e);
+                    }
+                }
+
+                callLink.IsException = true;
                 throw;
+            }
+            finally
+            {
+                FsLinkTrack.Current.Set(callLink);
             }
         }
     }

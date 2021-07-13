@@ -9,7 +9,7 @@ namespace FS.Extends
     /// <summary>
     ///     其它扩展，夫归类的扩展
     /// </summary>
-    public static partial class UtilsExtend
+    public static partial class Extend
     {
         /// <summary>
         ///     获取枚举中文

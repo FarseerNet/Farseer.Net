@@ -13,6 +13,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Farseer.Net.Core\Farseer.Net.Core.csproj" />
+      <ProjectReference Include="..\Farseer.Net.LinkTrack\Farseer.Net.LinkTrack.csproj" />
       <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />
     </ItemGroup>
 

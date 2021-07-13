@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FS.Cache.Redis;
+using FS.Core.LinkTrack;
 using FS.DI;
 using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
@@ -119,6 +120,7 @@ namespace FS.MQ.RedisStream
                         MessageIds = streamEntries.Select(o => o.Id.ToString()).ToArray()
                     };
 
+                    FsLinkTrack.TrackMq("RedisStream.Consumer");
                     result = await listener.Consumer(streamEntries, consumeContext);
                 }
                 catch (Exception e)
@@ -175,6 +177,7 @@ namespace FS.MQ.RedisStream
                 var result   = false;
                 try
                 {
+                    FsLinkTrack.TrackMq("RedisStream.Consumer");
                     result = await listener.Consumer(streamEntries, consumeContext);
                     if (result)
                     {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using StackExchange.Redis;
@@ -26,8 +25,14 @@ namespace FS.Cache.Redis
         /// <summary>
         ///     数据库
         /// </summary>
-        public IDatabase Db => _db ?? (_db = _connectionWrapper.Database());
-        
+        public IDatabase Db
+        {
+            get
+            {
+                return _db ??= new DatabaseAgent(_connectionWrapper.Database());
+            }
+        }
+
         /// <summary>
         /// 支持缓存不存在，则写入
         /// </summary>
@@ -82,6 +87,7 @@ namespace FS.Cache.Redis
                 var data    = funcData(po);
                 tasks.Add(transaction.HashSetAsync(key, dataKey, data));
             }
+
             transaction.Execute();
             Task.WaitAll(tasks.ToArray());
         }
@@ -101,6 +107,7 @@ namespace FS.Cache.Redis
                 var data    = funcData(po);
                 transaction.HashSetAsync(key, dataKey, data);
             }
+
             return transaction.ExecuteAsync();
         }
     }

@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using FS.Core.LinkTrack;
 using FS.DI;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
@@ -137,6 +138,7 @@ namespace FS.MQ.Rabbit
             var message = Encoding.UTF8.GetString(resp.Body.ToArray());
             try
             {
+                FsLinkTrack.TrackMq("Rabbit.Consumer");
                 result = listener.Consumer(message, resp);
             }
             catch (Exception e)
@@ -190,6 +192,7 @@ namespace FS.MQ.Rabbit
                 var message  = Encoding.UTF8.GetString(ea.Body.ToArray());
                 try
                 {
+                    FsLinkTrack.TrackMq("Rabbit.Consumer");
                     result     = await listener.Consumer(message, model, ea);
                     _lastAckAt = DateTime.Now;
                 }

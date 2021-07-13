@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text;
-using FS.Context;
 using FS.Log.Configuration;
 using NLog.Config;
 using NLog.LayoutRenderers;
@@ -14,7 +13,7 @@ namespace FS.Log
     {
         static NLogConfigrationProvider()
         {
-            var traceId = TraceIdContext.Current?.TraceId ?? "traceId"; //初始化TraceId
+            var traceId = "traceId"; //初始化TraceId
             LayoutRenderer.Register("traceid", (logEvent) => traceId);
             LayoutRenderer.Register("MyDateTime", (logEvent) => DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));//初始化日期格式
         }

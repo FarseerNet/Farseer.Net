@@ -11,10 +11,9 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using FS.Context;
 using FS.Extends;
 
-namespace FS.Http
+namespace FS.Core.Http
 {
     public class Net
     {

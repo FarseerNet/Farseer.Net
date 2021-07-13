@@ -119,8 +119,11 @@ namespace FS.Data.Internal
             // 默认SQL执行者
             Executeor = new ExecuteSql(new DbExecutor(ContextConnection.ConnectionString, ContextConnection.DbType, ContextConnection.CommandTimeout, !IsUnitOfWork && DbProvider.IsSupportTransaction ? IsolationLevel.RepeatableRead : IsolationLevel.Unspecified), this);
 
-            // 代理SQL监控
-            if (IocManager.Instance.IsRegistered<ISqlMonitor>()) Executeor = new ExecuteSqlMonitorProxy(Executeor);
+            // 记录执行链路
+            Executeor = new ExecuteSqlMonitorProxy(Executeor);
+            
+            // 代理SQL监控（添加了执行链路，这里不需要判断条件了）
+            //if (IocManager.Instance.IsRegistered<ISqlMonitor>()) Executeor = new ExecuteSqlMonitorProxy(Executeor);
 
             // 队列管理者
             QueueManger = new QueueManger(this);
