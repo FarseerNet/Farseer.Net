@@ -51,7 +51,7 @@ namespace Farseer.Net.Grpc
             {
                 CallType = EumCallType.GrpcClient,
                 StartTs  = DateTime.Now.ToTimestamps(),
-                GrpcLinkTrack = new GrpcLinkTrackDetail()
+                ApiLinkTrack = new ApiLinkTrackDetail()
                 {
                     Server = context.Method.ServiceName,
                     Action = context.Method.Name,
@@ -69,7 +69,7 @@ namespace Farseer.Net.Grpc
             {
                 CallType = EumCallType.GrpcClient,
                 StartTs  = DateTime.Now.ToTimestamps(),
-                GrpcLinkTrack = new GrpcLinkTrackDetail()
+                ApiLinkTrack = new ApiLinkTrackDetail()
                 {
                     Server = context.Method.ServiceName,
                     Action = context.Method.Name,

@@ -120,8 +120,10 @@ namespace FS.MQ.RedisStream
                         MessageIds = streamEntries.Select(o => o.Id.ToString()).ToArray()
                     };
 
-                    FsLinkTrack.TrackMq("RedisStream.Consumer");
-                    result = await listener.Consumer(streamEntries, consumeContext);
+                    using (FsLinkTrack.TrackMq("RedisStream.Consumer"))
+                    {
+                        result = await listener.Consumer(streamEntries, consumeContext);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -177,8 +179,10 @@ namespace FS.MQ.RedisStream
                 var result   = false;
                 try
                 {
-                    FsLinkTrack.TrackMq("RedisStream.Consumer");
-                    result = await listener.Consumer(streamEntries, consumeContext);
+                    using (FsLinkTrack.TrackMq("RedisStream.Consumer"))
+                    {
+                        result = await listener.Consumer(streamEntries, consumeContext);
+                    }
                     if (result)
                     {
                         //await _redisCacheManager.Db.StreamDeleteAsync(_queueName, consumeContext.MessageIds.Select(o => (RedisValue) o).ToArray());

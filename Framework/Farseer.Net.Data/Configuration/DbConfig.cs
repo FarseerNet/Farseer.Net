@@ -8,12 +8,6 @@ namespace FS.Data.Configuration
     [Serializable]
     public class DbConfig
     {
-        /// <summary> 是否把输出SQL记录 </summary>
-        public bool IsWriteSqlRunLog { get; set; }
-
-        /// <summary> 是否把打印SQL记录 </summary>
-        public bool IsPrintSqlLog { get; set; }
-
         /// <summary> 数据库连接配置列表 </summary>
         public List<DbItemConfig> Items { get; set; }
     }

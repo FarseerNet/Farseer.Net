@@ -41,7 +41,7 @@ namespace FS.ElasticSearch
         /// <summary>
         /// 条件语句
         /// </summary>
-        private List<Func<QueryContainerDescriptor<TDocument>, QueryContainer>> _query =new();
+        private List<Func<QueryContainerDescriptor<TDocument>, QueryContainer>> _query = new();
 
         /// <summary>
         /// 排序语句
@@ -137,16 +137,17 @@ namespace FS.ElasticSearch
         /// </summary>
         public virtual bool Insert(TDocument model)
         {
-            FsLinkTrack.TrackElasticsearch("Insert");
-            
-            WhenNotExistsAddIndex();
-            var result = Client.Index(new IndexRequest<TDocument>(model, SetMap.IndexName));
-            if (!result.IsValid)
+            using (FsLinkTrack.TrackElasticsearch("Insert"))
             {
-                IocManager.Instance.Logger<IndexSet<TDocument>>().LogError($"索引失败：{JsonConvert.SerializeObject(model)} \r\n" + result.OriginalException.Message);
-            }
+                WhenNotExistsAddIndex();
+                var result = Client.Index(new IndexRequest<TDocument>(model, SetMap.IndexName));
+                if (!result.IsValid)
+                {
+                    IocManager.Instance.Logger<IndexSet<TDocument>>().LogError($"索引失败：{JsonConvert.SerializeObject(model)} \r\n" + result.OriginalException.Message);
+                }
 
-            return result.IsValid;
+                return result.IsValid;
+            }
         }
 
         /// <summary>
@@ -154,103 +155,108 @@ namespace FS.ElasticSearch
         /// </summary>
         public virtual async Task<bool> InsertAsync(TDocument model)
         {
-            FsLinkTrack.TrackElasticsearch("InsertAsync");
-            WhenNotExistsAddIndex();
-            var result = await Client.IndexAsync(new IndexRequest<TDocument>(model, SetMap.IndexName));
-            if (!result.IsValid)
+            using (FsLinkTrack.TrackElasticsearch("InsertAsync"))
             {
-                IocManager.Instance.Logger<IndexSet<TDocument>>().LogError($"索引失败：{JsonConvert.SerializeObject(model)} \r\n" + result.OriginalException.Message);
-            }
+                WhenNotExistsAddIndex();
+                var result = await Client.IndexAsync(new IndexRequest<TDocument>(model, SetMap.IndexName));
+                if (!result.IsValid)
+                {
+                    IocManager.Instance.Logger<IndexSet<TDocument>>().LogError($"索引失败：{JsonConvert.SerializeObject(model)} \r\n" + result.OriginalException.Message);
+                }
 
-            return result.IsValid;
+                return result.IsValid;
+            }
         }
-        
+
         /// <summary>
         /// 批量写入数据
         /// </summary>
         public virtual bool Insert(List<TDocument> lst)
         {
-            FsLinkTrack.TrackElasticsearch("Insert");
-            
-            WhenNotExistsAddIndex();
-            var result = Client.IndexMany(lst, SetMap.IndexName);
-            if (!result.IsValid)
+            using (FsLinkTrack.TrackElasticsearch("Insert"))
             {
-                IocManager.Instance.Logger<IndexSet<TDocument>>().LogError($"索引失败：{JsonConvert.SerializeObject(lst)} \r\n" + result.OriginalException.Message);
-            }
+                WhenNotExistsAddIndex();
+                var result = Client.IndexMany(lst, SetMap.IndexName);
+                if (!result.IsValid)
+                {
+                    IocManager.Instance.Logger<IndexSet<TDocument>>().LogError($"索引失败：{JsonConvert.SerializeObject(lst)} \r\n" + result.OriginalException.Message);
+                }
 
-            return result.IsValid;
+                return result.IsValid;
+            }
         }
-        
+
         /// <summary>
         /// 批量写入数据
         /// </summary>
         public virtual async Task<bool> InsertAsync(List<TDocument> lst)
         {
-            FsLinkTrack.TrackElasticsearch("InsertAsync");
-            
-            WhenNotExistsAddIndex();
-            var result = await Client.IndexManyAsync(lst, SetMap.IndexName);
-            if (!result.IsValid)
+            using (FsLinkTrack.TrackElasticsearch("InsertAsync"))
             {
-                IocManager.Instance.Logger<IndexSet<TDocument>>().LogError($"索引失败：{JsonConvert.SerializeObject(lst)} \r\n" + result.OriginalException.Message);
-            }
+                WhenNotExistsAddIndex();
+                var result = await Client.IndexManyAsync(lst, SetMap.IndexName);
+                if (!result.IsValid)
+                {
+                    IocManager.Instance.Logger<IndexSet<TDocument>>().LogError($"索引失败：{JsonConvert.SerializeObject(lst)} \r\n" + result.OriginalException.Message);
+                }
 
-            return result.IsValid;
+                return result.IsValid;
+            }
         }
 
-            /// <summary>
+        /// <summary>
         /// 获取全部数据列表（支持获取全部数据）
         /// </summary>
         public List<TDocument> ToScrollList()
         {
-            FsLinkTrack.TrackElasticsearch("ToScrollList");
-            
-            var size       = 1000;
-            var scrollTime = new Time(TimeSpan.FromSeconds(30));
-            var searchResponse = Client.Search<TDocument>(s =>
+            using (FsLinkTrack.TrackElasticsearch("ToScrollList"))
             {
-                var searchDescriptor                        = s.Index(SetMap.AliasNames).Size(size).Scroll(scrollTime);
-                if (_query.Count > 0) searchDescriptor        = searchDescriptor.Query(q=>q.Bool(b=>b.Must(_query)));
-                if (_sort != null) searchDescriptor         = searchDescriptor.Sort(_sort);
-                if (_selectFields != null) searchDescriptor = searchDescriptor.Source(s => s.Includes(i => i.Fields(_selectFields)));
-                return searchDescriptor;
-            });
+                var size       = 1000;
+                var scrollTime = new Time(TimeSpan.FromSeconds(30));
+                var searchResponse = Client.Search<TDocument>(s =>
+                {
+                    var searchDescriptor                        = s.Index(SetMap.AliasNames).Size(size).Scroll(scrollTime);
+                    if (_query.Count > 0) searchDescriptor      = searchDescriptor.Query(q => q.Bool(b => b.Must(_query)));
+                    if (_sort != null) searchDescriptor         = searchDescriptor.Sort(_sort);
+                    if (_selectFields != null) searchDescriptor = searchDescriptor.Source(s => s.Includes(i => i.Fields(_selectFields)));
+                    return searchDescriptor;
+                });
 
-            if (!searchResponse.IsValid)
-            {
-                if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return null;
-                throw searchResponse.OriginalException;
-            }
-
-
-            // 查询超过1万条记录时，使用滚动（类似游标）方式实现
-            List<TDocument> Scroll()
-            {
-                var lst = new List<TDocument>();
                 if (!searchResponse.IsValid)
                 {
-                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return new List<TDocument>();
+                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return null;
                     throw searchResponse.OriginalException;
                 }
 
-                lst.AddRange(searchResponse.Documents.ToList());
 
-                // 数量相等，说明还没有读完全部数据
-                while (searchResponse.Documents.Count == size)
+                // 查询超过1万条记录时，使用滚动（类似游标）方式实现
+                List<TDocument> Scroll()
                 {
-                    searchResponse = Client.Scroll<TDocument>(scrollTime, searchResponse.ScrollId);
-                    if (searchResponse.Documents.Count > 0)
+                    var lst = new List<TDocument>();
+                    if (!searchResponse.IsValid)
                     {
-                        lst.AddRange(searchResponse.Documents.ToList());
+                        if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return new List<TDocument>();
+                        throw searchResponse.OriginalException;
                     }
+
+                    lst.AddRange(searchResponse.Documents.ToList());
+
+                    // 数量相等，说明还没有读完全部数据
+                    while (searchResponse.Documents.Count == size)
+                    {
+                        searchResponse = Client.Scroll<TDocument>(scrollTime, searchResponse.ScrollId);
+                        if (searchResponse.Documents.Count > 0)
+                        {
+                            lst.AddRange(searchResponse.Documents.ToList());
+                        }
+                    }
+
+                    Client.ClearScroll(s => s.ScrollId(searchResponse.ScrollId));
+                    return lst;
                 }
 
-                Client.ClearScroll(s => s.ScrollId(searchResponse.ScrollId));
-                return lst;
+                return Scroll();
             }
-
-            return Scroll();
         }
 
         /// <summary>
@@ -258,47 +264,48 @@ namespace FS.ElasticSearch
         /// </summary>
         public async Task<List<TDocument>> ToScrollListAsync()
         {
-            FsLinkTrack.TrackElasticsearch("ToScrollListAsync");
-            
-            var size       = 1000;
-            var scrollTime = new Time(TimeSpan.FromSeconds(30));
-            var searchResponse = await Client.SearchAsync<TDocument>(s =>
+            using (FsLinkTrack.TrackElasticsearch("ToScrollListAsync"))
             {
-                var searchDescriptor                        = s.Index(SetMap.AliasNames).Size(size).Scroll(scrollTime);
-                if (_query.Count > 0) searchDescriptor        = searchDescriptor.Query(q=>q.Bool(b=>b.Must(_query)));
-                if (_sort != null) searchDescriptor         = searchDescriptor.Sort(_sort);
-                if (_selectFields != null) searchDescriptor = searchDescriptor.Source(s => s.Includes(i => i.Fields(_selectFields)));
-                return searchDescriptor;
-            });
-
-            async Task<List<TDocument>> ScrollAsync()
-            {
-                var lst = new List<TDocument>();
-                if (!searchResponse.IsValid)
+                var size       = 1000;
+                var scrollTime = new Time(TimeSpan.FromSeconds(30));
+                var searchResponse = await Client.SearchAsync<TDocument>(s =>
                 {
-                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return new List<TDocument>();
-                    throw searchResponse.OriginalException;
-                }
+                    var searchDescriptor                        = s.Index(SetMap.AliasNames).Size(size).Scroll(scrollTime);
+                    if (_query.Count > 0) searchDescriptor      = searchDescriptor.Query(q => q.Bool(b => b.Must(_query)));
+                    if (_sort != null) searchDescriptor         = searchDescriptor.Sort(_sort);
+                    if (_selectFields != null) searchDescriptor = searchDescriptor.Source(s => s.Includes(i => i.Fields(_selectFields)));
+                    return searchDescriptor;
+                });
 
-                lst.AddRange(searchResponse.Documents.ToList());
-
-                // 数量相等，说明还没有读完全部数据
-                while (searchResponse.Documents.Count == size)
+                async Task<List<TDocument>> ScrollAsync()
                 {
-                    searchResponse = await Client.ScrollAsync<TDocument>(scrollTime, searchResponse.ScrollId);
-                    if (searchResponse.Documents.Count > 0)
+                    var lst = new List<TDocument>();
+                    if (!searchResponse.IsValid)
                     {
-                        lst.AddRange(searchResponse.Documents.ToList());
+                        if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return new List<TDocument>();
+                        throw searchResponse.OriginalException;
                     }
+
+                    lst.AddRange(searchResponse.Documents.ToList());
+
+                    // 数量相等，说明还没有读完全部数据
+                    while (searchResponse.Documents.Count == size)
+                    {
+                        searchResponse = await Client.ScrollAsync<TDocument>(scrollTime, searchResponse.ScrollId);
+                        if (searchResponse.Documents.Count > 0)
+                        {
+                            lst.AddRange(searchResponse.Documents.ToList());
+                        }
+                    }
+
+                    await Client.ClearScrollAsync(s => s.ScrollId(searchResponse.ScrollId));
+                    return lst;
                 }
 
-                await Client.ClearScrollAsync(s => s.ScrollId(searchResponse.ScrollId));
-                return lst;
+                return await ScrollAsync();
             }
-
-            return await ScrollAsync();
         }
-        
+
         /// <summary>
         /// 获取全部数据列表（支持取10000条以内）
         /// </summary>
@@ -308,32 +315,33 @@ namespace FS.ElasticSearch
         /// 获取全部数据列表（支持取10000条以内）
         /// </summary>
         public Task<List<TDocument>> ToListAsync() => ToListAsync(10000);
-        
+
         /// <summary>
         /// 获取数据列表
         /// </summary>
         /// <param name="top">显示前多少条数据</param>
         public List<TDocument> ToList(int top)
         {
-            FsLinkTrack.TrackElasticsearch("ToList");
-            
-            var searchResponse = Client.Search<TDocument>(s =>
+            using (FsLinkTrack.TrackElasticsearch("ToList"))
             {
-                var searchDescriptor                        = s.Index(SetMap.AliasNames);
-                if (_query.Count > 0) searchDescriptor        = searchDescriptor.Query(q=>q.Bool(b=>b.Must(_query)));
-                if (top > 0) searchDescriptor               = searchDescriptor.Size(top);
-                if (_sort != null) searchDescriptor         = searchDescriptor.Sort(_sort);
-                if (_selectFields != null) searchDescriptor = searchDescriptor.Source(s => s.Includes(i => i.Fields(_selectFields)));
-                return searchDescriptor;
-            });
+                var searchResponse = Client.Search<TDocument>(s =>
+                {
+                    var searchDescriptor                        = s.Index(SetMap.AliasNames);
+                    if (_query.Count > 0) searchDescriptor      = searchDescriptor.Query(q => q.Bool(b => b.Must(_query)));
+                    if (top > 0) searchDescriptor               = searchDescriptor.Size(top);
+                    if (_sort != null) searchDescriptor         = searchDescriptor.Sort(_sort);
+                    if (_selectFields != null) searchDescriptor = searchDescriptor.Source(s => s.Includes(i => i.Fields(_selectFields)));
+                    return searchDescriptor;
+                });
 
-            if (!searchResponse.IsValid)
-            {
-                if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return null;
-                throw searchResponse.OriginalException;
+                if (!searchResponse.IsValid)
+                {
+                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return null;
+                    throw searchResponse.OriginalException;
+                }
+
+                return searchResponse.Documents.ToList();
             }
-
-            return searchResponse.Documents.ToList();
         }
 
         /// <summary>
@@ -342,25 +350,26 @@ namespace FS.ElasticSearch
         /// <param name="top">显示前多少条数据</param>
         public async Task<List<TDocument>> ToListAsync(int top)
         {
-            FsLinkTrack.TrackElasticsearch("ToListAsync");
-            
-            var searchResponse = await Client.SearchAsync<TDocument>(s =>
+            using (FsLinkTrack.TrackElasticsearch("ToListAsync"))
             {
-                var searchDescriptor                        = s.Index(SetMap.AliasNames);
-                if (_query.Count > 0) searchDescriptor        = searchDescriptor.Query(q=>q.Bool(b=>b.Must(_query)));
-                if (top > 0) searchDescriptor               = searchDescriptor.Size(top);
-                if (_sort != null) searchDescriptor         = searchDescriptor.Sort(_sort);
-                if (_selectFields != null) searchDescriptor = searchDescriptor.Source(s => s.Includes(i => i.Fields(_selectFields)));
-                return searchDescriptor;
-            });
+                var searchResponse = await Client.SearchAsync<TDocument>(s =>
+                {
+                    var searchDescriptor                        = s.Index(SetMap.AliasNames);
+                    if (_query.Count > 0) searchDescriptor      = searchDescriptor.Query(q => q.Bool(b => b.Must(_query)));
+                    if (top > 0) searchDescriptor               = searchDescriptor.Size(top);
+                    if (_sort != null) searchDescriptor         = searchDescriptor.Sort(_sort);
+                    if (_selectFields != null) searchDescriptor = searchDescriptor.Source(s => s.Includes(i => i.Fields(_selectFields)));
+                    return searchDescriptor;
+                });
 
-            if (!searchResponse.IsValid)
-            {
-                if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return null;
-                throw searchResponse.OriginalException;
+                if (!searchResponse.IsValid)
+                {
+                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return null;
+                    throw searchResponse.OriginalException;
+                }
+
+                return searchResponse.Documents.ToList();
             }
-
-            return searchResponse.Documents.ToList();
         }
 
         /// <summary>
@@ -371,29 +380,30 @@ namespace FS.ElasticSearch
         /// <param name="recordCount">命中的总记录数 </param>
         public List<TDocument> ToList(int pageSize, int pageIndex, out long recordCount)
         {
-            FsLinkTrack.TrackElasticsearch("ToList");
-            
-            recordCount = 0;
-            var from                = 0;
-            if (pageIndex > 1) from = (pageIndex - 1) * pageSize;
-
-            var searchResponse = Client.Search<TDocument>(s =>
+            using (FsLinkTrack.TrackElasticsearch("ToList"))
             {
-                var searchDescriptor                        = s.Index(SetMap.AliasNames).Size(pageSize).From(from);
-                if (_query.Count > 0) searchDescriptor      = searchDescriptor.Query(q=>q.Bool(b=>b.Must(_query)));
-                if (_sort != null) searchDescriptor         = searchDescriptor.Sort(_sort);
-                if (_selectFields != null) searchDescriptor = searchDescriptor.Source(s => s.Includes(i => i.Fields(_selectFields)));
-                return searchDescriptor;
-            });
+                recordCount = 0;
+                var from                = 0;
+                if (pageIndex > 1) from = (pageIndex - 1) * pageSize;
 
-            if (!searchResponse.IsValid)
-            {
-                if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return null;
-                throw searchResponse.OriginalException;
+                var searchResponse = Client.Search<TDocument>(s =>
+                {
+                    var searchDescriptor                        = s.Index(SetMap.AliasNames).Size(pageSize).From(from);
+                    if (_query.Count > 0) searchDescriptor      = searchDescriptor.Query(q => q.Bool(b => b.Must(_query)));
+                    if (_sort != null) searchDescriptor         = searchDescriptor.Sort(_sort);
+                    if (_selectFields != null) searchDescriptor = searchDescriptor.Source(s => s.Includes(i => i.Fields(_selectFields)));
+                    return searchDescriptor;
+                });
+
+                if (!searchResponse.IsValid)
+                {
+                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return null;
+                    throw searchResponse.OriginalException;
+                }
+
+                recordCount = searchResponse.Total;
+                return searchResponse.Documents.ToList();
             }
-
-            recordCount = searchResponse.Total;
-            return searchResponse.Documents.ToList();
         }
 
         /// <summary>
@@ -401,24 +411,25 @@ namespace FS.ElasticSearch
         /// </summary>
         public TValue GetValue<TValue>(Expression<Func<TDocument, object>> select)
         {
-            FsLinkTrack.TrackElasticsearch("GetValue");
-            
-            var searchResponse = Client.Search<TDocument>(s =>
+            using (FsLinkTrack.TrackElasticsearch("GetValue"))
             {
-                var searchDescriptor                        = s.Index(SetMap.AliasNames).Size(1).Source(s => s.Includes(i => i.Fields(select)));
-                if (_query.Count > 0) searchDescriptor        = searchDescriptor.Query(q=>q.Bool(b=>b.Must(_query)));
-                if (_sort != null) searchDescriptor         = searchDescriptor.Sort(_sort);
-                return searchDescriptor;
-            });
+                var searchResponse = Client.Search<TDocument>(s =>
+                {
+                    var searchDescriptor                   = s.Index(SetMap.AliasNames).Size(1).Source(s => s.Includes(i => i.Fields(select)));
+                    if (_query.Count > 0) searchDescriptor = searchDescriptor.Query(q => q.Bool(b => b.Must(_query)));
+                    if (_sort != null) searchDescriptor    = searchDescriptor.Sort(_sort);
+                    return searchDescriptor;
+                });
 
-            if (!searchResponse.IsValid)
-            {
-                if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return default;
-                throw searchResponse.OriginalException;
+                if (!searchResponse.IsValid)
+                {
+                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return default;
+                    throw searchResponse.OriginalException;
+                }
+
+                var entity = searchResponse.Hits?.FirstOrDefault()?.Source;
+                return entity == null ? default : select.Compile().Invoke(entity).ConvertType(default(TValue));
             }
-
-            var entity= searchResponse.Hits?.FirstOrDefault()?.Source;
-            return entity == null ? default : select.Compile().Invoke(entity).ConvertType(default(TValue));
         }
 
         /// <summary>
@@ -426,24 +437,25 @@ namespace FS.ElasticSearch
         /// </summary>
         public async Task<TValue> GetValueAsync<TValue>(Expression<Func<TDocument, object>> select)
         {
-            FsLinkTrack.TrackElasticsearch("GetValueAsync");
-            
-            var searchResponse = await Client.SearchAsync<TDocument>(s =>
+            using (FsLinkTrack.TrackElasticsearch("GetValueAsync"))
             {
-                var searchDescriptor                 = s.Index(SetMap.AliasNames).Size(1).Source(s => s.Includes(i => i.Fields(select)));
-                if (_query.Count > 0) searchDescriptor        = searchDescriptor.Query(q=>q.Bool(b=>b.Must(_query)));
-                if (_sort != null) searchDescriptor  = searchDescriptor.Sort(_sort);
-                return searchDescriptor;
-            });
+                var searchResponse = await Client.SearchAsync<TDocument>(s =>
+                {
+                    var searchDescriptor                   = s.Index(SetMap.AliasNames).Size(1).Source(s => s.Includes(i => i.Fields(select)));
+                    if (_query.Count > 0) searchDescriptor = searchDescriptor.Query(q => q.Bool(b => b.Must(_query)));
+                    if (_sort != null) searchDescriptor    = searchDescriptor.Sort(_sort);
+                    return searchDescriptor;
+                });
 
-            if (!searchResponse.IsValid)
-            {
-                if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return default;
-                throw searchResponse.OriginalException;
+                if (!searchResponse.IsValid)
+                {
+                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return default;
+                    throw searchResponse.OriginalException;
+                }
+
+                var entity = searchResponse.Hits?.FirstOrDefault()?.Source;
+                return entity == null ? default : select.Compile().Invoke(entity).ConvertType(default(TValue));
             }
-
-            var entity = searchResponse.Hits?.FirstOrDefault()?.Source;
-            return entity == null ? default : select.Compile().Invoke(entity).ConvertType(default(TValue));
         }
 
         /// <summary>
@@ -451,24 +463,25 @@ namespace FS.ElasticSearch
         /// </summary>
         public TDocument ToEntity()
         {
-            FsLinkTrack.TrackElasticsearch("ToEntity");
-            
-            var searchResponse = Client.Search<TDocument>(s =>
+            using (FsLinkTrack.TrackElasticsearch("ToEntity"))
             {
-                var searchDescriptor                        = s.Index(SetMap.AliasNames).Size(1);
-                if (_query.Count > 0) searchDescriptor        = searchDescriptor.Query(q=>q.Bool(b=>b.Must(_query)));
-                if (_sort != null) searchDescriptor         = searchDescriptor.Sort(_sort);
-                if (_selectFields != null) searchDescriptor = searchDescriptor.Source(s => s.Includes(i => i.Fields(_selectFields)));
-                return searchDescriptor;
-            });
+                var searchResponse = Client.Search<TDocument>(s =>
+                {
+                    var searchDescriptor                        = s.Index(SetMap.AliasNames).Size(1);
+                    if (_query.Count > 0) searchDescriptor      = searchDescriptor.Query(q => q.Bool(b => b.Must(_query)));
+                    if (_sort != null) searchDescriptor         = searchDescriptor.Sort(_sort);
+                    if (_selectFields != null) searchDescriptor = searchDescriptor.Source(s => s.Includes(i => i.Fields(_selectFields)));
+                    return searchDescriptor;
+                });
 
-            if (!searchResponse.IsValid)
-            {
-                if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return null;
-                throw searchResponse.OriginalException;
+                if (!searchResponse.IsValid)
+                {
+                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return null;
+                    throw searchResponse.OriginalException;
+                }
+
+                return searchResponse.Hits?.FirstOrDefault()?.Source;
             }
-
-            return searchResponse.Hits?.FirstOrDefault()?.Source;
         }
 
         /// <summary>
@@ -476,24 +489,25 @@ namespace FS.ElasticSearch
         /// </summary>
         public async Task<TDocument> ToEntityAsync()
         {
-            FsLinkTrack.TrackElasticsearch("ToEntityAsync");
-            
-            var searchResponse = await Client.SearchAsync<TDocument>(s =>
+            using (FsLinkTrack.TrackElasticsearch("ToEntityAsync"))
             {
-                var searchDescriptor                        = s.Index(SetMap.AliasNames).Size(1);
-                if (_query.Count > 0) searchDescriptor        = searchDescriptor.Query(q=>q.Bool(b=>b.Must(_query)));
-                if (_sort != null) searchDescriptor         = searchDescriptor.Sort(_sort);
-                if (_selectFields != null) searchDescriptor = searchDescriptor.Source(s => s.Includes(i => i.Fields(_selectFields)));
-                return searchDescriptor;
-            });
+                var searchResponse = await Client.SearchAsync<TDocument>(s =>
+                {
+                    var searchDescriptor                        = s.Index(SetMap.AliasNames).Size(1);
+                    if (_query.Count > 0) searchDescriptor      = searchDescriptor.Query(q => q.Bool(b => b.Must(_query)));
+                    if (_sort != null) searchDescriptor         = searchDescriptor.Sort(_sort);
+                    if (_selectFields != null) searchDescriptor = searchDescriptor.Source(s => s.Includes(i => i.Fields(_selectFields)));
+                    return searchDescriptor;
+                });
 
-            if (!searchResponse.IsValid)
-            {
-                if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return null;
-                throw searchResponse.OriginalException;
+                if (!searchResponse.IsValid)
+                {
+                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return null;
+                    throw searchResponse.OriginalException;
+                }
+
+                return searchResponse.Hits?.FirstOrDefault()?.Source;
             }
-
-            return searchResponse.Hits?.FirstOrDefault()?.Source;
         }
 
         /// <summary>
@@ -501,23 +515,24 @@ namespace FS.ElasticSearch
         /// </summary>
         public bool IsExists()
         {
-            FsLinkTrack.TrackElasticsearch("IsExists");
-            
-            var searchResponse = Client.Count<TDocument>(s =>
+            using (FsLinkTrack.TrackElasticsearch("IsExists"))
             {
-                var searchDescriptor                 = s.Index(SetMap.AliasNames);
-                if (_query.Count > 0) searchDescriptor        = searchDescriptor.Query(q=>q.Bool(b=>b.Must(_query)));
-                return searchDescriptor;
-            });
+                var searchResponse = Client.Count<TDocument>(s =>
+                {
+                    var searchDescriptor                   = s.Index(SetMap.AliasNames);
+                    if (_query.Count > 0) searchDescriptor = searchDescriptor.Query(q => q.Bool(b => b.Must(_query)));
+                    return searchDescriptor;
+                });
 
-            // 异常则抛出
-            if (!searchResponse.IsValid)
-            {
-                if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return false;
-                throw new Exception(searchResponse.ServerError.Error.ToString());
+                // 异常则抛出
+                if (!searchResponse.IsValid)
+                {
+                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return false;
+                    throw new Exception(searchResponse.ServerError.Error.ToString());
+                }
+
+                return searchResponse.Count > 0;
             }
-
-            return searchResponse.Count > 0;
         }
 
         /// <summary>
@@ -525,23 +540,24 @@ namespace FS.ElasticSearch
         /// </summary>
         public async Task<bool> IsExistsAsync()
         {
-            FsLinkTrack.TrackElasticsearch("IsExistsAsync");
-            
-            var searchResponse = await Client.CountAsync<TDocument>(s =>
+            using (FsLinkTrack.TrackElasticsearch("IsExistsAsync"))
             {
-                var searchDescriptor                 = s.Index(SetMap.AliasNames);
-                if (_query.Count > 0) searchDescriptor        = searchDescriptor.Query(q=>q.Bool(b=>b.Must(_query)));
-                return searchDescriptor;
-            });
+                var searchResponse = await Client.CountAsync<TDocument>(s =>
+                {
+                    var searchDescriptor                   = s.Index(SetMap.AliasNames);
+                    if (_query.Count > 0) searchDescriptor = searchDescriptor.Query(q => q.Bool(b => b.Must(_query)));
+                    return searchDescriptor;
+                });
 
-            // 异常则抛出
-            if (!searchResponse.IsValid)
-            {
-                if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return false;
-                throw new Exception(searchResponse.ServerError.Error.ToString());
+                // 异常则抛出
+                if (!searchResponse.IsValid)
+                {
+                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return false;
+                    throw new Exception(searchResponse.ServerError.Error.ToString());
+                }
+
+                return searchResponse.Count > 0;
             }
-
-            return searchResponse.Count > 0;
         }
 
         /// <summary>
@@ -549,23 +565,24 @@ namespace FS.ElasticSearch
         /// </summary>
         public long Count()
         {
-            FsLinkTrack.TrackElasticsearch("Count");
-            
-            var searchResponse = Client.Count<TDocument>(s =>
+            using (FsLinkTrack.TrackElasticsearch("Count"))
             {
-                var searchDescriptor                 = s.Index(SetMap.AliasNames);
-                if (_query.Count > 0) searchDescriptor        = searchDescriptor.Query(q=>q.Bool(b=>b.Must(_query)));
-                return searchDescriptor;
-            });
+                var searchResponse = Client.Count<TDocument>(s =>
+                {
+                    var searchDescriptor                   = s.Index(SetMap.AliasNames);
+                    if (_query.Count > 0) searchDescriptor = searchDescriptor.Query(q => q.Bool(b => b.Must(_query)));
+                    return searchDescriptor;
+                });
 
-            // 异常则抛出
-            if (!searchResponse.IsValid)
-            {
-                if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return 0;
-                throw new Exception(searchResponse.ServerError.Error.ToString());
+                // 异常则抛出
+                if (!searchResponse.IsValid)
+                {
+                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return 0;
+                    throw new Exception(searchResponse.ServerError.Error.ToString());
+                }
+
+                return searchResponse.Count;
             }
-
-            return searchResponse.Count;
         }
 
         /// <summary>
@@ -573,23 +590,24 @@ namespace FS.ElasticSearch
         /// </summary>
         public async Task<long> CountAsync()
         {
-            FsLinkTrack.TrackElasticsearch("CountAsync");
-            
-            var searchResponse = await Client.CountAsync<TDocument>(s =>
+            using (FsLinkTrack.TrackElasticsearch("CountAsync"))
             {
-                var searchDescriptor                 = s.Index(SetMap.AliasNames);
-                if (_query.Count > 0) searchDescriptor        = searchDescriptor.Query(q=>q.Bool(b=>b.Must(_query)));
-                return searchDescriptor;
-            });
+                var searchResponse = await Client.CountAsync<TDocument>(s =>
+                {
+                    var searchDescriptor                   = s.Index(SetMap.AliasNames);
+                    if (_query.Count > 0) searchDescriptor = searchDescriptor.Query(q => q.Bool(b => b.Must(_query)));
+                    return searchDescriptor;
+                });
 
-            // 异常则抛出
-            if (!searchResponse.IsValid)
-            {
-                if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return 0;
-                throw new Exception(searchResponse.ServerError.Error.ToString());
+                // 异常则抛出
+                if (!searchResponse.IsValid)
+                {
+                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return 0;
+                    throw new Exception(searchResponse.ServerError.Error.ToString());
+                }
+
+                return searchResponse.Count;
             }
-
-            return searchResponse.Count;
         }
 
         /// <summary>
@@ -597,10 +615,11 @@ namespace FS.ElasticSearch
         /// </summary>
         public bool Update(string id, TDocument entity)
         {
-            FsLinkTrack.TrackElasticsearch("Update");
-            
-            var result = Client.Update<TDocument>(id, s =>s.Index(SetMap.IndexName).Doc(entity));
-            return result.IsValid;
+            using (FsLinkTrack.TrackElasticsearch("Update"))
+            {
+                var result = Client.Update<TDocument>(id, s => s.Index(SetMap.IndexName).Doc(entity));
+                return result.IsValid;
+            }
         }
 
         /// <summary>
@@ -608,10 +627,11 @@ namespace FS.ElasticSearch
         /// </summary>
         public async Task<bool> UpdateAsync(string id, TDocument entity)
         {
-            FsLinkTrack.TrackElasticsearch("Update");
-            
-            var result = await Client.UpdateAsync<TDocument>(id, s =>s.Index(SetMap.IndexName).Doc(entity));
-            return result.IsValid;
+            using (FsLinkTrack.TrackElasticsearch("Update"))
+            {
+                var result = await Client.UpdateAsync<TDocument>(id, s => s.Index(SetMap.IndexName).Doc(entity));
+                return result.IsValid;
+            }
         }
 
         /// <summary>
@@ -619,16 +639,17 @@ namespace FS.ElasticSearch
         /// </summary>
         public bool Update(object entity, bool firstCharToLower = true)
         {
-            FsLinkTrack.TrackElasticsearch("Update");
-            
-            var result = Client.UpdateByQuery<TDocument>(o =>
+            using (FsLinkTrack.TrackElasticsearch("Update"))
             {
-                var searchDescriptor                 = o.Index(SetMap.AliasNames);
-                if (_query.Count > 0) searchDescriptor        = searchDescriptor.Query(q=>q.Bool(b=>b.Must(_query)));
-                return Script(searchDescriptor, entity, firstCharToLower);
-            });
+                var result = Client.UpdateByQuery<TDocument>(o =>
+                {
+                    var searchDescriptor                   = o.Index(SetMap.AliasNames);
+                    if (_query.Count > 0) searchDescriptor = searchDescriptor.Query(q => q.Bool(b => b.Must(_query)));
+                    return Script(searchDescriptor, entity, firstCharToLower);
+                });
 
-            return result.IsValid;
+                return result.IsValid;
+            }
         }
 
         /// <summary>
@@ -636,17 +657,18 @@ namespace FS.ElasticSearch
         /// </summary>
         public async Task<bool> UpdateAsync(object entity, bool firstCharToLower = true)
         {
-            FsLinkTrack.TrackElasticsearch("UpdateAsync");
-            
-            var result = await Client.UpdateByQueryAsync<TDocument>(s =>
+            using (FsLinkTrack.TrackElasticsearch("UpdateAsync"))
             {
-                var searchDescriptor                 = s.Index(SetMap.AliasNames);
-                if (_query.Count > 0) searchDescriptor        = searchDescriptor.Query(q=>q.Bool(b=>b.Must(_query)));
-                return Script(searchDescriptor, entity, firstCharToLower);
-            });
+                var result = await Client.UpdateByQueryAsync<TDocument>(s =>
+                {
+                    var searchDescriptor                   = s.Index(SetMap.AliasNames);
+                    if (_query.Count > 0) searchDescriptor = searchDescriptor.Query(q => q.Bool(b => b.Must(_query)));
+                    return Script(searchDescriptor, entity, firstCharToLower);
+                });
 
 
-            return result.IsValid;
+                return result.IsValid;
+            }
         }
 
         /// <summary>
@@ -683,55 +705,59 @@ namespace FS.ElasticSearch
         /// </summary>
         public bool Delete(string id)
         {
-            FsLinkTrack.TrackElasticsearch("Delete");
-            
-            var searchResponse = Client.Delete<TDocument>(id);
-            return searchResponse.IsValid;
+            using (FsLinkTrack.TrackElasticsearch("Delete"))
+            {
+                var searchResponse = Client.Delete<TDocument>(id);
+                return searchResponse.IsValid;
+            }
         }
-        
+
         /// <summary>
         /// 删除数据（指定Id的方式）
         /// </summary>
         public async Task<bool> DeleteAsync(string id)
         {
-            FsLinkTrack.TrackElasticsearch("DeleteAsync");
-            
-            var searchResponse = await Client.DeleteAsync<TDocument>(id);
-            return searchResponse.IsValid;
+            using (FsLinkTrack.TrackElasticsearch("DeleteAsync"))
+            {
+                var searchResponse = await Client.DeleteAsync<TDocument>(id);
+                return searchResponse.IsValid;
+            }
         }
-        
+
         /// <summary>
         /// 删除数据
         /// </summary>
         public bool Delete()
         {
-            FsLinkTrack.TrackElasticsearch("Delete");
-            
-            var searchResponse = Client.DeleteByQuery<TDocument>(s=>
+            using (FsLinkTrack.TrackElasticsearch("Delete"))
             {
-                var searchDescriptor                 = s.Index(SetMap.AliasNames);
-                if (_query.Count > 0) searchDescriptor        = searchDescriptor.Query(q=>q.Bool(b=>b.Must(_query)));
-                return searchDescriptor;
-            });
-            return searchResponse.IsValid;
+                var searchResponse = Client.DeleteByQuery<TDocument>(s =>
+                {
+                    var searchDescriptor                   = s.Index(SetMap.AliasNames);
+                    if (_query.Count > 0) searchDescriptor = searchDescriptor.Query(q => q.Bool(b => b.Must(_query)));
+                    return searchDescriptor;
+                });
+                return searchResponse.IsValid;
+            }
         }
-        
+
         /// <summary>
         /// 删除数据
         /// </summary>
         public async Task<bool> DeleteAsync()
         {
-            FsLinkTrack.TrackElasticsearch("DeleteAsync");
-            
-            var searchResponse = await Client.DeleteByQueryAsync<TDocument>(s=>
+            using (FsLinkTrack.TrackElasticsearch("DeleteAsync"))
             {
-                var searchDescriptor                 = s.Index(SetMap.AliasNames);
-                if (_query.Count > 0) searchDescriptor        = searchDescriptor.Query(q=>q.Bool(b=>b.Must(_query)));
-                return searchDescriptor;
-            });
-            return searchResponse.IsValid;
+                var searchResponse = await Client.DeleteByQueryAsync<TDocument>(s =>
+                {
+                    var searchDescriptor                   = s.Index(SetMap.AliasNames);
+                    if (_query.Count > 0) searchDescriptor = searchDescriptor.Query(q => q.Bool(b => b.Must(_query)));
+                    return searchDescriptor;
+                });
+                return searchResponse.IsValid;
+            }
         }
-        
+
         /// <summary>
         /// 获取ES实体字段名
         /// </summary>
@@ -807,23 +833,24 @@ namespace FS.ElasticSearch
         /// </summary>
         protected bool CreateIndex()
         {
-            FsLinkTrack.TrackElasticsearch("CreateIndex");
-            
-            var rsp = Client.Indices.Create(SetMap.IndexName, c => c
-                .Map<TDocument>(m => m.AutoMap())
-                .Aliases(des =>
-                {
-                    foreach (var aliasName in SetMap.AliasNames)
+            using (FsLinkTrack.TrackElasticsearch("CreateIndex"))
+            {
+                var rsp = Client.Indices.Create(SetMap.IndexName, c => c
+                    .Map<TDocument>(m => m.AutoMap())
+                    .Aliases(des =>
                     {
-                        des.Alias(aliasName);
-                    }
+                        foreach (var aliasName in SetMap.AliasNames)
+                        {
+                            des.Alias(aliasName);
+                        }
 
-                    return des;
-                }).Settings(s => s.NumberOfReplicas(SetMap.ReplicasCount).NumberOfShards(SetMap.ShardsCount))
-            );
-            if (!rsp.IsValid) throw new Exception(rsp.OriginalException.Message);
+                        return des;
+                    }).Settings(s => s.NumberOfReplicas(SetMap.ReplicasCount).NumberOfShards(SetMap.ShardsCount))
+                );
+                if (!rsp.IsValid) throw new Exception(rsp.OriginalException.Message);
 
-            return true;
+                return true;
+            }
         }
     }
 }

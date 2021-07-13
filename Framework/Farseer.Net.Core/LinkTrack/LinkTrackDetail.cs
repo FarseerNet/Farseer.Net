@@ -56,7 +56,7 @@ namespace FS.Core.LinkTrack
         /// <summary>
         /// 请求GRPC上下文
         /// </summary>
-        public GrpcLinkTrackDetail GrpcLinkTrack { get; set; }
+        public ApiLinkTrackDetail ApiLinkTrack { get; set; }
 
         /// <summary>
         /// 调用开始时间戳

@@ -21,17 +21,13 @@ namespace FS.Data.Internal
     {
         private readonly IExecuteSql _dbExecutor;
 
-        /// <summary>SQL执行监控 </summary>
-        private readonly ISqlMonitor[] _sqlMonitors;
-
         /// <summary>
         ///     将SQL发送到数据库（代理类、记录SQL、执行时间）
         /// </summary>
         /// <param name="db">数据库执行者</param>
         internal ExecuteSqlMonitorProxy(IExecuteSql db)
         {
-            _dbExecutor  = db;
-            _sqlMonitors = IocManager.Instance.ResolveAll<ISqlMonitor>();
+            _dbExecutor = db;
         }
 
         public DbExecutor DataBase => _dbExecutor.DataBase;
@@ -146,62 +142,18 @@ namespace FS.Data.Internal
         private TReturn SpeedTest<TReturn>(string methodName, string dbName, string tableName, CommandType cmdType, string sql, IEnumerable<DbParameter> param, Func<TReturn> func)
         {
             // 调用链上下文
-            var callLink = new LinkTrackDetail
+            var dbLinkTrackDetail = new DbLinkTrackDetail
             {
-                CallType = EumCallType.Database,
-                DbLinkTrackDetail = new DbLinkTrackDetail
-                {
-                    DataBaseName = dbName,
-                    TableName    = tableName,
-                    CommandType  = cmdType,
-                    Sql          = sql,
-                    SqlParam     = param.ToDictionary(o => o.ParameterName, o => o.Value.ToString())
-                }
+                DataBaseName = dbName,
+                TableName    = tableName,
+                CommandType  = cmdType,
+                Sql          = sql,
+                SqlParam     = param.ToDictionary(o => o.ParameterName, o => o.Value.ToString())
             };
 
-            try
+            using (FsLinkTrack.TrackDatabase(methodName, dbLinkTrackDetail))
             {
-                // 执行前
-                if (_sqlMonitors != null)
-                {
-                    foreach (var sqlMonitor in _sqlMonitors)
-                    {
-                        sqlMonitor.PreExecute(methodName, dbName, tableName, cmdType, sql, param);
-                    }
-                }
-
-                // 记录调用链执行时间
-                callLink.StartTs = DateTime.Now.ToTimestamps();
-                var val = func();
-                callLink.EndTs = DateTime.Now.ToTimestamps();
-
-                // 执行后
-                if (_sqlMonitors != null)
-                {
-                    foreach (var sqlMonitor in _sqlMonitors)
-                    {
-                        sqlMonitor.Executed(methodName, dbName, tableName, cmdType, sql, param, callLink.UseTs, val);
-                    }
-                }
-
-                return val;
-            }
-            catch (Exception e)
-            {
-                if (_sqlMonitors != null)
-                {
-                    foreach (var sqlMonitor in _sqlMonitors)
-                    {
-                        sqlMonitor.ExecuteException(methodName, dbName, tableName, cmdType, sql, param, callLink.UseTs, e);
-                    }
-                }
-
-                callLink.IsException = true;
-                throw;
-            }
-            finally
-            {
-                FsLinkTrack.Current.Set(callLink);
+                return func();
             }
         }
     }

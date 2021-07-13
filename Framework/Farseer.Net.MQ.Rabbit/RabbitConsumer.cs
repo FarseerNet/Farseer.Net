@@ -138,8 +138,10 @@ namespace FS.MQ.Rabbit
             var message = Encoding.UTF8.GetString(resp.Body.ToArray());
             try
             {
-                FsLinkTrack.TrackMq("Rabbit.Consumer");
-                result = listener.Consumer(message, resp);
+                using (FsLinkTrack.TrackMq("Rabbit.Consumer"))
+                {
+                    result = listener.Consumer(message, resp);
+                }
             }
             catch (Exception e)
             {
@@ -192,8 +194,10 @@ namespace FS.MQ.Rabbit
                 var message  = Encoding.UTF8.GetString(ea.Body.ToArray());
                 try
                 {
-                    FsLinkTrack.TrackMq("Rabbit.Consumer");
-                    result     = await listener.Consumer(message, model, ea);
+                    using (FsLinkTrack.TrackMq("Rabbit.Consumer"))
+                    {
+                        result = await listener.Consumer(message, model, ea);
+                    }
                     _lastAckAt = DateTime.Now;
                 }
                 catch (AlreadyClosedException e) // rabbit被关闭了，重新打开链接

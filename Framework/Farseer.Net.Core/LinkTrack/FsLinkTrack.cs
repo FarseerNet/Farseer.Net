@@ -52,39 +52,74 @@ namespace FS.Core.LinkTrack
         public void Set(LinkTrackDetail linkTrackDetail) => Get().List.Add(linkTrackDetail);
 
         /// <summary>
+        /// 追踪数据库
+        /// </summary>
+        public static TrackEnd TrackDatabase(string method,DbLinkTrackDetail dbLinkTrackDetail)
+        {
+            var linkTrackDetail = new LinkTrackDetail
+            {
+                CallType          = EumCallType.Database,
+                DbLinkTrackDetail = dbLinkTrackDetail,
+                CallMethod        = method
+            };
+            Current.Set(linkTrackDetail);
+            return new TrackEnd(linkTrackDetail);
+        }
+
+        /// <summary>
         /// 追踪Redis
         /// </summary>
-        public static void TrackRedis(string method)
+        public static TrackEnd TrackApiServer(ApiLinkTrackDetail apiLinkTrack)
         {
-            Current.Set(new LinkTrackDetail
+            var linkTrackDetail = new LinkTrackDetail
+            {
+                CallType   = EumCallType.ApiServer,
+                ApiLinkTrack = apiLinkTrack
+            };
+            Current.Set(linkTrackDetail);
+            return new TrackEnd(linkTrackDetail);
+        }
+
+        /// <summary>
+        /// 追踪Redis
+        /// </summary>
+        public static TrackEnd TrackRedis(string method)
+        {
+            var linkTrackDetail = new LinkTrackDetail
             {
                 CallType   = EumCallType.Redis,
                 CallMethod = method
-            });
+            };
+            Current.Set(linkTrackDetail);
+            return new TrackEnd(linkTrackDetail);
         }
 
         /// <summary>
         /// 追踪Elasticsearch
         /// </summary>
-        public static void TrackElasticsearch(string method)
+        public static TrackEnd TrackElasticsearch(string method)
         {
-            Current.Set(new LinkTrackDetail
+            var linkTrackDetail = new LinkTrackDetail
             {
                 CallType   = EumCallType.Elasticsearch,
                 CallMethod = method
-            });
+            };
+            Current.Set(linkTrackDetail);
+            return new TrackEnd(linkTrackDetail);
         }
 
         /// <summary>
         /// 追踪Mq
         /// </summary>
-        public static void TrackMq(string method)
+        public static TrackEnd TrackMq(string method)
         {
-            Current.Set(new LinkTrackDetail
+            var linkTrackDetail = new LinkTrackDetail
             {
                 CallType   = EumCallType.Mq,
                 CallMethod = method
-            });
+            };
+            Current.Set(linkTrackDetail);
+            return new TrackEnd(linkTrackDetail);
         }
     }
 }

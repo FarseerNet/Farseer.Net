@@ -22,7 +22,7 @@ namespace FS
             _next = next;
         }
 
-        public async Task Invoke(HttpContext httpContext,IIocManager ioc)
+        public async Task Invoke(HttpContext httpContext, IIocManager ioc)
         {
             if (!string.IsNullOrWhiteSpace(httpContext.Request.ContentType))
             {
@@ -36,19 +36,17 @@ namespace FS
             }
 
             var path = httpContext.Request.Path.Value?.ToLower();
-            FsLinkTrack.Current.Set(new LinkTrackDetail
+            var apiLinkTrack = new ApiLinkTrackDetail()
             {
-                CallType          = EumCallType.ApiServer,
-                StartTs           = DateTime.Now.ToTimestamps(),
-                GrpcLinkTrack = new GrpcLinkTrackDetail()
-                {
-                    Server = path.Substring(0, path.LastIndexOf('/')),
-                    Action = path.Split('/').LastOrDefault()
-                }
-            });
-            
-            await _next.Invoke(httpContext);
-            
+                Server = path.Substring(0, path.LastIndexOf('/')),
+                Action = path.Split('/').LastOrDefault()
+            };
+
+            using (FsLinkTrack.TrackApiServer(apiLinkTrack))
+            {
+                await _next.Invoke(httpContext);
+            }
+
             // 写入链路追踪
             LinkTrackQueue.Enqueue();
         }

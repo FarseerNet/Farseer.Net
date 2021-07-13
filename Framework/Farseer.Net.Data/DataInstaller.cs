@@ -42,12 +42,6 @@ namespace FS.Data
                             Dependency.OnValue(m.DataType.GetType(),         m.DataType))
                         .LifestyleSingleton());
             });
-
-            // 记录SQL日志
-            if (dbConfig.IsWriteSqlRunLog) container.Register(Component.For<ISqlMonitor>().ImplementedBy<WriteSqlMonitor>().LifestyleTransient());
-            
-            // 打印SQL日志
-            if (dbConfig.IsPrintSqlLog) container.Register(Component.For<ISqlMonitor>().ImplementedBy<PrintSqlMonitor>().LifestyleTransient());
         }
     }
 }
