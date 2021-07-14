@@ -224,7 +224,7 @@ namespace FS.ElasticSearch
 
                 if (!searchResponse.IsValid)
                 {
-                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return null;
+                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return new List<TDocument>();
                     throw searchResponse.OriginalException;
                 }
 
@@ -336,7 +336,7 @@ namespace FS.ElasticSearch
 
                 if (!searchResponse.IsValid)
                 {
-                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return null;
+                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return new List<TDocument>();
                     throw searchResponse.OriginalException;
                 }
 
@@ -364,7 +364,7 @@ namespace FS.ElasticSearch
 
                 if (!searchResponse.IsValid)
                 {
-                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return null;
+                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return new List<TDocument>();
                     throw searchResponse.OriginalException;
                 }
 
@@ -397,7 +397,7 @@ namespace FS.ElasticSearch
 
                 if (!searchResponse.IsValid)
                 {
-                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return null;
+                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return new List<TDocument>();
                     throw searchResponse.OriginalException;
                 }
 
