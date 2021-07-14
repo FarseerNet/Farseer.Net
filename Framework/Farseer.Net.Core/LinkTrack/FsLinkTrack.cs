@@ -29,7 +29,7 @@ namespace FS.Core.LinkTrack
         /// </summary>
         public LinkTrackContext Get() => AsyncLocal.Value ??= new LinkTrackContext()
         {
-            AppId     = Assembly.GetEntryAssembly().FullName.Split(',')[0],
+            AppId     = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
             ContextId = SnowflakeId.GenerateId.ToString(),
             StartTs   = DateTime.Now.ToTimestamps(),
             List      = new List<LinkTrackDetail>()
@@ -40,7 +40,7 @@ namespace FS.Core.LinkTrack
         /// </summary>
         public void Set(string contextId) => AsyncLocal.Value = new LinkTrackContext()
         {
-            AppId     = Assembly.GetEntryAssembly().FullName.Split(',')[0],
+            AppId     = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
             ContextId = contextId,
             StartTs   = DateTime.Now.ToTimestamps(),
             List      = new List<LinkTrackDetail>()
@@ -54,7 +54,7 @@ namespace FS.Core.LinkTrack
         /// <summary>
         /// 追踪数据库
         /// </summary>
-        public static TrackEnd TrackDatabase(string method,DbLinkTrackDetail dbLinkTrackDetail)
+        public static TrackEnd TrackDatabase(string method, DbLinkTrackDetail dbLinkTrackDetail)
         {
             var linkTrackDetail = new LinkTrackDetail
             {
@@ -69,15 +69,17 @@ namespace FS.Core.LinkTrack
         /// <summary>
         /// 追踪Redis
         /// </summary>
-        public static TrackEnd TrackApiServer(ApiLinkTrackDetail apiLinkTrack)
+        public static TrackEnd TrackApiServer(string domain, string path, string method, string contentType, Dictionary<string, string> headerDictionary, string requestBody, string ip)
         {
-            var linkTrackDetail = new LinkTrackDetail
-            {
-                CallType   = EumCallType.ApiServer,
-                ApiLinkTrack = apiLinkTrack
-            };
-            Current.Set(linkTrackDetail);
-            return new TrackEnd(linkTrackDetail);
+            var linkTrackContext = Current.Get();
+            linkTrackContext.Domain      = domain;
+            linkTrackContext.Path        = path;
+            linkTrackContext.Method      = method;
+            linkTrackContext.ContentType = contentType;
+            linkTrackContext.Headers     = headerDictionary;
+            linkTrackContext.RequestBody = requestBody;
+            linkTrackContext.RequestIp   = ip;
+            return new TrackEnd(linkTrackContext);
         }
 
         /// <summary>

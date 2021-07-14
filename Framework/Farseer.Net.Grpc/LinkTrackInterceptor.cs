@@ -1,8 +1,12 @@
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 using FS.Core.LinkTrack;
 using FS.Extends;
+using FS.LinkTrack;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
+using Newtonsoft.Json;
 
 namespace Farseer.Net.Grpc
 {
@@ -11,8 +15,6 @@ namespace Farseer.Net.Grpc
     /// </summary>
     public class LinkTrackInterceptor : Interceptor
     {
-        /*
-         使用中间件代替
         /// <summary>
         /// GRPC服务端，接收请求
         /// </summary>
@@ -23,24 +25,19 @@ namespace Farseer.Net.Grpc
             {
                 FsLinkTrack.Current.Set(contextId);
             }
-            
-            FsLinkTrack.Current.Set(new LinkTrackDetail
+
+            TResponse result;
+            var       dicHeader = context.RequestHeaders.ToDictionary(o => o.Key, o => o.Value);
+            using (var trackEnd = FsLinkTrack.TrackApiServer(context.Host, context.Method, "Grpc", "application/grpc", dicHeader, JsonConvert.SerializeObject(request), context.Peer))
             {
-                CallType          = EumCallType.GrpcServer,
-                StartTs           = DateTime.Now.ToTimestamps(),
-                GrpcLinkTrack = new GrpcLinkTrackDetail()
-                {
-                    Server = context.Method.Substring(0, context.Method.LastIndexOf('/')),
-                    Action = context.Method.Split('/').LastOrDefault()
-                }
-            });
-            var result =  await continuation(request, context);
-            
+                result = await continuation(request, context);
+                trackEnd.SetResponseBody(JsonConvert.SerializeObject(result));
+            }
+
             // 写入链路追踪
             LinkTrackQueue.Enqueue();
             return result;
         }
-*/
 
         /// <summary>
         /// 客户端请求GRPC服务时，要添加的头部信息

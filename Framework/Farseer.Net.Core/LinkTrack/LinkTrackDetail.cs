@@ -54,7 +54,7 @@ namespace FS.Core.LinkTrack
         public DbLinkTrackDetail DbLinkTrackDetail { get; set; }
 
         /// <summary>
-        /// 请求GRPC上下文
+        /// 请求API Server
         /// </summary>
         public ApiLinkTrackDetail ApiLinkTrack { get; set; }
 

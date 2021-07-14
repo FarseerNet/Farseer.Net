@@ -8,7 +8,7 @@ namespace FS.LinkTrack
     public class LinkTrackQueue : BaseAsyncQueue<LinkTrackContext>
     {
         private static LinkTrackQueue _instance;
-        public static LinkTrackQueue Instance => _instance ??= new LinkTrackQueue();
+        public static  LinkTrackQueue Instance => _instance ??= new LinkTrackQueue();
 
         private LinkTrackQueue() : base(500000, 100, 500)
         {
@@ -23,10 +23,20 @@ namespace FS.LinkTrack
         {
             LinkTrackEsContext.Data.LinkTrackContext.Insert(lst.Select(o => new LinkTrackContextPO
             {
-                AppId     = o.AppId,
-                ContextId = o.ContextId,
-                List      = o.List,
-                Id        = $"{o.AppId}_{o.ContextId}"
+                Id           = $"{o.AppId}_{o.ContextId}",
+                AppId        = o.AppId,
+                ContextId    = o.ContextId,
+                List         = o.List,
+                StartTs      = o.StartTs,
+                EndTs        = o.EndTs,
+                Domain       = o.Domain,
+                Path         = o.Path,
+                Method       = o.Method,
+                Headers      = o.Headers,
+                ContentType  = o.ContentType,
+                RequestBody  = o.RequestBody,
+                ResponseBody = o.ResponseBody,
+                RequestIp    = o.RequestIp
             }).ToList());
         }
 

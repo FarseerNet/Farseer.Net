@@ -10,7 +10,6 @@ namespace FS.Core.Async
     /// <summary>
     /// 进程内异步队列
     /// </summary>
-    /// <typeparam name="T"></typeparam>
     public abstract class BaseAsyncQueue<T>
     {
         /// <summary>并发队列</summary>
@@ -25,10 +24,7 @@ namespace FS.Core.Async
         /// <summary>出队的数据</summary>
         private readonly List<T> _callBackList;
 
-        /// <summary> 下一次回调的时间间隔(毫秒) </summary>
-        protected int NextCallBackIntervalMs;
-
-        private int _sleepMs;
+        private readonly int _sleepMs;
 
         /// <summary> 队列数据元素个数 </summary>
         public int QueueCount => _concurrentQueue.Count;
@@ -79,13 +75,13 @@ namespace FS.Core.Async
                 try
                 {
                     DeQueue(_callBackList); //队列数据出队保存到回调数据列表
-                    NextCallBackIntervalMs = 0;
+                    
                     if (_callBackList.Count > 0)
                     {
                         OnDequeue(_callBackList, QueueCount); //交由用户处理
                     }
 
-                    SafeSleep(token);
+                    Thread.Sleep(_sleepMs);
                 }
                 catch (System.Exception e)
                 {
@@ -114,37 +110,6 @@ namespace FS.Core.Async
                 {
                     break;
                 }
-            }
-        }
-
-        /// <summary>
-        ///     线程休眠,5ms检测一次取消令牌
-        /// </summary>
-        private void SafeSleep(CancellationToken ct)
-        {
-            try
-            {
-                long leftSleep = NextCallBackIntervalMs;
-                var  start     = Environment.TickCount;
-                while (true)
-                {
-                    ct.ThrowIfCancellationRequested(); //检测取消令牌,取消执行
-
-                    if (leftSleep < _sleepMs)
-                    {
-                        if (leftSleep >= 0) Thread.Sleep((int) leftSleep);
-                        else Thread.Sleep(1);
-                        return;
-                    }
-
-                    Thread.Sleep(_sleepMs);
-                    var stop = Environment.TickCount;
-                    leftSleep = NextCallBackIntervalMs - (stop - start);
-                }
-            }
-            catch (System.Exception e)
-            {
-                Console.WriteLine(e);
             }
         }
     }

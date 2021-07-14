@@ -13,7 +13,7 @@ namespace FS.LinkTrack
 
         protected override void CreateModelInit(Dictionary<string, SetDataMap> map)
         {
-            map["LinkTrackContext"].SetName($"link_track_{DateTime.Now:yyyy_MM_dd}", 1, 0, "link_track");
+            map["LinkTrackContext"].SetName($"link_track_{DateTime.Now:yyyy_MM}", 1, 0, "link_track");
         }
 
         public IndexSet<LinkTrackContextPO> LinkTrackContext { get; set; }

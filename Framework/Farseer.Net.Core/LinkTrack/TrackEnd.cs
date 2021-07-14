@@ -8,7 +8,13 @@ namespace FS.Core.LinkTrack
     /// </summary>
     public class TrackEnd : IDisposable
     {
-        private readonly LinkTrackDetail _linkTrackDetail;
+        private readonly LinkTrackDetail  _linkTrackDetail;
+        private readonly LinkTrackContext _linkTrackContext;
+
+        public TrackEnd(LinkTrackContext linkTrackContext)
+        {
+            _linkTrackContext = linkTrackContext;
+        }
 
         public TrackEnd(LinkTrackDetail linkTrackDetail)
         {
@@ -16,16 +22,20 @@ namespace FS.Core.LinkTrack
         }
 
         /// <summary>
-        /// 完成本次追踪
+        /// 设置API响应内容
         /// </summary>
-        public void End()
+        public void SetResponseBody(string responseBody)
         {
-            _linkTrackDetail.EndTs = DateTime.Now.ToTimestamps();
+            _linkTrackContext.ResponseBody = responseBody;
         }
 
+        /// <summary>
+        /// 完成本次追踪
+        /// </summary>
         public void Dispose()
         {
-            End();
+            if (_linkTrackDetail != null) _linkTrackDetail.EndTs   = DateTime.Now.ToTimestamps();
+            if (_linkTrackContext != null) _linkTrackContext.EndTs = DateTime.Now.ToTimestamps();
         }
     }
 }
