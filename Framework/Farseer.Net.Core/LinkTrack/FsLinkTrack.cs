@@ -29,21 +29,23 @@ namespace FS.Core.LinkTrack
         /// </summary>
         public LinkTrackContext Get() => AsyncLocal.Value ??= new LinkTrackContext()
         {
-            AppId     = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
-            ContextId = SnowflakeId.GenerateId.ToString(),
-            StartTs   = DateTime.Now.ToTimestamps(),
-            List      = new List<LinkTrackDetail>()
+            AppId       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
+            ParentAppId = "",
+            ContextId   = SnowflakeId.GenerateId.ToString(),
+            StartTs     = DateTime.Now.ToTimestamps(),
+            List        = new List<LinkTrackDetail>()
         };
 
         /// <summary>
         ///     写入上下文ID
         /// </summary>
-        public void Set(string contextId) => AsyncLocal.Value = new LinkTrackContext()
+        public void Set(string contextId, string parentAppId) => AsyncLocal.Value = new LinkTrackContext()
         {
-            AppId     = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
-            ContextId = contextId,
-            StartTs   = DateTime.Now.ToTimestamps(),
-            List      = new List<LinkTrackDetail>()
+            AppId       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
+            ParentAppId = parentAppId,
+            ContextId   = contextId,
+            StartTs     = DateTime.Now.ToTimestamps(),
+            List        = new List<LinkTrackDetail>()
         };
 
         /// <summary>
@@ -119,6 +121,25 @@ namespace FS.Core.LinkTrack
             {
                 CallType   = EumCallType.Mq,
                 CallMethod = method
+            };
+            Current.Set(linkTrackDetail);
+            return new TrackEnd(linkTrackDetail);
+        }
+
+        /// <summary>
+        /// 追踪Grpc
+        /// </summary>
+        public static TrackEnd TrackGrpc(string server, string action)
+        {
+            var linkTrackDetail = new LinkTrackDetail
+            {
+                CallType = EumCallType.GrpcClient,
+                StartTs  = DateTime.Now.ToTimestamps(),
+                ApiLinkTrack = new ApiLinkTrackDetail()
+                {
+                    Server = server,
+                    Action = action,
+                }
             };
             Current.Set(linkTrackDetail);
             return new TrackEnd(linkTrackDetail);

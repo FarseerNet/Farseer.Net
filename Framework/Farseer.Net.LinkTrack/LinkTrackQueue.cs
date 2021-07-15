@@ -25,6 +25,7 @@ namespace FS.LinkTrack
             {
                 Id           = $"{o.AppId}_{o.ContextId}",
                 AppId        = o.AppId,
+                ParentAppId  = o.ParentAppId,
                 ContextId    = o.ContextId,
                 List         = o.List,
                 StartTs      = o.StartTs,

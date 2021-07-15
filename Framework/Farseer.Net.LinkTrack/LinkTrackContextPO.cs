@@ -16,6 +16,9 @@ namespace FS.LinkTrack
         [Keyword]
         public override string AppId { get; set; }
 
+        [Keyword]
+        public override string ParentAppId { get; set; }
+
         [Number(NumberType.Long)]
         public override long StartTs { get; set; }
 

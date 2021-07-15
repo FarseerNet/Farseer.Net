@@ -25,7 +25,8 @@ namespace FS
             httpContext.Request.Headers.TryGetValue("FsContextId", out var contextId);
             if (!string.IsNullOrWhiteSpace(contextId))
             {
-                FsLinkTrack.Current.Set(contextId);
+                httpContext.Request.Headers.TryGetValue("FsAppId", out var parentAppId);
+                FsLinkTrack.Current.Set(contextId, parentAppId);
             }
 
             // 读取请求入参

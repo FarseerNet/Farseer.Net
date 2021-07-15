@@ -9,11 +9,13 @@ namespace FS.Core.Http
         public static void AddTraceInfoToHeader(this HttpWebRequest httpWebRequest)
         {
             httpWebRequest.Headers.Add("FsContextId", FsLinkTrack.Current.Get().ContextId);
+            httpWebRequest.Headers.Add("FsAppId", FsLinkTrack.Current.Get().AppId);
         }
 
         public static void AddTraceInfoToHeader(this HttpContentHeaders httpWebRequest)
         {
-            httpWebRequest.Add("FsContextId", FsLinkTrack.Current.Get().ContextId);
+            httpWebRequest.Add("FsContextId",   FsLinkTrack.Current.Get().ContextId);
+            httpWebRequest.Add("FsAppId", FsLinkTrack.Current.Get().AppId);
         }
     }
 

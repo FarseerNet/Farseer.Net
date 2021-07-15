@@ -23,7 +23,8 @@ namespace Farseer.Net.Grpc
             var contextId = (context.RequestHeaders.FirstOrDefault(o => o.Key == "fscontextid")?.Value);
             if (!string.IsNullOrWhiteSpace(contextId))
             {
-                FsLinkTrack.Current.Set(contextId);
+                var parentAppId = (context.RequestHeaders.FirstOrDefault(o => o.Key == "fsappid")?.Value);
+                FsLinkTrack.Current.Set(contextId, parentAppId);
             }
 
             TResponse result;
@@ -44,17 +45,12 @@ namespace Farseer.Net.Grpc
         /// </summary>
         public override AsyncUnaryCall<TResponse> AsyncUnaryCall<TRequest, TResponse>(TRequest request, ClientInterceptorContext<TRequest, TResponse> context, AsyncUnaryCallContinuation<TRequest, TResponse> continuation)
         {
-            FsLinkTrack.Current.Set(new LinkTrackDetail
+            using (FsLinkTrack.TrackGrpc(context.Method.ServiceName, context.Method.Name))
             {
-                CallType = EumCallType.GrpcClient,
-                StartTs  = DateTime.Now.ToTimestamps(),
-                ApiLinkTrack = new ApiLinkTrackDetail()
-                {
-                    Server = context.Method.ServiceName,
-                    Action = context.Method.Name,
-                }
-            });
-            return continuation(request, Continuation(context));
+                var result = continuation(request, Continuation(context));
+                result.GetAwaiter().GetResult();
+                return result;
+            }
         }
 
         /// <summary>
@@ -62,17 +58,10 @@ namespace Farseer.Net.Grpc
         /// </summary>
         public override TResponse BlockingUnaryCall<TRequest, TResponse>(TRequest request, ClientInterceptorContext<TRequest, TResponse> context, BlockingUnaryCallContinuation<TRequest, TResponse> continuation)
         {
-            FsLinkTrack.Current.Set(new LinkTrackDetail
+            using (FsLinkTrack.TrackGrpc(context.Method.ServiceName, context.Method.Name))
             {
-                CallType = EumCallType.GrpcClient,
-                StartTs  = DateTime.Now.ToTimestamps(),
-                ApiLinkTrack = new ApiLinkTrackDetail()
-                {
-                    Server = context.Method.ServiceName,
-                    Action = context.Method.Name,
-                }
-            });
-            return continuation(request, Continuation(context));
+                return continuation(request, Continuation(context));
+            }
         }
 
         /// <summary>
@@ -89,7 +78,8 @@ namespace Farseer.Net.Grpc
         {
             var callOptions = context.Options.WithHeaders(new Metadata()
             {
-                {"FsContextId", FsLinkTrack.Current.Get().ContextId.ToString()}
+                {"FsContextId", FsLinkTrack.Current.Get().ContextId},
+                {"FsAppId", FsLinkTrack.Current.Get().AppId}
             });
 
             callOptions = SetCallOptions(callOptions);

@@ -10,6 +10,11 @@ namespace FS.Core.LinkTrack
         public virtual string AppId { get; set; }
 
         /// <summary>
+        /// 上游应用
+        /// </summary>
+        public virtual string ParentAppId { get; set; }
+
+        /// <summary>
         /// 上下文ID
         /// </summary>
         public virtual string ContextId { get; set; }
@@ -23,6 +28,11 @@ namespace FS.Core.LinkTrack
         /// 调用结束时间戳
         /// </summary>
         public virtual long EndTs { get; set; }
+
+        /// <summary>
+        /// 总共使用时间毫秒
+        /// </summary>
+        public virtual long UseTs => EndTs > StartTs ? EndTs - StartTs : 0;
 
         /// <summary>
         /// 请求域名
