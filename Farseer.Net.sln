@@ -67,6 +67,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.Demo", "Demo\Fa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.LinkTrack", "Framework\Farseer.Net.LinkTrack\Farseer.Net.LinkTrack.csproj", "{19233F24-2037-4D4B-9767-BB7D7428764F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{20CBD197-6B5F-4A25-8614-45D64FC593BD}"
+ProjectSection(SolutionItems) = preProject
+	Doc\1.3分钟入门.md = Doc\1.3分钟入门.md
+	Doc\2.IOC框架使用.md = Doc\2.IOC框架使用.md
+	Doc\3.配置文件使用.md = Doc\3.配置文件使用.md
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
