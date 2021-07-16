@@ -59,6 +59,11 @@ namespace FS.Core.LinkTrack
         public ApiLinkTrackDetail ApiLinkTrack { get; set; }
 
         /// <summary>
+        /// 自定义埋点
+        /// </summary>
+        public CustomLinkTrackDetail CustomLinkTrack { get; set; }
+
+        /// <summary>
         /// 调用开始时间戳
         /// </summary>
         public long StartTs { get; set; } = DateTime.Now.ToTimestamps();

@@ -144,5 +144,23 @@ namespace FS.Core.LinkTrack
             Current.Set(linkTrackDetail);
             return new TrackEnd(linkTrackDetail);
         }
+
+        /// <summary>
+        /// 手动埋点
+        /// </summary>
+        public static TrackEnd Track(string message)
+        {
+            var linkTrackDetail = new LinkTrackDetail
+            {
+                CallType = EumCallType.Custom,
+                StartTs  = DateTime.Now.ToTimestamps(),
+                CustomLinkTrack = new CustomLinkTrackDetail
+                {
+                    Message = message
+                }
+            };
+            Current.Set(linkTrackDetail);
+            return new TrackEnd(linkTrackDetail);
+        }
     }
 }

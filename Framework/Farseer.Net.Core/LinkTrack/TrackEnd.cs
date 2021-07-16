@@ -32,10 +32,18 @@ namespace FS.Core.LinkTrack
         /// <summary>
         /// 完成本次追踪
         /// </summary>
-        public void Dispose()
+        public void End()
         {
             if (_linkTrackDetail != null) _linkTrackDetail.EndTs   = DateTime.Now.ToTimestamps();
             if (_linkTrackContext != null) _linkTrackContext.EndTs = DateTime.Now.ToTimestamps();
+        }
+
+        /// <summary>
+        /// 完成本次追踪
+        /// </summary>
+        public void Dispose()
+        {
+            End();
         }
     }
 }

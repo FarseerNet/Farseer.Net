@@ -7,6 +7,7 @@ namespace FS.Core.LinkTrack
         Database,
         Redis,
         Mq,
-        Elasticsearch
+        Elasticsearch,
+        Custom,
     }
 }
