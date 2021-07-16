@@ -173,6 +173,8 @@ public class StartupModule : FarseerModule
   *  基于NETS的模块化封装
 * `Farseer.Net.Job`
   *  基于`FSS`分布式调度平台的客户端
+* `Farseer.Net.LinkTrack`
+  *  全链路追踪监控
 * `Farseer.Net.Log`
   *  基于NLog的模块化封装
 * `Farseer.Net.Mapper`

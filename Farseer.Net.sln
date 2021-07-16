@@ -72,6 +72,8 @@ ProjectSection(SolutionItems) = preProject
 	Doc\1.3分钟入门.md = Doc\1.3分钟入门.md
 	Doc\2.IOC框架使用.md = Doc\2.IOC框架使用.md
 	Doc\3.配置文件使用.md = Doc\3.配置文件使用.md
+	Doc\8.Redis组件使用.md = Doc\8.Redis组件使用.md
+	Doc\9.LinkTrack全链路追踪监控组件.md = Doc\9.LinkTrack全链路追踪监控组件.md
 EndProjectSection
 EndProject
 Global
