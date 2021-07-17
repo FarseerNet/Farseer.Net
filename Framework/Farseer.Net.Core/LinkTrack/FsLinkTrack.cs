@@ -56,7 +56,7 @@ namespace FS.Core.LinkTrack
         /// <summary>
         /// 追踪数据库
         /// </summary>
-        public static TrackEnd TrackDatabase(string method, DbLinkTrackDetail dbLinkTrackDetail)
+        public static TrackEnd TrackDatabase(string method, DbLinkTrackDetail dbLinkTrackDetail = null)
         {
             var linkTrackDetail = new LinkTrackDetail
             {
@@ -87,12 +87,17 @@ namespace FS.Core.LinkTrack
         /// <summary>
         /// 追踪Redis
         /// </summary>
-        public static TrackEnd TrackRedis(string method)
+        public static TrackEnd TrackRedis(string method, string key = "", string member = "")
         {
             var linkTrackDetail = new LinkTrackDetail
             {
                 CallType   = EumCallType.Redis,
-                CallMethod = method
+                CallMethod = method,
+                Data = new Dictionary<string, string>()
+                {
+                    {"RedisKey", key},
+                    {"RedisHashFields", member},
+                }
             };
             Current.Set(linkTrackDetail);
             return new TrackEnd(linkTrackDetail);
@@ -135,10 +140,10 @@ namespace FS.Core.LinkTrack
             {
                 CallType = EumCallType.GrpcClient,
                 StartTs  = DateTime.Now.ToTimestamps(),
-                ApiLinkTrack = new ApiLinkTrackDetail()
+                Data = new Dictionary<string, string>()
                 {
-                    Server = server,
-                    Action = action,
+                    {"Server", server},
+                    {"Action", action},
                 }
             };
             Current.Set(linkTrackDetail);
@@ -154,9 +159,9 @@ namespace FS.Core.LinkTrack
             {
                 CallType = EumCallType.Custom,
                 StartTs  = DateTime.Now.ToTimestamps(),
-                CustomLinkTrack = new CustomLinkTrackDetail
+                Data = new Dictionary<string, string>()
                 {
-                    Message = message
+                    {"Message", message}
                 }
             };
             Current.Set(linkTrackDetail);

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using FS.Extends;
@@ -54,14 +55,9 @@ namespace FS.Core.LinkTrack
         public DbLinkTrackDetail DbLinkTrackDetail { get; set; }
 
         /// <summary>
-        /// 请求API Server
+        /// 埋点数据
         /// </summary>
-        public ApiLinkTrackDetail ApiLinkTrack { get; set; }
-
-        /// <summary>
-        /// 自定义埋点
-        /// </summary>
-        public CustomLinkTrackDetail CustomLinkTrack { get; set; }
+        public Dictionary<string,string> Data { get; set; }
 
         /// <summary>
         /// 调用开始时间戳
