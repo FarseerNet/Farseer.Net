@@ -22,6 +22,12 @@ namespace FS
 
         public async Task Invoke(HttpContext httpContext, IIocManager ioc)
         {
+            if (string.IsNullOrWhiteSpace(httpContext.Request.ContentType))
+            {
+                await _next.Invoke(httpContext);
+                return;
+            }
+
             httpContext.Request.Headers.TryGetValue("FsContextId", out var contextId);
             if (!string.IsNullOrWhiteSpace(contextId))
             {
@@ -67,8 +73,8 @@ namespace FS
                     httpContext.Response.Body.Seek(0, SeekOrigin.Begin);
                     var rspBody = await new StreamReader(httpContext.Response.Body).ReadToEndAsync();
                     httpContext.Response.Body.Seek(0, SeekOrigin.Begin);
-                    await responseBody.CopyToAsync(originalBodyStream); 
-                    
+                    await responseBody.CopyToAsync(originalBodyStream);
+
                     // 如果是api接口，则记录返回值
                     if (!string.IsNullOrWhiteSpace(httpContext.Response.ContentType) && (httpContext.Response.ContentType.Contains("json") ||
                                                                                          httpContext.Response.ContentType.Contains("xml") ||
