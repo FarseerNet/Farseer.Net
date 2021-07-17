@@ -381,16 +381,33 @@ namespace FS.Utils.Common
         /// <summary>
         ///     动态构造获取值委托
         /// </summary>
-        /// <param name="propertyInfo">属性值类型</param>
+        /// <param name="fieldInfo">属性值类型</param>
         /// <returns>强类型委托</returns>
-        public static Func<object, object> GetValue(FieldInfo propertyInfo)
+        public static Func<object, object> GetValue(FieldInfo fieldInfo)
         {
             var instanceParam = Expression.Parameter(typeof(object), "instance");
             //((T)instance)
-            var castInstanceExpression = Expression.Convert(instanceParam, propertyInfo.DeclaringType);
+            var castInstanceExpression = Expression.Convert(instanceParam, fieldInfo.DeclaringType);
             //((T)instance).Property
-            var propertyProperty = Expression.Field(castInstanceExpression, propertyInfo);
-            var val = Expression.Convert(propertyProperty, typeof(object));
+            var fieldProperty    = Expression.Field(castInstanceExpression, fieldInfo);
+            var val              = Expression.Convert(fieldProperty, typeof(object));
+            var lambdaExpression = Expression.Lambda<Func<object, object>>(Expression.Convert(val, typeof(object)), instanceParam);
+            return lambdaExpression.Compile();
+        }
+
+        /// <summary>
+        ///     动态构造获取值委托（静态字段）
+        /// </summary>
+        /// <param name="fieldInfo">属性值类型</param>
+        /// <returns>强类型委托</returns>
+        public static Func<object, object> GetStaticValue(FieldInfo fieldInfo)
+        {
+            var instanceParam = Expression.Parameter(typeof(object), "instance");
+            //((T)instance)
+            var castInstanceExpression = Expression.Convert(instanceParam, fieldInfo.DeclaringType);
+            //((T)instance).Property
+            var fieldProperty    = Expression.Field(null, fieldInfo);
+            var val              = Expression.Convert(fieldProperty, typeof(object));
             var lambdaExpression = Expression.Lambda<Func<object, object>>(Expression.Convert(val, typeof(object)), instanceParam);
             return lambdaExpression.Compile();
         }

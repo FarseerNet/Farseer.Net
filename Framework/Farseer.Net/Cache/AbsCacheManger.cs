@@ -31,7 +31,7 @@ namespace FS.Cache
         /// <summary>
         ///     缓存类
         /// </summary>
-        protected static readonly Dictionary<TKey, TValue> CacheList = new Dictionary<TKey, TValue>();
+        protected static readonly Dictionary<TKey, TValue> CacheList = new();
 
         /// <summary>
         ///     通过缓存获取数据
