@@ -50,11 +50,6 @@ namespace FS.Data.Internal
             queue.Dispose();
         }
 
-        /// <summary>
-        ///     延迟执行的委托（返回影响行数）
-        /// </summary>
-        internal Func<Queue, int> LazyAct { get; set; }
-
         #region ExpBuilder表达式持久化
 
         private ExpressionBuilder _expBuilder;
@@ -104,7 +99,6 @@ namespace FS.Data.Internal
                 _expBuilder  = null;
                 _sqlBuilder  = null;
                 _procBuilder = null;
-                LazyAct      = null;
             }
         }
 

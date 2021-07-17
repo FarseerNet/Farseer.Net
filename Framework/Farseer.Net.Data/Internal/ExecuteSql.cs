@@ -18,7 +18,7 @@ namespace FS.Data.Internal
         /// <param name="contextProvider">数据库上下文</param>
         internal ExecuteSql(DbExecutor dataBase, InternalContext contextProvider)
         {
-            DataBase = dataBase;
+            DataBase         = dataBase;
             _contextProvider = contextProvider;
         }
 
@@ -62,8 +62,8 @@ namespace FS.Data.Internal
         {
             // 生成SQL 输入、输出参数化
             var sqlParam = procBuilder.InitParam(entity);
-            var param = sqlParam.Param?.ToArray();
-            var value = DataBase.ExecuteNonQuery(CommandType.StoredProcedure, sqlParam.ProcName, param);
+            var param    = sqlParam.Param?.ToArray();
+            var value    = DataBase.ExecuteNonQuery(CommandType.StoredProcedure, sqlParam.ProcName, param);
             procBuilder.SetParamToEntity(entity);
             return value;
         }
@@ -78,8 +78,8 @@ namespace FS.Data.Internal
         {
             // 生成SQL 输入、输出参数化
             var sqlParam = procBuilder.InitParam(entity);
-            var param = sqlParam.Param?.ToArray();
-            var value = await DataBase.ExecuteNonQueryAsync(CommandType.StoredProcedure, sqlParam.ProcName, param);
+            var param    = sqlParam.Param?.ToArray();
+            var value    = await DataBase.ExecuteNonQueryAsync(CommandType.StoredProcedure, sqlParam.ProcName, param);
             procBuilder.SetParamToEntity(entity);
             return value;
         }
@@ -114,8 +114,8 @@ namespace FS.Data.Internal
         {
             // 生成SQL 输入、输出参数化
             var sqlParam = procBuilder.InitParam(entity);
-            var param = sqlParam.Param?.ToArray();
-            var value = DataBase.GetDataTable(CommandType.StoredProcedure, sqlParam.ProcName, param);
+            var param    = sqlParam.Param?.ToArray();
+            var value    = DataBase.GetDataTable(CommandType.StoredProcedure, sqlParam.ProcName, param);
             procBuilder.SetParamToEntity(entity);
             return value;
         }
@@ -130,8 +130,8 @@ namespace FS.Data.Internal
         {
             // 生成SQL 输入、输出参数化
             var sqlParam = procBuilder.InitParam(entity);
-            var param = sqlParam.Param?.ToArray();
-            var value = await DataBase.GetDataTableAsync(CommandType.StoredProcedure, sqlParam.ProcName, param);
+            var param    = sqlParam.Param?.ToArray();
+            var value    = await DataBase.GetDataTableAsync(CommandType.StoredProcedure, sqlParam.ProcName, param);
             procBuilder.SetParamToEntity(entity);
             return value;
         }
@@ -150,18 +150,18 @@ namespace FS.Data.Internal
         ///     返回返回泛型集合
         /// </summary>
         /// <param name="sqlParam">SQL语句与参数</param>
-        public async Task<List<TEntity>> ToListAsync<TEntity>(ISqlParam sqlParam) where TEntity : class, new()
+        public Task<List<TEntity>> ToListAsync<TEntity>(ISqlParam sqlParam) where TEntity : class, new()
         {
             var param = sqlParam.Param?.ToArray();
-            return SqlExtend.ToList<TEntity>(await DataBase.GetReaderAsync(CommandType.Text, sqlParam.Sql.ToString(), param));
+            return SqlExtend.ToListAsync<TEntity>(DataBase.GetReaderAsync(CommandType.Text, sqlParam.Sql.ToString(), param));
         }
 
         public List<TEntity> ToList<TEntity>(ProcBuilder procBuilder, TEntity entity) where TEntity : class, new()
         {
             // 生成SQL 输入、输出参数化
             var sqlParam = procBuilder.InitParam(entity);
-            var param = sqlParam.Param?.ToArray();
-            var value = SqlExtend.ToList<TEntity>(DataBase.GetReader(CommandType.StoredProcedure, sqlParam.ProcName, param));
+            var param    = sqlParam.Param?.ToArray();
+            var value    = SqlExtend.ToList<TEntity>(DataBase.GetReader(CommandType.StoredProcedure, sqlParam.ProcName, param));
             procBuilder.SetParamToEntity(entity);
             return value;
         }
@@ -170,8 +170,8 @@ namespace FS.Data.Internal
         {
             // 生成SQL 输入、输出参数化
             var sqlParam = procBuilder.InitParam(entity);
-            var param = sqlParam.Param?.ToArray();
-            var value = SqlExtend.ToList<TEntity>(await DataBase.GetReaderAsync(CommandType.StoredProcedure, sqlParam.ProcName, param));
+            var param    = sqlParam.Param?.ToArray();
+            var value    = SqlExtend.ToList<TEntity>(await DataBase.GetReaderAsync(CommandType.StoredProcedure, sqlParam.ProcName, param));
             procBuilder.SetParamToEntity(entity);
             return value;
         }
@@ -183,9 +183,13 @@ namespace FS.Data.Internal
         /// <param name="sqlParam">SQL语句与参数</param>
         public TEntity ToEntity<TEntity>(ISqlParam sqlParam) where TEntity : class, new()
         {
-            var param = sqlParam.Param?.ToArray();
+            var     param = sqlParam.Param?.ToArray();
             TEntity t;
-            using (var reader = DataBase.GetReader(CommandType.Text, sqlParam.Sql.ToString(), param)) { t = reader.ToEntity<TEntity>(); }
+            using (var reader = DataBase.GetReader(CommandType.Text, sqlParam.Sql.ToString(), param))
+            {
+                t = reader.ToEntity<TEntity>();
+            }
+
             DataBase.Close(false);
             return t;
         }
@@ -197,9 +201,13 @@ namespace FS.Data.Internal
         /// <param name="sqlParam">SQL语句与参数</param>
         public async Task<TEntity> ToEntityAsync<TEntity>(ISqlParam sqlParam) where TEntity : class, new()
         {
-            var param = sqlParam.Param?.ToArray();
+            var     param = sqlParam.Param?.ToArray();
             TEntity t;
-            using (var reader = await DataBase.GetReaderAsync(CommandType.Text, sqlParam.Sql.ToString(), param)) { t = reader.ToEntity<TEntity>(); }
+            using (var reader = await DataBase.GetReaderAsync(CommandType.Text, sqlParam.Sql.ToString(), param))
+            {
+                t = reader.ToEntity<TEntity>();
+            }
+
             DataBase.Close(false);
             return t;
         }
@@ -213,10 +221,14 @@ namespace FS.Data.Internal
         public TEntity ToEntity<TEntity>(ProcBuilder procBuilder, TEntity entity) where TEntity : class, new()
         {
             // 生成SQL 输入、输出参数化
-            var sqlParam = procBuilder.InitParam(entity);
-            var param = sqlParam.Param?.ToArray();
+            var     sqlParam = procBuilder.InitParam(entity);
+            var     param    = sqlParam.Param?.ToArray();
             TEntity t;
-            using (var reader = DataBase.GetReader(CommandType.StoredProcedure, sqlParam.ProcName, param)) { t = reader.ToEntity<TEntity>(); }
+            using (var reader = DataBase.GetReader(CommandType.StoredProcedure, sqlParam.ProcName, param))
+            {
+                t = reader.ToEntity<TEntity>();
+            }
+
             DataBase.Close(false);
             procBuilder.SetParamToEntity(entity);
             return t;
@@ -231,10 +243,14 @@ namespace FS.Data.Internal
         public async Task<TEntity> ToEntityAsync<TEntity>(ProcBuilder procBuilder, TEntity entity) where TEntity : class, new()
         {
             // 生成SQL 输入、输出参数化
-            var sqlParam = procBuilder.InitParam(entity);
-            var param = sqlParam.Param?.ToArray();
+            var     sqlParam = procBuilder.InitParam(entity);
+            var     param    = sqlParam.Param?.ToArray();
             TEntity t;
-            using (var reader = await DataBase.GetReaderAsync(CommandType.StoredProcedure, sqlParam.ProcName, param)) { t = reader.ToEntity<TEntity>(); }
+            using (var reader = await DataBase.GetReaderAsync(CommandType.StoredProcedure, sqlParam.ProcName, param))
+            {
+                t = reader.ToEntity<TEntity>();
+            }
+
             DataBase.Close(false);
             procBuilder.SetParamToEntity(entity);
             return t;
@@ -278,8 +294,8 @@ namespace FS.Data.Internal
         {
             // 生成SQL 输入、输出参数化
             var sqlParam = procBuilder.InitParam(entity);
-            var param = sqlParam.Param?.ToArray();
-            var value = DataBase.ExecuteScalar(CommandType.StoredProcedure, sqlParam.ProcName, param);
+            var param    = sqlParam.Param?.ToArray();
+            var value    = DataBase.ExecuteScalar(CommandType.StoredProcedure, sqlParam.ProcName, param);
             procBuilder.SetParamToEntity(entity);
             return ConvertHelper.ConvertType(value, defValue);
         }
@@ -296,8 +312,8 @@ namespace FS.Data.Internal
         {
             // 生成SQL 输入、输出参数化
             var sqlParam = procBuilder.InitParam(entity);
-            var param = sqlParam.Param?.ToArray();
-            var value = await DataBase.ExecuteScalarAsync(CommandType.StoredProcedure, sqlParam.ProcName, param);
+            var param    = sqlParam.Param?.ToArray();
+            var value    = await DataBase.ExecuteScalarAsync(CommandType.StoredProcedure, sqlParam.ProcName, param);
             procBuilder.SetParamToEntity(entity);
             return ConvertHelper.ConvertType(value, defValue);
         }

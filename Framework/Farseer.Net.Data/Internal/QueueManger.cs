@@ -49,13 +49,20 @@ namespace FS.Data.Internal
             {
                 // 立即删除时，先提交队列中的数据
                 var queue = CreateQueue(map);
-                if (joinSoftDeleteCondition) { queue.ExpBuilder.DeleteSortCondition(); }
+                if (joinSoftDeleteCondition)
+                {
+                    queue.ExpBuilder.DeleteSortCondition();
+                }
+
                 return act(queue);
             }
             finally
             {
                 Clear();
-                if (ContextProvider.IsUnitOfWork) { ContextProvider.Executeor.DataBase.Close(true); }
+                if (ContextProvider.IsUnitOfWork)
+                {
+                    ContextProvider.Executeor.DataBase.Close(true);
+                }
             }
         }
 
@@ -70,13 +77,20 @@ namespace FS.Data.Internal
             try
             {
                 var queue = CreateQueue(map);
-                if (joinSoftDeleteCondition) { queue.ExpBuilder.DeleteSortCondition(); }
+                if (joinSoftDeleteCondition)
+                {
+                    queue.ExpBuilder.DeleteSortCondition();
+                }
+
                 return await act(queue);
             }
             finally
             {
                 Clear();
-                if (ContextProvider.IsUnitOfWork) { ContextProvider.Executeor.DataBase.Close(true); }
+                if (ContextProvider.IsUnitOfWork)
+                {
+                    ContextProvider.Executeor.DataBase.Close(true);
+                }
             }
         }
 
