@@ -80,13 +80,13 @@ namespace FS.Core.Async
                     {
                         OnDequeue(_callBackList, QueueCount); //交由用户处理
                     }
-
-                    Thread.Sleep(_sleepMs);
                 }
                 catch (System.Exception e)
                 {
                     Console.WriteLine(e.Message);
                 }
+
+                Thread.Sleep(_sleepMs);
             }
         }
 
