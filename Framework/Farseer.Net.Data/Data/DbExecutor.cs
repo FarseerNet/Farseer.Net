@@ -3,7 +3,9 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading.Tasks;
+using FS.Core.LinkTrack;
 using FS.Data.Client;
 using FS.Data.Infrastructure;
 using FS.DI;
@@ -30,8 +32,8 @@ namespace FS.Data.Data
         public DbExecutor(string connectionString, eumDbType dbType = eumDbType.SqlServer, int commandTimeout = 30, IsolationLevel tranLevel = IsolationLevel.Unspecified)
         {
             _connectionString = connectionString;
-            _commandTimeout = commandTimeout;
-            DataType = dbType;
+            _commandTimeout   = commandTimeout;
+            DataType          = dbType;
             OpenTran(tranLevel);
         }
 
@@ -59,18 +61,21 @@ namespace FS.Data.Data
         ///     是否开启事务
         /// </summary>
         internal bool IsTransaction { get; private set; }
+
         /// <summary>
         /// 事务级别
         /// </summary>
         internal IsolationLevel TranLevel { get; private set; }
+
         private DbCommand _comm;
+
         /// <summary>
         ///     开启事务。
         /// </summary>
         /// <param name="tranLevel">事务方式</param>
         public void OpenTran(IsolationLevel tranLevel)
         {
-            TranLevel = tranLevel;
+            TranLevel     = tranLevel;
             IsTransaction = tranLevel != IsolationLevel.Unspecified;
         }
 
@@ -83,6 +88,7 @@ namespace FS.Data.Data
             {
                 _comm?.Transaction?.Dispose();
             }
+
             IsTransaction = false;
         }
 
@@ -94,20 +100,26 @@ namespace FS.Data.Data
             if (_comm == null || _comm.Connection == null)
             {
                 _factory = AbsDbProvider.CreateInstance(DataType).DbProviderFactory;
-                _comm = _factory.CreateCommand();
+                _comm    = _factory.CreateCommand();
                 // ReSharper disable once PossibleNullReferenceException
-                _comm.Connection = _factory.CreateConnection();
+                _comm.Connection                  = _factory.CreateConnection();
                 _comm.Connection.ConnectionString = _connectionString;
-                _comm.CommandTimeout = _commandTimeout;
+                _comm.CommandTimeout              = _commandTimeout;
             }
 
             if (_comm.Connection.State == ConnectionState.Closed)
             {
-                _comm.Parameters.Clear();
-                _comm.Connection.Open();
+                using (FsLinkTrack.TrackDatabase($"Connection.Open IsTransaction={IsTransaction}", _connectionString))
+                {
+                    _comm.Parameters.Clear();
+                    _comm.Connection.Open();
 
-                // 是否开启事务
-                if (IsTransaction) { _comm.Transaction = _comm.Connection.BeginTransaction(TranLevel); }
+                    // 是否开启事务
+                    if (IsTransaction)
+                    {
+                        _comm.Transaction = _comm.Connection.BeginTransaction(TranLevel);
+                    }
+                }
             }
         }
 
@@ -119,22 +131,27 @@ namespace FS.Data.Data
             if (_comm == null || _comm.Connection == null)
             {
                 _factory = AbsDbProvider.CreateInstance(DataType).DbProviderFactory;
-                _comm = _factory.CreateCommand();
+                _comm    = _factory.CreateCommand();
                 // ReSharper disable once PossibleNullReferenceException
-                _comm.Connection = _factory.CreateConnection();
+                _comm.Connection                  = _factory.CreateConnection();
                 _comm.Connection.ConnectionString = _connectionString;
-                _comm.CommandTimeout = _commandTimeout;
+                _comm.CommandTimeout              = _commandTimeout;
             }
 
             if (_comm.Connection.State == ConnectionState.Closed)
             {
-                _comm.Parameters.Clear();
-                await _comm.Connection.OpenAsync().ConfigureAwait(false);
+                using (FsLinkTrack.TrackDatabase($"Connection.OpenAsync IsTransaction={IsTransaction}", _connectionString))
+                {
+                    _comm.Parameters.Clear();
+                    await _comm.Connection.OpenAsync();
 
-                // 是否开启事务
-                if (IsTransaction) { _comm.Transaction = _comm.Connection.BeginTransaction(TranLevel); }
+                    // 是否开启事务
+                    if (IsTransaction)
+                    {
+                        _comm.Transaction = _comm.Connection.BeginTransaction(TranLevel);
+                    }
+                }
             }
-
         }
 
         /// <summary>
@@ -159,9 +176,16 @@ namespace FS.Data.Data
         /// </summary>
         public void Commit()
         {
-            if (_comm == null) return;
-            if (_comm.Transaction == null) { throw new Exception("未开启事务"); }
-            _comm.Transaction.Commit();
+            using (FsLinkTrack.TrackDatabase("Transaction.Commit", _connectionString))
+            {
+                if (_comm == null) return;
+                if (_comm.Transaction == null)
+                {
+                    throw new Exception("未开启事务");
+                }
+
+                _comm.Transaction.Commit();
+            }
         }
 
         /// <summary>
@@ -170,8 +194,15 @@ namespace FS.Data.Data
         /// </summary>
         public void Rollback()
         {
-            if (_comm?.Transaction == null) { throw new Exception("未开启事务"); }
-            _comm.Transaction.Rollback();
+            using (FsLinkTrack.TrackDatabase("Transaction.Rollback", _connectionString))
+            {
+                if (_comm?.Transaction == null)
+                {
+                    throw new Exception("未开启事务");
+                }
+
+                _comm.Transaction.Rollback();
+            }
         }
 
         /// <summary>
@@ -183,18 +214,35 @@ namespace FS.Data.Data
         [SuppressMessage("Microsoft.Security", "CA2100:检查 SQL 查询是否存在安全漏洞")]
         public object ExecuteScalar(CommandType cmdType, string cmdText, params DbParameter[] parameters)
         {
-            if (string.IsNullOrWhiteSpace(cmdText)) { return null; }
+            if (string.IsNullOrWhiteSpace(cmdText))
+            {
+                return null;
+            }
+
             try
             {
                 Open();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
-                if (parameters != null && parameters.Length > 0) { _comm.Parameters.AddRange(parameters); }
+                if (parameters != null && parameters.Length > 0)
+                {
+                    _comm.Parameters.AddRange(parameters);
+                }
 
-                return _comm.ExecuteScalar();
+                using (FsLinkTrack.TrackDatabase("ExecuteScalar", _connectionString, cmdType, cmdText, parameters))
+                {
+                    return _comm.ExecuteScalar();
+                }
             }
-            catch (Exception) { Close(true); throw; }
-            finally { Close(false); }
+            catch (Exception)
+            {
+                Close(true);
+                throw;
+            }
+            finally
+            {
+                Close(false);
+            }
         }
 
         /// <summary>
@@ -206,18 +254,35 @@ namespace FS.Data.Data
         [SuppressMessage("Microsoft.Security", "CA2100:检查 SQL 查询是否存在安全漏洞")]
         public async Task<object> ExecuteScalarAsync(CommandType cmdType, string cmdText, params DbParameter[] parameters)
         {
-            if (string.IsNullOrWhiteSpace(cmdText)) { return null; }
+            if (string.IsNullOrWhiteSpace(cmdText))
+            {
+                return null;
+            }
+
             try
             {
                 await OpenAsync();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
-                if (parameters != null && parameters.Length > 0) { _comm.Parameters.AddRange(parameters); }
+                if (parameters != null && parameters.Length > 0)
+                {
+                    _comm.Parameters.AddRange(parameters);
+                }
 
-                return await _comm.ExecuteScalarAsync();
+                using (FsLinkTrack.TrackDatabase("ExecuteScalarAsync", _connectionString, cmdType, cmdText, parameters))
+                {
+                    return await _comm.ExecuteScalarAsync();
+                }
             }
-            catch (Exception) { Close(true); throw; }
-            finally { Close(false); }
+            catch (Exception)
+            {
+                Close(true);
+                throw;
+            }
+            finally
+            {
+                Close(false);
+            }
         }
 
         /// <summary>
@@ -229,18 +294,35 @@ namespace FS.Data.Data
         [SuppressMessage("Microsoft.Security", "CA2100:检查 SQL 查询是否存在安全漏洞")]
         public int ExecuteNonQuery(CommandType cmdType, string cmdText, params DbParameter[] parameters)
         {
-            if (string.IsNullOrWhiteSpace(cmdText)) { return 0; }
+            if (string.IsNullOrWhiteSpace(cmdText))
+            {
+                return 0;
+            }
+
             try
             {
                 Open();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
-                if (parameters != null && parameters.Length > 0) { _comm.Parameters.AddRange(parameters); }
+                if (parameters != null && parameters.Length > 0)
+                {
+                    _comm.Parameters.AddRange(parameters);
+                }
 
-                return _comm.ExecuteNonQuery();
+                using (FsLinkTrack.TrackDatabase("ExecuteNonQuery", _connectionString, cmdType, cmdText, parameters))
+                {
+                    return _comm.ExecuteNonQuery();
+                }
             }
-            catch (Exception) { Close(true); throw; }
-            finally { Close(false); }
+            catch (Exception)
+            {
+                Close(true);
+                throw;
+            }
+            finally
+            {
+                Close(false);
+            }
         }
 
         /// <summary>
@@ -252,18 +334,35 @@ namespace FS.Data.Data
         [SuppressMessage("Microsoft.Security", "CA2100:检查 SQL 查询是否存在安全漏洞")]
         public async Task<int> ExecuteNonQueryAsync(CommandType cmdType, string cmdText, params DbParameter[] parameters)
         {
-            if (string.IsNullOrWhiteSpace(cmdText)) { return 0; }
+            if (string.IsNullOrWhiteSpace(cmdText))
+            {
+                return 0;
+            }
+
             try
             {
                 await OpenAsync();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
-                if (parameters != null && parameters.Length > 0) { _comm.Parameters.AddRange(parameters); }
+                if (parameters != null && parameters.Length > 0)
+                {
+                    _comm.Parameters.AddRange(parameters);
+                }
 
-                return await _comm.ExecuteNonQueryAsync();
+                using (FsLinkTrack.TrackDatabase("ExecuteNonQueryAsync", _connectionString, cmdType, cmdText, parameters))
+                {
+                    return await _comm.ExecuteNonQueryAsync();
+                }
             }
-            catch (Exception) { Close(true); throw; }
-            finally { Close(false); }
+            catch (Exception)
+            {
+                Close(true);
+                throw;
+            }
+            finally
+            {
+                Close(false);
+            }
         }
 
         /// <summary>
@@ -275,17 +374,31 @@ namespace FS.Data.Data
         [SuppressMessage("Microsoft.Security", "CA2100:检查 SQL 查询是否存在安全漏洞")]
         public DbDataReader GetReader(CommandType cmdType, string cmdText, params DbParameter[] parameters)
         {
-            if (string.IsNullOrWhiteSpace(cmdText)) { return null; }
+            if (string.IsNullOrWhiteSpace(cmdText))
+            {
+                return null;
+            }
+
             try
             {
                 Open();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
-                if (parameters != null && parameters.Length > 0) { _comm.Parameters.AddRange(parameters); }
+                if (parameters != null && parameters.Length > 0)
+                {
+                    _comm.Parameters.AddRange(parameters);
+                }
 
-                return IsTransaction ? _comm.ExecuteReader() : _comm.ExecuteReader(CommandBehavior.CloseConnection);
+                using (FsLinkTrack.TrackDatabase("ExecuteReader", _connectionString, cmdType, cmdText, parameters))
+                {
+                    return IsTransaction ? _comm.ExecuteReader() : _comm.ExecuteReader(CommandBehavior.CloseConnection);
+                }
             }
-            catch (Exception) { Close(true); throw; }
+            catch (Exception)
+            {
+                Close(true);
+                throw;
+            }
         }
 
         /// <summary>
@@ -297,18 +410,32 @@ namespace FS.Data.Data
         [SuppressMessage("Microsoft.Security", "CA2100:检查 SQL 查询是否存在安全漏洞")]
         public async Task<DbDataReader> GetReaderAsync(CommandType cmdType, string cmdText, params DbParameter[] parameters)
         {
-            if (string.IsNullOrWhiteSpace(cmdText)) { return null; }
+            if (string.IsNullOrWhiteSpace(cmdText))
+            {
+                return null;
+            }
+
             try
             {
                 await OpenAsync();
 
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
-                if (parameters != null && parameters.Length > 0) { _comm.Parameters.AddRange(parameters); }
+                if (parameters != null && parameters.Length > 0)
+                {
+                    _comm.Parameters.AddRange(parameters);
+                }
 
-                return await (IsTransaction ? _comm.ExecuteReaderAsync().ConfigureAwait(false) : _comm.ExecuteReaderAsync(CommandBehavior.CloseConnection).ConfigureAwait(false));
+                using (FsLinkTrack.TrackDatabase("ExecuteReaderAsync", _connectionString, cmdType, cmdText, parameters))
+                {
+                    return await (IsTransaction ? _comm.ExecuteReaderAsync() : _comm.ExecuteReaderAsync(CommandBehavior.CloseConnection));
+                }
             }
-            catch (Exception) { Close(true); throw; }
+            catch (Exception)
+            {
+                Close(true);
+                throw;
+            }
         }
 
         /// <summary>
@@ -320,21 +447,39 @@ namespace FS.Data.Data
         [SuppressMessage("Microsoft.Security", "CA2100:检查 SQL 查询是否存在安全漏洞")]
         public DataSet GetDataSet(CommandType cmdType, string cmdText, params DbParameter[] parameters)
         {
-            if (string.IsNullOrWhiteSpace(cmdText)) { return new DataSet(); }
+            if (string.IsNullOrWhiteSpace(cmdText))
+            {
+                return new DataSet();
+            }
+
             try
             {
                 Open();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
-                if (parameters != null && parameters.Length > 0) { _comm.Parameters.AddRange(parameters); }
-                var ada = _factory.CreateDataAdapter();
-                ada.SelectCommand = _comm;
-                var ds = new DataSet();
-                ada.Fill(ds);
-                return ds;
+                if (parameters != null && parameters.Length > 0)
+                {
+                    _comm.Parameters.AddRange(parameters);
+                }
+
+                using (FsLinkTrack.TrackDatabase("CreateDataAdapter", _connectionString, cmdType, cmdText, parameters))
+                {
+                    var ada = _factory.CreateDataAdapter();
+                    ada.SelectCommand = _comm;
+                    var ds = new DataSet();
+                    ada.Fill(ds);
+                    return ds;
+                }
             }
-            catch (Exception) { Close(true); throw; }
-            finally { Close(false); }
+            catch (Exception)
+            {
+                Close(true);
+                throw;
+            }
+            finally
+            {
+                Close(false);
+            }
         }
 
         /// <summary>
@@ -346,22 +491,40 @@ namespace FS.Data.Data
         [SuppressMessage("Microsoft.Security", "CA2100:检查 SQL 查询是否存在安全漏洞")]
         public async Task<DataSet> GetDataSetAsync(CommandType cmdType, string cmdText, params DbParameter[] parameters)
         {
-            if (string.IsNullOrWhiteSpace(cmdText)) { return new DataSet(); }
+            if (string.IsNullOrWhiteSpace(cmdText))
+            {
+                return new DataSet();
+            }
+
             try
             {
                 await OpenAsync();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
-                if (parameters != null && parameters.Length > 0) { _comm.Parameters.AddRange(parameters); }
-                var dataAdapter = _factory.CreateDataAdapter();
-                // ReSharper disable once PossibleNullReferenceException
-                dataAdapter.SelectCommand = _comm;
-                var ds = new DataSet();
-                dataAdapter.Fill(ds);
-                return ds;
+                if (parameters != null && parameters.Length > 0)
+                {
+                    _comm.Parameters.AddRange(parameters);
+                }
+
+                using (FsLinkTrack.TrackDatabase("CreateDataAdapter", _connectionString, cmdType, cmdText, parameters))
+                {
+                    var dataAdapter = _factory.CreateDataAdapter();
+                    // ReSharper disable once PossibleNullReferenceException
+                    dataAdapter.SelectCommand = _comm;
+                    var ds = new DataSet();
+                    dataAdapter.Fill(ds);
+                    return ds;
+                }
             }
-            catch (Exception) { Close(true); throw; }
-            finally { Close(false); }
+            catch (Exception)
+            {
+                Close(true);
+                throw;
+            }
+            finally
+            {
+                Close(false);
+            }
         }
 
         /// <summary>
@@ -395,21 +558,34 @@ namespace FS.Data.Data
         /// <param name="dt">数据</param>
         public void ExecuteSqlBulkCopy(string tableName, DataTable dt)
         {
-            if (dt == null || dt.Rows.Count == 0) { return; }
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                return;
+            }
 
             try
             {
                 Open();
-                using (var bulkCopy = new SqlBulkCopy((SqlConnection)_comm.Connection, SqlBulkCopyOptions.Default, (SqlTransaction)_comm.Transaction))
+                using (FsLinkTrack.TrackDatabase("SqlBulkCopy", _connectionString, tableName))
                 {
-                    bulkCopy.DestinationTableName = tableName;
-                    bulkCopy.BatchSize = dt.Rows.Count;
-                    bulkCopy.BulkCopyTimeout = 3600;
-                    bulkCopy.WriteToServer(dt);
+                    using (var bulkCopy = new SqlBulkCopy((SqlConnection) _comm.Connection, SqlBulkCopyOptions.Default, (SqlTransaction) _comm.Transaction))
+                    {
+                        bulkCopy.DestinationTableName = tableName;
+                        bulkCopy.BatchSize            = dt.Rows.Count;
+                        bulkCopy.BulkCopyTimeout      = 3600;
+                        bulkCopy.WriteToServer(dt);
+                    }
                 }
             }
-            catch (Exception) { Close(true); throw; }
-            finally { Close(false); }
+            catch (Exception)
+            {
+                Close(true);
+                throw;
+            }
+            finally
+            {
+                Close(false);
+            }
         }
 
         /// <summary>
@@ -419,27 +595,43 @@ namespace FS.Data.Data
         /// <param name="dt">数据</param>
         public async Task ExecuteSqlBulkCopyAsync(string tableName, DataTable dt)
         {
-            if (dt == null || dt.Rows.Count == 0) { return; }
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                return;
+            }
 
             try
             {
                 await OpenAsync();
-                using (var bulkCopy = new SqlBulkCopy((SqlConnection)_comm.Connection, SqlBulkCopyOptions.Default, (SqlTransaction)_comm.Transaction))
+                using (FsLinkTrack.TrackDatabase("SqlBulkCopy", _connectionString, tableName))
                 {
-                    bulkCopy.DestinationTableName = tableName;
-                    bulkCopy.BatchSize = dt.Rows.Count;
-                    bulkCopy.BulkCopyTimeout = 3600;
-                    await bulkCopy.WriteToServerAsync(dt);
+                    using (var bulkCopy = new SqlBulkCopy((SqlConnection) _comm.Connection, SqlBulkCopyOptions.Default, (SqlTransaction) _comm.Transaction))
+                    {
+                        bulkCopy.DestinationTableName = tableName;
+                        bulkCopy.BatchSize            = dt.Rows.Count;
+                        bulkCopy.BulkCopyTimeout      = 3600;
+                        await bulkCopy.WriteToServerAsync(dt);
+                    }
                 }
             }
-            catch (Exception) { Close(true); throw; }
-            finally { Close(false); }
+            catch (Exception)
+            {
+                Close(true);
+                throw;
+            }
+            finally
+            {
+                Close(false);
+            }
         }
 
         private void Dispose(bool disposing)
         {
             //释放托管资源
-            if (disposing) { Close(true); }
+            if (disposing)
+            {
+                Close(true);
+            }
         }
 
         /// <summary>

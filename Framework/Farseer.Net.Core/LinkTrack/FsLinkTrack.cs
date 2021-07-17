@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using FS.Extends;
@@ -63,6 +66,57 @@ namespace FS.Core.LinkTrack
                 CallType          = EumCallType.Database,
                 DbLinkTrackDetail = dbLinkTrackDetail,
                 CallMethod        = method
+            };
+            Current.Set(linkTrackDetail);
+            return new TrackEnd(linkTrackDetail);
+        }
+
+        /// <summary>
+        /// 追踪数据库
+        /// </summary>
+        public static TrackEnd TrackDatabase(string method, string connectionString)
+        {
+            var linkTrackDetail = new LinkTrackDetail
+            {
+                CallType          = EumCallType.Database,
+                DbLinkTrackDetail = new DbLinkTrackDetail() {ConnectionString = connectionString},
+                CallMethod        = method
+            };
+            Current.Set(linkTrackDetail);
+            return new TrackEnd(linkTrackDetail);
+        }
+
+        /// <summary>
+        /// 追踪数据库
+        /// </summary>
+        public static TrackEnd TrackDatabase(string method, string connectionString,string tableName)
+        {
+            var linkTrackDetail = new LinkTrackDetail
+            {
+                CallType          = EumCallType.Database,
+                DbLinkTrackDetail = new DbLinkTrackDetail() {ConnectionString = connectionString,TableName = tableName},
+                CallMethod        = method
+            };
+            Current.Set(linkTrackDetail);
+            return new TrackEnd(linkTrackDetail);
+        }
+
+        /// <summary>
+        /// 追踪数据库
+        /// </summary>
+        public static TrackEnd TrackDatabase(string method, string connectionString, CommandType commandType, string sql, params DbParameter[] parameters)
+        {
+            var linkTrackDetail = new LinkTrackDetail
+            {
+                CallType = EumCallType.Database,
+                DbLinkTrackDetail = new DbLinkTrackDetail()
+                {
+                    ConnectionString = connectionString,
+                    CommandType      = commandType,
+                    Sql              = sql,
+                    SqlParam         = parameters.ToDictionary(o => o.ParameterName, o => o.Value.ToString())
+                },
+                CallMethod = method
             };
             Current.Set(linkTrackDetail);
             return new TrackEnd(linkTrackDetail);
