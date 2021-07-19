@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using FS.Extends;
+using Newtonsoft.Json;
 
 namespace FS.Core.LinkTrack
 {
@@ -89,12 +90,12 @@ namespace FS.Core.LinkTrack
         /// <summary>
         /// 追踪数据库
         /// </summary>
-        public static TrackEnd TrackDatabase(string method, string connectionString,string tableName)
+        public static TrackEnd TrackDatabase(string method, string connectionString, string tableName)
         {
             var linkTrackDetail = new LinkTrackDetail
             {
                 CallType          = EumCallType.Database,
-                DbLinkTrackDetail = new DbLinkTrackDetail() {ConnectionString = connectionString,TableName = tableName},
+                DbLinkTrackDetail = new DbLinkTrackDetail() {ConnectionString = connectionString, TableName = tableName},
                 CallMethod        = method
             };
             Current.Set(linkTrackDetail);
@@ -198,6 +199,27 @@ namespace FS.Core.LinkTrack
                 {
                     {"Server", server},
                     {"Action", action},
+                }
+            };
+            Current.Set(linkTrackDetail);
+            return new TrackEnd(linkTrackDetail);
+        }
+
+        /// <summary>
+        /// 追踪Http
+        /// </summary>
+        public static TrackEnd TrackHttp(string url, string method, Dictionary<string, string> headerData, string requestBody)
+        {
+            var linkTrackDetail = new LinkTrackDetail
+            {
+                CallType = EumCallType.HttpClient,
+                StartTs  = DateTime.Now.ToTimestamps(),
+                Data = new Dictionary<string, string>()
+                {
+                    {"Url", url},
+                    {"Method", method},
+                    {"RequestBody", requestBody},
+                    {"Header", headerData != null ? JsonConvert.SerializeObject(headerData) : "{}"},
                 }
             };
             Current.Set(linkTrackDetail);

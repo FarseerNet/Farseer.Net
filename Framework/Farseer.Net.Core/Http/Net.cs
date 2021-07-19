@@ -11,6 +11,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using FS.Core.LinkTrack;
 using FS.Extends;
 
 namespace FS.Core.Http
@@ -19,7 +20,7 @@ namespace FS.Core.Http
     {
         private static readonly HttpClient httpClient = new(new HttpClientHandler()
         {
-            UseProxy = true,
+            UseProxy                                  = true,
             ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
         });
 
@@ -50,31 +51,36 @@ namespace FS.Core.Http
         /// <param name="cookie">是否需要cookie</param>
         public static async Task<string> GetAsync(string url, string postData = null, Dictionary<string, string> headerData = null, Encoding encoding = null, int requestTimeout = 0, CookieContainer cookie = null)
         {
-            encoding ??= Encoding.UTF8;
-
-            var httpContent = new StringContent("", encoding); // 内容体
-            httpContent.Headers.AddTraceInfoToHeader();        // 添加头部
-            if (headerData != null)
+            using (var trackEnd = FsLinkTrack.TrackHttp(url, "GET", headerData, postData))
             {
-                foreach (var header in headerData)
+                encoding ??= Encoding.UTF8;
+
+                var httpContent = new StringContent("", encoding); // 内容体
+                httpContent.Headers.AddTraceInfoToHeader();        // 添加头部
+                if (headerData != null)
                 {
-                    if (httpContent.Headers.Contains(header.Key)) continue;
-                    httpContent.Headers.TryAddWithoutValidation(header.Key, header.Value);
+                    foreach (var header in headerData)
+                    {
+                        if (httpContent.Headers.Contains(header.Key)) continue;
+                        httpContent.Headers.TryAddWithoutValidation(header.Key, header.Value);
+                    }
                 }
+
+                var cancellationTokenSource = new CancellationTokenSource();
+                if (requestTimeout > 0) cancellationTokenSource.CancelAfter(requestTimeout);
+
+                var httpRspMessage = await httpClient.SendAsync(new HttpRequestMessage
+                {
+                    Content    = httpContent,
+                    Method     = HttpMethod.Get,
+                    RequestUri = new Uri(string.IsNullOrWhiteSpace(postData) ? url : $"{url}?{postData}"),
+                }, cancellationTokenSource.Token);
+
+                var bytes  = await httpRspMessage.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+                var result = encoding.GetString(bytes);
+                trackEnd.SetHttpResponseBody(result);
+                return result;
             }
-
-            var cancellationTokenSource = new CancellationTokenSource();
-            if (requestTimeout > 0) cancellationTokenSource.CancelAfter(requestTimeout);
-
-            var httpRspMessage = await httpClient.SendAsync(new HttpRequestMessage
-            {
-                Content    = httpContent,
-                Method     = HttpMethod.Get,
-                RequestUri = new Uri(string.IsNullOrWhiteSpace(postData) ? url : $"{url}?{postData}"),
-            }, cancellationTokenSource.Token);
-
-            var bytes = await httpRspMessage.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
-            return encoding.GetString(bytes);
         }
 
         /// <summary>
@@ -100,25 +106,30 @@ namespace FS.Core.Http
         /// <param name="cookie">是否需要cookie</param>
         public static async Task<string> PostAsync(string url, string postData, Dictionary<string, string> headerData, Encoding encoding = null, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, CookieContainer cookie = null)
         {
-            encoding ??= Encoding.UTF8;
-
-            var httpContent = new StringContent(postData, encoding, contentType); // 内容体
-            httpContent.Headers.AddTraceInfoToHeader();                           // 添加头部
-            if (headerData != null)
+            using (var trackEnd = FsLinkTrack.TrackHttp(url, "POST", headerData, postData))
             {
-                foreach (var header in headerData)
+                encoding ??= Encoding.UTF8;
+
+                var httpContent = new StringContent(postData, encoding, contentType); // 内容体
+                httpContent.Headers.AddTraceInfoToHeader();                           // 添加头部
+                if (headerData != null)
                 {
-                    if (httpContent.Headers.Contains(header.Key)) continue;
-                    httpContent.Headers.Add(header.Key, header.Value);
+                    foreach (var header in headerData)
+                    {
+                        if (httpContent.Headers.Contains(header.Key)) continue;
+                        httpContent.Headers.Add(header.Key, header.Value);
+                    }
                 }
+
+                var cancellationTokenSource = new CancellationTokenSource();
+                if (requestTimeout > 0) cancellationTokenSource.CancelAfter(requestTimeout);
+                var httpRspMessage = httpClient.PostAsync(url, httpContent, cancellationTokenSource.Token);
+
+                var bytes  = await (await httpRspMessage.ConfigureAwait(false)).Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+                var result = encoding.GetString(bytes);
+                trackEnd.SetHttpResponseBody(result);
+                return result;
             }
-
-            var cancellationTokenSource = new CancellationTokenSource();
-            if (requestTimeout > 0) cancellationTokenSource.CancelAfter(requestTimeout);
-            var httpRspMessage = httpClient.PostAsync(url, httpContent, cancellationTokenSource.Token);
-
-            var bytes = await (await httpRspMessage.ConfigureAwait(false)).Content.ReadAsByteArrayAsync().ConfigureAwait(false);
-            return encoding.GetString(bytes);
         }
 
         /// <summary>
@@ -156,26 +167,31 @@ namespace FS.Core.Http
         /// <param name="cookie">是否需要cookie</param>
         public static async Task<string> PutAsync(string url, string postData, Dictionary<string, string> headerData, Encoding encoding = null, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, CookieContainer cookie = null)
         {
-            encoding ??= Encoding.UTF8;
-
-            var httpContent = new StringContent(postData, encoding, contentType); // 内容体
-            httpContent.Headers.AddTraceInfoToHeader();                           // 添加头部
-            if (headerData != null)
+            using (var trackEnd = FsLinkTrack.TrackHttp(url, "POST", headerData, postData))
             {
-                foreach (var header in headerData)
+                encoding ??= Encoding.UTF8;
+
+                var httpContent = new StringContent(postData, encoding, contentType); // 内容体
+                httpContent.Headers.AddTraceInfoToHeader();                           // 添加头部
+                if (headerData != null)
                 {
-                    if (httpContent.Headers.Contains(header.Key)) continue;
-                    httpContent.Headers.Add(header.Key, header.Value);
+                    foreach (var header in headerData)
+                    {
+                        if (httpContent.Headers.Contains(header.Key)) continue;
+                        httpContent.Headers.Add(header.Key, header.Value);
+                    }
                 }
+
+                //httpContent.Headers.Add("Cookie", "bid=\"YObnALe98pw\"");
+                var cancellationTokenSource = new CancellationTokenSource();
+                if (requestTimeout > 0) cancellationTokenSource.CancelAfter(requestTimeout);
+                var httpRspMessage = httpClient.PutAsync(url, httpContent, cancellationTokenSource.Token);
+
+                var bytes  = await (await httpRspMessage.ConfigureAwait(false)).Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+                var result = encoding.GetString(bytes);
+                trackEnd.SetHttpResponseBody(result);
+                return result;
             }
-
-            //httpContent.Headers.Add("Cookie", "bid=\"YObnALe98pw\"");
-            var cancellationTokenSource = new CancellationTokenSource();
-            if (requestTimeout > 0) cancellationTokenSource.CancelAfter(requestTimeout);
-            var httpRspMessage = httpClient.PutAsync(url, httpContent, cancellationTokenSource.Token);
-
-            var bytes = await (await httpRspMessage.ConfigureAwait(false)).Content.ReadAsByteArrayAsync().ConfigureAwait(false);
-            return encoding.GetString(bytes);
         }
 
         /// <summary>

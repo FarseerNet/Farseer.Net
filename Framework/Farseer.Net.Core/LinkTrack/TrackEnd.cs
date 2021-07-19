@@ -22,11 +22,19 @@ namespace FS.Core.LinkTrack
         }
 
         /// <summary>
-        /// 设置API响应内容
+        /// 设置下游系统API响应内容
         /// </summary>
-        public void SetResponseBody(string responseBody)
+        public void SetDownstreamResponseBody(string responseBody)
         {
             _linkTrackContext.ResponseBody = responseBody;
+        }
+
+        /// <summary>
+        /// 设置Http响应内容
+        /// </summary>
+        public void SetHttpResponseBody(string responseBody)
+        {
+            _linkTrackDetail.Data["ResponseBody"] = responseBody;
         }
 
         /// <summary>
