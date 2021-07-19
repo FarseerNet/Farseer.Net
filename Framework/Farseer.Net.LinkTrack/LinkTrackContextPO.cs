@@ -28,7 +28,7 @@ namespace FS.LinkTrack
         [Keyword]
         public override string Domain { get; set; }
 
-        [Keyword]
+        [Text]
         public override string Path { get; set; }
         
         [Keyword]
