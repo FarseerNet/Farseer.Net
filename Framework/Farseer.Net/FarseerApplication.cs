@@ -153,7 +153,7 @@ namespace FS
                     var interfaceCom = model.Services.FirstOrDefault(o => o.IsInterface) ?? model.Services.FirstOrDefault();
                     Console.WriteLine(interfaceCom.IsInterface ? $"{index + 1}、{name} {model.Implementation.Name} ==> {interfaceCom.Name}" : $"{index + 1}、{name} {model.Implementation.Name}");
                 }
-                IocManager.Logger<FarseerApplication>().LogInformation($"系统初始化完毕，耗时{(DateTime.Now - StartupAt).TotalMilliseconds:n}ms");
+                IocManager.Logger<FarseerApplication>().LogInformation($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]系统初始化完毕，耗时{(DateTime.Now - StartupAt).TotalMilliseconds:n}ms");
             }
             catch (Exception ex)
             {
