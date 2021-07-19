@@ -302,7 +302,7 @@ namespace FS.Cache.Redis
 
         public Task<long> HyperLogLogLengthAsync(RedisKey[] keys, CommandFlags flags = CommandFlags.None)
         {
-            using (FsLinkTrack.TrackRedis("HyperLogLogLengthAsync"))
+            using (FsLinkTrack.TrackRedis("HyperLogLogLengthAsync", string.Join(",", keys)))
             {
                 return _db.HyperLogLogLengthAsync(keys, flags);
             }
@@ -342,7 +342,7 @@ namespace FS.Cache.Redis
 
         public Task<long> KeyDeleteAsync(RedisKey[] keys, CommandFlags flags = CommandFlags.None)
         {
-            using (FsLinkTrack.TrackRedis("KeyDeleteAsync"))
+            using (FsLinkTrack.TrackRedis("KeyDeleteAsync", string.Join(",", keys)))
             {
                 return _db.KeyDeleteAsync(keys, flags);
             }
@@ -366,7 +366,7 @@ namespace FS.Cache.Redis
 
         public Task<long> KeyExistsAsync(RedisKey[] keys, CommandFlags flags = CommandFlags.None)
         {
-            using (FsLinkTrack.TrackRedis("KeyExistsAsync"))
+            using (FsLinkTrack.TrackRedis("KeyExistsAsync", string.Join(",", keys)))
             {
                 return _db.KeyExistsAsync(keys, flags);
             }
@@ -646,7 +646,7 @@ namespace FS.Cache.Redis
 
         public Task<RedisResult> ScriptEvaluateAsync(string script, RedisKey[] keys = null, RedisValue[] values = null, CommandFlags flags = CommandFlags.None)
         {
-            using (FsLinkTrack.TrackRedis("ScriptEvaluateAsync"))
+            using (FsLinkTrack.TrackRedis("ScriptEvaluateAsync", string.Join(",", keys)))
             {
                 return _db.ScriptEvaluateAsync(script, keys, values, flags);
             }
@@ -654,7 +654,7 @@ namespace FS.Cache.Redis
 
         public Task<RedisResult> ScriptEvaluateAsync(byte[] hash, RedisKey[] keys = null, RedisValue[] values = null, CommandFlags flags = CommandFlags.None)
         {
-            using (FsLinkTrack.TrackRedis("ScriptEvaluateAsync"))
+            using (FsLinkTrack.TrackRedis("ScriptEvaluateAsync", string.Join(",", keys)))
             {
                 return _db.ScriptEvaluateAsync(hash, keys, values, flags);
             }
@@ -702,7 +702,7 @@ namespace FS.Cache.Redis
 
         public Task<RedisValue[]> SetCombineAsync(SetOperation operation, RedisKey[] keys, CommandFlags flags = CommandFlags.None)
         {
-            using (FsLinkTrack.TrackRedis("SetCombineAsync"))
+            using (FsLinkTrack.TrackRedis("SetCombineAsync", string.Join(",", keys)))
             {
                 return _db.SetCombineAsync(operation, keys, flags);
             }
@@ -718,7 +718,7 @@ namespace FS.Cache.Redis
 
         public Task<long> SetCombineAndStoreAsync(SetOperation operation, RedisKey destination, RedisKey[] keys, CommandFlags flags = CommandFlags.None)
         {
-            using (FsLinkTrack.TrackRedis("SetCombineAndStoreAsync"))
+            using (FsLinkTrack.TrackRedis("SetCombineAndStoreAsync", string.Join(",", keys)))
             {
                 return _db.SetCombineAndStoreAsync(operation, destination, keys, flags);
             }
@@ -862,7 +862,7 @@ namespace FS.Cache.Redis
 
         public Task<long> SortedSetCombineAndStoreAsync(SetOperation operation, RedisKey destination, RedisKey[] keys, double[] weights = null, Aggregate aggregate = Aggregate.Sum, CommandFlags flags = CommandFlags.None)
         {
-            using (FsLinkTrack.TrackRedis("SortedSetCombineAndStoreAsync"))
+            using (FsLinkTrack.TrackRedis("SortedSetCombineAndStoreAsync", string.Join(",", keys)))
             {
                 return _db.SortedSetCombineAndStoreAsync(operation, destination, keys, weights, aggregate, flags);
             }
@@ -1270,7 +1270,7 @@ namespace FS.Cache.Redis
 
         public Task<long> StringBitOperationAsync(Bitwise operation, RedisKey destination, RedisKey[] keys, CommandFlags flags = CommandFlags.None)
         {
-            using (FsLinkTrack.TrackRedis("StringBitOperationAsync"))
+            using (FsLinkTrack.TrackRedis("StringBitOperationAsync", string.Join(",", keys)))
             {
                 return _db.StringBitOperationAsync(operation, destination, keys, flags);
             }
@@ -1310,7 +1310,7 @@ namespace FS.Cache.Redis
 
         public Task<RedisValue[]> StringGetAsync(RedisKey[] keys, CommandFlags flags = CommandFlags.None)
         {
-            using (FsLinkTrack.TrackRedis("StringGetAsync"))
+            using (FsLinkTrack.TrackRedis("StringGetAsync", string.Join(",", keys)))
             {
                 return _db.StringGetAsync(keys, flags);
             }
@@ -1422,7 +1422,7 @@ namespace FS.Cache.Redis
 
         public Task<long> KeyTouchAsync(RedisKey[] keys, CommandFlags flags = CommandFlags.None)
         {
-            using (FsLinkTrack.TrackRedis("KeyTouchAsync"))
+            using (FsLinkTrack.TrackRedis("KeyTouchAsync", string.Join(",", keys)))
             {
                 return _db.KeyTouchAsync(keys, flags);
             }
@@ -1710,7 +1710,7 @@ namespace FS.Cache.Redis
 
         public long HyperLogLogLength(RedisKey[] keys, CommandFlags flags = CommandFlags.None)
         {
-            using (FsLinkTrack.TrackRedis("HyperLogLogLength"))
+            using (FsLinkTrack.TrackRedis("HyperLogLogLength", string.Join(",", keys)))
             {
                 return _db.HyperLogLogLength(keys, flags);
             }
@@ -1746,7 +1746,7 @@ namespace FS.Cache.Redis
 
         public long KeyDelete(RedisKey[] keys, CommandFlags flags = CommandFlags.None)
         {
-            using (FsLinkTrack.TrackRedis("KeyDelete"))
+            using (FsLinkTrack.TrackRedis("KeyDelete", string.Join(",", keys)))
             {
                 return _db.KeyDelete(keys, flags);
             }
@@ -1770,7 +1770,7 @@ namespace FS.Cache.Redis
 
         public long KeyExists(RedisKey[] keys, CommandFlags flags = CommandFlags.None)
         {
-            using (FsLinkTrack.TrackRedis("KeyExists"))
+            using (FsLinkTrack.TrackRedis("KeyExists", string.Join(",", keys)))
             {
                 return _db.KeyExists(keys, flags);
             }
@@ -2044,7 +2044,7 @@ namespace FS.Cache.Redis
 
         public RedisResult ScriptEvaluate(string script, RedisKey[] keys = null, RedisValue[] values = null, CommandFlags flags = CommandFlags.None)
         {
-            using (FsLinkTrack.TrackRedis("ScriptEvaluate"))
+            using (FsLinkTrack.TrackRedis("ScriptEvaluate", string.Join(",", keys)))
             {
                 return _db.ScriptEvaluate(script, keys, values, flags);
             }
@@ -2052,7 +2052,7 @@ namespace FS.Cache.Redis
 
         public RedisResult ScriptEvaluate(byte[] hash, RedisKey[] keys = null, RedisValue[] values = null, CommandFlags flags = CommandFlags.None)
         {
-            using (FsLinkTrack.TrackRedis("ScriptEvaluate"))
+            using (FsLinkTrack.TrackRedis("ScriptEvaluate", string.Join(",", keys)))
             {
                 return _db.ScriptEvaluate(hash, keys, values, flags);
             }
@@ -2100,7 +2100,7 @@ namespace FS.Cache.Redis
 
         public RedisValue[] SetCombine(SetOperation operation, RedisKey[] keys, CommandFlags flags = CommandFlags.None)
         {
-            using (FsLinkTrack.TrackRedis("SetCombine"))
+            using (FsLinkTrack.TrackRedis("SetCombine", string.Join(",", keys)))
             {
                 return _db.SetCombine(operation, keys, flags);
             }
@@ -2116,7 +2116,7 @@ namespace FS.Cache.Redis
 
         public long SetCombineAndStore(SetOperation operation, RedisKey destination, RedisKey[] keys, CommandFlags flags = CommandFlags.None)
         {
-            using (FsLinkTrack.TrackRedis("SetCombineAndStore"))
+            using (FsLinkTrack.TrackRedis("SetCombineAndStore", string.Join(",", keys)))
             {
                 return _db.SetCombineAndStore(operation, destination, keys, flags);
             }
@@ -2276,7 +2276,7 @@ namespace FS.Cache.Redis
 
         public long SortedSetCombineAndStore(SetOperation operation, RedisKey destination, RedisKey[] keys, double[] weights = null, Aggregate aggregate = Aggregate.Sum, CommandFlags flags = CommandFlags.None)
         {
-            using (FsLinkTrack.TrackRedis("SortedSetCombineAndStore"))
+            using (FsLinkTrack.TrackRedis("SortedSetCombineAndStore", string.Join(",", keys)))
             {
                 return _db.SortedSetCombineAndStore(operation, destination, keys, weights, aggregate, flags);
             }
@@ -2684,7 +2684,7 @@ namespace FS.Cache.Redis
 
         public long StringBitOperation(Bitwise operation, RedisKey destination, RedisKey[] keys, CommandFlags flags = CommandFlags.None)
         {
-            using (FsLinkTrack.TrackRedis("StringBitOperation"))
+            using (FsLinkTrack.TrackRedis("StringBitOperation", string.Join(",", keys)))
             {
                 return _db.StringBitOperation(operation, destination, keys, flags);
             }
@@ -2724,7 +2724,7 @@ namespace FS.Cache.Redis
 
         public RedisValue[] StringGet(RedisKey[] keys, CommandFlags flags = CommandFlags.None)
         {
-            using (FsLinkTrack.TrackRedis("StringGet"))
+            using (FsLinkTrack.TrackRedis("StringGet", string.Join(",", keys)))
             {
                 return _db.StringGet(keys, flags);
             }
@@ -2836,7 +2836,7 @@ namespace FS.Cache.Redis
 
         public long KeyTouch(RedisKey[] keys, CommandFlags flags = CommandFlags.None)
         {
-            using (FsLinkTrack.TrackRedis("KeyTouch"))
+            using (FsLinkTrack.TrackRedis("KeyTouch", string.Join(",", keys)))
             {
                 return _db.KeyTouch(keys, flags);
             }
