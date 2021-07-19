@@ -80,7 +80,7 @@ namespace FS
                                                                                          httpContext.Response.ContentType.Contains("xml") ||
                                                                                          httpContext.Response.ContentType.Contains("text")))
                     {
-                        trackEnd.SetResponseBody(rspBody);
+                        trackEnd.SetDownstreamResponseBody(rspBody);
                     }
                 }
             }
