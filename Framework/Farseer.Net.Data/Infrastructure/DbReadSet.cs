@@ -106,13 +106,13 @@ namespace FS.Data.Infrastructure
         /// <param name="top">限制显示的数量</param>
         /// <param name="isDistinct">返回当前条件下非重复数据</param>
         /// <param name="isRand">返回当前条件下随机的数据</param>
-        public virtual DataTable ToTable(int top = 0, bool isDistinct = false, bool isRand = false) => QueueManger.Commit(SetMap, (queue) => Context.Executeor.ToTable(queue.SqlBuilder.ToList(top, isDistinct, isRand)), true);
+        public virtual DataTable ToTable(int top = 0, bool isDistinct = false, bool isRand = false) => QueueManger.Commit(SetMap, (queue) => Context.Executeor.ToTable($"{typeof(TEntity).Name}.ToTable", queue.SqlBuilder.ToList(top, isDistinct, isRand)), true);
 
         /// <summary> 异步查询多条记录（不支持延迟加载） </summary>
         /// <param name="top">限制显示的数量</param>
         /// <param name="isDistinct">返回当前条件下非重复数据</param>
         /// <param name="isRand">返回当前条件下随机的数据</param>
-        public virtual Task<DataTable> ToTableAsync(int top = 0, bool isDistinct = false, bool isRand = false) => QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ToTableAsync(queue.SqlBuilder.ToList(top, isDistinct, isRand)), true);
+        public virtual Task<DataTable> ToTableAsync(int top = 0, bool isDistinct = false, bool isRand = false) => QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ToTableAsync($"{typeof(TEntity).Name}.ToTableAsync", queue.SqlBuilder.ToList(top, isDistinct, isRand)), true);
 
         /// <summary> 查询多条记录（不支持延迟加载） </summary>
         /// <param name="pageSize">每页显示数量</param>
@@ -125,7 +125,7 @@ namespace FS.Data.Infrastructure
             Check.IsTure(pageIndex < 1, $"参数{nameof(pageSize)}，不能小于1");
             Check.IsTure(pageSize < 1, $"参数{nameof(pageSize)}，不能小于1");
 
-            return QueueManger.Commit(SetMap, (queue) => Context.Executeor.ToTable(queue.SqlBuilder.ToList(pageSize, pageIndex, isDistinct)), true);
+            return QueueManger.Commit(SetMap, (queue) => Context.Executeor.ToTable($"{typeof(TEntity).Name}.ToTable", queue.SqlBuilder.ToList(pageSize, pageIndex, isDistinct)), true);
         }
 
         /// <summary> 异步查询多条记录（不支持延迟加载） </summary>
@@ -139,7 +139,7 @@ namespace FS.Data.Infrastructure
             Check.IsTure(pageIndex < 1, $"参数{nameof(pageSize)}，不能小于1");
             Check.IsTure(pageSize < 1, $"参数{nameof(pageSize)}，不能小于1");
 
-            return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ToTableAsync(queue.SqlBuilder.ToList(pageSize, pageIndex, isDistinct)), true);
+            return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ToTableAsync($"{typeof(TEntity).Name}.ToTableAsync", queue.SqlBuilder.ToList(pageSize, pageIndex, isDistinct)), true);
         }
 
         /// <summary> 查询多条记录（不支持延迟加载） </summary>
@@ -186,13 +186,13 @@ namespace FS.Data.Infrastructure
         /// <param name="top">限制显示的数量</param>
         /// <param name="isDistinct">返回当前条件下非重复数据</param>
         /// <param name="isRand">返回当前条件下随机的数据</param>
-        public virtual List<TEntity> ToList(int top = 0, bool isDistinct = false, bool isRand = false) => QueueManger.Commit(SetMap, (queue) => Context.Executeor.ToList<TEntity>(queue.SqlBuilder.ToList(top, isDistinct, isRand)), true);
+        public virtual List<TEntity> ToList(int top = 0, bool isDistinct = false, bool isRand = false) => QueueManger.Commit(SetMap, (queue) => Context.Executeor.ToList<TEntity>($"{typeof(TEntity).Name}.ToList", queue.SqlBuilder.ToList(top, isDistinct, isRand)), true);
 
         /// <summary> 查询多条记录（不支持延迟加载） </summary>
         /// <param name="top">限制显示的数量</param>
         /// <param name="isDistinct">返回当前条件下非重复数据</param>
         /// <param name="isRand">返回当前条件下随机的数据</param>
-        public virtual Task<List<TEntity>> ToListAsync(int top = 0, bool isDistinct = false, bool isRand = false) => QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ToListAsync<TEntity>(queue.SqlBuilder.ToList(top, isDistinct, isRand)), true);
+        public virtual Task<List<TEntity>> ToListAsync(int top = 0, bool isDistinct = false, bool isRand = false) => QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ToListAsync<TEntity>($"{typeof(TEntity).Name}.ToListAsync", queue.SqlBuilder.ToList(top, isDistinct, isRand)), true);
 
         /// <summary>
         ///     查询多条记录（不支持延迟加载）
@@ -207,7 +207,7 @@ namespace FS.Data.Infrastructure
             Check.IsTure(pageIndex < 1, $"参数{nameof(pageSize)}，不能小于1");
             Check.IsTure(pageSize < 1, $"参数{nameof(pageSize)}，不能小于1");
 
-            return QueueManger.Commit(SetMap, (queue) => Context.Executeor.ToList<TEntity>(queue.SqlBuilder.ToList(pageSize, pageIndex, isDistinct)), true);
+            return QueueManger.Commit(SetMap, (queue) => Context.Executeor.ToList<TEntity>($"{typeof(TEntity).Name}.ToList", queue.SqlBuilder.ToList(pageSize, pageIndex, isDistinct)), true);
 
         }
         /// <summary>
@@ -223,7 +223,7 @@ namespace FS.Data.Infrastructure
             Check.IsTure(pageIndex < 1, $"参数{nameof(pageSize)}，不能小于1");
             Check.IsTure(pageSize < 1, $"参数{nameof(pageSize)}，不能小于1");
 
-            return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ToListAsync<TEntity>(queue.SqlBuilder.ToList(pageSize, pageIndex, isDistinct)), true);
+            return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ToListAsync<TEntity>($"{typeof(TEntity).Name}.ToListAsync", queue.SqlBuilder.ToList(pageSize, pageIndex, isDistinct)), true);
         }
 
         /// <summary>
@@ -467,12 +467,12 @@ namespace FS.Data.Infrastructure
         /// <summary>
         ///     查询单条记录（不支持延迟加载）
         /// </summary>
-        public virtual TEntity ToEntity() => QueueManger.Commit(SetMap, (queue) => Context.Executeor.ToEntity<TEntity>(queue.SqlBuilder.ToEntity()), true);
+        public virtual TEntity ToEntity() => QueueManger.Commit(SetMap, (queue) => Context.Executeor.ToEntity<TEntity>($"{typeof(TEntity).Name}.ToEntity", queue.SqlBuilder.ToEntity()), true);
 
         /// <summary>
         ///     查询单条记录（不支持延迟加载）
         /// </summary>
-        public virtual Task<TEntity> ToEntityAsync() => QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ToEntityAsync<TEntity>(queue.SqlBuilder.ToEntity()), true);
+        public virtual Task<TEntity> ToEntityAsync() => QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ToEntityAsync<TEntity>($"{typeof(TEntity).Name}.ToEntityAsync", queue.SqlBuilder.ToEntity()), true);
 
         /// <summary>
         ///     获取单条记录
@@ -503,12 +503,12 @@ namespace FS.Data.Infrastructure
         /// <summary>
         ///     查询数量（不支持延迟加载）
         /// </summary>
-        public virtual int Count(bool isDistinct = false, bool isRand = false) => QueueManger.Commit(SetMap, (queue) => Context.Executeor.GetValue<int>(queue.SqlBuilder.Count()), true);
+        public virtual int Count(bool isDistinct = false, bool isRand = false) => QueueManger.Commit(SetMap, (queue) => Context.Executeor.GetValue<int>($"{typeof(TEntity).Name}.Count", queue.SqlBuilder.Count()), true);
 
         /// <summary>
         ///     查询数量（不支持延迟加载）
         /// </summary>
-        public virtual Task<int> CountAsync(bool isDistinct = false, bool isRand = false) => QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.GetValueAsync<int>(queue.SqlBuilder.Count()), true);
+        public virtual Task<int> CountAsync(bool isDistinct = false, bool isRand = false) => QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.GetValueAsync<int>($"{typeof(TEntity).Name}.CountAsync", queue.SqlBuilder.Count()), true);
 
         /// <summary>
         ///     获取数量
@@ -612,7 +612,7 @@ namespace FS.Data.Infrastructure
             if (fieldName == null) { throw new ArgumentNullException("fieldName", "查询Value操作时，fieldName参数不能为空！"); }
 
             Select(fieldName);
-            return QueueManger.Commit(SetMap, (queue) => Context.Executeor.GetValue(queue.SqlBuilder.GetValue(), defValue), true);
+            return QueueManger.Commit(SetMap, (queue) => Context.Executeor.GetValue($"{typeof(TEntity).Name}.GetValue", queue.SqlBuilder.GetValue(), defValue), true);
         }
 
         /// <summary>
@@ -623,7 +623,7 @@ namespace FS.Data.Infrastructure
             if (fieldName == null) { throw new ArgumentNullException("fieldName", "查询Value操作时，fieldName参数不能为空！"); }
 
             Select(fieldName);
-            return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.GetValueAsync(queue.SqlBuilder.GetValue(), defValue), true);
+            return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.GetValueAsync($"{typeof(TEntity).Name}.GetValueAsync", queue.SqlBuilder.GetValue(), defValue), true);
         }
 
         /// <summary>
@@ -658,7 +658,7 @@ namespace FS.Data.Infrastructure
             if (fieldName == null) { throw new ArgumentNullException("fieldName", "查询Sum操作时，fieldName参数不能为空！"); }
 
             Select(fieldName);
-            return QueueManger.Commit(SetMap, (queue) => Context.Executeor.GetValue(queue.SqlBuilder.Sum(), defValue), true);
+            return QueueManger.Commit(SetMap, (queue) => Context.Executeor.GetValue($"{typeof(TEntity).Name}.Sum", queue.SqlBuilder.Sum(), defValue), true);
         }
 
         /// <summary>
@@ -669,7 +669,7 @@ namespace FS.Data.Infrastructure
             if (fieldName == null) { throw new ArgumentNullException("fieldName", "查询Sum操作时，fieldName参数不能为空！"); }
 
             Select(fieldName);
-            return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.GetValueAsync(queue.SqlBuilder.Sum(), defValue), true);
+            return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.GetValueAsync($"{typeof(TEntity).Name}.SumAsync", queue.SqlBuilder.Sum(), defValue), true);
         }
 
         /// <summary>
@@ -680,7 +680,7 @@ namespace FS.Data.Infrastructure
             if (fieldName == null) { throw new ArgumentNullException("fieldName", "查询Max操作时，fieldName参数不能为空！"); }
 
             Select(fieldName);
-            return QueueManger.Commit(SetMap, (queue) => Context.Executeor.GetValue(queue.SqlBuilder.Max(), defValue), true);
+            return QueueManger.Commit(SetMap, (queue) => Context.Executeor.GetValue($"{typeof(TEntity).Name}.Max", queue.SqlBuilder.Max(), defValue), true);
         }
 
         /// <summary>
@@ -691,7 +691,7 @@ namespace FS.Data.Infrastructure
             if (fieldName == null) { throw new ArgumentNullException("fieldName", "查询Max操作时，fieldName参数不能为空！"); }
 
             Select(fieldName);
-            return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.GetValueAsync(queue.SqlBuilder.Max(), defValue), true);
+            return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.GetValueAsync($"{typeof(TEntity).Name}.MaxAsync", queue.SqlBuilder.Max(), defValue), true);
         }
 
         /// <summary>
@@ -702,7 +702,7 @@ namespace FS.Data.Infrastructure
             if (fieldName == null) { throw new ArgumentNullException("fieldName", "查询Min操作时，fieldName参数不能为空！"); }
 
             Select(fieldName);
-            return QueueManger.Commit(SetMap, (queue) => Context.Executeor.GetValue(queue.SqlBuilder.Min(), defValue), true);
+            return QueueManger.Commit(SetMap, (queue) => Context.Executeor.GetValue($"{typeof(TEntity).Name}.Min", queue.SqlBuilder.Min(), defValue), true);
         }
 
         /// <summary>
@@ -713,7 +713,7 @@ namespace FS.Data.Infrastructure
             if (fieldName == null) { throw new ArgumentNullException("fieldName", "查询Min操作时，fieldName参数不能为空！"); }
 
             Select(fieldName);
-            return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.GetValueAsync(queue.SqlBuilder.Min(), defValue), true);
+            return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.GetValueAsync($"{typeof(TEntity).Name}.MinAsync", queue.SqlBuilder.Min(), defValue), true);
         }
         #endregion
     }

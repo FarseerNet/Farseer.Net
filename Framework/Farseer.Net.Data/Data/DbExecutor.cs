@@ -229,7 +229,7 @@ namespace FS.Data.Data
                     _comm.Parameters.AddRange(parameters);
                 }
 
-                using (FsLinkTrack.TrackDatabase("ExecuteScalar", _connectionString, cmdType, cmdText, parameters))
+                //using (FsLinkTrack.TrackDatabase("ExecuteScalar", _connectionString, cmdType, cmdText, parameters))
                 {
                     return _comm.ExecuteScalar();
                 }
@@ -269,7 +269,7 @@ namespace FS.Data.Data
                     _comm.Parameters.AddRange(parameters);
                 }
 
-                using (FsLinkTrack.TrackDatabase("ExecuteScalarAsync", _connectionString, cmdType, cmdText, parameters))
+                //using (FsLinkTrack.TrackDatabase("ExecuteScalarAsync", _connectionString, cmdType, cmdText, parameters))
                 {
                     return await _comm.ExecuteScalarAsync();
                 }
@@ -309,7 +309,7 @@ namespace FS.Data.Data
                     _comm.Parameters.AddRange(parameters);
                 }
 
-                using (FsLinkTrack.TrackDatabase("ExecuteNonQuery", _connectionString, cmdType, cmdText, parameters))
+                //using (FsLinkTrack.TrackDatabase("ExecuteNonQuery", _connectionString, cmdType, cmdText, parameters))
                 {
                     return _comm.ExecuteNonQuery();
                 }
@@ -349,7 +349,7 @@ namespace FS.Data.Data
                     _comm.Parameters.AddRange(parameters);
                 }
 
-                using (FsLinkTrack.TrackDatabase("ExecuteNonQueryAsync", _connectionString, cmdType, cmdText, parameters))
+                //using (FsLinkTrack.TrackDatabase("ExecuteNonQueryAsync", _connectionString, cmdType, cmdText, parameters))
                 {
                     return await _comm.ExecuteNonQueryAsync();
                 }
@@ -389,7 +389,7 @@ namespace FS.Data.Data
                     _comm.Parameters.AddRange(parameters);
                 }
 
-                using (FsLinkTrack.TrackDatabase("ExecuteReader", _connectionString, cmdType, cmdText, parameters))
+                //using (FsLinkTrack.TrackDatabase("ExecuteReader", _connectionString, cmdType, cmdText, parameters))
                 {
                     return IsTransaction ? _comm.ExecuteReader() : _comm.ExecuteReader(CommandBehavior.CloseConnection);
                 }
@@ -426,7 +426,7 @@ namespace FS.Data.Data
                     _comm.Parameters.AddRange(parameters);
                 }
 
-                using (FsLinkTrack.TrackDatabase("ExecuteReaderAsync", _connectionString, cmdType, cmdText, parameters))
+                //using (FsLinkTrack.TrackDatabase("ExecuteReaderAsync", _connectionString, cmdType, cmdText, parameters))
                 {
                     return await (IsTransaction ? _comm.ExecuteReaderAsync() : _comm.ExecuteReaderAsync(CommandBehavior.CloseConnection));
                 }
@@ -462,7 +462,7 @@ namespace FS.Data.Data
                     _comm.Parameters.AddRange(parameters);
                 }
 
-                using (FsLinkTrack.TrackDatabase("CreateDataAdapter", _connectionString, cmdType, cmdText, parameters))
+                //using (FsLinkTrack.TrackDatabase("CreateDataAdapter", _connectionString, cmdType, cmdText, parameters))
                 {
                     var ada = _factory.CreateDataAdapter();
                     ada.SelectCommand = _comm;
@@ -506,7 +506,7 @@ namespace FS.Data.Data
                     _comm.Parameters.AddRange(parameters);
                 }
 
-                using (FsLinkTrack.TrackDatabase("CreateDataAdapter", _connectionString, cmdType, cmdText, parameters))
+                //using (FsLinkTrack.TrackDatabase("CreateDataAdapter", _connectionString, cmdType, cmdText, parameters))
                 {
                     var dataAdapter = _factory.CreateDataAdapter();
                     // ReSharper disable once PossibleNullReferenceException
@@ -565,9 +565,9 @@ namespace FS.Data.Data
 
             try
             {
-                Open();
                 using (FsLinkTrack.TrackDatabase("SqlBulkCopy", _connectionString, tableName))
                 {
+                    Open();
                     using (var bulkCopy = new SqlBulkCopy((SqlConnection) _comm.Connection, SqlBulkCopyOptions.Default, (SqlTransaction) _comm.Transaction))
                     {
                         bulkCopy.DestinationTableName = tableName;
@@ -602,9 +602,9 @@ namespace FS.Data.Data
 
             try
             {
-                await OpenAsync();
                 using (FsLinkTrack.TrackDatabase("SqlBulkCopy", _connectionString, tableName))
                 {
+                    await OpenAsync();
                     using (var bulkCopy = new SqlBulkCopy((SqlConnection) _comm.Connection, SqlBulkCopyOptions.Default, (SqlTransaction) _comm.Transaction))
                     {
                         bulkCopy.DestinationTableName = tableName;

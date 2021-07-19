@@ -164,7 +164,7 @@ namespace FS.Data
             Queue.ExpBuilder.AssignUpdate(entity);
 
             // 加入队列
-            return QueueManger.Commit(SetMap, (queue) => Context.Executeor.Execute(queue.SqlBuilder.Update()), true);
+            return QueueManger.Commit(SetMap, (queue) => Context.Executeor.Execute($"{typeof(TEntity).Name}.Update", queue.SqlBuilder.Update()), true);
         }
 
         /// <summary>
@@ -179,7 +179,7 @@ namespace FS.Data
             Queue.ExpBuilder.AssignUpdate(entity);
 
             // 加入队列
-            return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ExecuteAsync(queue.SqlBuilder.Update()), true);
+            return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ExecuteAsync($"{typeof(TEntity).Name}.UpdateAsync", queue.SqlBuilder.Update()), true);
         }
 
         /// <summary>
@@ -239,21 +239,21 @@ namespace FS.Data
                 // 赋值标识字段
                 return QueueManger.Commit(SetMap, (queue) =>
                 {
-                    PropertySetCacheManger.Cache(SetMap.PhysicsMap.DbGeneratedFields.Key, entity, ConvertHelper.ConvertType(Context.Executeor.GetValue<object>(queue.SqlBuilder.InsertIdentity()), SetMap.PhysicsMap.DbGeneratedFields.Key.PropertyType));
+                    PropertySetCacheManger.Cache(SetMap.PhysicsMap.DbGeneratedFields.Key, entity, ConvertHelper.ConvertType(Context.Executeor.GetValue<object>($"{typeof(TEntity).Name}.InsertIdentity", queue.SqlBuilder.InsertIdentity()), SetMap.PhysicsMap.DbGeneratedFields.Key.PropertyType));
                     return 1;
                 }, false);
             }
 
             // 不返回标识字段
-            return QueueManger.Commit(SetMap, (queue) => Context.Executeor.Execute(queue.SqlBuilder.Insert()), false);
+            return QueueManger.Commit(SetMap, (queue) => Context.Executeor.Execute($"{typeof(TEntity).Name}.Insert", queue.SqlBuilder.Insert()), false);
         }
 
         /// <summary>
         ///     插入
         /// </summary>
         /// <param name="entity"></param>
-        /// <param name="isReturnLastID">是否需要返回标识字段（如果设置的话）</param>
-        public Task<int> InsertAsync(TEntity entity, bool isReturnLastID = false)
+        /// <param name="isReturnLastId">是否需要返回标识字段（如果设置的话）</param>
+        public Task<int> InsertAsync(TEntity entity, bool isReturnLastId = false)
         {
             Check.NotNull(entity, "插入操作时，参数不能为空！");
 
@@ -261,19 +261,19 @@ namespace FS.Data
             Queue.ExpBuilder.AssignInsert(entity);
 
             // 需要返回值时，则不允许延迟提交
-            if (isReturnLastID && SetMap.PhysicsMap.DbGeneratedFields.Key != null)
+            if (isReturnLastId && SetMap.PhysicsMap.DbGeneratedFields.Key != null)
             {
                 // 赋值标识字段
                 return QueueManger.CommitAsync(SetMap, async (queue) =>
                 {
-                    var sourceValue = await Context.Executeor.GetValueAsync<object>(queue.SqlBuilder.InsertIdentity());
+                    var sourceValue = await Context.Executeor.GetValueAsync<object>($"{typeof(TEntity).Name}.InsertIdentityAsync", queue.SqlBuilder.InsertIdentity());
                     PropertySetCacheManger.Cache(SetMap.PhysicsMap.DbGeneratedFields.Key, entity, ConvertHelper.ConvertType(sourceValue, SetMap.PhysicsMap.DbGeneratedFields.Key.PropertyType));
                     return 1;
                 }, false);
             }
 
             // 不返回标识字段
-            return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ExecuteAsync(queue.SqlBuilder.Insert()), false);
+            return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ExecuteAsync($"{typeof(TEntity).Name}.InsertAsync", queue.SqlBuilder.Insert()), false);
         }
 
         /// <summary>
@@ -352,7 +352,7 @@ namespace FS.Data
             }
 
             // 加入队列
-            return QueueManger.Commit(SetMap, (queue) => Context.Executeor.Execute(queue.SqlBuilder.Delete()), false);
+            return QueueManger.Commit(SetMap, (queue) => Context.Executeor.Execute($"{typeof(TEntity).Name}.Delete", queue.SqlBuilder.Delete()), false);
         }
 
         /// <summary>
@@ -367,7 +367,7 @@ namespace FS.Data
             }
 
             // 加入队列
-            return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ExecuteAsync(queue.SqlBuilder.Delete()), false);
+            return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ExecuteAsync($"{typeof(TEntity).Name}.DeleteAsync", queue.SqlBuilder.Delete()), false);
         }
 
         /// <summary>
@@ -429,7 +429,7 @@ namespace FS.Data
             Check.NotNull(Queue.ExpBuilder.ExpAssign, "+=字段操作时，必须先执行AddUp的另一个重载版本！");
 
             // 加入队列
-            return QueueManger.Commit(SetMap, (queue) => Context.Executeor.Execute(queue.SqlBuilder.AddUp()), true);
+            return QueueManger.Commit(SetMap, (queue) => Context.Executeor.Execute($"{typeof(TEntity).Name}.AddUp", queue.SqlBuilder.AddUp()), true);
         }
 
         /// <summary>
@@ -440,7 +440,7 @@ namespace FS.Data
             Check.NotNull(Queue.ExpBuilder.ExpAssign, "+=字段操作时，必须先执行AddUp的另一个重载版本！");
 
             // 加入队列
-            return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ExecuteAsync(queue.SqlBuilder.AddUp()), true);
+            return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ExecuteAsync($"{typeof(TEntity).Name}.AddUpAsync",queue.SqlBuilder.AddUp()), true);
         }
 
         /// <summary>

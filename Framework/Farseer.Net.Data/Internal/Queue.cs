@@ -57,7 +57,7 @@ namespace FS.Data.Internal
         /// <summary>
         ///     表达式持久化
         /// </summary>
-        internal ExpressionBuilder ExpBuilder => _expBuilder ?? (_expBuilder = new ExpressionBuilder(Map));
+        internal ExpressionBuilder ExpBuilder => _expBuilder ??= new ExpressionBuilder(Map);
 
         #endregion
 

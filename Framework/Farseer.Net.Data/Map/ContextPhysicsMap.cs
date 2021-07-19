@@ -34,7 +34,7 @@ namespace FS.Data.Map
         /// <summary>
         ///     获取所有Set属性
         /// </summary>
-        public Dictionary<PropertyInfo, SetPhysicsMap> EntityMapList { get; } = new Dictionary<PropertyInfo, SetPhysicsMap>();
+        public Dictionary<PropertyInfo, SetPhysicsMap> EntityMapList { get; } = new();
 
         /// <summary>
         ///     类型

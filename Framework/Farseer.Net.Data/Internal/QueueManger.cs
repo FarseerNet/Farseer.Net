@@ -34,7 +34,7 @@ namespace FS.Data.Internal
         /// <param name="map">字段映射</param>
         internal Queue CreateQueue(SetDataMap map)
         {
-            return _queue ?? (_queue = new Queue(ContextProvider, map));
+            return _queue ??= new Queue(ContextProvider, map);
         }
 
         /// <summary>

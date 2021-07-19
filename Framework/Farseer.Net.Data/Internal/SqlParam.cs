@@ -15,13 +15,23 @@ namespace FS.Data.Internal
         public SqlParam(string sql, params DbParameter[] parameters)
         {
             Sql = new StringBuilder(sql);
-            if (parameters != null) { Param = parameters.ToList(); }
+            if (parameters != null)
+            {
+                Param = parameters.ToList();
+            }
         }
 
-        public string DbName { get; private set; }
-        public string TableName { get; private set; }
-        public StringBuilder Sql { get; private set; }
-        public List<DbParameter> Param { get; }
+        public SqlParam(IProcParam procParam)
+        {
+            DbName    = procParam.DbName;
+            TableName = procParam.ProcName;
+            Param     = procParam.Param;
+        }
+
+        public string            DbName    { get; }
+        public string            TableName { get; }
+        public StringBuilder     Sql       { get; private set; }
+        public List<DbParameter> Param     { get; }
 
         #region 释放
 

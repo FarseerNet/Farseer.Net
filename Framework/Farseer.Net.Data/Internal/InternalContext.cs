@@ -47,7 +47,7 @@ namespace FS.Data.Internal
             // 数据库提供者
             DbProvider = masterContext.DbProvider;
             // 队列管理者
-            QueueManger = masterContext.QueueManger;
+            QueueManger = new QueueManger(masterContext); //masterContext.QueueManger;
 
 
             // 上下文映射关系
@@ -122,9 +122,6 @@ namespace FS.Data.Internal
             // 记录执行链路
             Executeor = new ExecuteSqlMonitorProxy(Executeor);
             
-            // 代理SQL监控（添加了执行链路，这里不需要判断条件了）
-            //if (IocManager.Instance.IsRegistered<ISqlMonitor>()) Executeor = new ExecuteSqlMonitorProxy(Executeor);
-
             // 队列管理者
             QueueManger = new QueueManger(this);
             // 手动编写SQL

@@ -27,50 +27,50 @@ namespace FS.Data
         /// </summary>
         /// <param name="entity">传入被设置好参数赋值的实体</param>
         /// <param name="t">失败时返回的值</param>
-        public T GetValue<T>(TEntity entity = null, T t = default(T)) => QueueManger.Commit(SetMap, (queue) => Context.Executeor.GetValue(Queue.ProcBuilder, entity, t), false);
+        public T GetValue<T>(TEntity entity = null, T t = default(T)) => QueueManger.Commit(SetMap, (queue) => Context.Executeor.GetValue($"{typeof(TEntity).Name}.GetValue", Queue.ProcBuilder, entity, t), false);
 
         /// <summary>
         ///     返回查询的值
         /// </summary>
         /// <param name="entity">传入被设置好参数赋值的实体</param>
         /// <param name="t">失败时返回的值</param>
-        public Task<T> GetValueAsync<T>(TEntity entity = null, T t = default(T)) => QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.GetValueAsync(Queue.ProcBuilder, entity, t), false);
+        public Task<T> GetValueAsync<T>(TEntity entity = null, T t = default(T)) => QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.GetValueAsync($"{typeof(TEntity).Name}.GetValueAsync", Queue.ProcBuilder, entity, t), false);
 
         /// <summary>
         ///     返回单条记录
         /// </summary>
         /// <param name="entity">传入被设置好参数赋值的实体</param>
-        public TEntity ToEntity(TEntity entity = null) => QueueManger.Commit(SetMap, (queue) => Context.Executeor.ToEntity(Queue.ProcBuilder, entity), false);
+        public TEntity ToEntity(TEntity entity = null) => QueueManger.Commit(SetMap, (queue) => Context.Executeor.ToEntity($"{typeof(TEntity).Name}.ToEntity", Queue.ProcBuilder, entity), false);
 
         /// <summary>
         ///     返回单条记录
         /// </summary>
         /// <param name="entity">传入被设置好参数赋值的实体</param>
-        public Task<TEntity> ToEntityAsync(TEntity entity = null) => QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ToEntityAsync(Queue.ProcBuilder, entity), false);
+        public Task<TEntity> ToEntityAsync(TEntity entity = null) => QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ToEntityAsync($"{typeof(TEntity).Name}.ToEntityAsync", Queue.ProcBuilder, entity), false);
 
         /// <summary>
         ///     返回多条记录
         /// </summary>
         /// <param name="entity">传入被设置好参数赋值的实体</param>
-        public List<TEntity> ToList(TEntity entity = null) => QueueManger.Commit(SetMap, (queue) => Context.Executeor.ToList<TEntity>(Queue.ProcBuilder, entity), false);
+        public List<TEntity> ToList(TEntity entity = null) => QueueManger.Commit(SetMap, (queue) => Context.Executeor.ToList<TEntity>($"{typeof(TEntity).Name}.ToList", Queue.ProcBuilder, entity), false);
 
         /// <summary>
         ///     返回多条记录
         /// </summary>
         /// <param name="entity">传入被设置好参数赋值的实体</param>
-        public Task<List<TEntity>> ToListAsync(TEntity entity = null) => QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ToListAsync<TEntity>(Queue.ProcBuilder, entity), false);
+        public Task<List<TEntity>> ToListAsync(TEntity entity = null) => QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ToListAsync<TEntity>($"{typeof(TEntity).Name}.ToListAsync", Queue.ProcBuilder, entity), false);
 
         /// <summary>
         ///     返回多条记录
         /// </summary>
         /// <param name="entity">传入被设置好参数赋值的实体</param>
-        public DataTable ToTable(TEntity entity = null) => QueueManger.Commit(SetMap, (queue) => Context.Executeor.ToTable(Queue.ProcBuilder, entity), false);
+        public DataTable ToTable(TEntity entity = null) => QueueManger.Commit(SetMap, (queue) => Context.Executeor.ToTable($"{typeof(TEntity).Name}.ToTable", Queue.ProcBuilder, entity), false);
 
         /// <summary>
         ///     返回多条记录
         /// </summary>
         /// <param name="entity">传入被设置好参数赋值的实体</param>
-        public Task<DataTable> ToTableAsync(TEntity entity = null) => QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ToTableAsync(Queue.ProcBuilder, entity), false);
+        public Task<DataTable> ToTableAsync(TEntity entity = null) => QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ToTableAsync($"{typeof(TEntity).Name}.ToTableAsync", Queue.ProcBuilder, entity), false);
 
         /// <summary>
         ///     执行存储过程
@@ -80,7 +80,7 @@ namespace FS.Data
         {
             // 加入委托
             //var isExitsOutParam = SetMap.PhysicsMap.MapList.Any(o => o.Value.Field.IsOutParam);
-            return QueueManger.Commit(SetMap, (queue) => Context.Executeor.Execute(Queue.ProcBuilder, entity), false);
+            return QueueManger.Commit(SetMap, (queue) => Context.Executeor.Execute($"{typeof(TEntity).Name}.Execute", Queue.ProcBuilder, entity), false);
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace FS.Data
         {
             // 加入委托
             //var isExitsOutParam = SetMap.PhysicsMap.MapList.Any(o => o.Value.Field.IsOutParam);
-            return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ExecuteAsync(Queue.ProcBuilder, entity), false);
+            return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ExecuteAsync($"{typeof(TEntity).Name}.ExecuteAsync", Queue.ProcBuilder, entity), false);
         }
     }
 }

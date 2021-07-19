@@ -31,7 +31,7 @@ namespace FS.Data.Map
         /// <summary>
         ///     获取所有Set属性
         /// </summary>
-        public List<SetDataMap> SetDataList { get; } = new List<SetDataMap>();
+        public List<SetDataMap> SetDataList { get; } = new();
 
         /// <summary>
         ///     获取标注的名称
