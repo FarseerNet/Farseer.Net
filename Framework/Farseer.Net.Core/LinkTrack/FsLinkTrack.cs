@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using Castle.Core.Internal;
 using FS.Extends;
 using Newtonsoft.Json;
 
@@ -128,6 +129,17 @@ namespace FS.Core.LinkTrack
         /// </summary>
         public static TrackEnd TrackApiServer(string domain, string path, string method, string contentType, Dictionary<string, string> headerDictionary, string requestBody, string ip)
         {
+            // 移除charset的类型
+            if (contentType.Contains("charset"))
+            {
+                var contentTypes = contentType.Split(';').ToList();
+                contentTypes.RemoveAll(o => o.Contains("charset"));
+                
+                // 如果有application，则直接获取
+                var application  = contentTypes.Find(o => o.Contains("application"));
+                contentType = !string.IsNullOrWhiteSpace(application) ? application : string.Join(";", contentTypes);
+            }
+
             var linkTrackContext = Current.Get();
             linkTrackContext.Domain      = domain;
             linkTrackContext.Path        = path;

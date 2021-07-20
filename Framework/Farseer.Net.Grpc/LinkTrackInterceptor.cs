@@ -29,7 +29,8 @@ namespace Farseer.Net.Grpc
 
             TResponse result;
             var       dicHeader = context.RequestHeaders.ToDictionary(o => o.Key, o => o.Value);
-            using (var trackEnd = FsLinkTrack.TrackApiServer(context.Host, context.Method, "GRPC", "application/grpc", dicHeader, JsonConvert.SerializeObject(request), context.Peer))
+            var       path      = $"http://{context.Host}{context.Method.ToLower()}";
+            using (var trackEnd = FsLinkTrack.TrackApiServer(context.Host, path, "GRPC", "application/grpc", dicHeader, JsonConvert.SerializeObject(request), context.Peer))
             {
                 result = await continuation(request, context);
                 trackEnd.SetDownstreamResponseBody(JsonConvert.SerializeObject(result));

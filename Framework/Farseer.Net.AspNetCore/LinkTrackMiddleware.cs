@@ -58,7 +58,8 @@ namespace FS
             }
 
             // 读取响应Body
-            var path      = httpContext.Request.Path.Value?.ToLower();
+            var path      = $"{httpContext.Request.Scheme}://{httpContext.Request.Host.Host}{httpContext.Request.Path.Value?.ToLower()}";
+            
             var dicHeader = httpContext.Request.Headers.ToDictionary(o => o.Key, o => o.Value.ToString());
             using (var trackEnd = FsLinkTrack.TrackApiServer(httpContext.Request.Host.Host, path, httpContext.Request.Method, httpContext.Request.ContentType, dicHeader, requestContent, httpContext.GetIP()))
             {
