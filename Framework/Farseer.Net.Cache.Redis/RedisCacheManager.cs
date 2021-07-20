@@ -29,7 +29,7 @@ namespace FS.Cache.Redis
         {
             get
             {
-                return _db ??= new DatabaseAgent(_connectionWrapper.Database());
+                return _db ??= new LinkTrackWarp(_connectionWrapper.Database());
             }
         }
 

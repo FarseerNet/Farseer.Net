@@ -7,11 +7,11 @@ using StackExchange.Redis;
 
 namespace FS.Cache.Redis
 {
-    public class DatabaseAgent : IDatabase
+    public class LinkTrackWarp : IDatabase
     {
         private readonly IDatabase _db;
 
-        public DatabaseAgent(IDatabase db)
+        public LinkTrackWarp(IDatabase db)
         {
             _db = db;
         }
