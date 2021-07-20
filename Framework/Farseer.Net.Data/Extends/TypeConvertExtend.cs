@@ -53,6 +53,30 @@ namespace FS.Extends
         }
 
         /// <summary>
+        ///     数据填充
+        /// </summary>
+        /// <param name="reader">源IDataReader</param>
+        /// <typeparam name="TEntity">实体类</typeparam>
+        public static TEntity ToEntity<TEntity>(this DataTable reader)
+        {
+            var mapData = DataReaderHelper.DataTableToDictionary(reader);
+            var type    = new EntityDynamics().BuildType(typeof(TEntity));
+            return (TEntity) InstanceStaticCacheManger.Cache(type, "ToEntity", (object) mapData, 0);
+        }
+
+        /// <summary>
+        ///     数据填充
+        /// </summary>
+        /// <param name="reader">源IDataReader</param>
+        /// <typeparam name="TEntity">实体类</typeparam>
+        public static async Task<TEntity> ToEntityAsync<TEntity>(this Task<DataTable> reader)
+        {
+            var mapData = DataReaderHelper.DataTableToDictionary(await reader);
+            var type    = new EntityDynamics().BuildType(typeof(TEntity));
+            return (TEntity) InstanceStaticCacheManger.Cache(type, "ToEntity", (object) mapData, 0);
+        }
+
+        /// <summary>
         ///     DataTable转换为List实体类
         /// </summary>
         /// <param name="dt">源DataTable</param>
@@ -60,6 +84,18 @@ namespace FS.Extends
         public static List<TEntity> ToList<TEntity>(this DataTable dt)
         {
             var mapData = DataReaderHelper.DataTableToDictionary(dt);
+            var type    = new EntityDynamics().BuildType(typeof(TEntity));
+            return (List<TEntity>) InstanceStaticCacheManger.Cache(type, "ToList", (object) mapData);
+        }
+
+        /// <summary>
+        ///     DataTable转换为List实体类
+        /// </summary>
+        /// <param name="dt">源DataTable</param>
+        /// <typeparam name="TEntity">实体类</typeparam>
+        public static async Task<List<TEntity>> ToListAsync<TEntity>(this Task<DataTable> dt)
+        {
+            var mapData = DataReaderHelper.DataTableToDictionary(await dt);
             var type    = new EntityDynamics().BuildType(typeof(TEntity));
             return (List<TEntity>) InstanceStaticCacheManger.Cache(type, "ToList", (object) mapData);
         }
