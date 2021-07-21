@@ -77,6 +77,11 @@ namespace FS.Core.LinkTrack
         /// <summary>
         /// 是否执行异常
         /// </summary>
-        public bool IsException { get; set; }
+        public virtual bool IsException { get; set; }
+
+        /// <summary>
+        /// 异常信息
+        /// </summary>
+        public virtual string ExceptionMessage { get; set; }
     }
 }

@@ -78,5 +78,15 @@ namespace FS.Core.LinkTrack
         /// 调用的上下文
         /// </summary>
         public virtual List<LinkTrackDetail> List { get; set; } = new();
+
+        /// <summary>
+        /// 是否执行异常
+        /// </summary>
+        public virtual bool IsException { get; set; }
+
+        /// <summary>
+        /// 异常信息
+        /// </summary>
+        public virtual string ExceptionMessage { get; set; }
     }
 }
