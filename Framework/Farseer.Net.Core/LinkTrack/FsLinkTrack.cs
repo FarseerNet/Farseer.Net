@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -56,7 +57,14 @@ namespace FS.Core.LinkTrack
         /// <summary>
         ///     写入数据
         /// </summary>
-        public void Set(LinkTrackDetail linkTrackDetail) => Get().List.Add(linkTrackDetail);
+        public void Set(LinkTrackDetail linkTrackDetail)
+        {
+            Stopwatch sw = Stopwatch.StartNew();
+            //linkTrackDetail._lstFrames  = new StackTrace(true).GetFrames();
+            linkTrackDetail._stackTrace = new StackTrace(true);
+            Console.WriteLine(sw.ElapsedMilliseconds);
+            Get().List.Add(linkTrackDetail);
+        }
 
         /// <summary>
         /// 追踪数据库
@@ -69,6 +77,7 @@ namespace FS.Core.LinkTrack
                 DbLinkTrackDetail = dbLinkTrackDetail,
                 CallMethod        = method
             };
+
             Current.Set(linkTrackDetail);
             return new TrackEnd(linkTrackDetail);
         }
@@ -84,6 +93,7 @@ namespace FS.Core.LinkTrack
                 DbLinkTrackDetail = new DbLinkTrackDetail() {ConnectionString = connectionString},
                 CallMethod        = method
             };
+
             Current.Set(linkTrackDetail);
             return new TrackEnd(linkTrackDetail);
         }
@@ -125,7 +135,7 @@ namespace FS.Core.LinkTrack
         }
 
         /// <summary>
-        /// 追踪Redis
+        /// 追踪ApiServer
         /// </summary>
         public static TrackEnd TrackApiServer(string domain, string path, string method, string contentType, Dictionary<string, string> headerDictionary, string requestBody, string ip)
         {
@@ -134,9 +144,9 @@ namespace FS.Core.LinkTrack
             {
                 var contentTypes = contentType.Split(';').ToList();
                 contentTypes.RemoveAll(o => o.Contains("charset"));
-                
+
                 // 如果有application，则直接获取
-                var application  = contentTypes.Find(o => o.Contains("application"));
+                var application = contentTypes.Find(o => o.Contains("application"));
                 contentType = !string.IsNullOrWhiteSpace(application) ? application : string.Join(";", contentTypes);
             }
 

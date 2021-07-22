@@ -12,15 +12,20 @@ namespace FS.Core.LinkTrack
         /// </summary>
         public string Rgba { get; set; }
         /// <summary>
-        /// 描述
-        /// </summary>
-        public string Desc { get; set; }
-        /// <summary>
         /// 时间轴位置
         /// </summary>
-        public long   StartTs { get; set; }
+        public long StartTs { get;   set; }
         public long   UseTs   { get; set; }
         public string Caption { get; set; }
-        public string AppId   { get; set; }
+        /// <summary>
+        /// C#调用方法
+        /// </summary>
+        public string CsharpCallMethod { get;  set; }
+        public string CsharpCallMethods { get; set; }
+        /// <summary>
+        /// 描述
+        /// </summary>
+        public string Desc { get;              set; }
+        public string AppId             { get; set; }
     }
 }

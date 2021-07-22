@@ -21,6 +21,12 @@ namespace FS.LinkTrack
         /// <param name="remainCount">队列中当前剩余多少要处理</param>
         protected override void OnDequeue(List<LinkTrackContext> lst, int remainCount)
         {
+            // 设置C#的调用链
+            foreach (var linkTrackContext in lst)
+            {
+                linkTrackContext.List.ForEach(o=>o.SetCallStackTrace());
+            }
+
             LinkTrackEsContext.Data.LinkTrackContext.Insert(lst.Select(o => new LinkTrackContextPO
             {
                 Id           = $"{o.AppId}_{o.ContextId}",
