@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using FS.Core.LinkTrack;
 using FS.DI;
 using FS.Extends;
 using FS.Job.Abstract;
@@ -72,7 +73,12 @@ namespace FS.Job.RemoteCall
                     // 执行业务JOB
                     var fssJob = IocManager.Resolve<IFssJob>($"fss_job_{task.JobTypeName}");
                     sw.Start();
-                    result = await fssJob.Execute(receiveContext);
+                    using (FsLinkTrack.TrackFss(task.JobTypeName))
+                    {
+                        result = await fssJob.Execute(receiveContext);
+                    }
+                    // 写入链路追踪
+                    if (IocManager.IsRegistered<ILinkTrackQueue>()) IocManager.Resolve<ILinkTrackQueue>().Enqueue();
                 }
                 catch (Exception e)
                 {

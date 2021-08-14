@@ -91,7 +91,7 @@ namespace FS.Core.LinkTrack
             var linkTrackDetail = new LinkTrackDetail
             {
                 CallType          = EumCallType.Database,
-                DbLinkTrackDetail = new DbLinkTrackDetail() {ConnectionString = connectionString},
+                DbLinkTrackDetail = new DbLinkTrackDetail() { ConnectionString = connectionString },
                 CallMethod        = method
             };
 
@@ -107,7 +107,7 @@ namespace FS.Core.LinkTrack
             var linkTrackDetail = new LinkTrackDetail
             {
                 CallType          = EumCallType.Database,
-                DbLinkTrackDetail = new DbLinkTrackDetail() {ConnectionString = connectionString, TableName = tableName},
+                DbLinkTrackDetail = new DbLinkTrackDetail() { ConnectionString = connectionString, TableName = tableName },
                 CallMethod        = method
             };
             Current.Set(linkTrackDetail);
@@ -173,8 +173,8 @@ namespace FS.Core.LinkTrack
                 CallMethod = method,
                 Data = new Dictionary<string, string>()
                 {
-                    {"RedisKey", key},
-                    {"RedisHashFields", member},
+                    { "RedisKey", key },
+                    { "RedisHashFields", member },
                 }
             };
             Current.Set(linkTrackDetail);
@@ -196,11 +196,22 @@ namespace FS.Core.LinkTrack
         }
 
         /// <summary>
-        /// 追踪Mq
+        /// 追踪Mq消费
         /// </summary>
         public static TrackEnd TrackMqConsumer(string method)
         {
-            var linkTrackContext =Current.Set(SnowflakeId.GenerateId.ToString(),"");
+            var linkTrackContext = Current.Set(SnowflakeId.GenerateId.ToString(), "");
+            linkTrackContext.Method    = method;
+            linkTrackContext.RequestIp = IpHelper.GetIp;
+            return new TrackEnd(linkTrackContext);
+        }
+
+        /// <summary>
+        /// 追踪Fss
+        /// </summary>
+        public static TrackEnd TrackFss(string method)
+        {
+            var linkTrackContext = Current.Set(SnowflakeId.GenerateId.ToString(), "");
             linkTrackContext.Method    = method;
             linkTrackContext.RequestIp = IpHelper.GetIp;
             return new TrackEnd(linkTrackContext);
@@ -231,8 +242,8 @@ namespace FS.Core.LinkTrack
                 StartTs  = DateTime.Now.ToTimestamps(),
                 Data = new Dictionary<string, string>()
                 {
-                    {"Server", server},
-                    {"Action", action},
+                    { "Server", server },
+                    { "Action", action },
                 }
             };
             Current.Set(linkTrackDetail);
@@ -250,10 +261,10 @@ namespace FS.Core.LinkTrack
                 StartTs  = DateTime.Now.ToTimestamps(),
                 Data = new Dictionary<string, string>()
                 {
-                    {"Url", url},
-                    {"Method", method},
-                    {"RequestBody", requestBody},
-                    {"Header", headerData != null ? JsonConvert.SerializeObject(headerData) : "{}"},
+                    { "Url", url },
+                    { "Method", method },
+                    { "RequestBody", requestBody },
+                    { "Header", headerData != null ? JsonConvert.SerializeObject(headerData) : "{}" },
                 }
             };
             Current.Set(linkTrackDetail);
@@ -271,7 +282,7 @@ namespace FS.Core.LinkTrack
                 StartTs  = DateTime.Now.ToTimestamps(),
                 Data = new Dictionary<string, string>()
                 {
-                    {"Message", message}
+                    { "Message", message }
                 }
             };
             Current.Set(linkTrackDetail);
