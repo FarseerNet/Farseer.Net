@@ -120,10 +120,13 @@ namespace FS.MQ.RedisStream
                         MessageIds = streamEntries.Select(o => o.Id.ToString()).ToArray()
                     };
 
-                    using (FsLinkTrack.TrackMq("RedisStream.Consumer"))
+                    using (FsLinkTrack.TrackMqConsumer(_queueName))
                     {
                         result = await listener.Consumer(streamEntries, consumeContext);
                     }
+
+                    // 写入链路追踪
+                    _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
                 }
                 catch (Exception e)
                 {
@@ -131,7 +134,13 @@ namespace FS.MQ.RedisStream
                     _iocManager.Logger<RedisStreamConsumer>().LogError(e, listener.GetType().FullName);
                     try
                     {
-                        result = await listener.FailureHandling(streamEntries, consumeContext);
+                        using (FsLinkTrack.TrackMqConsumer(_queueName))
+                        {
+                            result = await listener.FailureHandling(streamEntries, consumeContext);
+                        }
+
+                        // 写入链路追踪
+                        _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
                     }
                     catch (Exception exception)
                     {
@@ -179,10 +188,14 @@ namespace FS.MQ.RedisStream
                 var result   = false;
                 try
                 {
-                    using (FsLinkTrack.TrackMq("RedisStream.Consumer"))
+                    using (FsLinkTrack.TrackMqConsumer(_queueName))
                     {
                         result = await listener.Consumer(streamEntries, consumeContext);
                     }
+
+                    // 写入链路追踪
+                    _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
+
                     if (result)
                     {
                         //await _redisCacheManager.Db.StreamDeleteAsync(_queueName, consumeContext.MessageIds.Select(o => (RedisValue) o).ToArray());
@@ -195,7 +208,13 @@ namespace FS.MQ.RedisStream
                     _iocManager.Logger<RedisStreamConsumer>().LogError(e, listener.GetType().FullName);
                     try
                     {
-                        result = await listener.FailureHandling(streamEntries, consumeContext);
+                        using (FsLinkTrack.TrackMqConsumer(_queueName))
+                        {
+                            result = await listener.FailureHandling(streamEntries, consumeContext);
+                        }
+
+                        // 写入链路追踪
+                        _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
                         if (result)
                         {
                             //await _redisCacheManager.Db.StreamDeleteAsync(_queueName, consumeContext.MessageIds.Select(o => (RedisValue) o).ToArray());

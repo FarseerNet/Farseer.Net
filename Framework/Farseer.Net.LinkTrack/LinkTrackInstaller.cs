@@ -5,6 +5,7 @@ using System.Threading;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
+using FS.Core.LinkTrack;
 using FS.DI;
 using FS.Reflection;
 using Microsoft.Extensions.Configuration;
@@ -36,8 +37,11 @@ namespace FS.LinkTrack
         /// <param name="store"></param>
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
-            CancellationTokenSource cts = new CancellationTokenSource();
-            LinkTrackQueue.Instance.StartDequeue(cts.Token);
+            CancellationTokenSource cts            = new CancellationTokenSource();
+            var                     linkTrackQueue = new LinkTrackQueue();
+            linkTrackQueue.StartDequeue(cts.Token);
+
+            container.Register(Component.For<ILinkTrackQueue>().Instance(linkTrackQueue).LifestyleSingleton());
         }
     }
 }

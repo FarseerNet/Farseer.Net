@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FS.Core.LinkTrack;
+using FS.DI;
 using FS.Extends;
 using FS.LinkTrack;
 using Grpc.Core;
@@ -11,7 +12,7 @@ using Newtonsoft.Json;
 namespace Farseer.Net.Grpc
 {
     /// <summary>
-    /// 注册公司ID拦截器
+    /// 链路追踪（Grpc入口）
     /// </summary>
     public class LinkTrackInterceptor : Interceptor
     {
@@ -46,7 +47,7 @@ namespace Farseer.Net.Grpc
             }
 
             // 写入链路追踪
-            LinkTrackQueue.Enqueue();
+            IocManager.Instance.Resolve<ILinkTrackQueue>().Enqueue();
             return result;
         }
 

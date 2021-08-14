@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Http;
 namespace FS
 {
     /// <summary>
-    /// 链路追踪
+    /// 链路追踪（Web Api入口）
     /// </summary>
     public class LinkTrackMiddleware
     {
@@ -21,7 +21,7 @@ namespace FS
             _next = next;
         }
 
-        public async Task Invoke(HttpContext httpContext, IIocManager ioc)
+        public async Task Invoke(HttpContext httpContext, IIocManager _iocManager)
         {
             if (string.IsNullOrWhiteSpace(httpContext.Request.ContentType))
             {
@@ -92,14 +92,14 @@ namespace FS
                         trackEnd.Exception(e);
                         
                         // 写入链路追踪
-                        LinkTrackQueue.Enqueue();
+                        _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
                         throw;
                     }
                 }
             }
 
             // 写入链路追踪
-            LinkTrackQueue.Enqueue();
+            _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
         }
     }
 }

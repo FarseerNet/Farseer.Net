@@ -26,7 +26,7 @@ namespace FS.MQ.RedisStream
         /// <param name="message">消息主体</param>
         public bool Send(string message, string field = "data")
         {
-            using (FsLinkTrack.TrackMq("RedisStream.Send"))
+            using (FsLinkTrack.TrackMqProduct($"RedisStream.Send.{_productItemConfig.QueueName}"))
             {
                 var redisValue = _redisCacheManager.Db.StreamAdd(_productItemConfig.QueueName, field, message, maxLength: _productItemConfig.MaxLength, useApproximateMaxLength: true);
                 return redisValue.HasValue;
@@ -40,7 +40,7 @@ namespace FS.MQ.RedisStream
         /// <param name="entity">消息主体</param>
         public bool Send(object entity, string field = "data")
         {
-            using (FsLinkTrack.TrackMq("RedisStream.Send"))
+            using (FsLinkTrack.TrackMqProduct($"RedisStream.Send.{_productItemConfig.QueueName}"))
             {
                 var json       = JsonConvert.SerializeObject(entity);
                 var redisValue = _redisCacheManager.Db.StreamAdd(_productItemConfig.QueueName, field, json, maxLength: _productItemConfig.MaxLength, useApproximateMaxLength: true);
@@ -55,7 +55,7 @@ namespace FS.MQ.RedisStream
         /// <param name="message">消息主体</param>
         public async Task<bool> SendAsync(string message, string field = "data")
         {
-            using (FsLinkTrack.TrackMq("RedisStream.Send"))
+            using (FsLinkTrack.TrackMqProduct($"RedisStream.Send.{_productItemConfig.QueueName}"))
             {
                 var redisValue = await _redisCacheManager.Db.StreamAddAsync(_productItemConfig.QueueName, field, message, maxLength: _productItemConfig.MaxLength, useApproximateMaxLength: true);
                 return redisValue.HasValue;
@@ -69,7 +69,7 @@ namespace FS.MQ.RedisStream
         /// <param name="entity">消息主体</param>
         public async Task<bool> SendAsync(object entity, string field = "data")
         {
-            using (FsLinkTrack.TrackMq("RedisStream.Send"))
+            using (FsLinkTrack.TrackMqProduct($"RedisStream.Send.{_productItemConfig.QueueName}"))
             {
                 var json       = JsonConvert.SerializeObject(entity);
                 var redisValue = await _redisCacheManager.Db.StreamAddAsync(_productItemConfig.QueueName, field, json, maxLength: _productItemConfig.MaxLength, useApproximateMaxLength: true);

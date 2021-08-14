@@ -135,7 +135,7 @@ namespace FS.MQ.Rabbit
         /// <param name="funcBasicProperties">属性</param>
         public bool Send(string message, string routingKey, string exchange = "", Action<IBasicProperties> funcBasicProperties = null)
         {
-            using (FsLinkTrack.TrackMq("Rabbit.Send"))
+            using (FsLinkTrack.TrackMqProduct("Rabbit.Send"))
             {
                 IModel channel = null;
                 try
@@ -174,7 +174,7 @@ namespace FS.MQ.Rabbit
         /// <param name="funcBasicProperties">属性</param>
         public bool Send(IEnumerable<string> message, string routingKey, string exchange = "", Action<IBasicProperties> funcBasicProperties = null)
         {
-            using (FsLinkTrack.TrackMq("Rabbit.Send"))
+            using (FsLinkTrack.TrackMqProduct($"Rabbit.Send.{_productConfig.ExchangeName}"))
             {
                 IModel channel = null;
                 try

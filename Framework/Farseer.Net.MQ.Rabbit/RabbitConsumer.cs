@@ -138,10 +138,13 @@ namespace FS.MQ.Rabbit
             var message = Encoding.UTF8.GetString(resp.Body.ToArray());
             try
             {
-                using (FsLinkTrack.TrackMq("Rabbit.Consumer"))
+                using (FsLinkTrack.TrackMqConsumer(_queueName))
                 {
                     result = listener.Consumer(message, resp);
                 }
+
+                // 写入链路追踪
+                _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
             }
             catch (Exception e)
             {
@@ -149,7 +152,13 @@ namespace FS.MQ.Rabbit
                 // 消费失败后处理
                 try
                 {
-                    result = listener.FailureHandling(message, resp);
+                    using (FsLinkTrack.TrackMqConsumer(_queueName))
+                    {
+                        result = listener.FailureHandling(message, resp);
+                    }
+
+                    // 写入链路追踪
+                    _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
                 }
                 catch (Exception exception)
                 {
@@ -185,7 +194,7 @@ namespace FS.MQ.Rabbit
         {
             Connect();
 
-            _channel.BasicQos(0, (ushort) _consumeThreadNums, false);
+            _channel.BasicQos(0, (ushort)_consumeThreadNums, false);
             var consumer = new EventingBasicConsumer(_channel);
             consumer.Received += async (model, ea) =>
             {
@@ -194,10 +203,14 @@ namespace FS.MQ.Rabbit
                 var message  = Encoding.UTF8.GetString(ea.Body.ToArray());
                 try
                 {
-                    using (FsLinkTrack.TrackMq("Rabbit.Consumer"))
+                    using (FsLinkTrack.TrackMqConsumer(_queueName))
                     {
                         result = await listener.Consumer(message, model, ea);
                     }
+
+                    // 写入链路追踪
+                    _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
+
                     _lastAckAt = DateTime.Now;
                 }
                 catch (AlreadyClosedException e) // rabbit被关闭了，重新打开链接
@@ -211,7 +224,13 @@ namespace FS.MQ.Rabbit
                     IocManager.Instance.Logger<RabbitConsumer>().LogError(e, listener.GetType().FullName);
                     try
                     {
-                        result = await listener.FailureHandling(message, model, ea);
+                        using (FsLinkTrack.TrackMqConsumer(_queueName))
+                        {
+                            result = await listener.FailureHandling(message, model, ea);
+                        }
+
+                        // 写入链路追踪
+                        _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
                     }
                     catch (Exception exception)
                     {

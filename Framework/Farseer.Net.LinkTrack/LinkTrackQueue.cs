@@ -5,12 +5,9 @@ using FS.Core.LinkTrack;
 
 namespace FS.LinkTrack
 {
-    public class LinkTrackQueue : BaseAsyncQueue<LinkTrackContext>
+    public class LinkTrackQueue : BaseAsyncQueue<LinkTrackContext>, ILinkTrackQueue
     {
-        private static LinkTrackQueue _instance;
-        public static  LinkTrackQueue Instance => _instance ??= new LinkTrackQueue();
-
-        private LinkTrackQueue() : base(500000, 100, 500)
+        internal LinkTrackQueue() : base(500000, 100, 500)
         {
         }
 
@@ -50,6 +47,6 @@ namespace FS.LinkTrack
         /// <summary>
         /// 将链路追踪写入队列
         /// </summary>
-        public static void Enqueue() => Instance.Enqueue(FsLinkTrack.Current.Get());
+        public void Enqueue() => base.Enqueue(FsLinkTrack.Current.Get());
     }
 }

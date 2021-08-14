@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Threading;
 using Castle.Core.Internal;
 using FS.Extends;
+using FS.Utils.Common;
 using Newtonsoft.Json;
 
 namespace FS.Core.LinkTrack
@@ -45,7 +46,7 @@ namespace FS.Core.LinkTrack
         /// <summary>
         ///     写入上下文ID
         /// </summary>
-        public void Set(string contextId, string parentAppId) => AsyncLocal.Value = new LinkTrackContext()
+        public LinkTrackContext Set(string contextId, string parentAppId) => AsyncLocal.Value = new LinkTrackContext()
         {
             AppId       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
             ParentAppId = parentAppId,
@@ -197,7 +198,18 @@ namespace FS.Core.LinkTrack
         /// <summary>
         /// 追踪Mq
         /// </summary>
-        public static TrackEnd TrackMq(string method)
+        public static TrackEnd TrackMqConsumer(string method)
+        {
+            var linkTrackContext =Current.Set(SnowflakeId.GenerateId.ToString(),"");
+            linkTrackContext.Method    = method;
+            linkTrackContext.RequestIp = IpHelper.GetIp;
+            return new TrackEnd(linkTrackContext);
+        }
+
+        /// <summary>
+        /// 追踪Mq
+        /// </summary>
+        public static TrackEnd TrackMqProduct(string method)
         {
             var linkTrackDetail = new LinkTrackDetail
             {
