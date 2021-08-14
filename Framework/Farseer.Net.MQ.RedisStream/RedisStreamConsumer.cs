@@ -126,7 +126,7 @@ namespace FS.MQ.RedisStream
                     }
 
                     // 写入链路追踪
-                    _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
+                    if (_iocManager.IsRegistered<ILinkTrackQueue>()) _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
                 }
                 catch (Exception e)
                 {
@@ -140,7 +140,7 @@ namespace FS.MQ.RedisStream
                         }
 
                         // 写入链路追踪
-                        _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
+                        if (_iocManager.IsRegistered<ILinkTrackQueue>()) _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
                     }
                     catch (Exception exception)
                     {
@@ -194,7 +194,7 @@ namespace FS.MQ.RedisStream
                     }
 
                     // 写入链路追踪
-                    _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
+                    if (_iocManager.IsRegistered<ILinkTrackQueue>()) _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
 
                     if (result)
                     {
@@ -214,7 +214,7 @@ namespace FS.MQ.RedisStream
                         }
 
                         // 写入链路追踪
-                        _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
+                        if (_iocManager.IsRegistered<ILinkTrackQueue>()) _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
                         if (result)
                         {
                             //await _redisCacheManager.Db.StreamDeleteAsync(_queueName, consumeContext.MessageIds.Select(o => (RedisValue) o).ToArray());

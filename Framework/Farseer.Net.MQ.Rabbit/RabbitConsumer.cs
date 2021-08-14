@@ -144,7 +144,7 @@ namespace FS.MQ.Rabbit
                 }
 
                 // 写入链路追踪
-                _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
+                if (_iocManager.IsRegistered<ILinkTrackQueue>()) _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
             }
             catch (Exception e)
             {
@@ -158,7 +158,7 @@ namespace FS.MQ.Rabbit
                     }
 
                     // 写入链路追踪
-                    _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
+                    if (_iocManager.IsRegistered<ILinkTrackQueue>()) _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
                 }
                 catch (Exception exception)
                 {
@@ -209,7 +209,7 @@ namespace FS.MQ.Rabbit
                     }
 
                     // 写入链路追踪
-                    _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
+                    if (_iocManager.IsRegistered<ILinkTrackQueue>()) _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
 
                     _lastAckAt = DateTime.Now;
                 }
@@ -230,7 +230,7 @@ namespace FS.MQ.Rabbit
                         }
 
                         // 写入链路追踪
-                        _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
+                        if (_iocManager.IsRegistered<ILinkTrackQueue>()) _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
                     }
                     catch (Exception exception)
                     {
