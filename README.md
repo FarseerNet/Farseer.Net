@@ -158,7 +158,7 @@ public class StartupModule : FarseerModule
 
 ### Farseer.net有哪些功能？
 * `Farseer.Net.Data`：数据库ORM
-  *  支持：Sqlserver/Oledb（Access/Execl）/Sqlite/MySql/Oracle 数据库。 
+  *  支持：MySql/ClickHouse/Sqlserver/Sqlite/Oracle/Oledb（Access/Execl） 数据库。 
 * `Farseer.Net.AspNetCore`
   *  基于asp.net core的一些封装
 * `Farseer.Net.Cache`

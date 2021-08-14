@@ -74,6 +74,10 @@ ProjectSection(SolutionItems) = preProject
 	Doc\3.配置文件使用.md = Doc\3.配置文件使用.md
 	Doc\8.Redis组件使用.md = Doc\8.Redis组件使用.md
 	Doc\9.LinkTrack全链路追踪监控组件.md = Doc\9.LinkTrack全链路追踪监控组件.md
+	Doc\4.已支持的组件列表.md = Doc\4.已支持的组件列表.md
+	Doc\5.Rabbit组件使用.md = Doc\5.Rabbit组件使用.md
+	Doc\6.ORM组件使用.md = Doc\6.ORM组件使用.md
+	Doc\7.Elasticsearch组件使用.md = Doc\7.Elasticsearch组件使用.md
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.LinkTrackDemo", "Demo\Farseer.Net.LinkTrackDemo\Farseer.Net.LinkTrackDemo.csproj", "{5887C6DF-9723-4BD8-9B13-97AEC3FE2383}"
