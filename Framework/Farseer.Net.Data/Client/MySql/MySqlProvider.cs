@@ -33,13 +33,13 @@ namespace FS.Data.Client.MySql
 
         internal override AbsSqlBuilder CreateSqlBuilder(ExpressionBuilder expBuilder,string dbName, string tableName) => new MySqlBuilder(this, expBuilder,dbName ,tableName);
 
-        public override string CreateDbConnstring(string server, string port, string userID, string passWord = null, string catalog = null, string dataVer = null, string additional = null, int connectTimeout = 60, int poolMinSize = 16, int poolMaxSize = 100)
+        public override string CreateDbConnstring(string server, string port, string userId, string passWord = null, string catalog = null, string dataVer = null, string additional = null, int connectTimeout = 60, int poolMinSize = 16, int poolMaxSize = 100)
         {
             // 2016年1月13日
             // 感谢：QQ21995346 ★Master★ 同学，发现了BUG
             // 场景：连接连字符串，被强制指定了：charset='gbk'
             // 解决：移除charset='gbk'，并在DbConfig配置中增加自定义连接方式
-            var sb = new StringBuilder($"Data Source='{server}';User Id='{userID}';");
+            var sb = new StringBuilder($"Data Source='{server}';User Id='{userId}';");
             if (!string.IsNullOrWhiteSpace(port)) { sb.Append($"Port='{port}';"); }
             if (!string.IsNullOrWhiteSpace(passWord)) { sb.Append($"Password='{passWord}';"); }
             if (!string.IsNullOrWhiteSpace(catalog)) { sb.Append($"Database='{catalog}';"); }

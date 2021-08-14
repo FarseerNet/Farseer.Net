@@ -62,32 +62,32 @@ namespace FS.Data.Infrastructure
         /// </summary>
         public string TableName { get; }
 
-        public string DbTableName => string.IsNullOrEmpty(DbName) ? DbProvider.KeywordAegis(TableName) : $"{DbProvider.KeywordAegis(DbName)}.{DbProvider.KeywordAegis(TableName)}";
+        protected string DbTableName => string.IsNullOrEmpty(DbName) ? DbProvider.KeywordAegis(TableName) : $"{DbProvider.KeywordAegis(DbName)}.{DbProvider.KeywordAegis(TableName)}";
 
         /// <summary>
         ///     Where条件表达式树的解析
         /// </summary>
-        protected WhereVisitor WhereVisitor => new WhereVisitor(DbProvider, ExpBuilder.SetMap, Param);
+        protected WhereVisitor WhereVisitor => new(DbProvider, ExpBuilder.SetMap, Param);
 
         /// <summary>
         ///     提供字段赋值时表达式树的解析
         /// </summary>
-        private AssignVisitor AssignVisitor => new AssignVisitor(DbProvider, ExpBuilder.SetMap, Param);
+        private AssignVisitor AssignVisitor => new (DbProvider, ExpBuilder.SetMap, Param);
 
         /// <summary>
         ///     提供字段排序时表达式树的解析
         /// </summary>
-        protected OrderByVisitor OrderByVisitor => new OrderByVisitor(DbProvider, ExpBuilder.SetMap, Param);
+        protected OrderByVisitor OrderByVisitor => new (DbProvider, ExpBuilder.SetMap, Param);
 
         /// <summary>
         ///     提供ExpressionBinary表达式树的解析
         /// </summary>
-        protected SelectVisitor SelectVisitor => new SelectVisitor(DbProvider, ExpBuilder.SetMap, Param);
+        protected SelectVisitor SelectVisitor => new (DbProvider, ExpBuilder.SetMap, Param);
 
         /// <summary>
         ///     提供字段插入表达式树的解析
         /// </summary>
-        private InsertVisitor InsertVisitor => new InsertVisitor(DbProvider, ExpBuilder.SetMap, Param);
+        private InsertVisitor InsertVisitor => new (DbProvider, ExpBuilder.SetMap, Param);
 
         /// <summary>
         ///     查询单条记录

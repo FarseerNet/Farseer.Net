@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using FS.Core;
 using FS.Core.Entity;
 using FS.Core.LinkTrack;
+using FS.Data.Client;
 using FS.Data.Data;
 using FS.Data.Infrastructure;
 using FS.DI;
@@ -19,7 +20,8 @@ namespace FS.Data.Internal
     /// <summary> 将SQL发送到数据库（代理类、记录SQL、执行时间） </summary>
     internal sealed class ExecuteSqlMonitorProxy : IExecuteSql
     {
-        private readonly IExecuteSql _dbExecutor;
+        private readonly IExecuteSql   _dbExecutor;
+        private readonly AbsDbProvider _dbProvider;
 
         /// <summary>
         /// 本次执行的SQL 
@@ -30,9 +32,11 @@ namespace FS.Data.Internal
         ///     将SQL发送到数据库（代理类、记录SQL、执行时间）
         /// </summary>
         /// <param name="db">数据库执行者</param>
-        internal ExecuteSqlMonitorProxy(IExecuteSql db)
+        /// <param name="absDbProvider"> </param>
+        internal ExecuteSqlMonitorProxy(IExecuteSql db, AbsDbProvider dbProvider)
         {
             _dbExecutor = db;
+            _dbProvider = dbProvider;
         }
 
         public DbExecutor DataBase => _dbExecutor.DataBase;
@@ -194,7 +198,7 @@ namespace FS.Data.Internal
                 TableName    = tableName,
                 CommandType  = cmdType,
                 Sql          = sql,
-                SqlParam     = param.ToDictionary(o => o.ParameterName, o => o.Value.ToString())
+                SqlParam     = _dbProvider.IsSupportParam ? param.ToDictionary(o => o.ParameterName, o => o.Value.ToString()) : new()
             };
 
             using (FsLinkTrack.TrackDatabase(callMethod, dbLinkTrackDetail))

@@ -29,10 +29,12 @@ namespace FS.Data.Data
         ///     重复读（repeatable read）: 当事务A更新数据时，不容许其他事务进行任何操作，但当事务A进行读取时，其他事务只能读取，不能更新。
         ///     序列化（serializable）：     最严格的隔离级别，事务必须依次进行。
         /// </param>
-        public DbExecutor(string connectionString, eumDbType dbType = eumDbType.SqlServer, int commandTimeout = 30, IsolationLevel tranLevel = IsolationLevel.Unspecified)
+        /// <param name="dbProvider"> </param>
+        public DbExecutor(string connectionString, eumDbType dbType = eumDbType.SqlServer, int commandTimeout = 30, IsolationLevel tranLevel = IsolationLevel.Unspecified, AbsDbProvider dbProvider = null)
         {
             _connectionString = connectionString;
             _commandTimeout   = commandTimeout;
+            _dbProvider       = dbProvider;
             DataType          = dbType;
             OpenTran(tranLevel);
         }
@@ -41,6 +43,8 @@ namespace FS.Data.Data
         ///     数据库执行时间，单位秒
         /// </summary>
         private readonly int _commandTimeout;
+
+        private readonly AbsDbProvider _dbProvider;
 
         /// <summary>
         ///     连接字符串
@@ -224,7 +228,8 @@ namespace FS.Data.Data
                 Open();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
-                if (parameters != null && parameters.Length > 0)
+
+                if (_dbProvider is { IsSupportParam: true } && parameters is { Length: > 0 })
                 {
                     _comm.Parameters.AddRange(parameters);
                 }
@@ -264,7 +269,7 @@ namespace FS.Data.Data
                 await OpenAsync();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
-                if (parameters != null && parameters.Length > 0)
+                if (_dbProvider is { IsSupportParam: true } && parameters is { Length: > 0 })
                 {
                     _comm.Parameters.AddRange(parameters);
                 }
@@ -304,7 +309,7 @@ namespace FS.Data.Data
                 Open();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
-                if (parameters != null && parameters.Length > 0)
+                if (_dbProvider is { IsSupportParam: true } && parameters is { Length: > 0 })
                 {
                     _comm.Parameters.AddRange(parameters);
                 }
@@ -344,7 +349,7 @@ namespace FS.Data.Data
                 await OpenAsync();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
-                if (parameters != null && parameters.Length > 0)
+                if (_dbProvider is { IsSupportParam: true } && parameters is { Length: > 0 })
                 {
                     _comm.Parameters.AddRange(parameters);
                 }
@@ -384,7 +389,7 @@ namespace FS.Data.Data
                 Open();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
-                if (parameters != null && parameters.Length > 0)
+                if (_dbProvider is { IsSupportParam: true } && parameters is { Length: > 0 })
                 {
                     _comm.Parameters.AddRange(parameters);
                 }
@@ -421,7 +426,7 @@ namespace FS.Data.Data
 
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
-                if (parameters != null && parameters.Length > 0)
+                if (_dbProvider is { IsSupportParam: true } && parameters is { Length: > 0 })
                 {
                     _comm.Parameters.AddRange(parameters);
                 }
@@ -457,7 +462,7 @@ namespace FS.Data.Data
                 Open();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
-                if (parameters != null && parameters.Length > 0)
+                if (_dbProvider is { IsSupportParam: true } && parameters is { Length: > 0 })
                 {
                     _comm.Parameters.AddRange(parameters);
                 }
@@ -501,7 +506,7 @@ namespace FS.Data.Data
                 await OpenAsync();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
-                if (parameters != null && parameters.Length > 0)
+                if (_dbProvider is { IsSupportParam: true } && parameters is { Length: > 0 })
                 {
                     _comm.Parameters.AddRange(parameters);
                 }
@@ -568,7 +573,7 @@ namespace FS.Data.Data
                 using (FsLinkTrack.TrackDatabase("SqlBulkCopy", _connectionString, tableName))
                 {
                     Open();
-                    using (var bulkCopy = new SqlBulkCopy((SqlConnection) _comm.Connection, SqlBulkCopyOptions.Default, (SqlTransaction) _comm.Transaction))
+                    using (var bulkCopy = new SqlBulkCopy((SqlConnection)_comm.Connection, SqlBulkCopyOptions.Default, (SqlTransaction)_comm.Transaction))
                     {
                         bulkCopy.DestinationTableName = tableName;
                         bulkCopy.BatchSize            = dt.Rows.Count;
@@ -605,7 +610,7 @@ namespace FS.Data.Data
                 using (FsLinkTrack.TrackDatabase("SqlBulkCopy", _connectionString, tableName))
                 {
                     await OpenAsync();
-                    using (var bulkCopy = new SqlBulkCopy((SqlConnection) _comm.Connection, SqlBulkCopyOptions.Default, (SqlTransaction) _comm.Transaction))
+                    using (var bulkCopy = new SqlBulkCopy((SqlConnection)_comm.Connection, SqlBulkCopyOptions.Default, (SqlTransaction)_comm.Transaction))
                     {
                         bulkCopy.DestinationTableName = tableName;
                         bulkCopy.BatchSize            = dt.Rows.Count;

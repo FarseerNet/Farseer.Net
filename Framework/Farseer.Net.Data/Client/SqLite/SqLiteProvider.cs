@@ -16,12 +16,12 @@ namespace FS.Data.Client.SqLite
         public override AbsFunctionProvider FunctionProvider => new SqLiteFunctionProvider();
         internal override AbsSqlBuilder CreateSqlBuilder(ExpressionBuilder expBuilder, string dbName, string tableName) => new SqLiteBuilder(this, expBuilder, dbName, tableName);
         public override bool IsSupportTransaction => true;
-        public override string CreateDbConnstring(string server, string port, string userID, string passWord = null, string catalog = null, string dataVer = null, string additional = null, int connectTimeout = 60, int poolMinSize = 16, int poolMaxSize = 100)
+        public override string CreateDbConnstring(string server, string port, string userId, string passWord = null, string catalog = null, string dataVer = null, string additional = null, int connectTimeout = 60, int poolMinSize = 16, int poolMaxSize = 100)
         {
             var sb = new StringBuilder($"Data Source='{GetFilePath(server)}';");
             if (!string.IsNullOrWhiteSpace(port)) { sb.Append($"Port='{port}';"); }
 
-            if (!string.IsNullOrWhiteSpace(userID)) { sb.Append($"User ID='{userID}';"); }
+            if (!string.IsNullOrWhiteSpace(userId)) { sb.Append($"User ID='{userId}';"); }
             if (!string.IsNullOrWhiteSpace(passWord)) { sb.Append($"Password='{passWord}';"); }
             if (!string.IsNullOrWhiteSpace(dataVer)) { sb.Append($"Version='{dataVer}';"); }
 

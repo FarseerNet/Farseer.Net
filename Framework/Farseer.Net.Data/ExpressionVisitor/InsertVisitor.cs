@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
@@ -33,12 +34,14 @@ namespace FS.Data.ExpressionVisitor
             var strValues = new StringBuilder();
 
             var lst = SqlList.Reverse().ToList();
+            return "(" + string.Join(",", lst) + ") VALUES (" + string.Join(",", ParamList.Select(o => o.ParameterName)) + ")";
             for (var i = 0; i < lst.Count; i++)
             {
                 //  添加参数到列表
-                strFields.AppendFormat("{0},", lst[i]);
-                strValues.AppendFormat("{0},", ParamList[i].ParameterName);
+                strFields.Append($"{lst[i]},");
+                strValues.Append($"{ParamList[i].ParameterName},");
             }
+
             return "(" + strFields.Remove(strFields.Length - 1, 1) + ") VALUES (" + strValues.Remove(strValues.Length - 1, 1) + ")";
         }
 
@@ -47,20 +50,24 @@ namespace FS.Data.ExpressionVisitor
         /// </summary>
         protected override Expression VisitBinary(BinaryExpression b)
         {
-            if (b == null) { return null; }
+            if (b == null)
+            {
+                return null;
+            }
 
             var isReverse = false;
-            var left = b.Left;
-            var right = b.Right;
+            var left      = b.Left;
+            var right     = b.Right;
 
             // 先解析字段
             if (b.Left.NodeType != ExpressionType.MemberAccess && (b.Left.NodeType == ExpressionType.MemberAccess || b.Right.NodeType == ExpressionType.MemberAccess))
             {
-                left = b.Right;
-                right = b.Left;
+                left      = b.Right;
+                right     = b.Left;
                 isReverse = true;
             }
-            left = base.Visit(left);
+
+            left  = base.Visit(left);
             right = base.Visit(right);
             var conversion = base.Visit(b.Conversion);
 
@@ -68,11 +75,18 @@ namespace FS.Data.ExpressionVisitor
             // 说明进过了换算
             if (contidion || conversion != b.Conversion)
             {
-                if (b.NodeType == ExpressionType.Coalesce && b.Conversion != null) { return Expression.Coalesce(left, right, conversion as LambdaExpression); }
+                if (b.NodeType == ExpressionType.Coalesce && b.Conversion != null)
+                {
+                    return Expression.Coalesce(left, right, conversion as LambdaExpression);
+                }
                 else
                 {
                     // 两边类型不同时，需要进行转换
-                    if (left.Type != right.Type) { right = Expression.Convert(right, left.Type); }
+                    if (left.Type != right.Type)
+                    {
+                        right = Expression.Convert(right, left.Type);
+                    }
+
                     b = Expression.MakeBinary(b.NodeType, left, right, b.IsLiftedToNull, b.Method);
                 }
             }
@@ -80,9 +94,10 @@ namespace FS.Data.ExpressionVisitor
             // 清除状态（与或状态，不清除）
             if (b.NodeType != ExpressionType.And && b.NodeType != ExpressionType.Or)
             {
-                CurrentFieldName = null;
+                CurrentFieldName   = null;
                 CurrentDbParameter = null;
             }
+
             return b;
         }
 

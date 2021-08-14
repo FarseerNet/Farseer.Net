@@ -21,7 +21,7 @@ namespace FS.Data.ExpressionVisitor
         /// <summary>
         ///     条件堆栈
         /// </summary>
-        protected readonly Stack<string> SqlList = new Stack<string>();
+        protected readonly Stack<string> SqlList = new();
 
         /// <summary>
         ///     当前字段名称
@@ -108,7 +108,7 @@ namespace FS.Data.ExpressionVisitor
                 left  = SqlTrue(left);
             }
 
-            if (CurrentDbParameter != null && CurrentDbParameter.Value == null)
+            if (CurrentDbParameter is { Value: null })
             {
                 right = "NULL";
                 ParamList.RemoveAt(ParamList.Count - 1);

@@ -117,10 +117,10 @@ namespace FS.Data.Internal
             DbProvider = AbsDbProvider.CreateInstance(ContextConnection.DbType, ContextConnection.DataVer);
             
             // 默认SQL执行者
-            Executeor = new ExecuteSql(new DbExecutor(ContextConnection.ConnectionString, ContextConnection.DbType, ContextConnection.CommandTimeout, !IsUnitOfWork && DbProvider.IsSupportTransaction ? IsolationLevel.RepeatableRead : IsolationLevel.Unspecified), this);
+            Executeor = new ExecuteSql(new DbExecutor(ContextConnection.ConnectionString, ContextConnection.DbType, ContextConnection.CommandTimeout, !IsUnitOfWork && DbProvider.IsSupportTransaction ? IsolationLevel.RepeatableRead : IsolationLevel.Unspecified, DbProvider), this);
 
             // 记录执行链路
-            Executeor = new ExecuteSqlMonitorProxy(Executeor);
+            Executeor = new ExecuteSqlMonitorProxy(Executeor, DbProvider);
             
             // 队列管理者
             QueueManger = new QueueManger(this);

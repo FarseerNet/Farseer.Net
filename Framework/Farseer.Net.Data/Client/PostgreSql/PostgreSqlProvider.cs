@@ -22,9 +22,9 @@ namespace FS.Data.Client.PostgreSql
 
         internal override AbsSqlBuilder CreateSqlBuilder(ExpressionBuilder expBuilder, string dbName, string tableName) => new PostgreSqlBuilder(this, expBuilder, dbName, tableName);
 
-        public override string CreateDbConnstring(string server, string port, string userID, string passWord = null, string catalog = null, string dataVer = null, string additional = null, int connectTimeout = 60, int poolMinSize = 16, int poolMaxSize = 100)
+        public override string CreateDbConnstring(string server, string port, string userId, string passWord = null, string catalog = null, string dataVer = null, string additional = null, int connectTimeout = 60, int poolMinSize = 16, int poolMaxSize = 100)
         {
-            var sb = new StringBuilder($"Data Source='{server}';User ID='{userID}';");
+            var sb = new StringBuilder($"Data Source='{server}';User ID='{userId}';");
             if (!string.IsNullOrWhiteSpace(port)) { sb.Append($"Port='{port}';"); }
             if (!string.IsNullOrWhiteSpace(passWord)) { sb.Append($"Password='{passWord}';"); }
             if (!string.IsNullOrWhiteSpace(catalog)) { sb.Append($"Database='{catalog}';"); }
