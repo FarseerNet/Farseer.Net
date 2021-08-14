@@ -17,7 +17,7 @@ namespace FS.Data.Infrastructure
         [Display(Name = "System.Data.OracleClient")]Oracle,
         /// <summary> PostgreSql </summary>
         [Display(Name = "FS.NoSql")]PostgreSql,
-        /// <summary> MySql数据库 </summary>
-        [Display(Name = "MySql.Data.MySqlClient")] ClickHouse,
+        /// <summary> ClickHouse数据库 </summary>
+        [Display(Name = "Octonica.ClickHouseClient.ClickHouseDbProviderFactory")] ClickHouse,
     }
 }

@@ -13,16 +13,7 @@ namespace FS.Data.Client.MySql
     public class MySqlProvider : AbsDbProvider
     {
         //public override DbProviderFactory DbProviderFactory => (DbProviderFactory)InstanceCacheManger.Cache(Assembly.Load("MySql.Data").GetType("MySql.Data.MySqlClient.MySqlClientFactory"));
-        public override DbProviderFactory   DbProviderFactory
-        {
-            get
-            {
-                return (DbProviderFactory) FieldStaticGetCacheManger.Cache(Assembly.Load("MySqlConnector").GetType("MySqlConnector.MySqlConnectorFactory").GetField("Instance"));
-                //var    type = Assembly.Load("MySqlConnector").GetType("MySqlConnector.MySqlConnectorFactory");
-                //var instance = type.GetField("Instance").GetValue(null);
-                //return (DbProviderFactory) instance;
-            }
-        }
+        public override DbProviderFactory DbProviderFactory => (DbProviderFactory) FieldStaticGetCacheManger.Cache(Assembly.Load("MySqlConnector").GetType("MySqlConnector.MySqlConnectorFactory").GetField("Instance"));
 
         public override AbsFunctionProvider FunctionProvider     => new MySqlFunctionProvider();
         public override bool                IsSupportTransaction => true;
