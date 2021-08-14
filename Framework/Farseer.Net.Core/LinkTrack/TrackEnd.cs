@@ -53,5 +53,16 @@ namespace FS.Core.LinkTrack
         {
             End();
         }
+
+        public void Exception(System.Exception exception)
+        {
+            if (_linkTrackDetail != null)
+            {
+                SetHttpResponseBody(exception.ToString());
+                _linkTrackDetail.IsException      = true;
+                _linkTrackDetail.ExceptionMessage = exception.ToString();
+            }
+            End();
+        }
     }
 }

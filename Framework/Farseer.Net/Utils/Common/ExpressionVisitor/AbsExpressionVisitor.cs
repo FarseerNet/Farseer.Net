@@ -256,8 +256,7 @@ namespace FS.Utils.Common.ExpressionVisitor
         /// </summary>
         protected virtual Expression VisitConvertExp(Expression exp)
         {
-            var u = exp as UnaryExpression;
-            if (u != null && u.Operand is ConstantExpression) { return u.Operand; }
+            if (exp is UnaryExpression { Operand: ConstantExpression } u) { return u.Operand; }
             if (exp is BinaryExpression || !IsFieldValue(exp)) { return exp; }
             try { return Expression.Constant(Expression.Lambda(exp).Compile().DynamicInvoke(null), exp.Type); }
             catch

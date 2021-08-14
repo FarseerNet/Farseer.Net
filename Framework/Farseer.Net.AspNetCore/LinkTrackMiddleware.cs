@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -64,24 +65,35 @@ namespace FS
             using (var trackEnd = FsLinkTrack.TrackApiServer(httpContext.Request.Host.Host, path, httpContext.Request.Method, httpContext.Request.ContentType, dicHeader, requestContent, httpContext.GetIP()))
             {
                 var originalBodyStream = httpContext.Response.Body;
-                using (var responseBody = new MemoryStream())
+                await using (var responseBody = new MemoryStream())
                 {
                     // 先将MemoryStream给Body，用于后续取响应内容
                     httpContext.Response.Body = responseBody;
 
-                    await _next.Invoke(httpContext);
-
-                    httpContext.Response.Body.Seek(0, SeekOrigin.Begin);
-                    var rspBody = await new StreamReader(httpContext.Response.Body).ReadToEndAsync();
-                    httpContext.Response.Body.Seek(0, SeekOrigin.Begin);
-                    await responseBody.CopyToAsync(originalBodyStream);
-
-                    // 如果是api接口，则记录返回值
-                    if (!string.IsNullOrWhiteSpace(httpContext.Response.ContentType) && (httpContext.Response.ContentType.Contains("json") ||
-                                                                                         httpContext.Response.ContentType.Contains("xml") ||
-                                                                                         httpContext.Response.ContentType.Contains("text")))
+                    try
                     {
-                        trackEnd.SetDownstreamResponseBody(rspBody);
+                        await _next.Invoke(httpContext);
+
+                        httpContext.Response.Body.Seek(0, SeekOrigin.Begin);
+                        var rspBody = await new StreamReader(httpContext.Response.Body).ReadToEndAsync();
+                        httpContext.Response.Body.Seek(0, SeekOrigin.Begin);
+                        await responseBody.CopyToAsync(originalBodyStream);
+
+                        // 如果是api接口，则记录返回值
+                        if (!string.IsNullOrWhiteSpace(httpContext.Response.ContentType) && (httpContext.Response.ContentType.Contains("json") ||
+                                                                                             httpContext.Response.ContentType.Contains("xml") ||
+                                                                                             httpContext.Response.ContentType.Contains("text")))
+                        {
+                            trackEnd.SetDownstreamResponseBody(rspBody);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        trackEnd.Exception(e);
+                        
+                        // 写入链路追踪
+                        LinkTrackQueue.Enqueue();
+                        throw;
                     }
                 }
             }

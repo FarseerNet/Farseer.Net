@@ -2,12 +2,12 @@ namespace FS.Core.LinkTrack
 {
     public enum EumCallType
     {
-        HttpClient,
-        GrpcClient,
-        Database,
-        Redis,
-        Mq,
-        Elasticsearch,
-        Custom,
+        HttpClient    = 0,
+        GrpcClient    = 1,
+        Database      = 2,
+        Redis         = 3,
+        Mq            = 4,
+        Elasticsearch = 5,
+        Custom        = 6,
     }
 }

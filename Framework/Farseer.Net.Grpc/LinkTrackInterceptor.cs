@@ -27,13 +27,22 @@ namespace Farseer.Net.Grpc
                 FsLinkTrack.Current.Set(contextId, parentAppId);
             }
 
-            TResponse result;
+            TResponse result = null;
             var       dicHeader = context.RequestHeaders.ToDictionary(o => o.Key, o => o.Value);
             var       path      = $"http://{context.Host}{context.Method.ToLower()}";
+            
             using (var trackEnd = FsLinkTrack.TrackApiServer(context.Host, path, "GRPC", "application/grpc", dicHeader, JsonConvert.SerializeObject(request), context.Peer))
             {
-                result = await continuation(request, context);
-                trackEnd.SetDownstreamResponseBody(JsonConvert.SerializeObject(result));
+                try
+                {
+                    result = await continuation(request, context);
+                    trackEnd.SetDownstreamResponseBody(JsonConvert.SerializeObject(result));
+                }
+                catch (Exception e)
+                {
+                    trackEnd.Exception(e);
+                    throw;
+                }
             }
 
             // 写入链路追踪

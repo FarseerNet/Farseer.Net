@@ -62,7 +62,7 @@ namespace FS.Core.LinkTrack
             Stopwatch sw = Stopwatch.StartNew();
             //linkTrackDetail._lstFrames  = new StackTrace(true).GetFrames();
             linkTrackDetail._stackTrace = new StackTrace(true);
-            Console.WriteLine(sw.ElapsedMilliseconds);
+            //Console.WriteLine(sw.ElapsedMilliseconds);
             Get().List.Add(linkTrackDetail);
         }
 

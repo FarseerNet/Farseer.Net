@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace FS.Core.LinkTrack
 {
     public class LinkTrackVO
@@ -20,8 +22,8 @@ namespace FS.Core.LinkTrack
         /// <summary>
         /// C#调用方法
         /// </summary>
-        public string CsharpCallMethod { get;  set; }
-        public string CsharpCallMethods { get; set; }
+        public string CsharpCallMethod { get;        set; }
+        public List<string> CsharpCallMethods { get; set; }
         /// <summary>
         /// 描述
         /// </summary>
