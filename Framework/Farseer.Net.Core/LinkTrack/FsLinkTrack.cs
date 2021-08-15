@@ -198,22 +198,28 @@ namespace FS.Core.LinkTrack
         /// <summary>
         /// 追踪Mq消费
         /// </summary>
-        public static TrackEnd TrackMqConsumer(string method)
+        public static TrackEnd TrackMqConsumer(string endPort, string queueName, string method)
         {
             var linkTrackContext = Current.Set(SnowflakeId.GenerateId.ToString(), "");
-            linkTrackContext.Method    = method;
-            linkTrackContext.RequestIp = IpHelper.GetIp;
+            linkTrackContext.Method      = method;
+            linkTrackContext.Path        = queueName;
+            linkTrackContext.Domain      = endPort;
+            linkTrackContext.RequestIp   = IpHelper.GetIp;
+            linkTrackContext.ContentType = "MessageQueue";
             return new TrackEnd(linkTrackContext);
         }
 
         /// <summary>
         /// 追踪Fss
         /// </summary>
-        public static TrackEnd TrackFss(string method)
+        public static TrackEnd TrackFss(string clientHost, string jobName, int taskGroupId, int taskId)
         {
             var linkTrackContext = Current.Set(SnowflakeId.GenerateId.ToString(), "");
-            linkTrackContext.Method    = method;
-            linkTrackContext.RequestIp = IpHelper.GetIp;
+            linkTrackContext.Method      = jobName;
+            linkTrackContext.Path        = $"{taskGroupId}/{taskId}";
+            linkTrackContext.Domain      = clientHost;
+            linkTrackContext.RequestIp   = IpHelper.GetIp;
+            linkTrackContext.ContentType = "Fss";
             return new TrackEnd(linkTrackContext);
         }
 

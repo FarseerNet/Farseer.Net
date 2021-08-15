@@ -73,10 +73,11 @@ namespace FS.Job.RemoteCall
                     // 执行业务JOB
                     var fssJob = IocManager.Resolve<IFssJob>($"fss_job_{task.JobTypeName}");
                     sw.Start();
-                    using (FsLinkTrack.TrackFss(task.JobTypeName))
+                    using (FsLinkTrack.TrackFss(task.ClientHost, task.JobTypeName, task.TaskGroupId, task.TaskId))
                     {
                         result = await fssJob.Execute(receiveContext);
                     }
+
                     // 写入链路追踪
                     if (IocManager.IsRegistered<ILinkTrackQueue>()) IocManager.Resolve<ILinkTrackQueue>().Enqueue();
                 }
@@ -85,7 +86,7 @@ namespace FS.Job.RemoteCall
                     IocManager.Logger<JobSchedulerCommand>().LogError(e, $"taskGroupId={receiveContext.Meta.TaskGroupId},caption={receiveContext.Meta.Caption}：{e.Message}");
                     log = new LogResponse
                     {
-                        LogLevel = (int) LogLevel.Error,
+                        LogLevel = (int)LogLevel.Error,
                         Log      = e.ToString(),
                         CreateAt = DateTime.Now.ToTimestamps()
                     };

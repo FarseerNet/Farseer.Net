@@ -138,7 +138,7 @@ namespace FS.MQ.Rabbit
             var message = Encoding.UTF8.GetString(resp.Body.ToArray());
             try
             {
-                using (FsLinkTrack.TrackMqConsumer(_queueName))
+                using (FsLinkTrack.TrackMqConsumer(_connect.Connection.Endpoint.ToString(), _queueName, "RabbitConsumer")) // _connect.Connection.Endpoint.HostName,
                 {
                     result = listener.Consumer(message, resp);
                 }
@@ -152,7 +152,7 @@ namespace FS.MQ.Rabbit
                 // 消费失败后处理
                 try
                 {
-                    using (FsLinkTrack.TrackMqConsumer(_queueName))
+                    using (FsLinkTrack.TrackMqConsumer(_connect.Connection.Endpoint.ToString(), _queueName, "RabbitConsumer"))
                     {
                         result = listener.FailureHandling(message, resp);
                     }
@@ -203,7 +203,7 @@ namespace FS.MQ.Rabbit
                 var message  = Encoding.UTF8.GetString(ea.Body.ToArray());
                 try
                 {
-                    using (FsLinkTrack.TrackMqConsumer(_queueName))
+                    using (FsLinkTrack.TrackMqConsumer(_connect.Connection.Endpoint.ToString(), _queueName, "RabbitConsumer"))
                     {
                         result = await listener.Consumer(message, model, ea);
                     }
@@ -224,7 +224,7 @@ namespace FS.MQ.Rabbit
                     IocManager.Instance.Logger<RabbitConsumer>().LogError(e, listener.GetType().FullName);
                     try
                     {
-                        using (FsLinkTrack.TrackMqConsumer(_queueName))
+                        using (FsLinkTrack.TrackMqConsumer(_connect.Connection.Endpoint.ToString(), _queueName, "RabbitConsumer"))
                         {
                             result = await listener.FailureHandling(message, model, ea);
                         }
