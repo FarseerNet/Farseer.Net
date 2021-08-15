@@ -21,6 +21,11 @@ namespace FS.Cache.Redis
         ICacheManager CacheManager { get; }
 
         /// <summary>
+        /// Redis服务端
+        /// </summary>
+        string Server { get; }
+
+        /// <summary>
         /// 清除所有缓存
         /// </summary>
         void Clear();

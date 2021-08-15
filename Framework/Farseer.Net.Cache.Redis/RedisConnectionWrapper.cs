@@ -13,7 +13,7 @@ namespace FS.Cache.Redis
     {
         private readonly RedisItemConfig _config;
         private volatile ConnectionMultiplexer _connection;
-        private readonly object _lock = new object();
+        private readonly object _lock = new();
 
         /// <summary>
         ///     构造函数

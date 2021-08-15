@@ -69,7 +69,6 @@ namespace FS.MQ.RedisStream
             this._iocManager        = iocManager;
             this._consumerType      = consumerType;
             this._redisCacheManager = redisCacheManager;
-            this._redisCacheManager = redisCacheManager;
             this._consumeThreadNums = consumeThreadNums;
             this._groupName         = groupName;
             this._pullCount         = pullCount;
@@ -120,7 +119,7 @@ namespace FS.MQ.RedisStream
                         MessageIds = streamEntries.Select(o => o.Id.ToString()).ToArray()
                     };
 
-                    using (FsLinkTrack.TrackMqConsumer(_queueName))
+                    using (FsLinkTrack.TrackMqConsumer(_redisCacheManager.Server, $"{_queueName}/{_groupName}", "RedisStreamConsumer"))
                     {
                         result = await listener.Consumer(streamEntries, consumeContext);
                     }
@@ -134,7 +133,7 @@ namespace FS.MQ.RedisStream
                     _iocManager.Logger<RedisStreamConsumer>().LogError(e, listener.GetType().FullName);
                     try
                     {
-                        using (FsLinkTrack.TrackMqConsumer(_queueName))
+                        using (FsLinkTrack.TrackMqConsumer(_redisCacheManager.Server, $"{_queueName}/{_groupName}", "RedisStreamConsumer"))
                         {
                             result = await listener.FailureHandling(streamEntries, consumeContext);
                         }
@@ -188,7 +187,7 @@ namespace FS.MQ.RedisStream
                 var result   = false;
                 try
                 {
-                    using (FsLinkTrack.TrackMqConsumer(_queueName))
+                    using (FsLinkTrack.TrackMqConsumer(_redisCacheManager.Server, $"{_queueName}/{_groupName}", "RedisStreamConsumer"))
                     {
                         result = await listener.Consumer(streamEntries, consumeContext);
                     }
@@ -208,7 +207,7 @@ namespace FS.MQ.RedisStream
                     _iocManager.Logger<RedisStreamConsumer>().LogError(e, listener.GetType().FullName);
                     try
                     {
-                        using (FsLinkTrack.TrackMqConsumer(_queueName))
+                        using (FsLinkTrack.TrackMqConsumer(_redisCacheManager.Server, $"{_queueName}/{_groupName}", "RedisStreamConsumer"))
                         {
                             result = await listener.FailureHandling(streamEntries, consumeContext);
                         }

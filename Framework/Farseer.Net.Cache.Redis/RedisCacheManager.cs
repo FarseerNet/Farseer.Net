@@ -27,16 +27,18 @@ namespace FS.Cache.Redis
         /// </summary>
         public IDatabase Db
         {
-            get
-            {
-                return _db ??= new LinkTrackWarp(_connectionWrapper.Database());
-            }
+            get { return _db ??= new LinkTrackWarp(_connectionWrapper.Database()); }
         }
 
         /// <summary>
         /// 支持缓存不存在，则写入
         /// </summary>
         public ICacheManager CacheManager { get; internal set; }
+
+        /// <summary>
+        /// Redis服务端
+        /// </summary>
+        public string Server { get; }
 
         /// <summary>
         ///     构造函数
@@ -46,6 +48,7 @@ namespace FS.Cache.Redis
         public RedisCacheManager(RedisItemConfig config, IRedisConnectionWrapper connectionWrapper)
         {
             Check.NotNull(config.Server, "Redis连接字符串为空");
+            Server             = config.Server;
             _connectionWrapper = connectionWrapper;
         }
 
