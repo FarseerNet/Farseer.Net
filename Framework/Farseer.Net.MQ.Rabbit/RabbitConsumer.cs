@@ -21,7 +21,7 @@ namespace FS.MQ.Rabbit
         /// <summary>
         /// 消费监听
         /// </summary>
-        private string _consumerType;
+        private readonly string _consumerType;
 
         /// <summary>
         /// 创建消息队列属性
@@ -86,7 +86,6 @@ namespace FS.MQ.Rabbit
         /// <summary>
         /// 监控消费
         /// </summary>
-        /// <param name="listener">消费事件</param>
         /// <param name="autoAck">是否自动确认，默认false</param>
         public void Start(bool autoAck = false)
         {
@@ -120,62 +119,6 @@ namespace FS.MQ.Rabbit
                     Thread.Sleep(3000);
                 }
             });
-        }
-
-        /// <summary>
-        /// 监控消费（只消费一次）
-        /// </summary>
-        /// <param name="listener">消费事件</param>
-        /// <param name="autoAck">是否自动确认，默认false</param>
-        public void StartSingle(IListenerMessageSingle listener, bool autoAck = false)
-        {
-            Connect();
-
-            // 只获取一次
-            var resp = _channel.BasicGet(_queueName, autoAck);
-
-            var result  = false;
-            var message = Encoding.UTF8.GetString(resp.Body.ToArray());
-            try
-            {
-                using (FsLinkTrack.TrackMqConsumer(_connect.Connection.Endpoint.ToString(), _queueName, "RabbitConsumer")) // _connect.Connection.Endpoint.HostName,
-                {
-                    result = listener.Consumer(message, resp);
-                }
-
-                // 写入链路追踪
-                if (_iocManager.IsRegistered<ILinkTrackQueue>()) _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
-            }
-            catch (Exception e)
-            {
-                IocManager.Instance.Logger<RabbitConsumer>().LogError(e, e.Message);
-                // 消费失败后处理
-                try
-                {
-                    using (FsLinkTrack.TrackMqConsumer(_connect.Connection.Endpoint.ToString(), _queueName, "RabbitConsumer"))
-                    {
-                        result = listener.FailureHandling(message, resp);
-                    }
-
-                    // 写入链路追踪
-                    if (_iocManager.IsRegistered<ILinkTrackQueue>()) _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
-                }
-                catch (Exception exception)
-                {
-                    IocManager.Instance.Logger<RabbitConsumer>().LogError(exception, "失败处理出现异常：" + listener.GetType().FullName);
-                    result = false;
-                }
-            }
-            finally
-            {
-                if (!autoAck)
-                {
-                    if (result) _channel.BasicAck(resp.DeliveryTag, false);
-                    else _channel.BasicReject(resp.DeliveryTag, true);
-                }
-
-                Close();
-            }
         }
 
         /// <summary>

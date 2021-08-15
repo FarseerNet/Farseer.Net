@@ -41,8 +41,8 @@ namespace FS.MQ.Rabbit.Attr
         /// </summary>
         public string RoutingKey { get; set; } = "";
 
-        /// <summary> 线程数 </summary>
-        public int ConsumeThreadNums { get; set; } = 8;
+        /// <summary> 线程数或拉取数量 </summary>
+        public int ThreadNumsOrPullNums { get; set; } = 8;
 
         /// <summary> 最后ACK多少秒超时则重连（默认5分钟） </summary>
         public int LastAckTimeoutRestart { get; set; } = 5 * 60;

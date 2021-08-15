@@ -20,6 +20,6 @@ namespace FS.MQ.Rabbit
         /// <param name="listener">消费事件</param>
         /// <param name="queueName">队列名称</param>
         /// <param name="autoAck">是否自动确认，默认false</param>
-        void StartSignle(IListenerMessageSingle listener, bool autoAck = false);
+        void StartSignle(IListenerMessageBatch listener, bool autoAck = false);
     }
 }
