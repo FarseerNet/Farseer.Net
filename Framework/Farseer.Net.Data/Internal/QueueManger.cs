@@ -32,10 +32,7 @@ namespace FS.Data.Internal
         ///     获取当前队列（不存在，则创建）
         /// </summary>
         /// <param name="map">字段映射</param>
-        internal Queue CreateQueue(SetDataMap map)
-        {
-            return _queue ??= new Queue(ContextProvider, map);
-        }
+        internal Queue CreateQueue(SetDataMap map) => _queue ??= new Queue(ContextProvider, map);
 
         /// <summary>
         ///     立即执行

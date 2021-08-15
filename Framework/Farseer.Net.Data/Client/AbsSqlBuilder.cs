@@ -1,14 +1,16 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
-using FS.Data.Client;
 using FS.Data.ExpressionVisitor;
+using FS.Data.Infrastructure;
 using FS.Data.Internal;
 using FS.Utils.Common;
+using Newtonsoft.Json;
 
-namespace FS.Data.Infrastructure
+namespace FS.Data.Client
 {
     /// <summary>
     ///     通用SQL生成器
@@ -171,8 +173,23 @@ namespace FS.Data.Infrastructure
         /// </summary>
         public virtual ISqlParam Insert()
         {
-            var strinsertAssemble = InsertVisitor.Visit(ExpBuilder.ExpAssign);
-            Sql.Append($"INSERT INTO {DbTableName} {strinsertAssemble}");
+            var insertAssemble = InsertVisitor.Visit(ExpBuilder.ExpAssign);
+            Sql.Append($"INSERT INTO {DbTableName} {insertAssemble}");
+            return this;
+        }
+
+        /// <summary>
+        ///     批量插入
+        /// </summary>
+        public virtual ISqlParam InsertBatch<TEntity>(List<TEntity> lst) where TEntity : class, new()
+        {
+            foreach (var entity in lst)
+            {
+                ExpBuilder.AssignInsert(entity);
+                var insertAssemble = InsertVisitor.Visit(ExpBuilder.ExpAssign);
+                Sql.Append($"INSERT INTO {DbTableName} {insertAssemble};");
+                InsertVisitor.Clear();
+            }
             return this;
         }
 
@@ -181,8 +198,8 @@ namespace FS.Data.Infrastructure
         /// </summary>
         public virtual ISqlParam InsertIdentity()
         {
-            var strinsertAssemble = InsertVisitor.Visit(ExpBuilder.ExpAssign);
-            Sql.Append($"INSERT INTO {DbTableName} {strinsertAssemble} ");
+            var insertAssemble = InsertVisitor.Visit(ExpBuilder.ExpAssign);
+            Sql.Append($"INSERT INTO {DbTableName} {insertAssemble}");
             return this;
         }
 

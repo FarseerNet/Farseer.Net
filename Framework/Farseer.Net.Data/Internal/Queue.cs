@@ -15,7 +15,6 @@ namespace FS.Data.Internal
             ID       = Guid.NewGuid();
             Context  = context;
             Map      = map;
-            CreateAt = DateTime.Now;
         }
 
         /// <summary>
@@ -34,11 +33,6 @@ namespace FS.Data.Internal
         internal SetDataMap Map;
 
         /// <summary>
-        ///     队列创建时间
-        /// </summary>
-        internal DateTime CreateAt;
-
-        /// <summary>
         ///     复制条件
         /// </summary>
         /// <param name="queue">队列</param>
@@ -50,38 +44,23 @@ namespace FS.Data.Internal
             queue.Dispose();
         }
 
-        #region ExpBuilder表达式持久化
-
-        private ExpressionBuilder _expBuilder;
-
         /// <summary>
         ///     表达式持久化
         /// </summary>
+        private ExpressionBuilder _expBuilder;
         internal ExpressionBuilder ExpBuilder => _expBuilder ??= new ExpressionBuilder(Map);
-
-        #endregion
-
-        #region SqlBuilderSQL生成器
-
-        private AbsSqlBuilder _sqlBuilder;
 
         /// <summary>
         ///     SQL生成器
         /// </summary>
-        internal AbsSqlBuilder SqlBuilder => _sqlBuilder ?? (_sqlBuilder = Context.DbProvider.CreateSqlBuilder(ExpBuilder, Map.DbName, Map.TableName));
-
-        #endregion
-
-        #region ProcBuilder存储过程生成器
-
-        private ProcBuilder _procBuilder;
+        private AbsSqlBuilder _sqlBuilder;
+        internal AbsSqlBuilder SqlBuilder => _sqlBuilder ??= Context.DbProvider.CreateSqlBuilder(ExpBuilder, Map.DbName, Map.TableName);
 
         /// <summary>
         ///     存储过程生成器
         /// </summary>
-        internal ProcBuilder ProcBuilder => _procBuilder ?? (_procBuilder = new ProcBuilder(Context.DbProvider, Map));
-
-        #endregion
+        private ProcBuilder _procBuilder;
+        internal ProcBuilder ProcBuilder => _procBuilder ??= new ProcBuilder(Context.DbProvider, Map);
 
         #region 释放
 

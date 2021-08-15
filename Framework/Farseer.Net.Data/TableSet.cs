@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using FS.Cache;
 using FS.Data.Infrastructure;
 using FS.Extends;
 using FS.Utils.Common;
+using Newtonsoft.Json;
 
 namespace FS.Data
 {
@@ -147,6 +149,7 @@ namespace FS.Data
             Where(lstIDs, memberName);
             return CopyAsync(act);
         }
+
         #endregion
 
         #region Update
@@ -159,7 +162,7 @@ namespace FS.Data
         public int Update(TEntity entity)
         {
             Check.IsTure(entity == null && Queue.ExpBuilder.ExpAssign == null, "更新操作时，参数不能为空！");
-            
+
             // 实体类的赋值，转成表达式树
             Queue.ExpBuilder.AssignUpdate(entity);
 
@@ -217,6 +220,7 @@ namespace FS.Data
         /// <param name="lstIDs">条件，等同于：o=> IDs.Contains(o.ID) 的操作</param>
         /// <param name="memberName">条件字段名称，如为Null，默认为主键字段</param>
         public Task<int> UpdateAsync<T>(TEntity info, List<T> lstIDs, string memberName = null) where T : struct => Where(lstIDs, memberName).UpdateAsync(info);
+
         #endregion
 
         #region Insert
@@ -288,8 +292,9 @@ namespace FS.Data
             {
                 throw new FarseerException($"{entity.GetType().Name}未设置DbGenerated特性，无法获取自增ID");
             }
+
             var result = Insert(entity, true);
-            
+
             // 获取标识字段
             identity = ConvertHelper.ConvertType(PropertyGetCacheManger.Cache(SetMap.PhysicsMap.DbGeneratedFields.Key, entity), default(T));
             return result;
@@ -303,17 +308,16 @@ namespace FS.Data
         {
             Check.NotNull(lst, "插入操作时，lst参数不能为空！");
 
-            // 如果是MSSQLSER，则启用BulkCopy
             if (Context.Executeor.DataBase.DataType == eumDbType.SqlServer)
             {
-                QueueManger.Commit(SetMap, (queue) =>
+                return QueueManger.Commit(SetMap, (queue) =>
                 {
                     Context.Executeor.DataBase.ExecuteSqlBulkCopy(SetMap.TableName, lst.ToTable());
                     return lst.Count;
                 }, false);
             }
-            else { lst.ForEach(entity => Insert(entity)); }
-            return lst.Count;
+
+            return QueueManger.Commit(SetMap, queue => Context.Executeor.Execute($"{typeof(TEntity).Name}.InsertBatch", queue.SqlBuilder.InsertBatch(lst)), false);
         }
 
         /// <summary>
@@ -324,7 +328,7 @@ namespace FS.Data
         {
             Check.NotNull(lst, "插入操作时，lst参数不能为空！");
 
-            // 如果是MSSQLSER，则启用BulkCopy
+            // 如果是SqlServer，则启用BulkCopy
             if (Context.Executeor.DataBase.DataType == eumDbType.SqlServer)
             {
                 return await QueueManger.CommitAsync(SetMap, async (queue) =>
@@ -334,12 +338,14 @@ namespace FS.Data
                 }, false);
             }
 
-            foreach (var entity in lst) { await InsertAsync(entity); }
-            return lst.Count;
+            return await QueueManger.CommitAsync(SetMap, queue => Context.Executeor.ExecuteAsync($"{typeof(TEntity).Name}.InsertBatch", queue.SqlBuilder.InsertBatch(lst)), false);
+            
         }
+
         #endregion
 
         #region Delete
+
         /// <summary>
         ///     删除
         /// </summary>
@@ -417,6 +423,7 @@ namespace FS.Data
         /// <typeparam name="T">ID</typeparam>
         /// <param name="memberName">条件字段名称，如为Null，默认为主键字段</param>
         public Task<int> DeleteAsync<T>(List<T> lstIDs, string memberName = null) where T : struct => Where(lstIDs, memberName).DeleteAsync();
+
         #endregion
 
         #region AddUp
@@ -440,7 +447,7 @@ namespace FS.Data
             Check.NotNull(Queue.ExpBuilder.ExpAssign, "+=字段操作时，必须先执行AddUp的另一个重载版本！");
 
             // 加入队列
-            return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ExecuteAsync($"{typeof(TEntity).Name}.AddUpAsync",queue.SqlBuilder.AddUp()), true);
+            return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ExecuteAsync($"{typeof(TEntity).Name}.AddUpAsync", queue.SqlBuilder.AddUp()), true);
         }
 
         /// <summary>
@@ -526,6 +533,7 @@ namespace FS.Data
         /// <typeparam name="T">ID</typeparam>
         /// <param name="ID">o => o.ID.Equals(ID)</param>
         public Task<int> AddUpAsync<T>(T? ID, T fieldValue) where T : struct => AddUpAsync<T>(ID, null, fieldValue);
+
         #endregion
     }
 }

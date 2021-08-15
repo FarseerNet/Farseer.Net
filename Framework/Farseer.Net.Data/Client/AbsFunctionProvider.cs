@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using FS.Utils.Common;
 
-namespace FS.Data.Infrastructure
+namespace FS.Data.Client
 {
     /// <summary>
     /// 数据库函数提供者（不同数据库的函数）

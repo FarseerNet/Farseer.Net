@@ -34,6 +34,7 @@
   <ItemGroup>
     <Compile Include="Map\ContextDataMap.cs" />
     <Compile Include="Map\ContextPhysicsMap.cs" />
+    <Compile Include="Map\JsonFieldNameContractResolver.cs" />
     <Compile Include="Map\SetDataMap.cs" />
     <Compile Include="Map\SetPhysicsMap.cs" />
   </ItemGroup>
