@@ -129,13 +129,7 @@ namespace FS.MQ.Rabbit
                 if (!autoAck)
                 {
                     if (result) _channel.BasicAck(deliveryTag, true);
-                    else
-                    {
-                        foreach (var resp in lstBasicGetResult)
-                        {
-                            _channel.BasicReject(resp.DeliveryTag, true);
-                        }
-                    }
+                    else _channel.BasicNack(deliveryTag, true, true); // 批量拒绝，代替_channel.BasicReject
                 }
 
                 Close();
