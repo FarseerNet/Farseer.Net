@@ -94,6 +94,10 @@ namespace FS.MQ.Rabbit
                     deliveryTag = resp.DeliveryTag;
                 }
 
+                // 没有取到数据时，直接退出
+                if (lstResult.Count == 0) return 0;
+                
+                // 消费
                 using (FsLinkTrack.TrackMqConsumer(_connect.Connection.Endpoint.ToString(), _queueName, "RabbitConsumerBatch"))
                 {
                     result = await listener.Consumer(lstResult, lstBasicGetResult);
