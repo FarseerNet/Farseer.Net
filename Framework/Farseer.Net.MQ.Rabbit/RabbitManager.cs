@@ -20,10 +20,12 @@ namespace FS.MQ.Rabbit
         ///     生产消息
         /// </summary>
         private IRabbitProduct _product;
+
         /// <summary>
         /// 配置信息
         /// </summary>
         private readonly ProductConfig _productConfig;
+
         /// <summary>
         /// Rabbit连接
         /// </summary>
@@ -35,7 +37,7 @@ namespace FS.MQ.Rabbit
             _connect       = connect;
             _productConfig = productConfig;
         }
-        
+
         /// <summary> Rabbit管理器 </summary>
         public RabbitManager(RabbitItemConfig rabbitItemConfig)
         {
@@ -56,7 +58,7 @@ namespace FS.MQ.Rabbit
                 }
             }
         }
-        
+
         /// <summary>
         /// 创建队列
         /// </summary>
@@ -65,16 +67,21 @@ namespace FS.MQ.Rabbit
         /// <param name="exclusive">是否排他队列（默认false）</param>
         /// <param name="autoDelete">是否自动删除（默认false）</param>
         /// <param name="arguments">队列参数</param>
-        public void CreateQueue(string queueName, bool durable = true, bool exclusive = false, bool autoDelete = false,
-            IDictionary<string, object> arguments = null)
+        public void CreateQueue
+        (
+            string                      queueName,
+            bool                        durable    = true,
+            bool                        exclusive  = false,
+            bool                        autoDelete = false,
+            IDictionary<string, object> arguments  = null)
         {
             if (_connect.Connection == null || !_connect.Connection.IsOpen) _connect.Open();
             using (var channel = _connect.Connection.CreateModel())
             {
                 //声明一个队列
                 channel.QueueDeclare(
-                    queue: queueName, //消息队列名称
-                    durable: durable, //是否缓存
+                    queue: queueName,     //消息队列名称
+                    durable: durable,     //是否缓存
                     exclusive: exclusive, // 创建后删除
                     autoDelete: autoDelete,
                     arguments: arguments
@@ -90,8 +97,13 @@ namespace FS.MQ.Rabbit
         /// <param name="durable">是否持久化（默认true）</param>
         /// <param name="autoDelete">是否自动删除（默认false）</param>
         /// <param name="arguments">参数</param>
-        public void CreateExchange(string exchangeName, eumExchangeType exchangeType, bool durable = true,
-            bool autoDelete = false, IDictionary<string, object> arguments = null)
+        public void CreateExchange
+        (
+            string                      exchangeName,
+            eumExchangeType             exchangeType,
+            bool                        durable    = true,
+            bool                        autoDelete = false,
+            IDictionary<string, object> arguments  = null)
         {
             if (_connect.Connection == null || !_connect.Connection.IsOpen) _connect.Open();
             using (var channel = _connect.Connection.CreateModel())
@@ -144,7 +156,7 @@ namespace FS.MQ.Rabbit
             if (_connect.Connection == null || !_connect.Connection.IsOpen) _connect.Open();
             using (var channel = _connect.Connection.CreateModel())
             {
-                channel.QueueBind(queueName, exchangeName, routingKey);
+                channel.QueueBind(queueName, exchangeName, routingKey ?? "");
             }
         }
     }

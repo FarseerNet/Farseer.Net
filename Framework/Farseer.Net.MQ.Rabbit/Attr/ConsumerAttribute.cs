@@ -65,5 +65,10 @@ namespace FS.MQ.Rabbit.Attr
         /// 死信时间
         /// </summary>
         public int DlxTime { get; set; }
+
+        /// <summary>
+        /// 批量拉取消息时的间隔休眠时间（默认200ms)
+        /// </summary>
+        public int BatchPullSleepTime { get; set; } = 200;
     }
 }

@@ -17,16 +17,16 @@ namespace FS.MQ.Rabbit
         /// <summary>
         /// 消费
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="messages"></param>
         /// <param name="resp"></param>
         /// <returns>当开启手动确认时，返回true时，才会进行ACK确认</returns>
-        Task<bool> Consumer(List<string> message, List<BasicGetResult> resp);
+        Task<bool> Consumer(List<string> messages, List<BasicGetResult> resp);
 
         /// <summary>
         /// 当异常时处理
         /// </summary>
         /// <returns>true：表示成功处理，移除消息。false：处理失败，如果是重试状态，则放回队列</returns>
-        Task<bool> FailureHandling(List<string> message, List<BasicGetResult> resp) => Task.FromResult(false);
+        Task<bool> FailureHandling(List<string> messages, List<BasicGetResult> resp) => Task.FromResult(false);
 
         /// <summary>
         /// 初始化并自动消费
@@ -60,7 +60,7 @@ namespace FS.MQ.Rabbit
                 await Task.Factory.StartNew(async () =>
                 {
                     var consumerInstance = new RabbitConsumerBatch(iocManager, consumerType, rabbitItemConfig, consumerAtt.QueueName, consumerAtt.ThreadNumsOrPullNums);
-                    await consumerInstance.StartWhile(200);
+                    await consumerInstance.StartWhile(consumerAtt.BatchPullSleepTime);
                 }, TaskCreationOptions.LongRunning);
             });
 

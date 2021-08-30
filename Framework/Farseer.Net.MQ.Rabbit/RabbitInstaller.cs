@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Castle.MicroKernel.Registration;
@@ -10,9 +8,7 @@ using FS.DI;
 using FS.MQ.Rabbit.Attr;
 using FS.MQ.Rabbit.Configuration;
 using FS.Reflection;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Activator = System.Activator;
 
 namespace FS.MQ.Rabbit
 {
