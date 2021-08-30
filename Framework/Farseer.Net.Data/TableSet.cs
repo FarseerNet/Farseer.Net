@@ -304,7 +304,7 @@ namespace FS.Data
         ///     插入
         /// </summary>
         /// <param name="lst">实体类</param>
-        public int Insert(List<TEntity> lst)
+        public int Insert(IEnumerable<TEntity> lst)
         {
             Check.NotNull(lst, "插入操作时，lst参数不能为空！");
 
@@ -313,7 +313,7 @@ namespace FS.Data
                 return QueueManger.Commit(SetMap, (queue) =>
                 {
                     Context.Executeor.DataBase.ExecuteSqlBulkCopy(SetMap.TableName, lst.ToTable());
-                    return lst.Count;
+                    return lst.Count();
                 }, false);
             }
 
@@ -324,7 +324,7 @@ namespace FS.Data
         ///     插入
         /// </summary>
         /// <param name="lst">实体类</param>
-        public async Task<int> InsertAsync(List<TEntity> lst)
+        public async Task<int> InsertAsync(IEnumerable<TEntity> lst)
         {
             Check.NotNull(lst, "插入操作时，lst参数不能为空！");
 
@@ -334,7 +334,7 @@ namespace FS.Data
                 return await QueueManger.CommitAsync(SetMap, async (queue) =>
                 {
                     await Context.Executeor.DataBase.ExecuteSqlBulkCopyAsync(SetMap.TableName, lst.ToTable());
-                    return lst.Count;
+                    return lst.Count();
                 }, false);
             }
 

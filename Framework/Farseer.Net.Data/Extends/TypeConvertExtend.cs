@@ -174,10 +174,10 @@ namespace FS.Extends
         /// </summary>
         /// <param name="lst">集合</param>
         /// <returns></returns>
-        public static DataTable ToTable<TEntity>(this List<TEntity> lst) where TEntity : class
+        public static DataTable ToTable<TEntity>(this IEnumerable<TEntity> lst) where TEntity : class
         {
             var dt = new DataTable();
-            if (lst.Count == 0)
+            if (!lst.Any())
             {
                 return dt;
             }
