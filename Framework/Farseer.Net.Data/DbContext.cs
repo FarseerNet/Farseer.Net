@@ -100,6 +100,16 @@ namespace FS.Data
         ///     上下文数据库连接信息
         /// </summary>
         public IContextConnection ContextConnection => InternalContext.ContextConnection;
+        
+        /// <summary>
+        /// 当事务提交后，会调用该委托
+        /// </summary>
+        private List<Action> CommitCallback { get; } = new();
+
+        /// <summary>
+        /// 当事务提交后，会调用该委托
+        /// </summary>
+        public void AddCallback(Action act) => CommitCallback.Add(act);
 
         /// <summary>
         ///     保存修改
@@ -117,6 +127,10 @@ namespace FS.Data
             }
             InternalContext.Executeor.DataBase.Close(true);
             //return result;
+            foreach (var action in CommitCallback)
+            {
+                action();
+            }
         }
 
         /// <summary>
