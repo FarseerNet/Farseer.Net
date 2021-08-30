@@ -16,8 +16,7 @@ namespace Farseer.Net.Grpc
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             // 读取配置
-            var configurationSection = container.Resolve<IConfigurationRoot>().GetSection("Grpc");
-            var grpcItemConfigs      = configurationSection.GetChildren().Select(o => o.Get<GrpcItemConfig>()).ToList();
+            var grpcItemConfigs = GrpcConfigRoot.Get();
 
             foreach (var grpcItemConfig in grpcItemConfigs)
             {
