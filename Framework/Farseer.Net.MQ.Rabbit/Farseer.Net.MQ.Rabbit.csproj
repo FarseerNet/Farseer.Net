@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
         <Company>steden</Company>
         <Copyright>http://www.fsgit.com</Copyright>
         <Product>RabbitMQ组件</Product>
@@ -22,7 +22,7 @@
 
     <ItemGroup>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-        <PackageReference Include="RabbitMQ.Client" Version="6.2.1" />
+        <PackageReference Include="RabbitMQ.Client" Version="6.2.2" />
     </ItemGroup>
 
     <ItemGroup>
