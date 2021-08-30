@@ -139,7 +139,7 @@ namespace FS.Data.Client.ClickHouse
         /// <summary>
         ///     批量插入
         /// </summary>
-        public override ISqlParam InsertBatch<TEntity>(List<TEntity> lst)
+        public override ISqlParam InsertBatch<TEntity>(IEnumerable<TEntity> lst)
         {
             var settings = new JsonSerializerSettings
             {

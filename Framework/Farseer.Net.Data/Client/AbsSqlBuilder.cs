@@ -181,7 +181,7 @@ namespace FS.Data.Client
         /// <summary>
         ///     批量插入
         /// </summary>
-        public virtual ISqlParam InsertBatch<TEntity>(List<TEntity> lst) where TEntity : class, new()
+        public virtual ISqlParam InsertBatch<TEntity>(IEnumerable<TEntity> lst) where TEntity : class, new()
         {
             foreach (var entity in lst)
             {
