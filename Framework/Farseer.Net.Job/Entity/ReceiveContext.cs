@@ -24,10 +24,12 @@ namespace FS.Job.Entity
         private          long                                                        _nextTimespan;
         private readonly Queue<UploadJobProgress>                                    _logQueue = new();
         private          TimeSpan?                                                   _ts;
+
         /// <summary>
         /// 是否为本地Debug模式
         /// </summary>
-        private          bool                                                        _isDebug;
+        private bool _isDebug;
+
         /// <summary>
         /// 任务组的参数
         /// </summary>
@@ -41,11 +43,11 @@ namespace FS.Job.Entity
             _sw       =   sw;
             Meta.Data ??= new();
         }
-        
+
         /// <summary>
         /// DEBUG模式
         /// </summary>
-        internal ReceiveContext(IIocManager ioc, Stopwatch sw, Dictionary<string,string> debugMetaData)
+        internal ReceiveContext(IIocManager ioc, Stopwatch sw, Dictionary<string, string> debugMetaData)
         {
             Meta = new JobSchedulerVO
             {
@@ -53,12 +55,12 @@ namespace FS.Job.Entity
                 JobTypeName = null,
                 Data        = debugMetaData,
             };
-            
-            _ioc      =   ioc;
-            _isDebug  =   true;
-            _sw       =   sw;
+
+            _ioc     = ioc;
+            _isDebug = true;
+            _sw      = sw;
         }
-        
+
 
         /// <summary>
         /// 返回进度0-100
@@ -87,10 +89,10 @@ namespace FS.Job.Entity
             {
                 NextTimespan = _nextTimespan,
                 Progress     = Progress,
-                RunSpeed     = (int) _sw.ElapsedMilliseconds,
+                RunSpeed     = (int)_sw.ElapsedMilliseconds,
                 Log = new LogResponse
                 {
-                    LogLevel = (int) logLevel,
+                    LogLevel = (int)logLevel,
                     Log      = log,
                     CreateAt = DateTime.Now.ToTimestamps()
                 }
@@ -105,14 +107,14 @@ namespace FS.Job.Entity
             await UploadQueueAsync();
 
             // 如果本次有动态设计时间
-            if (_ts.HasValue) _nextTimespan = (int) _ts.GetValueOrDefault().TotalMilliseconds;
+            if (_ts.HasValue) _nextTimespan = (int)_ts.GetValueOrDefault().TotalMilliseconds;
 
             await _rpc.RequestStream.WriteAsync(new JobInvokeRequest
             {
                 NextTimespan = _nextTimespan,
                 Progress     = 100,
                 Status       = 4,
-                RunSpeed     = (int) _sw.ElapsedMilliseconds,
+                RunSpeed     = (int)_sw.ElapsedMilliseconds,
                 Log          = log,
                 Data         = JsonConvert.SerializeObject(Meta.Data)
             });
@@ -126,14 +128,14 @@ namespace FS.Job.Entity
             await UploadQueueAsync();
 
             // 如果本次有动态设计时间
-            if (_ts.HasValue) _nextTimespan = (int) _ts.GetValueOrDefault().TotalMilliseconds;
+            if (_ts.HasValue) _nextTimespan = (int)_ts.GetValueOrDefault().TotalMilliseconds;
 
             await _rpc.RequestStream.WriteAsync(new JobInvokeRequest
             {
                 NextTimespan = _nextTimespan,
                 Progress     = Progress,
                 Status       = 3,
-                RunSpeed     = (int) _sw.ElapsedMilliseconds,
+                RunSpeed     = (int)_sw.ElapsedMilliseconds,
                 Log          = log,
                 Data         = JsonConvert.SerializeObject(Meta.Data)
             });
@@ -152,7 +154,7 @@ namespace FS.Job.Entity
                     NextTimespan = _nextTimespan,
                     Progress     = Progress,
                     Status       = 2,
-                    RunSpeed     = (int) _sw.ElapsedMilliseconds,
+                    RunSpeed     = (int)_sw.ElapsedMilliseconds,
                     Data         = JsonConvert.SerializeObject(Meta.Data)
                 });
             }

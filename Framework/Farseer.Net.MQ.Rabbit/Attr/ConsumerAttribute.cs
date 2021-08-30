@@ -39,24 +39,28 @@ namespace FS.MQ.Rabbit.Attr
         /// <summary>
         /// 指定接收的路由KEY（默认为空）
         /// </summary>
-        public string RoutingKey { get; set; } = "";
+        public string RoutingKey { get; set; }
 
-        /// <summary> 线程数或拉取数量 </summary>
+        /// <summary>
+        /// 线程数或拉取数量
+        /// </summary>
         public int ThreadNumsOrPullNums { get; set; } = 8;
 
-        /// <summary> 最后ACK多少秒超时则重连（默认5分钟） </summary>
+        /// <summary>
+        /// 最后ACK多少秒超时则重连（默认5分钟）
+        /// </summary>
         public int LastAckTimeoutRestart { get; set; } = 5 * 60;
-        
+
         /// <summary>
         /// 死信交换器
         /// </summary>
         public string DlxExchangeName { get; set; }
-        
+
         /// <summary>
         /// 死信路由key
         /// </summary>
         public string DlxRoutingKey { get; set; }
-        
+
         /// <summary>
         /// 死信时间
         /// </summary>

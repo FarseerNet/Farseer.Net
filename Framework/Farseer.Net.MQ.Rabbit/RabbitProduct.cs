@@ -15,6 +15,7 @@ namespace FS.MQ.Rabbit
     public class RabbitProduct : IRabbitProduct
     {
         private readonly ConcurrentQueue<IModel> Stacks = new();
+
         /// <summary>
         /// 配置信息
         /// </summary>
@@ -64,7 +65,7 @@ namespace FS.MQ.Rabbit
                         var tryPop = Stacks.TryDequeue(out var channel);
 
                         // 取出失败，说明没有可用频道，需要创建新的
-                        if (tryPop && channel is {IsClosed: false})
+                        if (tryPop && channel is { IsClosed: false })
                         {
                             channel.Close();
                             channel.Dispose();
@@ -90,7 +91,7 @@ namespace FS.MQ.Rabbit
                 var tryPop = Stacks.TryDequeue(out var channel);
 
                 // 取出失败，说明没有可用频道，需要创建新的
-                if (tryPop && channel is {IsClosed: false}) return channel;
+                if (tryPop && channel is { IsClosed: false }) return channel;
 
                 channel = _connect.Connection.CreateModel();
                 if (_productConfig.UseConfirmModel) channel.ConfirmSelect();
@@ -126,6 +127,29 @@ namespace FS.MQ.Rabbit
             return Send(message, _productConfig.RoutingKey, _productConfig.ExchangeName, funcBasicProperties);
         }
 
+
+        /// <summary>
+        ///     发送消息（Routingkey默认配置中的RoutingKey；ExchangeName默认配置中的ExchangeName）
+        /// </summary>
+        /// <param name="message">消息主体</param>
+        /// <param name="routingKey">路由KEY名称</param>
+        /// <param name="funcBasicProperties">属性</param>
+        public bool Send(string message, string routingKey, Action<IBasicProperties> funcBasicProperties = null)
+        {
+            return Send(message, routingKey, _productConfig.ExchangeName, funcBasicProperties);
+        }
+
+        /// <summary>
+        ///     发送消息（Routingkey默认配置中的RoutingKey；ExchangeName默认配置中的ExchangeName）
+        /// </summary>
+        /// <param name="message">消息主体</param>
+        /// <param name="routingKey">路由KEY名称</param>
+        /// <param name="funcBasicProperties">属性</param>
+        public bool Send(IEnumerable<string> message, string routingKey, Action<IBasicProperties> funcBasicProperties = null)
+        {
+            return Send(message, routingKey, _productConfig.ExchangeName, funcBasicProperties);
+        }
+
         /// <summary>
         ///     发送消息
         /// </summary>
@@ -133,9 +157,9 @@ namespace FS.MQ.Rabbit
         /// <param name="routingKey">路由KEY名称</param>
         /// <param name="exchange">交换器名称</param>
         /// <param name="funcBasicProperties">属性</param>
-        public bool Send(string message, string routingKey, string exchange = "", Action<IBasicProperties> funcBasicProperties = null)
+        public bool Send(string message, string routingKey, string exchange, Action<IBasicProperties> funcBasicProperties = null)
         {
-            using (FsLinkTrack.TrackMqProduct("Rabbit.Send"))
+            using (FsLinkTrack.TrackMqProduct($"Rabbit.Send.{exchange}"))
             {
                 IModel channel = null;
                 try
@@ -172,9 +196,9 @@ namespace FS.MQ.Rabbit
         /// <param name="routingKey">路由KEY名称</param>
         /// <param name="exchange">交换器名称</param>
         /// <param name="funcBasicProperties">属性</param>
-        public bool Send(IEnumerable<string> message, string routingKey, string exchange = "", Action<IBasicProperties> funcBasicProperties = null)
+        public bool Send(IEnumerable<string> message, string routingKey, string exchange, Action<IBasicProperties> funcBasicProperties = null)
         {
-            using (FsLinkTrack.TrackMqProduct($"Rabbit.Send.{_productConfig.ExchangeName}"))
+            using (FsLinkTrack.TrackMqProduct($"Rabbit.Send.{exchange}"))
             {
                 IModel channel = null;
                 try

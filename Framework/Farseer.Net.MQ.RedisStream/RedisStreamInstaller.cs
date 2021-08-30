@@ -26,8 +26,7 @@ namespace FS.MQ.RedisStream
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             // 读取配置
-            var configurationSection = container.Resolve<IConfigurationRoot>().GetSection("RedisStream");
-            var redisStreamConfigs   = configurationSection.GetChildren().Select(o => o.Get<RedisStreamConfig>()).ToList();
+            var redisStreamConfigs = RedisStreamConfigRoot.Get();
 
             // 注册生产者
             foreach (var redisStreamConfig in redisStreamConfigs)
@@ -58,7 +57,7 @@ namespace FS.MQ.RedisStream
 
             // 查找入口方法是否启用了Rabbit消费
             var rabbitAttribute = Assembly.GetEntryAssembly().EntryPoint.DeclaringType.GetCustomAttribute<RedisStreamAttribute>();
-            if (rabbitAttribute is {Enable: true})
+            if (rabbitAttribute is { Enable: true })
             {
                 // 查找消费实现
                 var types = container.Resolve<IAssemblyFinder>().GetType<IListenerMessage>();
@@ -87,7 +86,7 @@ namespace FS.MQ.RedisStream
         {
             // 没有使用consumerAttribute特性的，不启用
             var consumerAttribute = consumerType.GetCustomAttribute<ConsumerAttribute>();
-            if (consumerAttribute is {Enable: false}) return;
+            if (consumerAttribute is { Enable: false }) return;
 
             // 创建消费的实例
             var redisStreamConfig = rabbitItemConfigs.Find(o => o.RedisName == consumerAttribute.RedisName);
@@ -126,7 +125,7 @@ namespace FS.MQ.RedisStream
 
             // 注册消费端
             container.Register(Component.For<IListenerMessage>().ImplementedBy(consumerType).Named(consumerType.FullName).LifestyleTransient());
-            
+
             FarseerApplication.AddInitCallback(() =>
             {
                 IocManager.Instance.Logger<RedisStreamInstaller>().LogInformation($"正在启动：{consumerType.Name} Redis消费");

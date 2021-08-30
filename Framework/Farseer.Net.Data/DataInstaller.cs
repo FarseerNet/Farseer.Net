@@ -24,8 +24,7 @@ namespace FS.Data
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             // 读取配置
-            var configurationSection = container.Resolve<IConfigurationRoot>().GetSection("Database");
-            var dbConfig             = configurationSection.Get<DbConfig>();
+            var dbConfig = DataConfigRoot.Get();
             if (dbConfig == null || dbConfig.Items.Count == 0) return;
             dbConfig.Items.ForEach(m =>
             {

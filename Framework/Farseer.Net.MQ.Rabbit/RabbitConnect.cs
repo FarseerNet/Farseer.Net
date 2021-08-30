@@ -41,12 +41,20 @@ namespace FS.MQ.Rabbit
         }
 
         /// <summary>
-        ///     开启生产消息
+        ///     开启Rabbit
         /// </summary>
         public void Open()
         {
             var hostName = Dns.GetHostName();
             Connection = _factoryInfo.CreateConnection($"{hostName}/{_config.UserName}");
+        }
+
+        /// <summary>
+        /// 关闭Rabbit
+        /// </summary>
+        public void Close()
+        {
+            if (Connection != null) Connection.Close();
         }
     }
 }
