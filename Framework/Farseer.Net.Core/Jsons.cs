@@ -3,6 +3,8 @@
 // 时间：2016-11-08 14:21
 // ********************************************
 
+using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace FS.Core
@@ -36,5 +38,15 @@ namespace FS.Core
         /// <typeparam name="T">要转换的对象</typeparam>
         /// <param name="obj">json字符串</param>
         public static T ToObject<T>(object obj) => ToObject(obj, default(T));
+
+        /// <summary>
+        /// 转换到对象（失败时，用defVal代替）
+        /// </summary>
+        /// <typeparam name="T">要转换的对象</typeparam>
+        /// <param name="jsons">json字符串</param>
+        public static List<T> ToObject<T>(List<string> jsons)
+        {
+            return jsons.Select(ToObject<T>).Where(adminOprLogVO => adminOprLogVO != null).ToList();
+        }
     }
 }
