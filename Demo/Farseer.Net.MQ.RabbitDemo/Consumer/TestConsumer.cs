@@ -17,7 +17,5 @@ namespace Farseer.Net.MQ.RabbitDemo.Consumer
             System.Console.WriteLine(ea.ConsumerTag + "接收到信息为:" + message);
             return Task.FromResult(true);
         }
-
-        public Task<bool> FailureHandling(string message, object sender, BasicDeliverEventArgs ea) => throw new NotImplementedException();
     }
 }

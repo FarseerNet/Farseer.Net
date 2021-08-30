@@ -14,7 +14,5 @@ namespace Farseer.Net.MQ.RabbitDemo.Consumer
             System.Console.WriteLine(ea.ConsumerTag + "死信消息:" + message);
             return Task.FromResult(true);
         }
-
-        public Task<bool> FailureHandling(string message, object sender, BasicDeliverEventArgs ea) => throw new NotImplementedException();
     }
 }

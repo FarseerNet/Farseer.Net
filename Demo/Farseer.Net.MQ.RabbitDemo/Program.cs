@@ -23,9 +23,6 @@ namespace Farseer.Net.MQ.RabbitDemo
             rabbitProduct.Send("测试发送消息内容");
             // 开启时间测试
             var startNew = Stopwatch.StartNew();
-            startNew.Start();
-            Thread.Sleep(1000);
-            startNew.Stop();
             // 以上也是JIT
             
             
@@ -33,7 +30,7 @@ namespace Farseer.Net.MQ.RabbitDemo
             var count = 0;
             startNew.Reset();
             startNew.Restart();
-            while (startNew.ElapsedMilliseconds < 1000)
+            while (startNew.ElapsedMilliseconds < 100000)
             {
                 rabbitProduct.Send(DateTime.Now.ToString());
                 count++;
