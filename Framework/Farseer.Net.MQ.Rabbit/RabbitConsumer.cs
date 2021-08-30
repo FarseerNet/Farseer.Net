@@ -40,6 +40,11 @@ namespace FS.MQ.Rabbit
         private Task _checkConnectStatsTask;
 
         /// <summary>
+        /// 针对后台定时检查状态的取消令牌
+        /// </summary>
+        private CancellationTokenSource _cts;
+
+        /// <summary>
         /// 最后一次ACK确认时间
         /// </summary>
         private DateTime _lastAckAt;
@@ -82,7 +87,7 @@ namespace FS.MQ.Rabbit
             this._consumeThreadNums     = consumeThreadNums;
             this._queueName             = queueName;
             this._lastAckAt             = DateTime.Now;
-            
+
             if (!iocManager.IsRegistered(consumerType.FullName)) iocManager.Register(consumerType, consumerType.FullName);
         }
 
@@ -112,16 +117,35 @@ namespace FS.MQ.Rabbit
         private void CheckStatsAndConnect()
         {
             // 检查连接状态
-            _checkConnectStatsTask?.Dispose();
-            _checkConnectStatsTask = Task.Factory.StartNew(() =>
+            _cts = new CancellationTokenSource();
+            _checkConnectStatsTask = Task.Factory.StartNew(token =>
             {
-                while (true)
+                var cancellationToken = (CancellationToken)token;
+                try
                 {
-                    // 未打开、关闭状态、上一次ACK超时，则重启
-                    if (_channel == null || _channel.IsClosed || (DateTime.Now - _lastAckAt).TotalSeconds >= _lastAckTimeoutRestart) ReStart();
-                    Thread.Sleep(3000);
+                    while (true)
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        // 未打开、关闭状态、上一次ACK超时，则重启
+                        if (_channel == null || _channel.IsClosed)
+                        {
+                            _iocManager.Logger<RabbitConsumer>().LogWarning($"发现Rabbit未连接，或已关闭，开始重新连接");
+                            ReStart();
+                        }
+                        else if ((DateTime.Now - _lastAckAt).TotalSeconds >= _lastAckTimeoutRestart)
+                        {
+                            _iocManager.Logger<RabbitConsumer>().LogWarning($"rabbit距上一次消费过去了{(DateTime.Now - _lastAckAt).TotalSeconds}秒后没有新的消息，尝试重新连接Rabbit。");
+                            ReStart();
+                        }
+                        Thread.Sleep(3000);
+                    }
                 }
-            });
+                catch (Exception e)
+                {
+                    Console.WriteLine($"cancel");
+                    _iocManager.Logger<RabbitConsumer>().LogWarning($"");
+                }
+            }, _cts.Token);
         }
 
         /// <summary>
@@ -186,7 +210,7 @@ namespace FS.MQ.Rabbit
                 }
                 finally
                 {
-                    if (!autoAck)
+                    if (_channel is { IsOpen: true } && !autoAck)
                     {
                         if (result) _channel.BasicAck(ea.DeliveryTag, false);
                         else _channel.BasicReject(ea.DeliveryTag, true);
@@ -202,7 +226,8 @@ namespace FS.MQ.Rabbit
         /// </summary>
         public void Close()
         {
-            _checkConnectStatsTask?.Dispose();
+            _cts?.Cancel();
+
             if (_channel != null)
             {
                 _channel.Close();
