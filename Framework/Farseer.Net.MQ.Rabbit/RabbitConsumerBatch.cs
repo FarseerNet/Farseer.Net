@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Castle.MicroKernel.Registration;
 using FS.Core.LinkTrack;
 using FS.DI;
+using FS.MQ.Rabbit.Configuration;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 
@@ -12,7 +14,7 @@ namespace FS.MQ.Rabbit
     /// <summary>
     /// 批量拉取消息
     /// </summary>
-    internal class RabbitConsumerBatch
+    public class RabbitConsumerBatch
     {
         /// <summary>
         /// ioc
@@ -27,7 +29,7 @@ namespace FS.MQ.Rabbit
         /// <summary>
         /// 消费监听
         /// </summary>
-        private readonly string _consumerType;
+        private readonly string _consumerTypeName;
 
         /// <summary>
         /// 创建连接会话对象
@@ -48,17 +50,43 @@ namespace FS.MQ.Rabbit
         /// 消费客户端
         /// </summary>
         /// <param name="iocManager">IOC</param>
-        /// <param name="connect"></param>
+        /// <param name="rabbitItemConfig"></param>
         /// <param name="queueName">队列名称</param>
         /// <param name="batchPullMessageCount">批量拉取消息数量（默认10）</param>
         /// <param name="consumerType">消费监听 </param>
-        public RabbitConsumerBatch(IIocManager iocManager, string consumerType, RabbitConnect connect, string queueName, int batchPullMessageCount)
+        public RabbitConsumerBatch(IIocManager iocManager, Type consumerType, RabbitItemConfig rabbitItemConfig, string queueName, int batchPullMessageCount)
         {
             this._iocManager            = iocManager;
-            this._connect               = connect;
+            this._connect               = new RabbitConnect(rabbitItemConfig);
             this._batchPullMessageCount = batchPullMessageCount < 1 ? 10 : batchPullMessageCount;
             this._queueName             = queueName;
-            _consumerType               = consumerType;
+            this._consumerTypeName      = consumerType.FullName;
+            if (!iocManager.IsRegistered(consumerType.FullName)) iocManager.Register(consumerType, consumerType.FullName);
+        }
+
+        /// <summary>
+        /// 循环拉取
+        /// </summary>
+        /// <param name="waitSleep">拉到消息处理完后，休息多长时间，继续下一轮拉取</param>
+        /// <param name="autoAck">是否自动确认消息</param>
+        public async Task<int> StartWhile(int waitSleep, bool autoAck = false)
+        {
+            // 采用轮询的方式持续拉取
+            while (true)
+            {
+                var result = 0;
+                try
+                {
+                    // 拉取消息
+                    result = await Start(autoAck);
+                }
+                catch (Exception e)
+                {
+                    _iocManager.Logger<RabbitConsumerBatch>().LogError(e, $"{_consumerTypeName}消费异常：{e.Message}");
+                }
+
+                await Task.Delay(result > 0 ? waitSleep : 500);
+            }
         }
 
         /// <summary>
@@ -72,7 +100,7 @@ namespace FS.MQ.Rabbit
             var   lstBasicGetResult = new List<BasicGetResult>();
             ulong deliveryTag       = 0;
 
-            var listener = _iocManager.Resolve<IListenerMessageBatch>(_consumerType);
+            var listener = _iocManager.Resolve<IListenerMessageBatch>(_consumerTypeName);
 
             var result = false;
             try
@@ -96,7 +124,7 @@ namespace FS.MQ.Rabbit
 
                 // 没有取到数据时，直接退出
                 if (lstResult.Count == 0) return 0;
-                
+
                 // 消费
                 using (FsLinkTrack.TrackMqConsumer(_connect.Connection.Endpoint.ToString(), _queueName, "RabbitConsumerBatch"))
                 {

@@ -35,11 +35,11 @@ namespace FS.MQ.Rabbit
             _connect       = connect;
             _productConfig = productConfig;
         }
-
+        
         /// <summary> Rabbit管理器 </summary>
-        public RabbitManager(RabbitConnect connect)
+        public RabbitManager(RabbitItemConfig rabbitItemConfig)
         {
-            _connect       = connect;
+            _connect = new RabbitConnect(rabbitItemConfig);
         }
 
         /// <summary>
