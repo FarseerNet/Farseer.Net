@@ -35,11 +35,6 @@ namespace FS.MQ.Rabbit
         private IModel _channel;
 
         /// <summary>
-        /// 后台定时检查连接状态
-        /// </summary>
-        private Task _checkConnectStatsTask;
-
-        /// <summary>
         /// 针对后台定时检查状态的取消令牌
         /// </summary>
         private CancellationTokenSource _cts;
@@ -118,7 +113,7 @@ namespace FS.MQ.Rabbit
         {
             // 检查连接状态
             _cts = new CancellationTokenSource();
-            _checkConnectStatsTask = Task.Factory.StartNew(token =>
+            Task.Factory.StartNew(token =>
             {
                 var cancellationToken = (CancellationToken)token;
                 try
@@ -142,8 +137,7 @@ namespace FS.MQ.Rabbit
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"cancel");
-                    _iocManager.Logger<RabbitConsumer>().LogWarning($"");
+                    _iocManager.Logger<RabbitConsumer>().LogWarning(e.Message);
                 }
             }, _cts.Token);
         }
@@ -155,6 +149,7 @@ namespace FS.MQ.Rabbit
         {
             if (_rabbitConnect.Connection == null || !_rabbitConnect.Connection.IsOpen) _rabbitConnect.Open();
             if (_channel == null || _channel.IsClosed) _channel = _rabbitConnect.Connection.CreateModel();
+            _lastAckAt = DateTime.Now;
         }
 
         /// <summary>
