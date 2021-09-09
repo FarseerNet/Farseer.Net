@@ -64,6 +64,9 @@ namespace FS.Data.Client
         /// </summary>
         public string TableName { get; }
 
+        /// <summary>
+        /// 数据库名称+表名的组合
+        /// </summary>
         protected string DbTableName => string.IsNullOrEmpty(DbName) ? DbProvider.KeywordAegis(TableName) : $"{DbProvider.KeywordAegis(DbName)}.{DbProvider.KeywordAegis(TableName)}";
 
         /// <summary>

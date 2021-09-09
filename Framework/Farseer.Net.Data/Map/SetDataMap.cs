@@ -14,7 +14,7 @@ namespace FS.Data.Map
         {
             ClassProperty = entityPhysicsMap.Key;
             PhysicsMap = entityPhysicsMap.Value;
-            TableName = ClassProperty.Name;
+            TableName = ClassProperty.Name;// 默认使用属性名称作为表名，一般此处会被SetName覆盖
         }
 
         /// <summary>
@@ -31,7 +31,6 @@ namespace FS.Data.Map
         ///     表/视图/存储过程名称
         /// </summary>
         public string TableName { get; private set; }
-
         /// <summary>
         ///     类属性
         /// </summary>

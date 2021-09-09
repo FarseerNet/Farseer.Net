@@ -19,7 +19,7 @@ namespace FS.Data.Infrastructure
         /// <summary>
         ///     当前在上下文中的属性
         /// </summary>
-        private PropertyInfo _pInfo;
+        private PropertyInfo _setPropertyInfo;
 
         /// <summary>
         ///     保存字段映射的信息
@@ -29,7 +29,7 @@ namespace FS.Data.Infrastructure
         /// <summary>
         ///     保存字段映射的信息
         /// </summary>
-        public SetDataMap SetMap => Context.ContextMap.GetEntityMap(_pInfo);
+        public SetDataMap SetMap => Context.ContextMap.GetEntityMap(_setPropertyInfo);
 
         /// <summary>
         ///     当前队列
@@ -49,7 +49,7 @@ namespace FS.Data.Infrastructure
         internal void SetContext(DbContext context, PropertyInfo pInfo)
         {
             _dbContext = context;
-            this._pInfo = pInfo;
+            this._setPropertyInfo = pInfo;
         }
 
         #region 禁用智能提示
