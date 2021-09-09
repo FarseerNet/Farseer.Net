@@ -69,7 +69,7 @@ namespace FS.MQ.RedisStream
             this._iocManager        = iocManager;
             this._consumerType      = consumerType;
             this._redisCacheManager = redisCacheManager;
-            this._consumeThreadNums = consumeThreadNums;
+            this._consumeThreadNums = consumeThreadNums == 0 ? Environment.ProcessorCount : consumeThreadNums;
             this._groupName         = groupName;
             this._pullCount         = pullCount;
             this._queueName         = queueName;

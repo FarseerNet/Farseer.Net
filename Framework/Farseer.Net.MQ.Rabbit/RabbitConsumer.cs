@@ -79,7 +79,7 @@ namespace FS.MQ.Rabbit
             this._consumerType          = consumerType.FullName;
             this._rabbitConnect         = new RabbitConnect(rabbitItemConfig);
             this._lastAckTimeoutRestart = lastAckTimeoutRestart;
-            this._consumeThreadNums     = consumeThreadNums;
+            this._consumeThreadNums     = consumeThreadNums == 0 ? Environment.ProcessorCount : consumeThreadNums;
             this._queueName             = queueName;
             this._lastAckAt             = DateTime.Now;
 
@@ -132,6 +132,7 @@ namespace FS.MQ.Rabbit
                             _iocManager.Logger<RabbitConsumer>().LogWarning($"rabbit距上一次消费过去了{(DateTime.Now - _lastAckAt).TotalSeconds}秒后没有新的消息，尝试重新连接Rabbit。");
                             ReStart();
                         }
+
                         Thread.Sleep(3000);
                     }
                 }

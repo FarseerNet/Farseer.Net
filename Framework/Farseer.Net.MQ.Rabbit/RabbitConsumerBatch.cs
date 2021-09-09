@@ -107,7 +107,7 @@ namespace FS.MQ.Rabbit
             try
             {
                 // 并发拉取多条消息
-                Parallel.For(1, _batchPullMessageCount, new ParallelOptions { MaxDegreeOfParallelism = 8 }, index =>
+                Parallel.For(1, _batchPullMessageCount, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, index =>
                 {
                     // 拉取一条消息
                     var resp = _channel.BasicGet(_queueName, autoAck);
@@ -121,23 +121,6 @@ namespace FS.MQ.Rabbit
                 });
 
                 deliveryTag = lstBasicGetResult.Max(o => o.DeliveryTag);
-
-                // // 遍历拉取多条消息
-                // while (lstResult.Count < _batchPullMessageCount)
-                // {
-                //     // 拉取一条消息
-                //     var resp = _channel.BasicGet(_queueName, autoAck);
-                //     if (resp == null) break;
-                //
-                //     lstBasicGetResult.Add(resp);
-                //
-                //     // 将byte消息转成string类型
-                //     var message = Encoding.UTF8.GetString(resp.Body.ToArray());
-                //     lstResult.Add(message);
-                //
-                //     // 记录最后一次的Tag
-                //     deliveryTag = resp.DeliveryTag;
-                // }
 
                 // 没有取到数据时，直接退出
                 if (lstResult.Count == 0) return 0;
