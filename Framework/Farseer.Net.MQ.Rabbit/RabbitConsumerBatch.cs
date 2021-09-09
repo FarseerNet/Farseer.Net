@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Castle.MicroKernel.Registration;
@@ -61,7 +62,7 @@ namespace FS.MQ.Rabbit
             this._batchPullMessageCount = batchPullMessageCount < 1 ? 10 : batchPullMessageCount;
             this._queueName             = queueName;
             this._consumerTypeName      = consumerType.FullName;
-            if (!iocManager.IsRegistered(consumerType.FullName)) iocManager.Register(consumerType, consumerType.FullName);
+            if (!iocManager.IsRegistered(consumerType.FullName)) iocManager.Register(consumerType, consumerType.FullName, DependencyLifeStyle.Transient);
         }
 
         /// <summary>
@@ -105,22 +106,38 @@ namespace FS.MQ.Rabbit
             var result = false;
             try
             {
-                // 遍历拉取多条消息
-                while (lstResult.Count < _batchPullMessageCount)
+                // 并发拉取多条消息
+                Parallel.For(1, _batchPullMessageCount, new ParallelOptions { MaxDegreeOfParallelism = 8 }, index =>
                 {
                     // 拉取一条消息
                     var resp = _channel.BasicGet(_queueName, autoAck);
-                    if (resp == null) break;
+                    if (resp == null) return;
 
                     lstBasicGetResult.Add(resp);
 
                     // 将byte消息转成string类型
                     var message = Encoding.UTF8.GetString(resp.Body.ToArray());
                     lstResult.Add(message);
+                });
 
-                    // 记录最后一次的Tag
-                    deliveryTag = resp.DeliveryTag;
-                }
+                deliveryTag = lstBasicGetResult.Max(o => o.DeliveryTag);
+
+                // // 遍历拉取多条消息
+                // while (lstResult.Count < _batchPullMessageCount)
+                // {
+                //     // 拉取一条消息
+                //     var resp = _channel.BasicGet(_queueName, autoAck);
+                //     if (resp == null) break;
+                //
+                //     lstBasicGetResult.Add(resp);
+                //
+                //     // 将byte消息转成string类型
+                //     var message = Encoding.UTF8.GetString(resp.Body.ToArray());
+                //     lstResult.Add(message);
+                //
+                //     // 记录最后一次的Tag
+                //     deliveryTag = resp.DeliveryTag;
+                // }
 
                 // 没有取到数据时，直接退出
                 if (lstResult.Count == 0) return 0;

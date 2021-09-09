@@ -55,7 +55,7 @@ namespace FS.MQ.Rabbit
                         var consumerAtt  = consumerType.GetCustomAttribute<ConsumerAttribute>();
                         if (consumerAtt is { Enable: false }) continue;
                         
-                        if (!iocManager.IsRegistered(consumerType.FullName)) iocManager.Register(consumerType, consumerType.FullName);
+                        if (!iocManager.IsRegistered(consumerType.FullName)) iocManager.Register(consumerType, consumerType.FullName, DependencyLifeStyle.Transient);
                         iocManager.Resolve<IListenerMessage>(consumerType.FullName).Init(iocManager, consumerAtt, consumerType);
                     }
 
@@ -65,7 +65,7 @@ namespace FS.MQ.Rabbit
                         var consumerAtt = consumerType.GetCustomAttribute<ConsumerAttribute>();
                         if (consumerAtt is { Enable: false }) continue;
                         
-                        if (!iocManager.IsRegistered(consumerType.FullName)) iocManager.Register(consumerType, consumerType.FullName);
+                        if (!iocManager.IsRegistered(consumerType.FullName)) iocManager.Register(consumerType, consumerType.FullName, DependencyLifeStyle.Transient);
                         Task.WaitAll(iocManager.Resolve<IListenerMessageBatch>(consumerType.FullName).Init(iocManager, consumerAtt, consumerType));
                     }
 

@@ -83,7 +83,7 @@ namespace FS.MQ.Rabbit
             this._queueName             = queueName;
             this._lastAckAt             = DateTime.Now;
 
-            if (!iocManager.IsRegistered(consumerType.FullName)) iocManager.Register(consumerType, consumerType.FullName);
+            if (!iocManager.IsRegistered(consumerType.FullName)) iocManager.Register(consumerType, consumerType.FullName, DependencyLifeStyle.Transient);
         }
 
         /// <summary>
