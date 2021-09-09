@@ -137,12 +137,6 @@ namespace FS
                 _moduleManager.Initialize(StartupModule);
                 _moduleManager.StartModules();
 
-                IocManager.Logger<FarseerApplication>().LogInformation("启动初始化回调");
-                foreach (var action in InitCallback)
-                {
-                    action();
-                }
-
                 // 获取业务实现类
                 var lstModel = IocManager.GetCustomComponent();
                 Console.WriteLine($"共有{lstModel.Count}个业务实例注册到容器");
@@ -152,6 +146,13 @@ namespace FS
                     var name         = model.Name != model.Implementation.FullName ? $"{model.Name} ==>" : "";
                     var interfaceCom = model.Services.FirstOrDefault(o => o.IsInterface) ?? model.Services.FirstOrDefault();
                     Console.WriteLine(interfaceCom.IsInterface ? $"{index + 1}、{name} {model.Implementation.Name} ==> {interfaceCom.Name}" : $"{index + 1}、{name} {model.Implementation.Name}");
+                }
+                
+
+                IocManager.Logger<FarseerApplication>().LogInformation("启动初始化回调");
+                foreach (var action in InitCallback)
+                {
+                    action();
                 }
                 IocManager.Logger<FarseerApplication>().LogInformation($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]系统初始化完毕，耗时{(DateTime.Now - StartupAt).TotalMilliseconds:n}ms");
             }

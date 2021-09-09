@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using StackExchange.Redis;
@@ -101,7 +102,7 @@ namespace FS.Cache.Redis
         public Task HashSetTransactionAsync<TEntity>(string key, List<TEntity> lst, Func<TEntity, object> funcDataKey, Func<TEntity, string> funcData = null)
         {
             if (lst == null || lst.Count == 0) return Task.FromResult(0);
-            if (funcData == null) funcData = po => JsonConvert.SerializeObject(po);
+            funcData ??= po => JsonConvert.SerializeObject(po);
 
             var transaction = Db.CreateTransaction();
             foreach (var po in lst)
