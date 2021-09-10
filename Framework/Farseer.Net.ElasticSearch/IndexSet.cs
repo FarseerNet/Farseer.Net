@@ -179,7 +179,7 @@ namespace FS.ElasticSearch
                 var result = Client.IndexMany(lst, SetMap.IndexName);
                 if (!result.IsValid)
                 {
-                    IocManager.Instance.Logger<IndexSet<TDocument>>().LogError($"索引失败：{JsonConvert.SerializeObject(lst)} \r\n" + result.OriginalException?.Message);
+                    IocManager.Instance.Logger<IndexSet<TDocument>>().LogError($"索引失败：数据量：{lst.Count}条 \r\n" + result.OriginalException?.Message);
                 }
 
                 return result.IsValid;
