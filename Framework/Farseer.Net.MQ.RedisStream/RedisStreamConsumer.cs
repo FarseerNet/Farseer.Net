@@ -184,7 +184,7 @@ namespace FS.MQ.RedisStream
                 };
 
                 var listener = _iocManager.Resolve<IListenerMessage>(_consumerType);
-                var result   = false;
+                bool result;
                 try
                 {
                     using (FsLinkTrack.TrackMqConsumer(_redisCacheManager.Server, $"{_queueName}/{_groupName}", "RedisStreamConsumer"))
@@ -197,7 +197,7 @@ namespace FS.MQ.RedisStream
 
                     if (result)
                     {
-                        //await _redisCacheManager.Db.StreamDeleteAsync(_queueName, consumeContext.MessageIds.Select(o => (RedisValue) o).ToArray());
+                        await _redisCacheManager.Db.StreamDeleteAsync(_queueName, consumeContext.MessageIds.Select(o => (RedisValue) o).ToArray());
                         _lastMessageId = consumeContext.MessageIds.Last();
                     }
                 }
@@ -216,7 +216,7 @@ namespace FS.MQ.RedisStream
                         if (_iocManager.IsRegistered<ILinkTrackQueue>()) _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
                         if (result)
                         {
-                            //await _redisCacheManager.Db.StreamDeleteAsync(_queueName, consumeContext.MessageIds.Select(o => (RedisValue) o).ToArray());
+                            await _redisCacheManager.Db.StreamDeleteAsync(_queueName, consumeContext.MessageIds.Select(o => (RedisValue) o).ToArray());
                             _lastMessageId = consumeContext.MessageIds.Last();
                         }
                     }

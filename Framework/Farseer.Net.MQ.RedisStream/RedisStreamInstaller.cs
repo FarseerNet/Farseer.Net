@@ -55,7 +55,7 @@ namespace FS.MQ.RedisStream
                 }
             }
 
-            // 查找入口方法是否启用了Rabbit消费
+            // 查找入口方法是否启用了消费
             var rabbitAttribute = Assembly.GetEntryAssembly().EntryPoint.DeclaringType.GetCustomAttribute<RedisStreamAttribute>();
             if (rabbitAttribute is { Enable: true })
             {
