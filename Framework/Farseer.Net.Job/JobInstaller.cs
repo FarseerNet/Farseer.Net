@@ -5,18 +5,13 @@ using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using FS.DI;
-using FS.Job.Abstract;
-using FS.Job.Configuration;
-using FS.Job.GrpcClient;
-using FS.Job.RemoteCall;
 using FS.Reflection;
-using Microsoft.Extensions.Configuration;
 
 namespace FS.Job
 {
     public class JobInstaller : IWindsorInstaller
     {
-        public static Dictionary<string, Type> JobImpList = new();
+        public static readonly Dictionary<string, Type> JobImpList = new();
 
         /// <summary>
         /// 依赖获取接口
@@ -39,11 +34,6 @@ namespace FS.Job
         /// <param name="store"></param>
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
-            var jobItemConfig = JobConfigRoot.Get();
-
-            // 服务注册
-            container.Register(Component.For<ChannelClient>().DependsOn(Dependency.OnValue<string>(SnowflakeId.GenerateId().ToString()), Dependency.OnValue<JobItemConfig>(jobItemConfig)).LifestyleTransient());
-
             // 业务job
             var types = container.Resolve<IAssemblyFinder>().GetType<IFssJob>();
             foreach (var jobType in types)
@@ -55,10 +45,6 @@ namespace FS.Job
                 JobImpList[fssJobAttribute.Name] = jobType;
                 container.Register(Component.For<IFssJob>().ImplementedBy(jobType).Named($"fss_job_{fssJobAttribute.Name}").LifestyleTransient());
             }
-
-            container.Register(Component.For<IRemoteCommand, PrintCommand>().Named("fss_client_Print").LifestyleTransient());
-            container.Register(Component.For<IRemoteCommand, IgnoreCommand>().Named("fss_client_Ignore").LifestyleTransient());
-            container.Register(Component.For<IRemoteCommand, JobSchedulerCommand>().Named("fss_client_JobScheduler").LifestyleTransient());
         }
     }
 }
