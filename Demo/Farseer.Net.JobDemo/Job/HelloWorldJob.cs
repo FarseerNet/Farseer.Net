@@ -11,19 +11,19 @@ namespace Farseer.Net.JobDemo.Job
         /// <summary>
         /// 执行任务
         /// </summary>
-        public Task<bool> Execute(ReceiveContext context)
+        public async Task<bool> Execute(ReceiveContext context)
         {
             // 告诉FSS平台，当前进度执行了 20%
-            context.SetProgress(20);
+            await context.SetProgressAsync(20);
 
             // 让FSS平台，记录日志
-            context.Logger(LogLevel.Information, "你好，世界！");
+            await context.LoggerAsync(LogLevel.Information, "你好，世界！");
 
             // 下一次执行时间为10秒后（如果不设置，则使用任务组设置的时间）
             //context.SetNextAt(TimeSpan.FromSeconds(10));
 
             // 任务执行成功
-            return Task.FromResult(true);
+            return true;
         }
     }
 }
