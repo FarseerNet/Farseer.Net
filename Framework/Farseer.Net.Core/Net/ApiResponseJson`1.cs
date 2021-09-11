@@ -95,10 +95,10 @@ namespace FS.Core.Net
                 Status        = api.Status,
                 StatusCode    = api.StatusCode,
                 StatusMessage = api.StatusMessage,
-                Data          = Jsons.ToObject<TData>(api.Data)
+                Data          = api.Data != null ? Jsons.ToObject<TData>(api.Data) : null
             };
         }
-        
+
         //public static implicit operator ApiResponseJson(ApiResponseJson<TData> api)
         //{
         //    return new ApiResponseJson
