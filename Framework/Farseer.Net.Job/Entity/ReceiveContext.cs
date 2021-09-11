@@ -66,7 +66,7 @@ namespace FS.Job.Entity
         /// <summary>
         /// 本次执行完后，下一次执行的间隔时间
         /// </summary>
-        public void SetNextAtAsync(TimeSpan ts)
+        public void SetNextAt(TimeSpan ts)
         {
             _ts = ts;
         }
