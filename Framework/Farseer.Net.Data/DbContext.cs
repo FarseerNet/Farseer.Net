@@ -63,10 +63,11 @@ namespace FS.Data
         ///     创建来自其它上下文的共享
         /// </summary>
         /// <param name="masterContext">其它上下文（主上下文）</param>
-        internal static TPo TransactionInstance<TPo>(DbContext masterContext) where TPo : DbContext, new()
+        internal static TNewDbContext TransactionInstance<TNewDbContext>(DbContext masterContext) where TNewDbContext : DbContext, new()
         {
-            var newInstance = new TPo();
-            newInstance._internalContext.TransactionInstance(typeof(TPo), masterContext.InternalContext);
+            var newInstance = new TNewDbContext();
+            newInstance._internalContext.TransactionInstance(typeof(TNewDbContext), masterContext.InternalContext);
+            newInstance._masterContext = masterContext;
             return newInstance;
         }
 
@@ -100,33 +101,41 @@ namespace FS.Data
         ///     上下文数据库连接信息
         /// </summary>
         public IContextConnection ContextConnection => InternalContext.ContextConnection;
-        
+
         /// <summary>
-        /// 当事务提交后，会调用该委托
+        /// 跨事务时，主上下文
         /// </summary>
-        private List<Action> CommitCallback { get; } = new();
+        private DbContext _masterContext;
 
         /// <summary>
         /// 当事务提交后，会调用该委托
         /// </summary>
-        public void AddCallback(Action act) => CommitCallback.Add(act);
+        private readonly List<Action> CommitCallback = new();
+
+        /// <summary>
+        /// 当事务提交后，会调用该委托
+        /// </summary>
+        public void AddCallback(Action act)
+        {
+            // 如果是来自其它事务，则用主上下文来添加
+            if (_masterContext != null) _masterContext.CommitCallback.Add(act);
+            else CommitCallback.Add(act);
+        }
 
         /// <summary>
         ///     保存修改
         /// </summary>
         public void SaveChanges()
         {
-            // 执行数据库操作
-            //var result = InternalContext.QueueManger.CommitAll();
-
             // 如果开启了事务，则关闭
             if (InternalContext.Executeor.DataBase.IsTransaction)
             {
                 InternalContext.Executeor.DataBase.Commit();
                 InternalContext.Executeor.DataBase.CloseTran();
             }
+
             InternalContext.Executeor.DataBase.Close(true);
-            //return result;
+
             foreach (var action in CommitCallback)
             {
                 action();
@@ -138,15 +147,13 @@ namespace FS.Data
         /// </summary>
         public void Rollback()
         {
-            // 执行数据库操作
-            //InternalContext.QueueManger.ClearAll();
-
             // 如果开启了事务，则关闭
             if (InternalContext.Executeor.DataBase.IsTransaction)
             {
                 InternalContext.Executeor.DataBase.Rollback();
                 InternalContext.Executeor.DataBase.CloseTran();
             }
+
             InternalContext.Executeor.DataBase.Close(true);
         }
 
@@ -169,9 +176,12 @@ namespace FS.Data
         /// <summary>
         ///     在创建模型时调用
         /// </summary>
-        protected virtual void CreateModelInit(Dictionary<string, SetDataMap> map) { }
+        protected virtual void CreateModelInit(Dictionary<string, SetDataMap> map)
+        {
+        }
 
         #region DbContextInitializer上下文初始化器
+
         /// <summary>
         ///     上下文初始化器
         /// </summary>
@@ -187,21 +197,29 @@ namespace FS.Data
                 if (!_internalContext.IsInitializer)
                 {
                     // 分库方案
-                    if (_internalContext.ContextConnection == null) { _internalContext.ContextConnection = SplitDatabase(); }
+                    if (_internalContext.ContextConnection == null)
+                    {
+                        _internalContext.ContextConnection = SplitDatabase();
+                    }
+
                     _internalContext.Initializer();
                 }
+
                 if (!_internalContext.IsInitModelName)
                 {
                     // 初始化模型映射
                     CreateModelInit(_internalContext.ContextMap.SetDataList.ToDictionary(o => o.TableName));
                     _internalContext.IsInitModelName = true;
                 }
+
                 return _internalContext;
             }
         }
+
         #endregion
 
         #region 动态查找Set类型
+
         /// <summary>
         ///     动态返回Set类型
         /// </summary>
@@ -355,9 +373,17 @@ namespace FS.Data
         private PropertyInfo GetSetPropertyInfo(Type setType, string propertyName = null)
         {
             var lstPropertyInfo = this.GetType().GetProperties();
-            var lst = lstPropertyInfo.Where(propertyInfo => propertyInfo.CanWrite && propertyInfo.PropertyType == setType).Where(propertyInfo => propertyName == null || propertyInfo.Name == propertyName);
-            if (lst == null) { throw new Exception("未找到当前类型的Set属性：" + setType.GetGenericArguments()[0]); }
-            if (lst.Count() > 1) { throw new Exception("找到多个Set属性，请指定propertyName确定唯一。：" + setType.GetGenericArguments()[0]); }
+            var lst             = lstPropertyInfo.Where(propertyInfo => propertyInfo.CanWrite && propertyInfo.PropertyType == setType).Where(propertyInfo => propertyName == null || propertyInfo.Name == propertyName);
+            if (lst == null)
+            {
+                throw new Exception("未找到当前类型的Set属性：" + setType.GetGenericArguments()[0]);
+            }
+
+            if (lst.Count() > 1)
+            {
+                throw new Exception("找到多个Set属性，请指定propertyName确定唯一。：" + setType.GetGenericArguments()[0]);
+            }
+
             return lst.FirstOrDefault();
         }
 
