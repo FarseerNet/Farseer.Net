@@ -51,6 +51,7 @@ namespace FS.Cache.Redis
             Check.NotNull(config.Server, "Redis连接字符串为空");
             Server             = config.Server;
             _connectionWrapper = connectionWrapper;
+            
         }
 
         /// <summary>
