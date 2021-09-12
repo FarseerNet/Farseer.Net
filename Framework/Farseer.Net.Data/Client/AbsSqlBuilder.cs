@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -8,7 +7,6 @@ using FS.Data.ExpressionVisitor;
 using FS.Data.Infrastructure;
 using FS.Data.Internal;
 using FS.Utils.Common;
-using Newtonsoft.Json;
 
 namespace FS.Data.Client
 {
@@ -24,14 +22,14 @@ namespace FS.Data.Client
         /// <param name="expBuilder">表达式持久化</param>
         /// <param name="tableName">表名/视图名/存储过程名</param>
         /// <param name="dbName">数据库名称</param>
-        internal AbsSqlBuilder(AbsDbProvider dbProvider, ExpressionBuilder expBuilder,string dbName, string tableName)
+        internal AbsSqlBuilder(AbsDbProvider dbProvider, ExpressionBuilder expBuilder, string dbName, string tableName)
         {
             DbProvider = dbProvider;
             ExpBuilder = expBuilder;
-            DbName = dbName;
-            TableName = tableName;
-            Param = new List<DbParameter>();
-            Sql = new StringBuilder();
+            DbName     = dbName;
+            TableName  = tableName;
+            Param      = new List<DbParameter>();
+            Sql        = new StringBuilder();
         }
 
         /// <summary>
@@ -77,34 +75,41 @@ namespace FS.Data.Client
         /// <summary>
         ///     提供字段赋值时表达式树的解析
         /// </summary>
-        private AssignVisitor AssignVisitor => new (DbProvider, ExpBuilder.SetMap, Param);
+        private AssignVisitor AssignVisitor => new(DbProvider, ExpBuilder.SetMap, Param);
 
         /// <summary>
         ///     提供字段排序时表达式树的解析
         /// </summary>
-        protected OrderByVisitor OrderByVisitor => new (DbProvider, ExpBuilder.SetMap, Param);
+        protected OrderByVisitor OrderByVisitor => new(DbProvider, ExpBuilder.SetMap, Param);
 
         /// <summary>
         ///     提供ExpressionBinary表达式树的解析
         /// </summary>
-        protected SelectVisitor SelectVisitor => new (DbProvider, ExpBuilder.SetMap, Param);
+        protected SelectVisitor SelectVisitor => new(DbProvider, ExpBuilder.SetMap, Param);
 
         /// <summary>
         ///     提供字段插入表达式树的解析
         /// </summary>
-        private InsertVisitor InsertVisitor => new (DbProvider, ExpBuilder.SetMap, Param);
+        private InsertVisitor InsertVisitor => new(DbProvider, ExpBuilder.SetMap, Param);
 
         /// <summary>
         ///     查询单条记录
         /// </summary>
         public virtual ISqlParam ToEntity()
         {
-            var strSelectSql = SelectVisitor.Visit(ExpBuilder.ExpSelect);
-            var strWhereSql = WhereVisitor.Visit(ExpBuilder.ExpWhere);
+            var strSelectSql  = SelectVisitor.Visit(ExpBuilder.ExpSelect);
+            var strWhereSql   = WhereVisitor.Visit(ExpBuilder.ExpWhere);
             var strOrderBySql = OrderByVisitor.Visit(ExpBuilder.ExpOrderBy);
 
-            if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
-            if (!string.IsNullOrWhiteSpace(strOrderBySql)) { strOrderBySql = "ORDER BY " + strOrderBySql; }
+            if (!string.IsNullOrWhiteSpace(strWhereSql))
+            {
+                strWhereSql = "WHERE " + strWhereSql;
+            }
+
+            if (!string.IsNullOrWhiteSpace(strOrderBySql))
+            {
+                strOrderBySql = "ORDER BY " + strOrderBySql;
+            }
 
             Sql.Append($"SELECT TOP 1 {strSelectSql} FROM {DbTableName} {strWhereSql} {strOrderBySql}");
             return this;
@@ -118,17 +123,27 @@ namespace FS.Data.Client
         /// <param name="isRand">返回当前条件下随机的数据</param>
         public virtual ISqlParam ToList(int top = 0, bool isDistinct = false, bool isRand = false)
         {
-            var strSelectSql = SelectVisitor.Visit(ExpBuilder.ExpSelect);
-            var strWhereSql = WhereVisitor.Visit(ExpBuilder.ExpWhere);
-            var strOrderBySql = OrderByVisitor.Visit(ExpBuilder.ExpOrderBy);
-            var strTopSql = top > 0 ? $"TOP {top} " : string.Empty;
+            var strSelectSql   = SelectVisitor.Visit(ExpBuilder.ExpSelect);
+            var strWhereSql    = WhereVisitor.Visit(ExpBuilder.ExpWhere);
+            var strOrderBySql  = OrderByVisitor.Visit(ExpBuilder.ExpOrderBy);
+            var strTopSql      = top > 0 ? $"TOP {top} " : string.Empty;
             var strDistinctSql = isDistinct ? "Distinct " : string.Empty;
-            var randField = ",NEWID() as newid";
+            var randField      = ",NEWID() as newid";
 
-            if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
-            if (!string.IsNullOrWhiteSpace(strOrderBySql)) { strOrderBySql = "ORDER BY " + strOrderBySql; }
+            if (!string.IsNullOrWhiteSpace(strWhereSql))
+            {
+                strWhereSql = "WHERE " + strWhereSql;
+            }
 
-            if (!isRand) { Sql.Append($"SELECT {strDistinctSql}{strTopSql}{strSelectSql} FROM {DbTableName} {strWhereSql} {strOrderBySql}"); }
+            if (!string.IsNullOrWhiteSpace(strOrderBySql))
+            {
+                strOrderBySql = "ORDER BY " + strOrderBySql;
+            }
+
+            if (!isRand)
+            {
+                Sql.Append($"SELECT {strDistinctSql}{strTopSql}{strSelectSql} FROM {DbTableName} {strWhereSql} {strOrderBySql}");
+            }
             else if (!isDistinct && string.IsNullOrWhiteSpace(strOrderBySql))
             {
                 Sql.Append($"SELECT {strTopSql}{strSelectSql}{randField} FROM {DbTableName} {strWhereSql} ORDER BY NEWID()");
@@ -137,6 +152,7 @@ namespace FS.Data.Client
             {
                 Sql.Append($"SELECT {strTopSql} *{randField} FROM (SELECT {strDistinctSql} {strSelectSql} FROM {DbTableName} {strWhereSql} {strOrderBySql}) s ORDER BY NEWID()");
             }
+
             return this;
         }
 
@@ -155,9 +171,9 @@ namespace FS.Data.Client
                 return this;
             }
 
-            var strSelectSql = SelectVisitor.Visit(ExpBuilder.ExpSelect);
-            var strWhereSql = WhereVisitor.Visit(ExpBuilder.ExpWhere);
-            var strOrderBySql = OrderByVisitor.Visit(ExpBuilder.ExpOrderBy);
+            var strSelectSql   = SelectVisitor.Visit(ExpBuilder.ExpSelect);
+            var strWhereSql    = WhereVisitor.Visit(ExpBuilder.ExpWhere);
+            var strOrderBySql  = OrderByVisitor.Visit(ExpBuilder.ExpOrderBy);
             var strDistinctSql = isDistinct ? "Distinct " : string.Empty;
 
             Check.IsTure(string.IsNullOrWhiteSpace(strOrderBySql) && ExpBuilder.SetMap.PhysicsMap.PrimaryFields.Count == 0, "不指定排序字段时，需要设置主键ID");
@@ -165,7 +181,10 @@ namespace FS.Data.Client
             strOrderBySql = "ORDER BY " + (string.IsNullOrWhiteSpace(strOrderBySql) ? $"{IEnumerableHelper.ToString(ExpBuilder.SetMap.PhysicsMap.PrimaryFields.Select(o => o.Value.Name))} ASC" : strOrderBySql);
             var strOrderBySqlReverse = strOrderBySql.Replace(" DESC", " [倒序]").Replace("ASC", "DESC").Replace("[倒序]", "ASC");
 
-            if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
+            if (!string.IsNullOrWhiteSpace(strWhereSql))
+            {
+                strWhereSql = "WHERE " + strWhereSql;
+            }
 
             Sql.Append(string.Format("SELECT {0}TOP {2} {1} FROM (SELECT TOP {3} * FROM {4} {5} {6}) a  {7}", strDistinctSql, strSelectSql, pageSize, pageSize * pageIndex, DbTableName, strWhereSql, strOrderBySql, strOrderBySqlReverse));
             return this;
@@ -193,6 +212,7 @@ namespace FS.Data.Client
                 Sql.Append($"INSERT INTO {DbTableName} {insertAssemble};");
                 InsertVisitor.Clear();
             }
+
             return this;
         }
 
@@ -215,7 +235,10 @@ namespace FS.Data.Client
             var strWhereSql = WhereVisitor.Visit(ExpBuilder.ExpWhere);
 
             // 主键如果有值、或者设置成只读条件，则自动转成条件
-            if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
+            if (!string.IsNullOrWhiteSpace(strWhereSql))
+            {
+                strWhereSql = "WHERE " + strWhereSql;
+            }
 
             Sql.Append($"UPDATE {DbTableName} SET {strAssemble} {strWhereSql}");
             return this;
@@ -227,10 +250,13 @@ namespace FS.Data.Client
         /// <param name="isDistinct">返回当前条件下非重复数据</param>
         public virtual ISqlParam Count(bool isDistinct = false)
         {
-            var strWhereSql = WhereVisitor.Visit(ExpBuilder.ExpWhere);
+            var strWhereSql    = WhereVisitor.Visit(ExpBuilder.ExpWhere);
             var strDistinctSql = isDistinct ? "Distinct " : string.Empty;
 
-            if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
+            if (!string.IsNullOrWhiteSpace(strWhereSql))
+            {
+                strWhereSql = "WHERE " + strWhereSql;
+            }
 
             Sql.Append($"SELECT {strDistinctSql}Count(0) FROM {DbTableName} {strWhereSql}");
             return this;
@@ -241,12 +267,19 @@ namespace FS.Data.Client
         /// </summary>
         public virtual ISqlParam GetValue()
         {
-            var strSelectSql = SelectVisitor.Visit(ExpBuilder.ExpSelect);
-            var strWhereSql = WhereVisitor.Visit(ExpBuilder.ExpWhere);
+            var strSelectSql  = SelectVisitor.Visit(ExpBuilder.ExpSelect);
+            var strWhereSql   = WhereVisitor.Visit(ExpBuilder.ExpWhere);
             var strOrderBySql = OrderByVisitor.Visit(ExpBuilder.ExpOrderBy);
 
-            if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
-            if (!string.IsNullOrWhiteSpace(strOrderBySql)) { strOrderBySql = "ORDER BY " + strOrderBySql; }
+            if (!string.IsNullOrWhiteSpace(strWhereSql))
+            {
+                strWhereSql = "WHERE " + strWhereSql;
+            }
+
+            if (!string.IsNullOrWhiteSpace(strOrderBySql))
+            {
+                strOrderBySql = "ORDER BY " + strOrderBySql;
+            }
 
             Sql.Append($"SELECT TOP 1 {strSelectSql} FROM {DbTableName} {strWhereSql} {strOrderBySql}");
             return this;
@@ -259,7 +292,10 @@ namespace FS.Data.Client
         {
             var strWhereSql = WhereVisitor.Visit(ExpBuilder.ExpWhere);
 
-            if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
+            if (!string.IsNullOrWhiteSpace(strWhereSql))
+            {
+                strWhereSql = "WHERE " + strWhereSql;
+            }
 
             Sql.Append($"DELETE FROM {DbTableName} {strWhereSql}");
             return this;
@@ -275,7 +311,10 @@ namespace FS.Data.Client
             var strAssemble = AssignVisitor.Visit(ExpBuilder.ExpAssign);
             var strWhereSql = WhereVisitor.Visit(ExpBuilder.ExpWhere);
 
-            if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
+            if (!string.IsNullOrWhiteSpace(strWhereSql))
+            {
+                strWhereSql = "WHERE " + strWhereSql;
+            }
 
             Sql.Append($"UPDATE {DbTableName} SET {strAssemble} {strWhereSql}");
             return this;
@@ -287,10 +326,17 @@ namespace FS.Data.Client
         public virtual ISqlParam Sum()
         {
             var strSelectSql = SelectVisitor.Visit(ExpBuilder.ExpSelect);
-            var strWhereSql = WhereVisitor.Visit(ExpBuilder.ExpWhere);
+            var strWhereSql  = WhereVisitor.Visit(ExpBuilder.ExpWhere);
 
-            if (string.IsNullOrWhiteSpace(strSelectSql)) { strSelectSql = "0"; }
-            if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
+            if (string.IsNullOrWhiteSpace(strSelectSql))
+            {
+                strSelectSql = "0";
+            }
+
+            if (!string.IsNullOrWhiteSpace(strWhereSql))
+            {
+                strWhereSql = "WHERE " + strWhereSql;
+            }
 
             Sql.Append($"SELECT SUM({strSelectSql}) FROM {DbTableName} {strWhereSql}");
             return this;
@@ -302,10 +348,17 @@ namespace FS.Data.Client
         public virtual ISqlParam Max()
         {
             var strSelectSql = SelectVisitor.Visit(ExpBuilder.ExpSelect);
-            var strWhereSql = WhereVisitor.Visit(ExpBuilder.ExpWhere);
+            var strWhereSql  = WhereVisitor.Visit(ExpBuilder.ExpWhere);
 
-            if (string.IsNullOrWhiteSpace(strSelectSql)) { strSelectSql = "0"; }
-            if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
+            if (string.IsNullOrWhiteSpace(strSelectSql))
+            {
+                strSelectSql = "0";
+            }
+
+            if (!string.IsNullOrWhiteSpace(strWhereSql))
+            {
+                strWhereSql = "WHERE " + strWhereSql;
+            }
 
             Sql.Append($"SELECT MAX({strSelectSql}) FROM {DbTableName} {strWhereSql}");
             return this;
@@ -317,10 +370,17 @@ namespace FS.Data.Client
         public virtual ISqlParam Min()
         {
             var strSelectSql = SelectVisitor.Visit(ExpBuilder.ExpSelect);
-            var strWhereSql = WhereVisitor.Visit(ExpBuilder.ExpWhere);
+            var strWhereSql  = WhereVisitor.Visit(ExpBuilder.ExpWhere);
 
-            if (string.IsNullOrWhiteSpace(strSelectSql)) { strSelectSql = "0"; }
-            if (!string.IsNullOrWhiteSpace(strWhereSql)) { strWhereSql = "WHERE " + strWhereSql; }
+            if (string.IsNullOrWhiteSpace(strSelectSql))
+            {
+                strSelectSql = "0";
+            }
+
+            if (!string.IsNullOrWhiteSpace(strWhereSql))
+            {
+                strWhereSql = "WHERE " + strWhereSql;
+            }
 
             Sql.Append($"SELECT MIN({strSelectSql}) FROM {DbTableName} {strWhereSql}");
             return this;

@@ -94,10 +94,10 @@ namespace FS.Data.ExpressionVisitor
                     VisitMethodContains(m, fieldType, fieldName, paramType, paramName);
                     break;
                 case "StartsWith":
-                    VisitMethodStartswith(fieldType, fieldName, paramType, paramName);
+                    VisitMethodStartsWith(fieldType, fieldName, paramType, paramName);
                     break;
                 case "EndsWith":
-                    VisitMethodEndswith(fieldType, fieldName, paramType, paramName);
+                    VisitMethodEndsWith(fieldType, fieldName, paramType, paramName);
                     break;
                 case "IsEquals":
                     VisitMethodIsEquals(fieldType, fieldName, paramType, paramName);
@@ -190,7 +190,7 @@ namespace FS.Data.ExpressionVisitor
         /// <param name="fieldName"></param>
         /// <param name="paramType"></param>
         /// <param name="paramName"></param>
-        protected virtual void VisitMethodStartswith(Type fieldType, string fieldName, Type paramType, string paramName) => SqlList.Push(FunctionProvider.CharIndex(fieldName, paramName, IsNot));
+        protected virtual void VisitMethodStartsWith(Type fieldType, string fieldName, Type paramType, string paramName) => SqlList.Push(FunctionProvider.CharIndex(fieldName, paramName, IsNot));
 
         /// <summary>
         ///     EndSwith方法解析
@@ -199,7 +199,7 @@ namespace FS.Data.ExpressionVisitor
         /// <param name="fieldName"></param>
         /// <param name="paramType"></param>
         /// <param name="paramName"></param>
-        protected virtual void VisitMethodEndswith(Type fieldType, string fieldName, Type paramType, string paramName)
+        protected virtual void VisitMethodEndsWith(Type fieldType, string fieldName, Type paramType, string paramName)
         {
             SqlList.Push(FunctionProvider.EndsWith(fieldName, paramName, IsNot));
             CurrentDbParameter.Value = $"%{CurrentDbParameter.Value}";

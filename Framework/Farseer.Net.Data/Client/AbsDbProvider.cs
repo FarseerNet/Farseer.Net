@@ -140,7 +140,7 @@ namespace FS.Data.Client
                     return DbType.DateTime;
                 case "Boolean":
                     len = 1;
-                    return DbType.Int32;
+                    return DbType.Int16; // 忘了为什么是int
                 case "Int16":
                     len = 2;
                     return DbType.Int16;

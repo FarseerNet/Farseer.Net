@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using FS.Cache;
 using FS.Data.Infrastructure;
 using FS.Data.Internal;
+using FS.Extends;
 
 namespace FS.Data.Client.ClickHouse
 {
@@ -16,7 +17,8 @@ namespace FS.Data.Client.ClickHouse
     /// </summary>
     public class ClickHouseProvider : AbsDbProvider
     {
-        public override DbProviderFactory DbProviderFactory => (DbProviderFactory)InstanceCacheManger.Cache(Assembly.Load("Octonica.ClickHouseClient").GetType("Octonica.ClickHouseClient.ClickHouseDbProviderFactory"));
+        //public override DbProviderFactory DbProviderFactory => (DbProviderFactory)InstanceCacheManger.Cache(Assembly.Load("Octonica.ClickHouseClient").GetType("Octonica.ClickHouseClient.ClickHouseDbProviderFactory"));
+        public override DbProviderFactory DbProviderFactory => (DbProviderFactory)InstanceCacheManger.Cache(Assembly.Load("ClickHouse.Client").GetType("ClickHouse.Client.ADO.ClickHouseConnectionFactory"));
 
         public override AbsFunctionProvider FunctionProvider     => new ClickHouseFunctionProvider();
         public override bool                IsSupportTransaction => false;
@@ -48,11 +50,17 @@ namespace FS.Data.Client.ClickHouse
                 case DbType.String:
                     dbParam.ParameterName = $"'{dbParam.Value}'";
                     break;
+                case DbType.Boolean:
+                    dbParam.ParameterName = $"{dbParam.Value.ConvertType(0)}";
+                    break;
                 case DbType.Date:
                 case DbType.DateTime:
                 case DbType.DateTime2:
                 case DbType.DateTimeOffset:
                     dbParam.ParameterName = $"'{(DateTime)dbParam.Value:yyyy-MM-dd HH:mm:ss}'";
+                    break;
+                case DbType.Int16: // 解决ch不支持bool，强制转换成int。在dbType中，bool = int16类型
+                    dbParam.ParameterName = $"{dbParam.Value.ConvertType(0)}";
                     break;
                 default:
                     dbParam.ParameterName = $"{dbParam.Value}";
