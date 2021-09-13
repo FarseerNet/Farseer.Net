@@ -9,7 +9,6 @@ using FS.Core.Net;
 using FS.DI;
 using FS.Job.Configuration;
 using FS.Job.Entity;
-using FS.Job.TaskQueue;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 

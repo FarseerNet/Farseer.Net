@@ -5,7 +5,6 @@ using System.Reflection;
 using FS.DI;
 using FS.Job.Configuration;
 using FS.Job.Entity;
-using FS.Job.TaskQueue;
 using FS.Modules;
 using FS.Utils.Common;
 using Microsoft.Extensions.Configuration;

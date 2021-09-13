@@ -8,7 +8,7 @@ using FS.DI;
 using FS.Job.Entity;
 using Microsoft.Extensions.Logging;
 
-namespace FS.Job.TaskQueue
+namespace FS.Job
 {
     /// <summary>
     /// 从服务端摘取的任务列表
@@ -25,6 +25,7 @@ namespace FS.Job.TaskQueue
         /// </summary>
         public static void Enqueue(List<TaskVO> lstTask)
         {
+            IocManager.Instance.Logger<TaskQueueList>().LogInformation($"本次拉取{lstTask.Count}条任务");
             foreach (var task in lstTask)
             {
                 _queue.Enqueue(task);
@@ -46,23 +47,23 @@ namespace FS.Job.TaskQueue
                     {
                         // 拉取任务
                         await TaskManager.PullAsync();
-                    }
-
-                    if (_queue.Count == 0)
-                    {
-                        Thread.Sleep(500);
-                        continue;
+                        if (_queue.Count == 0)
+                        {
+                            Thread.Sleep(500);
+                            continue;
+                        }
                     }
 
                     // 计划时间还没到
                     var waitTimeSpan = _queue.Peek().StartAt - DateTime.Now;
-                    if (waitTimeSpan.TotalMilliseconds > 0)
-                    {
-                        Thread.Sleep(waitTimeSpan);
-                    }
+                    if (waitTimeSpan.TotalMilliseconds > 0) await Task.Delay(waitTimeSpan);
 
-                    // 取出任务
-                    RunTask(_queue.Dequeue());
+                    // 执行任务，这里不做等待,相当于开启一条线程执行
+                    Task.Run(async () =>
+                    {
+                        await RunTask(_queue.Dequeue());
+                    });
+
 
                     Thread.Sleep(500);
                 }
@@ -90,7 +91,8 @@ namespace FS.Job.TaskQueue
             }, cts.Token);
 
             // 业务是否有该调度任务的实现
-            var isRegistered = IocManager.Instance.IsRegistered($"fss_job_{task.JobName}");
+            var jobInsName   = $"fss_job_{task.JobName}";
+            var isRegistered = IocManager.Instance.IsRegistered(jobInsName);
             if (isRegistered is false)
             {
                 IocManager.Instance.Logger<TaskQueueList>().LogWarning($"未找到任务实现类：{message}");
@@ -105,38 +107,37 @@ namespace FS.Job.TaskQueue
 
             try
             {
-                try
+                // 执行业务JOB
+                var  fssJob = IocManager.Instance.Resolve<IFssJob>(jobInsName);
+                bool result;
+                using (FsLinkTrack.TrackFss(task.ClientHost, task.JobName, task.TaskGroupId, task.Id))
                 {
-                    // 执行业务JOB
-                    var fssJob = IocManager.Instance.Resolve<IFssJob>($"fss_job_{task.JobName}");
+                    // 执行具体任务（业务执行）
                     sw.Start();
-                    bool result;
-                    using (FsLinkTrack.TrackFss(task.ClientHost, task.JobName, task.TaskGroupId, task.Id))
-                    {
-                        result = await fssJob.Execute(receiveContext);
-                    }
+                    result = await fssJob.Execute(receiveContext);
+                }
 
-                    // 写入链路追踪
-                    if (IocManager.Instance.IsRegistered<ILinkTrackQueue>()) IocManager.Instance.Resolve<ILinkTrackQueue>().Enqueue();
+                // 写入链路追踪
+                if (IocManager.Instance.IsRegistered<ILinkTrackQueue>()) IocManager.Instance.Resolve<ILinkTrackQueue>().Enqueue();
 
-                    // 通知服务端，当前客户端执行结果
-                    if (result) await receiveContext.SuccessAsync();
-                    else await receiveContext.FailAsync();
-                }
-                catch (Exception e)
-                {
-                    IocManager.Instance.Logger<TaskQueueList>().LogError(e, $"taskGroupId={receiveContext.Meta.TaskGroupId},caption={receiveContext.Meta.Caption}：{e.Message}");
-                    await receiveContext.LoggerAsync(LogLevel.Error, e.ToString());
-                }
-                finally
-                {
-                    sw.Stop();
-                    cts.Cancel();
-                }
+                // 通知服务端，当前客户端执行结果
+                if (result) await receiveContext.SuccessAsync();
+                else await receiveContext.FailAsync();
             }
             catch (Exception e)
             {
-                IocManager.Instance.Logger<TaskQueueList>().LogError(e.Message);
+                IocManager.Instance.Logger<TaskQueueList>().LogError(e, $"taskGroupId={receiveContext.Meta.TaskGroupId},caption={receiveContext.Meta.Caption}：{e.Message}");
+                await receiveContext.FailAsync(new LogRequest
+                {
+                    LogLevel = LogLevel.Error,
+                    Log      = e.Message,
+                    CreateAt = DateTime.Now
+                });
+            }
+            finally
+            {
+                sw.Stop();
+                cts.Cancel();
             }
         }
     }

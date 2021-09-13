@@ -177,7 +177,7 @@ namespace FS.Data.Internal
                 TableName    = tableName,
                 CommandType  = cmdType,
                 Sql          = sql,
-                SqlParam     = param.ToDictionary(o => o.ParameterName, o => o.Value.ToString())
+                SqlParam     = _dbProvider.IsSupportParam ? param.ToDictionary(o => o.ParameterName, o => o.Value.ToString()) : new()
             };
 
             using (FsLinkTrack.TrackDatabase(callMethod, dbLinkTrackDetail))
