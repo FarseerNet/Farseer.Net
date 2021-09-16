@@ -202,19 +202,13 @@ namespace FS.Extends
         ///     是否不为Null或者Empty
         /// </summary>
         /// <param name="str">要判断的字符串</param>
-        public static bool IsHaving(this string str)
-        {
-            return str != null && str.Trim().Length > 0;
-        }
+        public static bool IsHaving(this string str) => str != null && str.Trim().Length > 0;
 
         /// <summary>
         ///     是否为Null或者Empty或者空白字符
         /// </summary>
         /// <param name="str">要判断的字符串</param>
-        public static bool IsNullOrEmpty(this string str)
-        {
-            return string.IsNullOrWhiteSpace(str);
-        }
+        public static bool IsNullOrEmpty(this string str) => string.IsNullOrWhiteSpace(str);
 
         /// <summary>
         ///     对比开头字符是否一致

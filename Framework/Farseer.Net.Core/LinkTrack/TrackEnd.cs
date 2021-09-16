@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
+using FS.DI;
 using FS.Extends;
+using Microsoft.Extensions.Logging;
 
 namespace FS.Core.LinkTrack
 {
@@ -43,7 +46,22 @@ namespace FS.Core.LinkTrack
         public void End()
         {
             if (_linkTrackDetail != null) _linkTrackDetail.EndTs   = DateTime.Now.ToTimestamps();
-            if (_linkTrackContext != null) _linkTrackContext.EndTs = DateTime.Now.ToTimestamps();
+            if (_linkTrackContext != null)
+            {
+                _linkTrackContext.EndTs = DateTime.Now.ToTimestamps();
+                if (!Env.IsPro)
+                {
+                    var lst = new List<string>
+                    {
+                        $"Path：{_linkTrackContext.Path}",
+                        $"Method：{_linkTrackContext.Method}",
+                        $"ContentType：{_linkTrackContext.ContentType}",
+                        $"Time：{_linkTrackContext.UseTs} ms"
+                    };
+                    if (!string.IsNullOrWhiteSpace(_linkTrackContext.RequestBody)) lst.Add($"Body：{_linkTrackContext.RequestBody}");
+                    IocManager.Instance.Logger<FsLinkTrack>().LogInformation($"{lst.ToString("\r\n")}");
+                }
+            }
         }
 
         /// <summary>

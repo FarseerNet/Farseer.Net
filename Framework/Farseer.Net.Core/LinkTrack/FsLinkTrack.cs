@@ -7,8 +7,10 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using Castle.Core.Internal;
+using FS.DI;
 using FS.Extends;
 using FS.Utils.Common;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace FS.Core.LinkTrack
@@ -61,9 +63,7 @@ namespace FS.Core.LinkTrack
         public void Set(LinkTrackDetail linkTrackDetail)
         {
             Stopwatch sw = Stopwatch.StartNew();
-            //linkTrackDetail._lstFrames  = new StackTrace(true).GetFrames();
             linkTrackDetail._stackTrace = new StackTrace(true);
-            //Console.WriteLine(sw.ElapsedMilliseconds);
             Get().List.Add(linkTrackDetail);
         }
 
@@ -159,6 +159,7 @@ namespace FS.Core.LinkTrack
             linkTrackContext.Headers     = headerDictionary;
             linkTrackContext.RequestBody = requestBody;
             linkTrackContext.RequestIp   = ip;
+
             return new TrackEnd(linkTrackContext);
         }
 
