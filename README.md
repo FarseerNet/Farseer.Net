@@ -5,39 +5,37 @@
 
 我们选用`Castle.Windsor`作为我们的`IOC`框架，并制定使用该框架的一些规则。
 
+结合[FOPS](https://github.com/FarseerNet/FOPS) 项目（自动构建、链路追踪控制台）支持代码无侵入的全链路实时监控。
+
 ### Farseer.net有哪些功能？
-* `Farseer.Net.Data`：数据库ORM
-  *  支持：MySql/ClickHouse/Sqlserver/Sqlite/Oracle/Oledb（Access/Execl） 数据库。
+* `Farseer.Net.Data`
+  *  ORM组件支持：MySql/ClickHouse/Sqlserver/Sqlite/Oracle/Oledb（Access/Execl） 数据库。
 * `Farseer.Net.AspNetCore`
-  *  基于asp.net core的一些封装
+  *  基于asp.net core的一些封装，如异常中间件、CORS、链路追踪入口、ioc注入web api
 * `Farseer.Net.Cache`
   *  基于本地缓存MemoryCache的模块化封装
 * `Farseer.Net.Cache.Redis`
   *  基于StackExchange.Redis的模块化封装
-* `Farseer.Net.Configuration`（计划废除）
-  *  本地json配置解析
-* `Farseer.Net.Core`
-  *  基础依赖
 * `Farseer.Net.ElasticSearch`
-  *  基于NETS的模块化封装
+  *  基于ES的ORM封装，于`Farseer.Net.Data`组件使用相似
 * `Farseer.Net.Job`
-  *  基于`FSS`分布式调度平台的客户端
+  *  基于`FSS`分布式调度平台的客户端，实现高可用的分布式的任务调度
 * `Farseer.Net.LinkTrack`
   *  全链路追踪监控
 * `Farseer.Net.Log`
-  *  基于NLog的模块化封装
+  *  基于NLog的模块化封装(废弃，建议直接使用IocManager.Instance.Logger)
 * `Farseer.Net.Mapper`
-  *  基于AutoMapper的模块化封装
+  *  对象类型转换组件（基于AutoMapper)
 * `Farseer.Net.MongoDB`
-  *  基于MongoDB.Driver的模块化封装
-* `Farseer.Net.MQ`
-  *  MQ的基类
+  *  MongoDB 组件
 * `Farseer.Net.MQ.Kafka`
   *  基于Confluent.Kafka的模块化封装
 * `Farseer.Net.MQ.Rabbit`
-  *  基于RabbitMQ.Client的模块化封装
+  *  RabbitMQ 消息队列组件
 * `Farseer.Net.MQ.RocketMQ`
-  *  基于阿里云ONSClient4CPP的模块化封装
+  *  RocketMQ 消息队列组件
+* `Farseer.Net.MQ.RedisStream`
+  * Redis5 消息队列组件
 * `Farseer.Net.Utils`
   *  常用工具扩展封装
 * `Farseer.Net.Web.Mvc`
