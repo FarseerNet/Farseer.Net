@@ -1,16 +1,48 @@
 ## Farseer.net是什么?
-针对`.net core` 平台下的一套开发标准制定。 
+针对`.net core` 平台下的一套开发标准制定，提供一系列优雅的组件供使用。
 
 通过该标准，我们会为您选型出目前最为流行的常用组件，并按我们的标准（模块化）来提供如何使用这些组件。
 
 我们选用`Castle.Windsor`作为我们的`IOC`框架，并制定使用该框架的一些规则。
 
-`Farseer.Net`会告诉你以什么样的方式实现优雅的代码。
+### Farseer.net有哪些功能？
+* `Farseer.Net.Data`：数据库ORM
+  *  支持：MySql/ClickHouse/Sqlserver/Sqlite/Oracle/Oledb（Access/Execl） 数据库。
+* `Farseer.Net.AspNetCore`
+  *  基于asp.net core的一些封装
+* `Farseer.Net.Cache`
+  *  基于本地缓存MemoryCache的模块化封装
+* `Farseer.Net.Cache.Redis`
+  *  基于StackExchange.Redis的模块化封装
+* `Farseer.Net.Configuration`（计划废除）
+  *  本地json配置解析
+* `Farseer.Net.Core`
+  *  基础依赖
+* `Farseer.Net.ElasticSearch`
+  *  基于NETS的模块化封装
+* `Farseer.Net.Job`
+  *  基于`FSS`分布式调度平台的客户端
+* `Farseer.Net.LinkTrack`
+  *  全链路追踪监控
+* `Farseer.Net.Log`
+  *  基于NLog的模块化封装
+* `Farseer.Net.Mapper`
+  *  基于AutoMapper的模块化封装
+* `Farseer.Net.MongoDB`
+  *  基于MongoDB.Driver的模块化封装
+* `Farseer.Net.MQ`
+  *  MQ的基类
+* `Farseer.Net.MQ.Kafka`
+  *  基于Confluent.Kafka的模块化封装
+* `Farseer.Net.MQ.Rabbit`
+  *  基于RabbitMQ.Client的模块化封装
+* `Farseer.Net.MQ.RocketMQ`
+  *  基于阿里云ONSClient4CPP的模块化封装
+* `Farseer.Net.Utils`
+  *  常用工具扩展封装
+* `Farseer.Net.Web.Mvc`
 
-我们不造轮子，我们只是这些优秀的开源组件搬运工。
-
-我们所有组件的使用标准，均无偿开源在`GitHub`上，并提供`Nuget`下载
-    
+各组件使用说明：[地址](https://github.com/FarseerNet/Farseer.Net/tree/main/Demo)
 ### 使用Rabbit组件的示例：
 `Program.cs`
 ```c#
@@ -141,7 +173,7 @@ public class TaskServer : ITaskServer
 
 上面用到了数据库上下文的概念，并支持工作单元模式。在我们需要操作数据库方面是极为轻巧、简单的。
 
-关与数据库操作、模块化理念的实际使用，可以参考我另外一个开源项目：分布式调度平台，地址：[GitHub](https://github.com/FarseerNet/FarseerSchedulerService)
+关与数据库操作、模块化理念的实际使用，可以参考我另外一个开源项目：分布式调度平台，[地址](https://github.com/FarseerNet/FarseerSchedulerService)
 
 当然，这里需要依赖`DataModule`模块：
 `StartupModule.cs`
@@ -155,45 +187,3 @@ public class StartupModule : FarseerModule
     public override void PostInitialize() { }
 }
 ```
-
-### Farseer.net有哪些功能？
-* `Farseer.Net.Data`：数据库ORM
-  *  支持：MySql/ClickHouse/Sqlserver/Sqlite/Oracle/Oledb（Access/Execl） 数据库。 
-* `Farseer.Net.AspNetCore`
-  *  基于asp.net core的一些封装
-* `Farseer.Net.Cache`
-  *  基于本地缓存MemoryCache的模块化封装
-* `Farseer.Net.Cache.Redis`
-  *  基于StackExchange.Redis的模块化封装
-* `Farseer.Net.Configuration`（计划废除）
-  *  本地json配置解析
-* `Farseer.Net.Core`
-  *  基础依赖
-* `Farseer.Net.ElasticSearch`
-  *  基于NETS的模块化封装
-* `Farseer.Net.Job`
-  *  基于`FSS`分布式调度平台的客户端
-* `Farseer.Net.LinkTrack`
-  *  全链路追踪监控
-* `Farseer.Net.Log`
-  *  基于NLog的模块化封装
-* `Farseer.Net.Mapper`
-  *  基于AutoMapper的模块化封装
-* `Farseer.Net.MongoDB`
-  *  基于MongoDB.Driver的模块化封装
-* `Farseer.Net.MQ`
-  *  MQ的基类
-* `Farseer.Net.MQ.Kafka`
-  *  基于Confluent.Kafka的模块化封装
-* `Farseer.Net.MQ.Rabbit`
-  *  基于RabbitMQ.Client的模块化封装
-* `Farseer.Net.MQ.RocketMQ`
-  *  基于阿里云ONSClient4CPP的模块化封装
-* `Farseer.Net.Utils`
-  *  常用工具扩展封装
-* `Farseer.Net.Web.Mvc`
-### 有问题反馈
-在使用中有任何问题，欢迎反馈给我，可以用以下联系方式跟我交流
-
-* QQ群: 116228666
-* 教程：http://www.cnblogs.com/steden/
