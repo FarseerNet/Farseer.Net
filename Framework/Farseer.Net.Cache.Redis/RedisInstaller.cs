@@ -43,7 +43,7 @@ namespace FS.Cache.Redis
                 var redisConnectionWrapper = _iocResolver.Resolve<IRedisConnectionWrapper>($"{redisItemConfig.Name}_connection");
 
                 var redisCacheManager = new RedisCacheManager(redisItemConfig, redisConnectionWrapper);
-                redisCacheManager.CacheManager = new CacheManager(new GetCacheByRedis(redisCacheManager));
+                redisCacheManager.CacheManager = new CacheManager(new GetCacheInRedis(redisCacheManager));
 
                 // 注册Redis管理
                 container.Register(Component.For<IRedisCacheManager>().Named(redisItemConfig.Name).Instance(redisCacheManager).LifestyleSingleton());

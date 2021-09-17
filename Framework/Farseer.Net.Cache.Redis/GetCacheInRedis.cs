@@ -9,11 +9,11 @@ using Newtonsoft.Json;
 
 namespace FS.Cache.Redis
 {
-    public class GetCacheByRedis : IGetCache
+    public class GetCacheInRedis : IGetCache
     {
         private readonly IRedisCacheManager _redisCacheManager;
 
-        public GetCacheByRedis(IRedisCacheManager redisCacheManager)
+        public GetCacheInRedis(IRedisCacheManager redisCacheManager)
         {
             this._redisCacheManager = redisCacheManager;
         }
