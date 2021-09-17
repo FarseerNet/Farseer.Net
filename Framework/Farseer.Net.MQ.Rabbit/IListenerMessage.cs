@@ -55,12 +55,9 @@ namespace FS.MQ.Rabbit
             }
 
             // 注册消费端            
-            FarseerApplication.AddInitCallback(() =>
-            {
-                iocManager.Logger<RabbitInstaller>().LogInformation($"正在启动：{consumerType.Name} Rabbit消费");
-                var consumerInstance = new RabbitConsumer(iocManager, consumerType, rabbitItemConfig, consumerAtt.QueueName, consumerAtt.LastAckTimeoutRestart, consumerAtt.ThreadNumsOrPullNums);
-                consumerInstance.Start();
-            });
+            iocManager.Logger<RabbitInstaller>().LogInformation($"正在启动：{consumerType.Name} Rabbit消费");
+            var consumerInstance = new RabbitConsumer(iocManager, consumerType, rabbitItemConfig, consumerAtt.QueueName, consumerAtt.LastAckTimeoutRestart, consumerAtt.ThreadNumsOrPullNums);
+            consumerInstance.Start();
             
             return Task.FromResult(0);
         }

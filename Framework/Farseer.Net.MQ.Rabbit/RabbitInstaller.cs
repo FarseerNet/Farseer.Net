@@ -56,7 +56,12 @@ namespace FS.MQ.Rabbit
                         if (consumerAtt is { Enable: false }) continue;
                         
                         if (!iocManager.IsRegistered(consumerType.FullName)) iocManager.Register(consumerType, consumerType.FullName, DependencyLifeStyle.Transient);
-                        iocManager.Resolve<IListenerMessage>(consumerType.FullName).Init(iocManager, consumerAtt, consumerType);
+                        
+                        FarseerApplication.AddInitCallback(() =>
+                        {
+                            iocManager.Resolve<IListenerMessage>(consumerType.FullName).Init(iocManager, consumerAtt, consumerType);
+                        });
+                        
                     }
 
                     // 启动批量消费程序
@@ -66,7 +71,12 @@ namespace FS.MQ.Rabbit
                         if (consumerAtt is { Enable: false }) continue;
                         
                         if (!iocManager.IsRegistered(consumerType.FullName)) iocManager.Register(consumerType, consumerType.FullName, DependencyLifeStyle.Transient);
-                        Task.WaitAll(iocManager.Resolve<IListenerMessageBatch>(consumerType.FullName).Init(iocManager, consumerAtt, consumerType));
+
+                        FarseerApplication.AddInitCallback(() =>
+                        {
+                            Task.WaitAll(iocManager.Resolve<IListenerMessageBatch>(consumerType.FullName).Init(iocManager, consumerAtt, consumerType));
+                        });
+                        
                     }
 
                     IocManager.Instance.Logger<RabbitInstaller>().LogInformation("全部消费启动完成!");

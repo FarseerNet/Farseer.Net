@@ -31,14 +31,14 @@ namespace FS.MQ.Rabbit
         /// <summary>
         /// 初始化并自动消费
         /// </summary>
-        Task Init(IIocManager iocManager, ConsumerAttribute consumerAtt, Type consumerType)
+        async Task Init(IIocManager iocManager, ConsumerAttribute consumerAtt, Type consumerType)
         {
             // 读取配置
             var rabbitItemConfig = RabbitConfigRoot.Get().Find(o => o.Name == consumerAtt.Name);
             if (rabbitItemConfig == null)
             {
                 iocManager.Logger<IListenerMessageBatch>().LogWarning($"未找到：{consumerType.FullName}的配置项：{consumerAtt.Name}");
-                return Task.FromResult(0);
+                return;
             }
 
             // 启用启动绑定时，要创建交换器、队列，并绑定
@@ -54,17 +54,12 @@ namespace FS.MQ.Rabbit
             }
 
             // 注册消费端            
-            FarseerApplication.AddInitCallback(async () =>
+            iocManager.Logger<IListenerMessageBatch>().LogInformation($"正在启动：{consumerType.Name} Rabbit批量消费");
+            await Task.Factory.StartNew(async () =>
             {
-                iocManager.Logger<IListenerMessageBatch>().LogInformation($"正在启动：{consumerType.Name} Rabbit批量消费");
-                await Task.Factory.StartNew(async () =>
-                {
-                    var consumerInstance = new RabbitConsumerBatch(iocManager, consumerType, rabbitItemConfig, consumerAtt.QueueName, consumerAtt.ThreadNumsOrPullNums);
-                    await consumerInstance.StartWhile(consumerAtt.BatchPullSleepTime);
-                }, TaskCreationOptions.LongRunning);
-            });
-
-            return Task.FromResult(0);
+                var consumerInstance = new RabbitConsumerBatch(iocManager, consumerType, rabbitItemConfig, consumerAtt.QueueName, consumerAtt.ThreadNumsOrPullNums);
+                await consumerInstance.StartWhile(consumerAtt.BatchPullSleepTime);
+            }, TaskCreationOptions.LongRunning);
         }
     }
 }

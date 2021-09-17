@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -78,7 +80,7 @@ namespace FS.MQ.Rabbit
             this._iocManager            = iocManager;
             this._consumerType          = consumerType.FullName;
             this._rabbitConnect         = new RabbitConnect(rabbitItemConfig);
-            this._lastAckTimeoutRestart = lastAckTimeoutRestart;
+            this._lastAckTimeoutRestart = lastAckTimeoutRestart > 0 ? lastAckTimeoutRestart : 5 * 60;
             this._consumeThreadNums     = consumeThreadNums == 0 ? Environment.ProcessorCount : consumeThreadNums;
             this._queueName             = queueName;
             this._lastAckAt             = DateTime.Now;
@@ -164,6 +166,9 @@ namespace FS.MQ.Rabbit
             var consumer = new EventingBasicConsumer(_channel);
             consumer.Received += async (model, ea) =>
             {
+                ea.BasicProperties.Headers ??= new Dictionary<string, object>();
+                ea.BasicProperties.Headers.Add("QueueName", _queueName);
+
                 var listener = _iocManager.Resolve<IListenerMessage>(_consumerType);
                 var result   = false;
                 var message  = Encoding.UTF8.GetString(ea.Body.ToArray());
@@ -214,7 +219,7 @@ namespace FS.MQ.Rabbit
                 }
             };
             // 消费者开启监听
-            _channel.BasicConsume(queue: _queueName, autoAck: autoAck, consumer: consumer);
+            _channel.BasicConsume(_queueName, autoAck, consumer);
         }
 
         /// <summary>
