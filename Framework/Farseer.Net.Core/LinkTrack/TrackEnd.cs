@@ -45,11 +45,11 @@ namespace FS.Core.LinkTrack
         /// </summary>
         public void End()
         {
-            if (_linkTrackDetail != null) _linkTrackDetail.EndTs   = DateTime.Now.ToTimestamps();
+            if (_linkTrackDetail != null) _linkTrackDetail.EndTs = DateTime.Now.ToTimestamps();
             if (_linkTrackContext != null)
             {
                 _linkTrackContext.EndTs = DateTime.Now.ToTimestamps();
-                if (!Env.IsPro)
+                if (!Env.IsPro && _linkTrackContext.ContentType != "MessageQueue")
                 {
                     var lst = new List<string>
                     {
@@ -80,6 +80,7 @@ namespace FS.Core.LinkTrack
                 _linkTrackDetail.IsException      = true;
                 _linkTrackDetail.ExceptionMessage = exception.ToString();
             }
+
             End();
         }
     }
