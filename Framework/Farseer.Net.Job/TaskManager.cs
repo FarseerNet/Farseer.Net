@@ -52,7 +52,7 @@ namespace FS.Job
                 var url = server.StartsWith("http") ? $"{server}/task/pull" : $"http://{server}/task/pull";
                 try
                 {
-                    var json = await Net.PostAsync(url, "{}", _header, contentType: "application/json");
+                    var json = await Net.PostAsync(url, new Dictionary<string, string>() { { "TaskCount", Environment.ProcessorCount.ToString() } }, _header, contentType: "application/json");
                     var api  = Jsons.ToObject<ApiResponseJson<List<TaskVO>>>(json);
                     if (!api.Status) continue;
                     if (api.Data.Count == 0) return;
