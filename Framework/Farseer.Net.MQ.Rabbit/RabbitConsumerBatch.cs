@@ -40,7 +40,7 @@ namespace FS.MQ.Rabbit
         /// <summary>
         /// 批量拉取消息数量
         /// </summary>
-        private readonly int _batchPullMessageCount;
+        private readonly uint _batchPullMessageCount;
 
         /// <summary>
         /// 队列名称
@@ -55,7 +55,7 @@ namespace FS.MQ.Rabbit
         /// <param name="queueName">队列名称</param>
         /// <param name="batchPullMessageCount">批量拉取消息数量（默认10）</param>
         /// <param name="consumerType">消费监听 </param>
-        public RabbitConsumerBatch(IIocManager iocManager, Type consumerType, RabbitItemConfig rabbitItemConfig, string queueName, int batchPullMessageCount)
+        public RabbitConsumerBatch(IIocManager iocManager, Type consumerType, RabbitItemConfig rabbitItemConfig, string queueName, uint batchPullMessageCount)
         {
             this._iocManager            = iocManager;
             this._connect               = new RabbitConnect(rabbitItemConfig);
@@ -106,8 +106,11 @@ namespace FS.MQ.Rabbit
             var result = false;
             try
             {
+                var queueDeclarePassive = _channel.QueueDeclarePassive(_queueName);
+                if (queueDeclarePassive.MessageCount == 0) return 0;
                 // 并发拉取多条消息
-                Parallel.For(1, _batchPullMessageCount, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, index =>
+                var forCount = queueDeclarePassive.MessageCount > _batchPullMessageCount ? _batchPullMessageCount : queueDeclarePassive.MessageCount;
+                Parallel.For(0, forCount, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, index =>
                 {
                     // 拉取一条消息
                     var resp = _channel.BasicGet(_queueName, autoAck);
@@ -124,7 +127,7 @@ namespace FS.MQ.Rabbit
                 if (lstResult.Count == 0) return 0;
 
                 deliveryTag = lstBasicGetResult.Max(o => o.DeliveryTag);
-                
+
                 // 消费
                 using (FsLinkTrack.TrackMqConsumer(_connect.Connection.Endpoint.ToString(), _queueName, "RabbitConsumerBatch"))
                 {

@@ -59,7 +59,7 @@ namespace FS.MQ.Rabbit
         /// <summary>
         /// 线程数（默认8）
         /// </summary>
-        private readonly int _consumeThreadNums;
+        private readonly uint _consumeThreadNums;
 
         /// <summary>
         /// 队列名称
@@ -75,13 +75,13 @@ namespace FS.MQ.Rabbit
         /// <param name="queueName">队列名称</param>
         /// <param name="lastAckTimeoutRestart">最后ACK多少秒超时则重连（默认5分钟）</param>
         /// <param name="consumeThreadNums">线程数（默认8）</param>
-        public RabbitConsumer(IIocManager iocManager, Type consumerType, RabbitItemConfig rabbitItemConfig, string queueName, int lastAckTimeoutRestart, int consumeThreadNums)
+        public RabbitConsumer(IIocManager iocManager, Type consumerType, RabbitItemConfig rabbitItemConfig, string queueName, int lastAckTimeoutRestart, uint consumeThreadNums)
         {
             this._iocManager            = iocManager;
             this._consumerType          = consumerType.FullName;
             this._rabbitConnect         = new RabbitConnect(rabbitItemConfig);
             this._lastAckTimeoutRestart = lastAckTimeoutRestart > 0 ? lastAckTimeoutRestart : 5 * 60;
-            this._consumeThreadNums     = consumeThreadNums == 0 ? Environment.ProcessorCount : consumeThreadNums;
+            this._consumeThreadNums     = consumeThreadNums == 0 ? (uint)Environment.ProcessorCount : consumeThreadNums;
             this._queueName             = queueName;
             this._lastAckAt             = DateTime.Now;
 

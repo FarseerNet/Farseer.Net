@@ -59,7 +59,7 @@ namespace FS.MQ.Rabbit
                         
                         FarseerApplication.AddInitCallback(() =>
                         {
-                            iocManager.Resolve<IListenerMessage>(consumerType.FullName).Init(iocManager, consumerAtt, consumerType);
+                            Task.WhenAll(iocManager.Resolve<IListenerMessage>(consumerType.FullName).Init(iocManager, consumerAtt, consumerType));
                         });
                         
                     }
@@ -74,7 +74,7 @@ namespace FS.MQ.Rabbit
 
                         FarseerApplication.AddInitCallback(() =>
                         {
-                            Task.WaitAll(iocManager.Resolve<IListenerMessageBatch>(consumerType.FullName).Init(iocManager, consumerAtt, consumerType));
+                            Task.WhenAll(iocManager.Resolve<IListenerMessageBatch>(consumerType.FullName).Init(iocManager, consumerAtt, consumerType));
                         });
                         
                     }
