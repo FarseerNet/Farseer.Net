@@ -14,6 +14,7 @@ namespace FS.Data.Map
         ///     关系映射
         /// </summary>
         /// <param name="type">实体类Type</param>
+        /// <param name="context">上下文 </param>
         public ContextPhysicsMap(Type type)
         {
             Type = type;
@@ -24,10 +25,18 @@ namespace FS.Data.Map
             foreach (var propertyInfo in Type.GetProperties(BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.GetProperty | BindingFlags.Public))
             {
                 // 必须是Farseer.Net.dll程序集
-                if (!propertyInfo.CanWrite || propertyInfo.PropertyType.Assembly != currentAssembly || (propertyInfo.DeclaringType != null && propertyInfo.DeclaringType.Assembly == currentAssembly)) { continue; }
+                if (!propertyInfo.CanWrite || propertyInfo.PropertyType.Assembly != currentAssembly || (propertyInfo.DeclaringType != null && propertyInfo.DeclaringType.Assembly == currentAssembly))
+                {
+                    continue;
+                }
 
                 // 设置每个Set属性（目前有Set是非泛型的）
-                EntityMapList[propertyInfo] = propertyInfo.PropertyType.IsGenericType ? SetMapCacheManger.Cache(propertyInfo.PropertyType.GetGenericArguments()[0]) : null;
+                if (propertyInfo.PropertyType.IsGenericType)
+                {
+                    EntityMapList[propertyInfo] = SetMapCacheManger.Cache(propertyInfo.PropertyType.GetGenericArguments()[0]);
+                }
+                else
+                    EntityMapList[propertyInfo] = null;
             }
         }
 

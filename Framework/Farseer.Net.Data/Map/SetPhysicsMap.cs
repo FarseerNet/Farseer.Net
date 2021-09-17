@@ -6,6 +6,7 @@ using System.Reflection;
 using FS.Core.Mapping;
 using FS.Core.Mapping.Attribute;
 using FS.Data.Cache;
+using FS.Data.Internal;
 
 namespace FS.Data.Map
 {
@@ -14,6 +15,11 @@ namespace FS.Data.Map
     /// </summary>
     public class SetPhysicsMap
     {
+        /// <summary>
+        /// 数据库上下文
+        /// </summary>
+        internal InternalContext InternalContext { get; set; }
+
         /// <summary>
         ///     获取所有Set属性
         /// </summary>
@@ -28,7 +34,6 @@ namespace FS.Data.Map
             Type          = type;
             MapList       = new Dictionary<PropertyInfo, DbFieldMapState>();
             PrimaryFields = new Dictionary<PropertyInfo, FieldAttribute>();
-
             // 循环Set的字段
             foreach (var propertyInfo in Type.GetProperties())
             {
@@ -39,53 +44,116 @@ namespace FS.Data.Map
                 foreach (var item in attrs)
                 {
                     // 字段
-                    if (item is FieldAttribute fieldAtt) { modelAtt.Field = fieldAtt; continue; }
+                    if (item is FieldAttribute fieldAtt)
+                    {
+                        modelAtt.Field = fieldAtt;
+                        continue;
+                    }
+
                     // 字符串长度
-                    if (item is StringLengthAttribute stringLengthAtt) { modelAtt.StringLength = stringLengthAtt; continue; }
+                    if (item is StringLengthAttribute stringLengthAtt)
+                    {
+                        modelAtt.StringLength = stringLengthAtt;
+                        continue;
+                    }
+
                     // 是否必填
-                    if (item is RequiredAttribute requiredAtt) { modelAtt.Required = requiredAtt; continue; }
+                    if (item is RequiredAttribute requiredAtt)
+                    {
+                        modelAtt.Required = requiredAtt;
+                        continue;
+                    }
+
                     // 字段描述
-                    if (item is DisplayAttribute displayAtt) { modelAtt.Display = displayAtt; continue; }
+                    if (item is DisplayAttribute displayAtt)
+                    {
+                        modelAtt.Display = displayAtt;
+                        continue;
+                    }
+
                     // 值的长度
-                    if (item is RangeAttribute rangeAtt) { modelAtt.Range = rangeAtt; continue; }
+                    if (item is RangeAttribute rangeAtt)
+                    {
+                        modelAtt.Range = rangeAtt;
+                        continue;
+                    }
+
                     // 正则
-                    if (item is RegularExpressionAttribute regularExpressionAtt) { modelAtt.RegularExpression = regularExpressionAtt; continue; }
+                    if (item is RegularExpressionAttribute regularExpressionAtt)
+                    {
+                        modelAtt.RegularExpression = regularExpressionAtt;
+                        continue;
+                    }
                 }
+
                 #endregion
 
                 #region 初始化字段映射
 
-                if (modelAtt.Field == null) { modelAtt.Field = new FieldAttribute { Name = propertyInfo.Name }; }
-                if (string.IsNullOrEmpty(modelAtt.Field.Name)) { modelAtt.Field.Name = propertyInfo.Name; }
+                if (modelAtt.Field == null)
+                {
+                    modelAtt.Field = new FieldAttribute { Name = propertyInfo.Name };
+                }
+
+                if (string.IsNullOrEmpty(modelAtt.Field.Name))
+                {
+                    modelAtt.Field.Name = propertyInfo.Name;
+                }
+
                 if (modelAtt.Field.IsMap)
                 {
                     // 主键
-                    if (modelAtt.Field.IsPrimaryKey) { PrimaryFields[propertyInfo] = modelAtt.Field; }
+                    if (modelAtt.Field.IsPrimaryKey)
+                    {
+                        PrimaryFields[propertyInfo] = modelAtt.Field;
+                    }
+
                     // 标识
-                    if (modelAtt.Field.IsDbGenerated) { DbGeneratedFields = new KeyValuePair<PropertyInfo, FieldAttribute>(propertyInfo, modelAtt.Field); }
+                    if (modelAtt.Field.IsDbGenerated)
+                    {
+                        DbGeneratedFields = new KeyValuePair<PropertyInfo, FieldAttribute>(propertyInfo, modelAtt.Field);
+                    }
                 }
 
                 #endregion
 
                 #region 初始化字段描述映射
 
-                if (modelAtt.Display == null) { modelAtt.Display = new DisplayAttribute { Name = propertyInfo.Name }; }
-                if (string.IsNullOrEmpty(modelAtt.Display.Name)) { modelAtt.Display.Name = propertyInfo.Name; }
+                if (modelAtt.Display == null)
+                {
+                    modelAtt.Display = new DisplayAttribute { Name = propertyInfo.Name };
+                }
+
+                if (string.IsNullOrEmpty(modelAtt.Display.Name))
+                {
+                    modelAtt.Display.Name = propertyInfo.Name;
+                }
 
                 #endregion
 
                 #region 加入智能错误显示消息
 
                 // 是否必填
-                if (modelAtt.Required != null && string.IsNullOrEmpty(modelAtt.Required.ErrorMessage)) { modelAtt.Required.ErrorMessage = $"{modelAtt.Display.Name}，不能为空！"; }
+                if (modelAtt.Required != null && string.IsNullOrEmpty(modelAtt.Required.ErrorMessage))
+                {
+                    modelAtt.Required.ErrorMessage = $"{modelAtt.Display.Name}，不能为空！";
+                }
 
                 // 字符串长度判断
                 if (modelAtt.StringLength != null && string.IsNullOrEmpty(modelAtt.StringLength.ErrorMessage))
                 {
-                    if (modelAtt.StringLength.MinimumLength > 0 && modelAtt.StringLength.MaximumLength > 0) { modelAtt.StringLength.ErrorMessage = $"{modelAtt.Display.Name}，长度范围必须为：{modelAtt.StringLength.MinimumLength} - {modelAtt.StringLength.MaximumLength} 个字符之间！"; }
-                    else if (modelAtt.StringLength.MaximumLength > 0) { modelAtt.StringLength.ErrorMessage = $"{modelAtt.Display.Name}，长度不能大于{modelAtt.StringLength.MaximumLength}个字符！"; }
+                    if (modelAtt.StringLength.MinimumLength > 0 && modelAtt.StringLength.MaximumLength > 0)
+                    {
+                        modelAtt.StringLength.ErrorMessage = $"{modelAtt.Display.Name}，长度范围必须为：{modelAtt.StringLength.MinimumLength} - {modelAtt.StringLength.MaximumLength} 个字符之间！";
+                    }
+                    else if (modelAtt.StringLength.MaximumLength > 0)
+                    {
+                        modelAtt.StringLength.ErrorMessage = $"{modelAtt.Display.Name}，长度不能大于{modelAtt.StringLength.MaximumLength}个字符！";
+                    }
                     else
-                    { modelAtt.StringLength.ErrorMessage = $"{modelAtt.Display.Name}，长度不能小于{modelAtt.StringLength.MinimumLength}个字符！"; }
+                    {
+                        modelAtt.StringLength.ErrorMessage = $"{modelAtt.Display.Name}，长度不能小于{modelAtt.StringLength.MinimumLength}个字符！";
+                    }
                 }
 
                 // 值的长度
@@ -96,10 +164,18 @@ namespace FS.Data.Map
                     decimal maximum;
                     decimal.TryParse(modelAtt.Range.Minimum.ToString(), out maximum);
 
-                    if (minnum > 0 && maximum > 0) { modelAtt.Range.ErrorMessage = $"{modelAtt.Display.Name}，的值范围必须为：{minnum} - {maximum} 之间！"; }
-                    else if (maximum > 0) { modelAtt.Range.ErrorMessage = $"{modelAtt.Display.Name}，的值不能大于{maximum}！"; }
+                    if (minnum > 0 && maximum > 0)
+                    {
+                        modelAtt.Range.ErrorMessage = $"{modelAtt.Display.Name}，的值范围必须为：{minnum} - {maximum} 之间！";
+                    }
+                    else if (maximum > 0)
+                    {
+                        modelAtt.Range.ErrorMessage = $"{modelAtt.Display.Name}，的值不能大于{maximum}！";
+                    }
                     else
-                    { modelAtt.Range.ErrorMessage = $"{modelAtt.Display.Name}，的值不能小于{minnum}！"; }
+                    {
+                        modelAtt.Range.ErrorMessage = $"{modelAtt.Display.Name}，的值不能小于{minnum}！";
+                    }
                 }
 
                 #endregion

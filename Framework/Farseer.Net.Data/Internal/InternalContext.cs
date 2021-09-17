@@ -24,8 +24,8 @@ namespace FS.Data.Internal
         /// <param name="contextConnection">上下文数据库连接信息</param>
         public InternalContext(Type contextType, bool isUnitOfWork, ContextConnection contextConnection = null)
         {
-            this.ContextType = contextType;
-            this.IsUnitOfWork = isUnitOfWork;
+            this.ContextType       = contextType;
+            this.IsUnitOfWork      = isUnitOfWork;
             this.ContextConnection = contextConnection;
         }
 
@@ -36,7 +36,7 @@ namespace FS.Data.Internal
         /// <param name="masterContext">其它上下文（主上下文）</param>
         public void TransactionInstance(Type currentContextType, InternalContext masterContext)
         {
-            this.ContextType = currentContextType;
+            this.ContextType  = currentContextType;
             this.IsUnitOfWork = masterContext.IsUnitOfWork;
             //  连接字符串
             this.ContextConnection = masterContext.ContextConnection;
@@ -51,7 +51,7 @@ namespace FS.Data.Internal
 
 
             // 上下文映射关系
-            ContextMap = new ContextDataMap(ContextType);
+            ContextMap = new ContextDataMap(ContextType, this);
             // 不再需要初始化
             IsInitializer = true;
         }
@@ -60,6 +60,7 @@ namespace FS.Data.Internal
         ///     上下文数据库连接信息
         /// </summary>
         internal IContextConnection ContextConnection { get; set; }
+
         /// <summary>
         ///     外部上下文类型
         /// </summary>
@@ -111,23 +112,26 @@ namespace FS.Data.Internal
         /// </summary>
         public void Initializer()
         {
-            if (IsInitializer) { return; }
+            if (IsInitializer)
+            {
+                return;
+            }
 
             // 数据库提供者
             DbProvider = AbsDbProvider.CreateInstance(ContextConnection.DbType, ContextConnection.DataVer);
-            
+
             // 默认SQL执行者
             Executeor = new ExecuteSql(new DbExecutor(ContextConnection.ConnectionString, ContextConnection.DbType, ContextConnection.CommandTimeout, !IsUnitOfWork && DbProvider.IsSupportTransaction ? IsolationLevel.RepeatableRead : IsolationLevel.Unspecified, DbProvider), this);
 
             // 记录执行链路
             Executeor = new ExecuteSqlMonitorProxy(Executeor, DbProvider);
-            
+
             // 队列管理者
             QueueManger = new QueueManger(this);
             // 手动编写SQL
             ManualSql = new ManualSql(this);
             // 上下文映射关系
-            this.ContextMap = new ContextDataMap(ContextType);
+            this.ContextMap = new ContextDataMap(ContextType, this);
 
             IsInitializer = true;
         }

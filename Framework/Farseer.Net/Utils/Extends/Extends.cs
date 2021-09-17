@@ -69,7 +69,7 @@ namespace FS.Extends
             return sourceValue.PadRight(total, '0');
         }
 
-        private static readonly ConcurrentDictionary<Type, Type> DicNullableArguments = new ConcurrentDictionary<Type, Type>();
+        private static readonly ConcurrentDictionary<Type, Type> DicNullableArguments = new();
         /// <summary>
         /// 获取非空类型的真实Type
         /// </summary>
