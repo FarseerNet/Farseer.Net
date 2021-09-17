@@ -13,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FS.Core.LinkTrack;
 using FS.Extends;
+using Newtonsoft.Json;
 
 namespace FS.Core.Http
 {
@@ -153,7 +154,21 @@ namespace FS.Core.Http
         /// <param name="requestTimeout">超时时间</param>
         /// <param name="encoding">编码格式</param>
         /// <param name="cookie">是否需要cookie</param>
-        public static Task<string> PostAsync(string url, Dictionary<string, string> postData, Dictionary<string, string> headerData, Encoding encoding = null, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, CookieContainer cookie = null) => PostAsync(url, postData.Select(keyVal => $"{keyVal.Key}={keyVal.Value}").ToString("&"), headerData, encoding, contentType, requestTimeout, cookie);
+        public static Task<string> PostAsync(string url, Dictionary<string, string> postData, Dictionary<string, string> headerData, Encoding encoding = null, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, CookieContainer cookie = null)
+        {
+            string pData;
+            switch (contentType)
+            {
+                case "application/json":
+                    pData = JsonConvert.SerializeObject(postData);
+                    break;
+                default:
+                    pData = postData.Select(keyVal => $"{keyVal.Key}={keyVal.Value}").ToString("&");
+                    break;
+            }
+
+            return PostAsync(url, pData, headerData, encoding, contentType, requestTimeout, cookie);
+        }
 
         /// <summary>
         /// http request请求
