@@ -39,7 +39,7 @@ namespace FS.Data.Client.ClickHouse
                 strOrderBySql = "ORDER BY " + strOrderBySql;
             }
 
-            Sql.Append($"SELECT {strSelectSql} FROM {DbTableName} {strWhereSql} {strOrderBySql} LIMIT 1");
+            Sql.Append($"SELECT {strSelectSql} FROM {DbTableName} final {strWhereSql} {strOrderBySql} LIMIT 1");
             return this;
         }
 
@@ -65,15 +65,15 @@ namespace FS.Data.Client.ClickHouse
 
             if (!isRand)
             {
-                Sql.Append($"SELECT {strDistinctSql}{strSelectSql} FROM {DbTableName} {strWhereSql} {strOrderBySql} {strTopSql}");
+                Sql.Append($"SELECT {strDistinctSql}{strSelectSql} FROM {DbTableName} final {strWhereSql} {strOrderBySql} {strTopSql}");
             }
             else if (!isDistinct && string.IsNullOrWhiteSpace(strOrderBySql))
             {
-                Sql.Append($"SELECT {strSelectSql}{randField} FROM {DbTableName} {strWhereSql} ORDER BY Rand() {strTopSql}");
+                Sql.Append($"SELECT {strSelectSql}{randField} FROM {DbTableName} final {strWhereSql} ORDER BY Rand() {strTopSql}");
             }
             else
             {
-                Sql.Append($"SELECT * {randField} FROM (SELECT {strDistinctSql} {strSelectSql} FROM {DbTableName} {strWhereSql} {strOrderBySql}) s ORDER BY Rand() {strTopSql}");
+                Sql.Append($"SELECT * {randField} FROM (SELECT {strDistinctSql} {strSelectSql} FROM {DbTableName} final {strWhereSql} {strOrderBySql}) s ORDER BY Rand() {strTopSql}");
             }
 
             return this;
@@ -104,7 +104,7 @@ namespace FS.Data.Client.ClickHouse
                 strOrderBySql = "ORDER BY " + strOrderBySql;
             }
 
-            Sql.Append($"SELECT {strDistinctSql}{strSelectSql} FROM {DbTableName} {strWhereSql} {strOrderBySql} LIMIT {pageSize * (pageIndex - 1)},{pageSize}");
+            Sql.Append($"SELECT {strDistinctSql}{strSelectSql} FROM {DbTableName} final {strWhereSql} {strOrderBySql} LIMIT {pageSize * (pageIndex - 1)},{pageSize}");
             return this;
         }
 
@@ -124,7 +124,7 @@ namespace FS.Data.Client.ClickHouse
                 strOrderBySql = "ORDER BY " + strOrderBySql;
             }
 
-            Sql.Append($"SELECT {strSelectSql} FROM {DbTableName} {strWhereSql} {strOrderBySql} LIMIT 1");
+            Sql.Append($"SELECT {strSelectSql} FROM {DbTableName} final {strWhereSql} {strOrderBySql} LIMIT 1");
             return this;
         }
 
@@ -149,6 +149,90 @@ namespace FS.Data.Client.ClickHouse
 
             var sql = string.Join(",", lst.Select(o => JsonConvert.SerializeObject(o, settings)));
             Sql.Append($"INSERT INTO {DbTableName} FORMAT JSONEachRow {sql}");
+            return this;
+        }
+
+        /// <summary>
+        ///     查询数量
+        /// </summary>
+        /// <param name="isDistinct">返回当前条件下非重复数据</param>
+        public override ISqlParam Count(bool isDistinct = false)
+        {
+            var strWhereSql    = WhereVisitor.Visit(ExpBuilder.ExpWhere);
+            var strDistinctSql = isDistinct ? "Distinct " : string.Empty;
+
+            if (!string.IsNullOrWhiteSpace(strWhereSql))
+            {
+                strWhereSql = "WHERE " + strWhereSql;
+            }
+
+            Sql.Append($"SELECT {strDistinctSql}Count(0) FROM {DbTableName} final {strWhereSql}");
+            return this;
+        }
+
+        /// <summary>
+        ///     累计和
+        /// </summary>
+        public override ISqlParam Sum()
+        {
+            var strSelectSql = SelectVisitor.Visit(ExpBuilder.ExpSelect);
+            var strWhereSql  = WhereVisitor.Visit(ExpBuilder.ExpWhere);
+
+            if (string.IsNullOrWhiteSpace(strSelectSql))
+            {
+                strSelectSql = "0";
+            }
+
+            if (!string.IsNullOrWhiteSpace(strWhereSql))
+            {
+                strWhereSql = "WHERE " + strWhereSql;
+            }
+
+            Sql.Append($"SELECT SUM({strSelectSql}) FROM {DbTableName} final {strWhereSql}");
+            return this;
+        }
+
+        /// <summary>
+        ///     查询最大数
+        /// </summary>
+        public override ISqlParam Max()
+        {
+            var strSelectSql = SelectVisitor.Visit(ExpBuilder.ExpSelect);
+            var strWhereSql  = WhereVisitor.Visit(ExpBuilder.ExpWhere);
+
+            if (string.IsNullOrWhiteSpace(strSelectSql))
+            {
+                strSelectSql = "0";
+            }
+
+            if (!string.IsNullOrWhiteSpace(strWhereSql))
+            {
+                strWhereSql = "WHERE " + strWhereSql;
+            }
+
+            Sql.Append($"SELECT MAX({strSelectSql}) FROM {DbTableName} final {strWhereSql}");
+            return this;
+        }
+
+        /// <summary>
+        ///     查询最小数
+        /// </summary>
+        public override ISqlParam Min()
+        {
+            var strSelectSql = SelectVisitor.Visit(ExpBuilder.ExpSelect);
+            var strWhereSql  = WhereVisitor.Visit(ExpBuilder.ExpWhere);
+
+            if (string.IsNullOrWhiteSpace(strSelectSql))
+            {
+                strSelectSql = "0";
+            }
+
+            if (!string.IsNullOrWhiteSpace(strWhereSql))
+            {
+                strWhereSql = "WHERE " + strWhereSql;
+            }
+
+            Sql.Append($"SELECT MIN({strSelectSql}) FROM {DbTableName} final {strWhereSql}");
             return this;
         }
     }
