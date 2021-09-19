@@ -122,8 +122,8 @@ namespace FS.Data.Infrastructure
         public virtual DataTable ToTable(int pageSize, int pageIndex, bool isDistinct = false)
         {
             // 计算总页数
-            Check.IsTure(pageIndex < 1, $"参数{nameof(pageSize)}，不能小于1");
-            Check.IsTure(pageSize < 1, $"参数{nameof(pageSize)}，不能小于1");
+            Check.IsTure(pageIndex < 1, $"参数{nameof(pageIndex)}，不能小于1");
+            Check.IsTure(pageSize < 1,  $"参数{nameof(pageSize)}，不能小于1");
 
             return QueueManger.Commit(SetMap, (queue) => Context.Executeor.ToTable($"{typeof(TEntity).Name}.ToTable", queue.SqlBuilder.ToList(pageSize, pageIndex, isDistinct)), true);
         }
@@ -136,8 +136,8 @@ namespace FS.Data.Infrastructure
         public virtual Task<DataTable> ToTableAsync(int pageSize, int pageIndex, bool isDistinct = false)
         {
             // 计算总页数
-            Check.IsTure(pageIndex < 1, $"参数{nameof(pageSize)}，不能小于1");
-            Check.IsTure(pageSize < 1, $"参数{nameof(pageSize)}，不能小于1");
+            Check.IsTure(pageIndex < 1, $"参数{nameof(pageIndex)}，不能小于1");
+            Check.IsTure(pageSize < 1,  $"参数{nameof(pageSize)}，不能小于1");
 
             return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ToTableAsync($"{typeof(TEntity).Name}.ToTableAsync", queue.SqlBuilder.ToList(pageSize, pageIndex, isDistinct)), true);
         }
@@ -150,8 +150,8 @@ namespace FS.Data.Infrastructure
         public virtual DataTable ToTable(int pageSize, int pageIndex, out int recordCount, bool isDistinct = false)
         {
             // 计算总页数
-            Check.IsTure(pageIndex < 1, $"参数{nameof(pageSize)}，不能小于1");
-            Check.IsTure(pageSize < 1, $"参数{nameof(pageSize)}，不能小于1");
+            Check.IsTure(pageIndex < 1, $"参数{nameof(pageIndex)}，不能小于1");
+            Check.IsTure(pageSize < 1,  $"参数{nameof(pageSize)}，不能小于1");
 
             var queue = Queue;
             recordCount = Count();
@@ -168,8 +168,8 @@ namespace FS.Data.Infrastructure
         public virtual Task<DataTable> ToTableAsync(int pageSize, int pageIndex, out int recordCount, bool isDistinct = false)
         {
             // 计算总页数
-            Check.IsTure(pageIndex < 1, $"参数{nameof(pageSize)}，不能小于1");
-            Check.IsTure(pageSize < 1, $"参数{nameof(pageSize)}，不能小于1");
+            Check.IsTure(pageIndex < 1, $"参数{nameof(pageIndex)}，不能小于1");
+            Check.IsTure(pageSize < 1,  $"参数{nameof(pageSize)}，不能小于1");
 
             var queue = Queue;
             recordCount = Count();
@@ -204,8 +204,8 @@ namespace FS.Data.Infrastructure
         public virtual List<TEntity> ToList(int pageSize, int pageIndex, bool isDistinct = false)
         {
             // 计算总页数
-            Check.IsTure(pageIndex < 1, $"参数{nameof(pageSize)}，不能小于1");
-            Check.IsTure(pageSize < 1, $"参数{nameof(pageSize)}，不能小于1");
+            Check.IsTure(pageIndex < 1, $"参数{nameof(pageIndex)}，不能小于1");
+            Check.IsTure(pageSize < 1,  $"参数{nameof(pageSize)}，不能小于1");
 
             return QueueManger.Commit(SetMap, (queue) => Context.Executeor.ToList<TEntity>($"{typeof(TEntity).Name}.ToList", queue.SqlBuilder.ToList(pageSize, pageIndex, isDistinct)), true);
 
@@ -220,8 +220,8 @@ namespace FS.Data.Infrastructure
         public virtual Task<List<TEntity>> ToListAsync(int pageSize, int pageIndex, bool isDistinct = false)
         {
             // 计算总页数
-            Check.IsTure(pageIndex < 1, $"参数{nameof(pageSize)}，不能小于1");
-            Check.IsTure(pageSize < 1, $"参数{nameof(pageSize)}，不能小于1");
+            Check.IsTure(pageIndex < 1, $"参数{nameof(pageIndex)}，不能小于1");
+            Check.IsTure(pageSize < 1,  $"参数{nameof(pageSize)}，不能小于1");
 
             return QueueManger.CommitAsync(SetMap, (queue) => Context.Executeor.ToListAsync<TEntity>($"{typeof(TEntity).Name}.ToListAsync", queue.SqlBuilder.ToList(pageSize, pageIndex, isDistinct)), true);
         }
@@ -236,7 +236,7 @@ namespace FS.Data.Infrastructure
         public virtual List<TEntity> ToList(int pageSize, int pageIndex, out int recordCount, bool isDistinct = false)
         {
             // 计算总页数
-            Check.IsTure(pageIndex < 1, $"参数{nameof(pageSize)}，不能小于1");
+            Check.IsTure(pageIndex < 1, $"参数{nameof(pageIndex)}，不能小于1");
             Check.IsTure(pageSize < 1, $"参数{nameof(pageSize)}，不能小于1");
 
             var queue = Queue;
@@ -256,7 +256,7 @@ namespace FS.Data.Infrastructure
         public virtual Task<List<TEntity>> ToListAsync(int pageSize, int pageIndex, out int recordCount, bool isDistinct = false)
         {
             // 计算总页数
-            Check.IsTure(pageIndex < 1, $"参数{nameof(pageSize)}，不能小于1");
+            Check.IsTure(pageIndex < 1, $"参数{nameof(pageIndex)}，不能小于1");
             Check.IsTure(pageSize < 1, $"参数{nameof(pageSize)}，不能小于1");
 
             var queue = Queue;
