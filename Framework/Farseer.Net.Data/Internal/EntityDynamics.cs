@@ -34,7 +34,7 @@ namespace FS.Data.Internal
         /// </summary>
         private static readonly ConcurrentDictionary<Type, Type> Cache = new();
 
-        public Type BuildType(Type entityType)
+        internal Type BuildType(Type entityType)
         {
             if (Cache.ContainsKey(entityType)) return Cache[entityType];
 
