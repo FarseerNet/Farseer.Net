@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using FS.Cache.Redis.Configuration;
-using FS.Configuration;
+﻿using System.Reflection;
 using FS.DI;
 using FS.Modules;
 
@@ -25,8 +22,8 @@ namespace FS.Cache.Redis
         /// </summary>
         public override void Initialize()
         {
-            IocManager.Container.Install(new RedisInstaller(IocManager));
-            IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly(), new ConventionalRegistrationConfig { InstallInstallers = false });
+            IocManager.Container.Install(new RedisInstaller(iocResolver: IocManager));
+            IocManager.RegisterAssemblyByConvention(assembly: Assembly.GetExecutingAssembly(), config: new ConventionalRegistrationConfig { InstallInstallers = false });
         }
     }
 }

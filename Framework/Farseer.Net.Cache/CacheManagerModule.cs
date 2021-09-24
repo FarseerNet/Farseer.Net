@@ -21,8 +21,8 @@ namespace FS.Cache
         /// </summary>
         public override void Initialize()
         {
-            IocManager.Container.Install(new CacheManagerInstaller(IocManager));
-            IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly(), new ConventionalRegistrationConfig { InstallInstallers = false });
+            IocManager.Container.Install(new CacheManagerInstaller(iocResolver: IocManager));
+            IocManager.RegisterAssemblyByConvention(assembly: Assembly.GetExecutingAssembly(), config: new ConventionalRegistrationConfig { InstallInstallers = false });
         }
     }
 }

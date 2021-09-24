@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using FS.Core;
 using FS.DI;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace FS.Cache.Redis
@@ -13,137 +12,157 @@ namespace FS.Cache.Redis
     {
         private readonly IRedisCacheManager _redisCacheManager;
 
-        public GetCacheInRedis(IRedisCacheManager redisCacheManager)
+        public GetCacheInRedis(string redisItemConfigName)
         {
-            this._redisCacheManager = redisCacheManager;
+            _redisCacheManager = IocManager.Instance.Resolve<IRedisCacheManager>(name: redisItemConfigName);
         }
 
         /// <summary>
-        /// 从缓存中读取LIST
+        ///     从缓存中读取LIST
         /// </summary>
-        /// <param name="key">缓存Key</param>
-        public List<TEntity> ToList<TEntity>(string key)
+        public List<TEntity> GetList<TEntity>(string cacheKey, Func<TEntity, object> getEntityId, CacheOption cacheOption)
         {
-            var hashGetAll = _redisCacheManager.Db.HashGetAll(key);
-            return hashGetAll.Select(o => JsonConvert.DeserializeObject<TEntity>(o.Value)).ToList();
+            var hashGetAll = _redisCacheManager.Db.HashGetAll(key: cacheKey);
+            return hashGetAll.Select(selector: o => JsonConvert.DeserializeObject<TEntity>(value: o.Value)).ToList();
         }
 
         /// <summary>
-        /// 从缓存中读取LIST
+        ///     从缓存中读取LIST
         /// </summary>
-        /// <param name="key">缓存Key</param>
-        public async Task<List<TEntity>> ToListAsync<TEntity>(string key)
+        public async Task<List<TEntity>> GetListAsync<TEntity>(string cacheKey, Func<TEntity, object> getEntityId, CacheOption cacheOption)
         {
-            var hashGetAll = await _redisCacheManager.Db.HashGetAllAsync(key);
-            return hashGetAll.Select(o => JsonConvert.DeserializeObject<TEntity>(o.Value)).ToList();
+            var hashGetAll = await _redisCacheManager.Db.HashGetAllAsync(key: cacheKey);
+            return hashGetAll.Select(selector: o => JsonConvert.DeserializeObject<TEntity>(value: o.Value)).ToList();
         }
 
         /// <summary>
-        /// 从缓存中读取实体
+        ///     从缓存中读取实体
         /// </summary>
-        /// <param name="key">缓存Key</param>
-        /// <param name="fieldKey">hash里的field值 </param>
-        public TEntity ToEntity<TEntity>(string key, string fieldKey)
+        public TEntity GetItem<TEntity>(string cacheKey, string fieldKey, Func<TEntity, object> getEntityId, CacheOption cacheOption)
         {
-            var redisValue = _redisCacheManager.Db.HashGet(key, fieldKey);
-            return !redisValue.HasValue ? default : JsonConvert.DeserializeObject<TEntity>(redisValue.ToString());
+            var redisValue = _redisCacheManager.Db.HashGet(key: cacheKey, hashField: fieldKey);
+            return !redisValue.HasValue ? default : JsonConvert.DeserializeObject<TEntity>(value: redisValue.ToString());
         }
 
         /// <summary>
-        /// 从缓存中读取实体
+        ///     从缓存中读取实体
         /// </summary>
-        /// <param name="key">缓存Key</param>
-        /// <param name="fieldKey">hash里的field值 </param>
-        public async Task<TEntity> ToEntityAsync<TEntity>(string key, string fieldKey)
+        public async Task<TEntity> GetItemAsync<TEntity>(string cacheKey, string fieldKey, Func<TEntity, object> getEntityId, CacheOption cacheOption)
         {
-            var redisValue = await _redisCacheManager.Db.HashGetAsync(key, fieldKey);
-            return !redisValue.HasValue ? default : JsonConvert.DeserializeObject<TEntity>(redisValue.ToString());
+            var redisValue = await _redisCacheManager.Db.HashGetAsync(key: cacheKey, hashField: fieldKey);
+            return !redisValue.HasValue ? default : JsonConvert.DeserializeObject<TEntity>(value: redisValue.ToString());
         }
 
         /// <summary>
-        /// 将实体保存到缓存中
+        ///     将实体保存到缓存中
         /// </summary>
-        /// <param name="key">缓存Key</param>
-        /// <param name="entity">数据源</param>
-        /// <param name="getEntityId">实体的ID（必须是具有唯一性）</param>
-        /// <param name="cacheOption">缓存配置项 </param>
-        public void Save<TEntity>(string key, TEntity entity, Func<TEntity, object> getEntityId, CacheOption cacheOption)
+        public void SaveItem<TEntity>(string cacheKey, TEntity entity, Func<TEntity, object> getEntityId, CacheOption cacheOption)
         {
-            _redisCacheManager.Db.HashSet(key, getEntityId(entity).ToString(), JsonConvert.SerializeObject(entity));
+            var transaction = _redisCacheManager.Db.CreateTransaction();
+            transaction.HashSetAsync(key: cacheKey, hashField: getEntityId(arg: entity).ToString(), value: JsonConvert.SerializeObject(value: entity));
+
+            // 设置过期时间
+            if (cacheOption.RedisExpiry != null) transaction.KeyExpireAsync(key: cacheKey, expiry: cacheOption.RedisExpiry.GetValueOrDefault());
+
+            transaction.Execute();
         }
 
         /// <summary>
-        /// 将实体保存到缓存中
+        ///     将实体保存到缓存中
         /// </summary>
-        /// <param name="key">缓存Key</param>
-        /// <param name="entity">数据源</param>
-        /// <param name="getEntityId">实体的ID（必须是具有唯一性）</param>
-        /// <param name="cacheOption">缓存配置项 </param>
-        public Task SaveAsync<TEntity>(string key, TEntity entity, Func<TEntity, object> getEntityId, CacheOption cacheOption)
+        public Task SaveItemAsync<TEntity>(string cacheKey, TEntity entity, Func<TEntity, object> getEntityId, CacheOption cacheOption)
         {
-            return _redisCacheManager.Db.HashSetAsync(key, getEntityId(entity).ToString(), JsonConvert.SerializeObject(entity));
+            var transaction = _redisCacheManager.Db.CreateTransaction();
+            transaction.HashSetAsync(key: cacheKey, hashField: getEntityId(arg: entity).ToString(), value: JsonConvert.SerializeObject(value: entity));
+
+            // 设置过期时间
+            if (cacheOption.RedisExpiry != null) transaction.KeyExpireAsync(key: cacheKey, expiry: cacheOption.RedisExpiry.GetValueOrDefault());
+
+            return transaction.ExecuteAsync();
         }
 
         /// <summary>
-        /// 将LIST保存到缓存中
+        ///     将LIST保存到缓存中
         /// </summary>
-        /// <param name="key">缓存Key</param>
-        /// <param name="lst">数据源</param>
-        /// <param name="getEntityId">实体的ID（必须是具有唯一性）</param>
-        /// <param name="cacheOption">缓存配置项 </param>
-        public void Save<TEntity>(string key, List<TEntity> lst, Func<TEntity, object> getEntityId, CacheOption cacheOption)
+        public void SaveList<TEntity>(string cacheKey, List<TEntity> lst, Func<TEntity, object> getEntityId, CacheOption cacheOption)
         {
-            _redisCacheManager.HashSetTransaction(key, lst, getEntityId);
+            _redisCacheManager.HashSetTransaction(key: cacheKey, lst: lst, funcDataKey: getEntityId, funcData: null, expiry: cacheOption.RedisExpiry);
         }
 
         /// <summary>
-        /// 将LIST保存到缓存中
+        ///     将LIST保存到缓存中
         /// </summary>
-        /// <param name="key">缓存Key</param>
-        /// <param name="lst">数据源</param>
-        /// <param name="getEntityId">实体的ID（必须是具有唯一性）</param>
-        /// <param name="cacheOption">缓存配置项 </param>
-        public Task SaveAsync<TEntity>(string key, List<TEntity> lst, Func<TEntity, object> getEntityId, CacheOption cacheOption)
+        public Task SaveListAsync<TEntity>(string cacheKey, List<TEntity> lst, Func<TEntity, object> getEntityId, CacheOption cacheOption) => _redisCacheManager.HashSetTransactionAsync(key: cacheKey, lst: lst, funcDataKey: getEntityId, funcData: null, expiry: cacheOption.RedisExpiry);
+
+        /// <summary>
+        ///     删除缓存item
+        /// </summary>
+        public void Remove(string cacheKey, string fieldKey) => _redisCacheManager.Db.HashDelete(key: cacheKey, hashField: fieldKey);
+
+        /// <summary>
+        ///     删除缓存item
+        /// </summary>
+        public Task RemoveAsync(string cacheKey, string fieldKey) => _redisCacheManager.Db.HashDeleteAsync(key: cacheKey, hashField: fieldKey);
+
+        /// <summary>
+        ///     删除整个缓存
+        /// </summary>
+        public void Remove(string cacheKey) => _redisCacheManager.Db.KeyDelete(key: cacheKey);
+
+        /// <summary>
+        ///     删除整个缓存
+        /// </summary>
+        public Task RemoveAsync(string cacheKey) => _redisCacheManager.Db.KeyDeleteAsync(key: cacheKey);
+
+        /// <summary>
+        ///     从缓存集合中读取实体
+        /// </summary>
+        /// <param name="cacheKey"> 缓存Key </param>
+        /// <param name="cacheOption"> 缓存策略 </param>
+        public TEntity Get<TEntity>(string cacheKey, CacheOption cacheOption)
         {
-            return _redisCacheManager.HashSetTransactionAsync(key, lst, getEntityId);
+            var redisValue = _redisCacheManager.Db.StringGet(key: cacheKey);
+            if (redisValue.HasValue) return Jsons.ToObject<TEntity>(obj: redisValue.ToString());
+            return default;
         }
 
         /// <summary>
-        /// 删除缓存item
+        ///     从缓存集合中读取实体
         /// </summary>
-        /// <param name="cacheKey">缓存KEY</param>
-        /// <param name="fieldKey">缓存Field</param>
-        public void Remove(string cacheKey, string fieldKey)
+        /// <param name="cacheKey"> 缓存Key </param>
+        /// <param name="cacheOption"> 缓存策略 </param>
+        public async Task<TEntity> GetAsync<TEntity>(string cacheKey, CacheOption cacheOption)
         {
-            _redisCacheManager.Db.HashDelete(cacheKey, fieldKey);
+            var redisValue = await _redisCacheManager.Db.StringGetAsync(key: cacheKey);
+            if (redisValue.HasValue) return Jsons.ToObject<TEntity>(obj: redisValue.ToString());
+            return default;
         }
 
         /// <summary>
-        /// 删除缓存item
+        ///     保存对象
         /// </summary>
-        /// <param name="cacheKey">缓存KEY</param>
-        /// <param name="fieldKey">缓存Field</param>
-        public Task RemoveAsync(string cacheKey, string fieldKey)
+        /// <param name="cacheKey"> 缓存Key </param>
+        /// <param name="entity"> 保存对象 </param>
+        /// <param name="cacheOption"> 缓存策略 </param>
+        public void Save<TEntity>(string cacheKey, TEntity entity, CacheOption cacheOption)
         {
-            return _redisCacheManager.Db.HashDeleteAsync(cacheKey, fieldKey);
+            if (cacheOption.RedisExpiry != null)
+                _redisCacheManager.Db.StringSet(key: cacheKey, value: JsonConvert.SerializeObject(value: entity), expiry: cacheOption.RedisExpiry.GetValueOrDefault());
+            else
+                _redisCacheManager.Db.StringSet(key: cacheKey, value: JsonConvert.SerializeObject(value: entity));
         }
 
         /// <summary>
-        /// 删除整个缓存
+        ///     保存对象
         /// </summary>
-        /// <param name="cacheKey">缓存KEY</param>
-        public void Remove(string cacheKey)
+        /// <param name="cacheKey"> 缓存Key </param>
+        /// <param name="entity"> 保存对象 </param>
+        /// <param name="cacheOption"> 缓存策略 </param>
+        public Task SaveAsync<TEntity>(string cacheKey, TEntity entity, CacheOption cacheOption)
         {
-            _redisCacheManager.Db.KeyDelete(cacheKey);
-        }
+            if (cacheOption.RedisExpiry != null) return _redisCacheManager.Db.StringSetAsync(key: cacheKey, value: JsonConvert.SerializeObject(value: entity), expiry: cacheOption.RedisExpiry.GetValueOrDefault());
 
-        /// <summary>
-        /// 删除整个缓存
-        /// </summary>
-        /// <param name="cacheKey">缓存KEY</param>
-        public Task RemoveAsync(string cacheKey)
-        {
-            return _redisCacheManager.Db.KeyDeleteAsync(cacheKey);
+            return _redisCacheManager.Db.StringSetAsync(key: cacheKey, value: JsonConvert.SerializeObject(value: entity));
         }
     }
 }
