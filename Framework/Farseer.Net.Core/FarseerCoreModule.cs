@@ -12,9 +12,7 @@
  */
 
 using System.Reflection;
-using FS.Configuration;
 using FS.Configuration.Startup;
-using FS.Core.Configuration;
 using FS.DI;
 using FS.Modules;
 
@@ -37,8 +35,8 @@ namespace FS.Core
         /// </summary>
         public override void Initialize()
         {
-            foreach (var replaceAction in ((FarseerStartupConfiguration)Configuration).ServiceReplaceActions.Values) { replaceAction(); }
-            IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly(), new ConventionalRegistrationConfig { InstallInstallers = false });
+            foreach (var replaceAction in ((FarseerStartupConfiguration)Configuration).ServiceReplaceActions.Values) replaceAction();
+            IocManager.RegisterAssemblyByConvention(assembly: Assembly.GetExecutingAssembly(), config: new ConventionalRegistrationConfig { InstallInstallers = false });
         }
     }
 }

@@ -10,7 +10,7 @@ namespace FS.MQ.Rocket
     internal class RocketConsumer : IRocketConsumer
     {
         private readonly ONSFactoryProperty _factoryInfo;
-        private Consumer _consumer;
+        private          Consumer           _consumer;
 
         public RocketConsumer(ONSFactoryProperty factoryInfo)
         {
@@ -20,13 +20,13 @@ namespace FS.MQ.Rocket
         /// <summary>
         ///     消费订阅
         /// </summary>
-        /// <param name="listen">消息监听处理</param>
-        /// <param name="tag">标签</param>
+        /// <param name="listen"> 消息监听处理 </param>
+        /// <param name="tag"> 标签 </param>
         public void Start(MessageListener listen, string tag = "*")
         {
-            if (_consumer != null) throw new FarseerException("当前已开启过该消费，无法重新开启，需先关闭上一次的消费（调用Close()）。");
-            _consumer = ONSFactory.getInstance().createPushConsumer(_factoryInfo);
-            _consumer.subscribe(_factoryInfo.getPublishTopics(), tag, listen);
+            if (_consumer != null) throw new FarseerException(message: "当前已开启过该消费，无法重新开启，需先关闭上一次的消费（调用Close()）。");
+            _consumer = ONSFactory.getInstance().createPushConsumer(factoryProperty: _factoryInfo);
+            _consumer.subscribe(topic: _factoryInfo.getPublishTopics(), subExpression: tag, listener: listen);
             _consumer.start();
         }
 

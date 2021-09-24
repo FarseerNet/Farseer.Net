@@ -7,46 +7,33 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Internal.Transform
 {
     internal class XmlUnmarshaller<TResponse> : IUnmarshaller<TResponse, Stream>
     {
-        private static readonly XmlSerializer _serializer = new XmlSerializer(typeof(TResponse));
+        private static readonly XmlSerializer _serializer = new XmlSerializer(type: typeof(TResponse));
 
-        public TResponse Unmarshall(Stream responseStream)
-        {
-            return this.Unmarshall(responseStream, false);
-        }
+        public TResponse Unmarshall(Stream responseStream) => Unmarshall(responseStream: responseStream, keepOpenOnException: false);
 
         public TResponse Unmarshall(Stream responseStream, bool keepOpenOnException = false)
         {
-            bool dispose = true;
+            var dispose = true;
             try
             {
-                return (TResponse)_serializer.Deserialize(responseStream);
+                return (TResponse)_serializer.Deserialize(stream: responseStream);
             }
             catch (XmlException ex)
             {
-                if (keepOpenOnException)
-                {
-                    dispose = false;
-                }
-                throw new ResponseUnmarshallException(ex.Message, ex);
+                if (keepOpenOnException) dispose = false;
+                throw new ResponseUnmarshallException(message: ex.Message, innerException: ex);
             }
             catch (InvalidOperationException ex)
             {
-                if (keepOpenOnException)
-                {
-                    dispose = false;
-                }
-                throw new ResponseUnmarshallException(ex.Message, ex);
+                if (keepOpenOnException) dispose = false;
+                throw new ResponseUnmarshallException(message: ex.Message, innerException: ex);
             }
             finally
             {
                 if (dispose)
-                {
                     responseStream.Dispose();
-                }
                 else
-                {
-                    responseStream.Seek(0, SeekOrigin.Begin);
-                }
+                    responseStream.Seek(offset: 0, origin: SeekOrigin.Begin);
             }
         }
     }

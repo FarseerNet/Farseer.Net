@@ -8,6 +8,16 @@ namespace FS.Cache
     public abstract class AbsCacheManger<TKey, TValue>
     {
         /// <summary>
+        ///     缓存类
+        /// </summary>
+        protected static readonly Dictionary<TKey, TValue> CacheList = new();
+
+        /// <summary>
+        ///     缓存Key
+        /// </summary>
+        protected TKey Key;
+
+        /// <summary>
         ///     缓存管理基类
         /// </summary>
         protected AbsCacheManger()
@@ -17,39 +27,29 @@ namespace FS.Cache
         /// <summary>
         ///     缓存管理基类
         /// </summary>
-        /// <param name="key">缓存Key</param>
+        /// <param name="key"> 缓存Key </param>
         protected AbsCacheManger(TKey key)
         {
-            this.Key = key;
+            Key = key;
         }
-
-        /// <summary>
-        ///     缓存Key
-        /// </summary>
-        protected TKey Key;
-
-        /// <summary>
-        ///     缓存类
-        /// </summary>
-        protected static readonly Dictionary<TKey, TValue> CacheList = new();
 
         /// <summary>
         ///     通过缓存获取数据
         /// </summary>
         public TValue GetValue()
         {
-            if (CacheList.ContainsKey(Key)) return CacheList[Key];
+            if (CacheList.ContainsKey(key: Key)) return CacheList[key: Key];
             return SetCacheLock();
         }
 
         /// <summary>
-        /// 更新缓存
+        ///     更新缓存
         /// </summary>
-        /// <param name="key">缓存Key</param>
-        /// <param name="value">要更新的值</param>
+        /// <param name="key"> 缓存Key </param>
+        /// <param name="value"> 要更新的值 </param>
         public static void Update(TKey key, TValue value)
         {
-            CacheList[key] = value;
+            CacheList[key: key] = value;
         }
 
         /// <summary>

@@ -8,14 +8,14 @@ namespace FS.Utils.Common.ExpressionVisitor
     /// </summary>
     public class GetParamVisitor : AbsExpressionVisitor
     {
-        private readonly List<ParameterExpression> _lst = new List<ParameterExpression>();
+        private readonly List<ParameterExpression> _lst = new();
 
         /// <summary>
         ///     获取表达式中的变量
         /// </summary>
         public new IEnumerable<ParameterExpression> Visit(Expression exp)
         {
-            base.Visit(exp);
+            base.Visit(exp: exp);
             return _lst;
         }
 
@@ -24,8 +24,8 @@ namespace FS.Utils.Common.ExpressionVisitor
         /// </summary>
         protected override Expression VisitParameter(ParameterExpression p)
         {
-            if (_lst.Exists(o => o.Name == p.Name && o.Type == p.Type)) { return p; }
-            _lst.Add(p);
+            if (_lst.Exists(match: o => o.Name == p.Name && o.Type == p.Type)) return p;
+            _lst.Add(item: p);
             return p;
         }
 
@@ -34,7 +34,7 @@ namespace FS.Utils.Common.ExpressionVisitor
         /// </summary>
         protected override Expression VisitMemberAccess(MemberExpression m)
         {
-            base.VisitMemberAccess(m);
+            base.VisitMemberAccess(m: m);
             return m;
         }
     }

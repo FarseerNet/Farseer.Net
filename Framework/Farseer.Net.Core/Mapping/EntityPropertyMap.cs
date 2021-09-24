@@ -5,17 +5,16 @@
 
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using FS.Core.Mapping.Attribute;
 
 namespace FS.Core.Mapping
 {
     /// <summary>
-    /// 保存普通实体属性映射的信息
+    ///     保存普通实体属性映射的信息
     /// </summary>
     public class EntityPropertyMap
     {
         /// <summary>
-        /// 验证特性列表
+        ///     验证特性列表
         /// </summary>
         public List<ValidationAttribute> ValidationList { get; set; }
 

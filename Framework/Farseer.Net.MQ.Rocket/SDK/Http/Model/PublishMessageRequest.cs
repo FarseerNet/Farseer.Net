@@ -2,80 +2,41 @@
 
 namespace FS.MQ.Rocket.SDK.Http.Model
 {
-    public partial class PublishMessageRequest: WebServiceRequest
+    public class PublishMessageRequest : WebServiceRequest
     {
-        private string _messageBody;
-        private string _messageTag;
-        private string _properties;
-        private string _topicName;
-        private string _instanceId;
-
-        public PublishMessageRequest() { }
+        public PublishMessageRequest()
+        {
+        }
 
         public PublishMessageRequest(string messageBody)
-            : this(messageBody, null)
+            : this(messageBody: messageBody, messageTag: null)
         {
         }
 
         public PublishMessageRequest(string messageBody, string messageTag)
         {
-            _messageBody = messageBody;
-            _messageTag = messageTag;
+            MessageBody = messageBody;
+            MessageTag  = messageTag;
         }
 
-        public string MessageBody
-        {
-            get { return this._messageBody; }
-            set { this._messageBody = value; }
-        }
+        public string MessageBody { get; set; }
 
-        internal bool IsSetMessageBody()
-        {
-            return this._messageBody != null;
-        }
+        public string MessageTag { get; set; }
 
-        public string MessageTag
-        {
-            get { return this._messageTag; }
-            set { this._messageTag = value; }
-        }
+        public string TopicName { get; set; }
 
-        internal bool IsSetMessageTag()
-        {
-            return this._messageTag != null;
-        }
+        public string IntanceId { get; set; }
 
-        public string TopicName
-        {
-            get { return this._topicName; }
-            set { this._topicName = value; }
-        }
+        public string Properties { get; set; }
 
-        internal bool IsSetTopicName()
-        {
-            return this._topicName != null;
-        }
+        internal bool IsSetMessageBody() => MessageBody != null;
 
-        public string IntanceId
-        {
-            get { return this._instanceId; }
-            set { this._instanceId = value; }
-        }
+        internal bool IsSetMessageTag() => MessageTag != null;
 
-        public bool IsSetInstance()
-        {
-            return !string.IsNullOrEmpty(this._instanceId);
-        }
+        internal bool IsSetTopicName() => TopicName != null;
 
-        public string Properties
-        {
-            get { return this._properties; }
-            set { this._properties = value; }
-        }
+        public bool IsSetInstance() => !string.IsNullOrEmpty(value: IntanceId);
 
-        public bool IsSetProperties()
-        {
-            return !string.IsNullOrEmpty(this._properties);
-        }
+        public bool IsSetProperties() => !string.IsNullOrEmpty(value: Properties);
     }
 }

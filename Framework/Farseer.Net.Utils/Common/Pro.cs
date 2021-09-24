@@ -12,39 +12,48 @@ namespace FS.Utils.Common
         /// <summary>
         ///     根据默认浏览器打开网页
         /// </summary>
-        /// <param name="url">要打开的链接</param>
-        /// <param name="openInNewWindow">是否在新窗口打开</param>
-        /// <returns></returns>
+        /// <param name="url"> 要打开的链接 </param>
+        /// <param name="openInNewWindow"> 是否在新窗口打开 </param>
+        /// <returns> </returns>
         public static bool OpenUrl(string url, bool openInNewWindow)
         {
             try
             {
-                const string name = @"http\shell\open\command";
-                var openSubKey = Registry.ClassesRoot.OpenSubKey(name, false);
+                const string name       = @"http\shell\open\command";
+                var          openSubKey = Registry.ClassesRoot.OpenSubKey(name: name, writable: false);
                 if (openSubKey != null)
                 {
-                    var fileName = ((string)openSubKey.GetValue(null, null)).Split(new[] { '"' })[1];
+                    var fileName = ((string)openSubKey.GetValue(name: null, defaultValue: null)).Split('"')[1];
                     if (openInNewWindow)
                     {
                         var process = new Process
                         {
                             StartInfo =
                             {
-                                FileName = fileName,
+                                FileName  = fileName,
                                 Arguments = url
                             }
                         };
                         process.Start();
                         return true;
                     }
-                    Process.Start(fileName, url);
+
+                    Process.Start(fileName: fileName, arguments: url);
                 }
             }
             catch (Exception)
             {
-                try { Process.Start(url); return true; }
-                catch (Exception) { return false; }
+                try
+                {
+                    Process.Start(fileName: url);
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
             }
+
             return true;
         }
     }

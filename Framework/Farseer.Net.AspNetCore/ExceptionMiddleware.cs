@@ -27,16 +27,16 @@ namespace FS
 
             try
             {
-                if (!string.IsNullOrWhiteSpace(httpContext.Request.ContentType))
+                if (!string.IsNullOrWhiteSpace(value: httpContext.Request.ContentType))
                 {
                     // 允许其他管道重复读流
                     httpContext.Request.EnableBuffering();
-                    requestContent = await new StreamReader(httpContext.Request.Body).ReadToEndAsync();
+                    requestContent = await new StreamReader(stream: httpContext.Request.Body).ReadToEndAsync();
                     // 将流定位到初始位置，以让mvc能读到完整的入参
-                    httpContext.Request.Body.Seek(0, SeekOrigin.Begin);
+                    httpContext.Request.Body.Seek(offset: 0, origin: SeekOrigin.Begin);
                 }
 
-                await _next.Invoke(httpContext);
+                await _next.Invoke(context: httpContext);
             }
             catch (Exception e)
             {
@@ -46,20 +46,22 @@ namespace FS
                     $"Path：http{http}://{httpContext.Request.Host}{httpContext.Request.Path}",
                     $"Method：{httpContext.Request.Method}",
                     $"ContentType：{httpContext.Request.ContentType}",
-                    $"Body：{requestContent}",
+                    $"Body：{requestContent}"
                 };
 
                 switch (e)
                 {
                     case RefuseException re:
                     {
-                        await HandleExceptionAsync(httpContext, re.Message, re.StatusCode);
+                        await HandleExceptionAsync(context: httpContext, message: re.Message, statusCode: re.StatusCode);
                         break;
                     }
-                    case { }:
+                    case
                     {
-                        IocManager.Instance.Logger<ExceptionMiddleware>().LogError(e, $"{lst.ToString("\r\n")}\r\n{e}");
-                        await HandleExceptionAsync(httpContext, "服务器开小差了", 500);
+                    }:
+                    {
+                        IocManager.Instance.Logger<ExceptionMiddleware>().LogError(exception: e, message: $"{lst.ToString(sign: "\r\n")}\r\n{e}");
+                        await HandleExceptionAsync(context: httpContext, message: "服务器开小差了", statusCode: 500);
                         break;
                     }
                 }
@@ -70,8 +72,8 @@ namespace FS
         {
             context.Response.StatusCode  = statusCode;
             context.Response.ContentType = "application/json";
-            var apiResponseJson = ApiResponseJson.Error(message, statusCode);
-            return context.Response.WriteAsync(JsonConvert.SerializeObject(apiResponseJson));
+            var apiResponseJson = ApiResponseJson.Error(statusMessage: message, statusCode: statusCode);
+            return context.Response.WriteAsync(text: JsonConvert.SerializeObject(value: apiResponseJson));
         }
     }
 }

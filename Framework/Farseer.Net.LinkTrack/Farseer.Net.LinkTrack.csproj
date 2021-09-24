@@ -15,12 +15,12 @@
         <RootNamespace>FS.LinkTrack</RootNamespace>
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
-    
+
     <ItemGroup>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-        <ProjectReference Include="..\Farseer.Net.Core\Farseer.Net.Core.csproj" />
-        <ProjectReference Include="..\Farseer.Net.ElasticSearch\Farseer.Net.ElasticSearch.csproj" />
-        <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
+        <ProjectReference Include="..\Farseer.Net.Core\Farseer.Net.Core.csproj"/>
+        <ProjectReference Include="..\Farseer.Net.ElasticSearch\Farseer.Net.ElasticSearch.csproj"/>
+        <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj"/>
     </ItemGroup>
 
 </Project>  

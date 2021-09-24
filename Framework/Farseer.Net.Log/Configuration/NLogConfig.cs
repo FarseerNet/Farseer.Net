@@ -1,9 +1,7 @@
-﻿using FS.Configuration;
-
-namespace FS.Log.Configuration
+﻿namespace FS.Log.Configuration
 {
     /// <summary>
-    /// NLog配置
+    ///     NLog配置
     /// </summary>
     public class NLogConfig
     {

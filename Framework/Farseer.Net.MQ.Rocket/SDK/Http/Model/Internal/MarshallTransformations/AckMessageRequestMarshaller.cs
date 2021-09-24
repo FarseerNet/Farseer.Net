@@ -9,57 +9,38 @@ using FS.MQ.Rocket.SDK.Http.Util;
 
 namespace FS.MQ.Rocket.SDK.Http.Model.Internal.MarshallTransformations
 {
-    public partial class AckMessageRequestMarshaller : IMarshaller<IRequest, AckMessageRequest>, IMarshaller<IRequest, WebServiceRequest>
+    public class AckMessageRequestMarshaller : IMarshaller<IRequest, AckMessageRequest>, IMarshaller<IRequest, WebServiceRequest>
     {
-        public IRequest Marshall(WebServiceRequest input)
-        {
-            return this.Marshall((AckMessageRequest)input);
-        }
+        public static AckMessageRequestMarshaller Instance { get; } = new AckMessageRequestMarshaller();
 
         public IRequest Marshall(AckMessageRequest publicRequest)
         {
-            MemoryStream stream = new MemoryStream();
-            XmlTextWriter writer = new XmlTextWriter(stream, Encoding.UTF8);
+            var stream = new MemoryStream();
+            var writer = new XmlTextWriter(w: stream, encoding: Encoding.UTF8);
             writer.WriteStartDocument();
-            writer.WriteStartElement(Constants.XML_ROOT_RECEIPT_HANDLES, Constants.MQ_XML_NAMESPACE);
-            foreach (string receiptHandle in publicRequest.ReceiptHandles)
-            {
-                writer.WriteElementString(Constants.XML_ELEMENT_RECEIPT_HANDLE, receiptHandle);
-            }
+            writer.WriteStartElement(localName: Constants.XML_ROOT_RECEIPT_HANDLES, ns: Constants.MQ_XML_NAMESPACE);
+            foreach (var receiptHandle in publicRequest.ReceiptHandles) writer.WriteElementString(localName: Constants.XML_ELEMENT_RECEIPT_HANDLE, value: receiptHandle);
             writer.WriteEndElement();
             writer.WriteEndDocument();
             writer.Flush();
-            stream.Seek(0, SeekOrigin.Begin);
+            stream.Seek(offset: 0, loc: SeekOrigin.Begin);
 
-            IRequest request = new DefaultRequest(publicRequest, Constants.MQ_SERVICE_NAME);
-            request.HttpMethod = HttpMethod.DELETE.ToString();
+            IRequest request = new DefaultRequest(request: publicRequest, serviceName: Constants.MQ_SERVICE_NAME);
+            request.HttpMethod    = HttpMethod.DELETE.ToString();
             request.ContentStream = stream;
             request.ResourcePath = Constants.TOPIC_PRE_RESOURCE + publicRequest.TopicName
-                + Constants.MESSAGE_SUB_RESOURCE;
-            PopulateSpecialParameters(publicRequest, request.Parameters);
+                                                                + Constants.MESSAGE_SUB_RESOURCE;
+            PopulateSpecialParameters(request: publicRequest, paramters: request.Parameters);
             return request;
         }
 
+        public IRequest Marshall(WebServiceRequest input) => Marshall(publicRequest: (AckMessageRequest)input);
+
         private static void PopulateSpecialParameters(AckMessageRequest request, IDictionary<string, string> paramters)
         {
-            paramters.Add(Constants.PARAMETER_CONSUMER, request.Consumer);
-            if (request.IsSetInstance())
-            {
-                paramters.Add(Constants.PARAMETER_NS, request.IntanceId);
-            }
-            if (request.IsSetTransaction())
-            {
-                paramters.Add(Constants.PARAMETER_TRANSACTION, request.Trasaction);
-            }
-        }
-
-        private static AckMessageRequestMarshaller _instance = new AckMessageRequestMarshaller();
-        public static AckMessageRequestMarshaller Instance
-        {
-            get
-            {
-                return _instance;
-            }
+            paramters.Add(key: Constants.PARAMETER_CONSUMER, value: request.Consumer);
+            if (request.IsSetInstance()) paramters.Add(key: Constants.PARAMETER_NS, value: request.IntanceId);
+            if (request.IsSetTransaction()) paramters.Add(key: Constants.PARAMETER_TRANSACTION, value: request.Trasaction);
         }
     }
 }

@@ -21,13 +21,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-        <PackageReference Include="RabbitMQ.Client" Version="6.2.2" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
+        <PackageReference Include="RabbitMQ.Client" Version="6.2.2"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Farseer.Net.Core\Farseer.Net.Core.csproj" />
-        <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />
+        <ProjectReference Include="..\Farseer.Net.Core\Farseer.Net.Core.csproj"/>
+        <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj"/>
     </ItemGroup>
 
 </Project>

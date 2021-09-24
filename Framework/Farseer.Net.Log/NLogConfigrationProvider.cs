@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Text;
 using FS.Log.Configuration;
+using NLog;
 using NLog.Config;
 using NLog.LayoutRenderers;
 using NLog.Targets;
 using NLog.Targets.Wrappers;
-using LogLevel = NLog.LogLevel;
 
 namespace FS.Log
 {
@@ -14,8 +14,8 @@ namespace FS.Log
         static NLogConfigrationProvider()
         {
             var traceId = "traceId"; //初始化TraceId
-            LayoutRenderer.Register("traceid", (logEvent) => traceId);
-            LayoutRenderer.Register("MyDateTime", (logEvent) => DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));//初始化日期格式
+            LayoutRenderer.Register(name: "traceid", func: logEvent => traceId);
+            LayoutRenderer.Register(name: "MyDateTime", func: logEvent => DateTime.Now.ToString(format: "yyyy-MM-dd HH:mm:ss.fff")); //初始化日期格式
         }
 
         public static LoggingConfiguration CreateConfigration(NLogConfig userConfig)
@@ -41,22 +41,22 @@ namespace FS.Log
             fileTarget.Layout = @"[${date:format=yyyy-MM-dd HH\:mm\:ss.fff}] ${level} ${processid} [${traceid}] [${threadid}] [${callsite:className=True:includeNamespace=True:fileName=False:includeSourcePath=True:methodName = False:cleanNamesOfAnonymousDelegates = False:skipFrames = 0}] : ${message}${exception:innerFormat=StackTrace:maxInnerExceptionLevel=100:format=StackTrace}";
             //fileTarget.ArchiveFileName = "c:/Farseerlog/应用名称/日志文件{#}.log";
             //fileTarget.ArchiveFileName = itemConfig.FolderPath+itemConfig.AppName+"/日志文件{#}.log";
-            fileTarget.ArchiveFileName = "c:/Farseerlog/" + userConfig.AppName + "/日志文件{#}.log";
-            fileTarget.ArchiveNumbering = ArchiveNumberingMode.Rolling;
-            fileTarget.MaxArchiveFiles = 10;
-            fileTarget.ArchiveAboveSize = 1024 * 1024 * 512; //1024 * 1024 * 1024;
-            fileTarget.ConcurrentWrites = true;
-            fileTarget.KeepFileOpen = true;
+            fileTarget.ArchiveFileName      = "c:/Farseerlog/" + userConfig.AppName + "/日志文件{#}.log";
+            fileTarget.ArchiveNumbering     = ArchiveNumberingMode.Rolling;
+            fileTarget.MaxArchiveFiles      = 10;
+            fileTarget.ArchiveAboveSize     = 1024 * 1024 * 512; //1024 * 1024 * 1024;
+            fileTarget.ConcurrentWrites     = true;
+            fileTarget.KeepFileOpen         = true;
             fileTarget.OpenFileCacheTimeout = 30;
-            fileTarget.Encoding = Encoding.UTF8;
+            fileTarget.Encoding             = Encoding.UTF8;
 
-            var asyncTargetWrapper = new AsyncTargetWrapper(fileTarget, 10000, AsyncTargetWrapperOverflowAction.Discard);
+            var asyncTargetWrapper = new AsyncTargetWrapper(wrappedTarget: fileTarget, queueLimit: 10000, overflowAction: AsyncTargetWrapperOverflowAction.Discard);
 
-            config.AddTarget("Farseer_log_file", asyncTargetWrapper);
+            config.AddTarget(name: "Farseer_log_file", target: asyncTargetWrapper);
 
             // Step 4. Define rules
-            var rule2 = new LoggingRule("*", LogLevel.Trace, asyncTargetWrapper);
-            config.LoggingRules.Add(rule2);
+            var rule2 = new LoggingRule(loggerNamePattern: "*", minLevel: LogLevel.Trace, target: asyncTargetWrapper);
+            config.LoggingRules.Add(item: rule2);
 
             // Step 5. Activate the configuration
             return config;

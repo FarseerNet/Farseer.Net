@@ -10,7 +10,7 @@ namespace FS.MQ.Rocket.Remove
     internal class RocketOrderConsumer : IRocketOrderConsumer
     {
         private readonly ONSFactoryProperty _factoryInfo;
-        private OrderConsumer _consumer;
+        private          OrderConsumer      _consumer;
 
         public RocketOrderConsumer(ONSFactoryProperty factoryInfo)
         {
@@ -20,12 +20,12 @@ namespace FS.MQ.Rocket.Remove
         /// <summary>
         ///     消费订阅
         /// </summary>
-        /// <param name="listen">消息监听处理</param>
-        /// <param name="subExpression">标签</param>
+        /// <param name="listen"> 消息监听处理 </param>
+        /// <param name="subExpression"> 标签 </param>
         public void Start(MessageOrderListener listen, string subExpression = "*")
         {
-            _consumer = ONSFactory.getInstance().createOrderConsumer(_factoryInfo);
-            _consumer.subscribe(_factoryInfo.getPublishTopics(), subExpression, listen);
+            _consumer = ONSFactory.getInstance().createOrderConsumer(factoryProperty: _factoryInfo);
+            _consumer.subscribe(topic: _factoryInfo.getPublishTopics(), subExpression: subExpression, listener: listen);
             _consumer.start();
         }
 

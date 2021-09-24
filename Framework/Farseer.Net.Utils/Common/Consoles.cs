@@ -8,53 +8,56 @@ using System;
 namespace FS.Utils.Common
 {
     /// <summary>
-    /// 控制台
+    ///     控制台
     /// </summary>
     public class Consoles
     {
         /// <summary>
-        /// 将指定的字符串值（后跟当前行终止符）写入标准输出流。
+        ///     将指定的字符串值（后跟当前行终止符）写入标准输出流。
         /// </summary>
         public static void WriteLine(string value, ConsoleColor color)
         {
-            WriteLine(() => Console.WriteLine(value), color);
+            WriteLine(output: () => Console.WriteLine(value: value), color: color);
         }
+
         /// <summary>
-        /// 将指定的字符串值（后跟当前行终止符）写入标准输出流。
+        ///     将指定的字符串值（后跟当前行终止符）写入标准输出流。
         /// </summary>
         public static void WriteLine(int value, ConsoleColor color)
         {
-            WriteLine(() => Console.WriteLine(value), color);
+            WriteLine(output: () => Console.WriteLine(value: value), color: color);
         }
+
         /// <summary>
-        /// 将指定的字符串值（后跟当前行终止符）写入标准输出流。
+        ///     将指定的字符串值（后跟当前行终止符）写入标准输出流。
         /// </summary>
         public static void WriteLine(long value, ConsoleColor color)
         {
-            WriteLine(() => Console.WriteLine(value), color);
+            WriteLine(output: () => Console.WriteLine(value: value), color: color);
         }
 
         /// <summary>
-        /// 将指定的字符串值写入标准输出流。
+        ///     将指定的字符串值写入标准输出流。
         /// </summary>
         public static void Write(string value, ConsoleColor color)
         {
-            WriteLine(() => Console.Write(value), color);
-        }
-        /// <summary>
-        /// 将指定的字符串值写入标准输出流。
-        /// </summary>
-        public static void Write(int value, ConsoleColor color)
-        {
-            WriteLine(() => Console.Write(value), color);
+            WriteLine(output: () => Console.Write(value: value), color: color);
         }
 
         /// <summary>
-        /// 将指定的字符串值写入标准输出流。
+        ///     将指定的字符串值写入标准输出流。
+        /// </summary>
+        public static void Write(int value, ConsoleColor color)
+        {
+            WriteLine(output: () => Console.Write(value: value), color: color);
+        }
+
+        /// <summary>
+        ///     将指定的字符串值写入标准输出流。
         /// </summary>
         public static void Write(long value, ConsoleColor color)
         {
-            WriteLine(() => Console.Write(value), color);
+            WriteLine(output: () => Console.Write(value: value), color: color);
         }
 
         private static void WriteLine(Action output, ConsoleColor color)

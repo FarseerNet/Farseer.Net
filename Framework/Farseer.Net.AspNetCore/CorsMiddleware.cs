@@ -14,23 +14,20 @@ namespace FS
 
         public async Task Invoke(HttpContext httpContext)
         {
-            httpContext.Response.Headers.Add("Access-Control-Allow-Headers",     httpContext.Request.Headers["Access-Control-Request-Headers"]);
-            httpContext.Response.Headers.Add("Access-Control-Allow-Methods",     httpContext.Request.Headers["Access-Control-Request-Method"]);
-            httpContext.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
-            httpContext.Response.Headers.Add("Access-Control-Max-Age",           "86400"); //缓存一天
-            if (httpContext.Request.Headers["Origin"] != "")
-            {
-                httpContext.Response.Headers.Add("Access-Control-Allow-Origin", httpContext.Request.Headers["Origin"]);
-            }
+            httpContext.Response.Headers.Add(key: "Access-Control-Allow-Headers", value: httpContext.Request.Headers[key: "Access-Control-Request-Headers"]);
+            httpContext.Response.Headers.Add(key: "Access-Control-Allow-Methods", value: httpContext.Request.Headers[key: "Access-Control-Request-Method"]);
+            httpContext.Response.Headers.Add(key: "Access-Control-Allow-Credentials", value: "true");
+            httpContext.Response.Headers.Add(key: "Access-Control-Max-Age", value: "86400"); //缓存一天
+            if (httpContext.Request.Headers[key: "Origin"] != "") httpContext.Response.Headers.Add(key: "Access-Control-Allow-Origin", value: httpContext.Request.Headers[key: "Origin"]);
 
             if (httpContext.Request.Method == "OPTIONS")
             {
                 httpContext.Response.StatusCode = 204;
-                await Task.FromResult(0);
+                await Task.FromResult(result: 0);
                 return;
             }
 
-            await _next.Invoke(httpContext);
+            await _next.Invoke(context: httpContext);
         }
     }
 }

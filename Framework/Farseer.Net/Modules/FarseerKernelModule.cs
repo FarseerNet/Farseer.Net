@@ -1,10 +1,7 @@
-﻿using System.Configuration;
-using System.Net;
+﻿using System.Net;
 using System.Reflection;
-using FS.Configuration;
 using FS.Configuration.Startup;
 using FS.DI;
-using Microsoft.Extensions.Logging;
 
 namespace FS.Modules
 {
@@ -18,9 +15,9 @@ namespace FS.Modules
         /// </summary>
         public override void PreInitialize()
         {
-            IocManager.AddConventionalRegistrar(new BasicConventionalRegistrarInstaller());
+            IocManager.AddConventionalRegistrar(registrar: new BasicConventionalRegistrarInstaller());
             ServicePointManager.DefaultConnectionLimit = 512;
-            ServicePointManager.UseNagleAlgorithm = false;
+            ServicePointManager.UseNagleAlgorithm      = false;
         }
 
         /// <summary>
@@ -28,9 +25,9 @@ namespace FS.Modules
         /// </summary>
         public override void Initialize()
         {
-            foreach (var replaceAction in ((FarseerStartupConfiguration)Configuration).ServiceReplaceActions.Values) { replaceAction(); }
-			IocManager.RegisterAssemblyByConvention(this.GetType().GetTypeInfo().Assembly, new ConventionalRegistrationConfig { InstallInstallers = false });
-		}
+            foreach (var replaceAction in ((FarseerStartupConfiguration)Configuration).ServiceReplaceActions.Values) replaceAction();
+            IocManager.RegisterAssemblyByConvention(assembly: GetType().GetTypeInfo().Assembly, config: new ConventionalRegistrationConfig { InstallInstallers = false });
+        }
 
         public override void PostInitialize()
         {

@@ -11,10 +11,11 @@ namespace FS.Cache
         /// <summary>
         ///     线程锁
         /// </summary>
-        private static readonly object LockObject = new object();
+        private static readonly object LockObject = new();
+
+        private readonly Type[] _parameterTypes;
 
         private readonly Type _type;
-        private readonly Type[] _parameterTypes;
 
         private InstanceCacheManger(Type type, params object[] args)
         {
@@ -28,8 +29,8 @@ namespace FS.Cache
                 _parameterTypes = new Type[args.Length];
                 for (var i = 0; i < args.Length; i++)
                 {
-                    _parameterTypes[i] = args[i].GetType();
-                    Key += _parameterTypes[i].GetHashCode();
+                    _parameterTypes[i] =  args[i].GetType();
+                    Key                += _parameterTypes[i].GetHashCode();
                 }
             }
         }
@@ -41,20 +42,17 @@ namespace FS.Cache
         {
             lock (LockObject)
             {
-                if (CacheList.ContainsKey(Key)) { return CacheList[Key]; }
+                if (CacheList.ContainsKey(key: Key)) return CacheList[key: Key];
                 //缓存中没有找到，新建一个构造函数的委托
-                return (CacheList[Key] = ExpressionHelper.CreateInstance(_type, _parameterTypes));
+                return CacheList[key: Key] = ExpressionHelper.CreateInstance(type: _type, parameterTypes: _parameterTypes);
             }
         }
 
         /// <summary>
         ///     获取缓存
         /// </summary>
-        /// <param name="type">对象类型</param>
-        /// <param name="args">对象构造参数</param>
-        public static object Cache(Type type, params object[] args)
-        {
-            return new InstanceCacheManger(type, args).GetValue()(args);
-        }
+        /// <param name="type"> 对象类型 </param>
+        /// <param name="args"> 对象构造参数 </param>
+        public static object Cache(Type type, params object[] args) => new InstanceCacheManger(type: type, args: args).GetValue()(arg: args);
     }
 }

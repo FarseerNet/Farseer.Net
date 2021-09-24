@@ -9,12 +9,12 @@ namespace FS.MQ.Rocket.Remove
     internal class RocketOrderProduct : IRocketOrderProduct
     {
         private readonly ONSFactoryProperty _factoryInfo;
-        private OrderProducer _producer;
+        private          OrderProducer      _producer;
 
         /// <summary>
         ///     生产消息
         /// </summary>
-        /// <param name="factoryInfo">消息队列属性</param>
+        /// <param name="factoryInfo"> 消息队列属性 </param>
         public RocketOrderProduct(ONSFactoryProperty factoryInfo)
         {
             _factoryInfo = factoryInfo;
@@ -27,7 +27,7 @@ namespace FS.MQ.Rocket.Remove
         {
             if (_producer == null)
             {
-                _producer = ONSFactory.getInstance().createOrderProducer(_factoryInfo);
+                _producer = ONSFactory.getInstance().createOrderProducer(factoryProperty: _factoryInfo);
                 _producer.start();
             }
         }
@@ -35,16 +35,16 @@ namespace FS.MQ.Rocket.Remove
         /// <summary>
         ///     发送消息
         /// </summary>
-        /// <param name="message">消息主体</param>
+        /// <param name="message"> 消息主体 </param>
         /// <param name="shardingKey"> </param>
-        /// <param name="tag">消息标签</param>
-        /// <param name="key">每条消息的唯一标识</param>
+        /// <param name="tag"> 消息标签 </param>
+        /// <param name="key"> 每条消息的唯一标识 </param>
         public SendResultONS Send(string message, string shardingKey, string tag = null, string key = null)
         {
-            if (string.IsNullOrWhiteSpace(tag)) tag = "";
-            if (string.IsNullOrWhiteSpace(key)) key = Guid.NewGuid().ToString();
-            var msg = new Message(_factoryInfo.getPublishTopics(), tag, key, message);
-            return _producer.send(msg, shardingKey);
+            if (string.IsNullOrWhiteSpace(value: tag)) tag = "";
+            if (string.IsNullOrWhiteSpace(value: key)) key = Guid.NewGuid().ToString();
+            var msg                                        = new Message(topic: _factoryInfo.getPublishTopics(), tags: tag, keys: key, body: message);
+            return _producer.send(msg: msg, shardingKey: shardingKey);
         }
 
         /// <summary>

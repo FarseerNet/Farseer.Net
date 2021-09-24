@@ -5,28 +5,11 @@ using FS.MQ.Rocket.SDK.Http.Runtime.Internal.Auth;
 
 namespace FS.MQ.Rocket.SDK.Http
 {
-    public partial class MQClient : AliyunServiceClient
+    public class MQClient : AliyunServiceClient
     {
-        #region Constructors
-
-        public MQClient(string accessKeyId, string secretAccessKey, string regionEndpoint)
-            : base(accessKeyId, secretAccessKey, new MQConfig { RegionEndpoint = new Uri(regionEndpoint) }, null)
-        {
-        }
-
-		public MQClient(string accessKeyId, string secretAccessKey, string regionEndpoint, string stsToken)
-			: base(accessKeyId, secretAccessKey, new MQConfig { RegionEndpoint = new Uri(regionEndpoint) }, stsToken)
-		{
-		}
-
-        #endregion
-
         #region Overrides
 
-        protected override IServiceSigner CreateSigner()
-        {
-            return new MQSigner();
-        }
+        protected override IServiceSigner CreateSigner() => new MQSigner();
 
         #endregion
 
@@ -34,7 +17,7 @@ namespace FS.MQ.Rocket.SDK.Http
 
         protected override void Dispose(bool disposing)
         {
-            base.Dispose(disposing);
+            base.Dispose(disposing: disposing);
         }
 
         #endregion
@@ -42,38 +25,38 @@ namespace FS.MQ.Rocket.SDK.Http
 
         public MQProducer GetProducer(string instanceId, string topicName)
         {
-            if (string.IsNullOrEmpty(topicName)) {
-                throw new MQException("TopicName is null or empty");
-            }
-            return new MQProducer(instanceId, topicName, this);
+            if (string.IsNullOrEmpty(value: topicName)) throw new MQException(message: "TopicName is null or empty");
+            return new MQProducer(instanceId: instanceId, topicName: topicName, serviceClient: this);
         }
 
         public MQTransProducer GetTransProdcuer(string instanceId, string topicName, string groupId)
         {
-            if (string.IsNullOrEmpty(topicName))
-            {
-                throw new MQException("TopicName is null or empty");
-            }
+            if (string.IsNullOrEmpty(value: topicName)) throw new MQException(message: "TopicName is null or empty");
 
-            if (string.IsNullOrEmpty(groupId))
-            {
-                throw new MQException("TopicName is null or empty");
-            }
+            if (string.IsNullOrEmpty(value: groupId)) throw new MQException(message: "TopicName is null or empty");
 
-            return new MQTransProducer(instanceId, topicName, groupId, this);
+            return new MQTransProducer(instanceId: instanceId, topicName: topicName, groupId: groupId, serviceClient: this);
         }
 
-        public MQConsumer GetConsumer(string instanceId, string topicName, String consumer, String messageTag)
+        public MQConsumer GetConsumer(string instanceId, string topicName, string consumer, string messageTag)
         {
-            if (string.IsNullOrEmpty(topicName))
-            {
-                throw new MQException("TopicName is null or empty");
-            }
-            if (string.IsNullOrEmpty(consumer))
-            {
-                throw new MQException("Consumer is null or empty");
-            }
-            return new MQConsumer(instanceId, topicName, consumer, messageTag, this);
+            if (string.IsNullOrEmpty(value: topicName)) throw new MQException(message: "TopicName is null or empty");
+            if (string.IsNullOrEmpty(value: consumer)) throw new MQException(message: "Consumer is null or empty");
+            return new MQConsumer(instanceId: instanceId, topicName: topicName, consumer: consumer, messageTag: messageTag, serviceClient: this);
         }
+
+        #region Constructors
+
+        public MQClient(string accessKeyId, string secretAccessKey, string regionEndpoint)
+            : base(accessKeyId: accessKeyId, secretAccessKey: secretAccessKey, config: new MQConfig { RegionEndpoint = new Uri(uriString: regionEndpoint) }, stsToken: null)
+        {
+        }
+
+        public MQClient(string accessKeyId, string secretAccessKey, string regionEndpoint, string stsToken)
+            : base(accessKeyId: accessKeyId, secretAccessKey: secretAccessKey, config: new MQConfig { RegionEndpoint = new Uri(uriString: regionEndpoint) }, stsToken: stsToken)
+        {
+        }
+
+        #endregion
     }
 }

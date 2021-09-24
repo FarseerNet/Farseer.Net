@@ -6,11 +6,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using Castle.Core.Internal;
-using FS.DI;
 using FS.Extends;
 using FS.Utils.Common;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace FS.Core.LinkTrack
@@ -36,7 +33,7 @@ namespace FS.Core.LinkTrack
         /// <summary>
         ///     获取数据
         /// </summary>
-        public LinkTrackContext Get() => AsyncLocal.Value ??= new LinkTrackContext()
+        public LinkTrackContext Get() => AsyncLocal.Value ??= new LinkTrackContext
         {
             AppId       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
             ParentAppId = "",
@@ -48,7 +45,7 @@ namespace FS.Core.LinkTrack
         /// <summary>
         ///     写入上下文ID
         /// </summary>
-        public LinkTrackContext Set(string contextId, string parentAppId) => AsyncLocal.Value = new LinkTrackContext()
+        public LinkTrackContext Set(string contextId, string parentAppId) => AsyncLocal.Value = new LinkTrackContext
         {
             AppId       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
             ParentAppId = parentAppId,
@@ -62,13 +59,13 @@ namespace FS.Core.LinkTrack
         /// </summary>
         public void Set(LinkTrackDetail linkTrackDetail)
         {
-            Stopwatch sw = Stopwatch.StartNew();
-            linkTrackDetail._stackTrace = new StackTrace(true);
-            Get().List.Add(linkTrackDetail);
+            var sw = Stopwatch.StartNew();
+            linkTrackDetail._stackTrace = new StackTrace(fNeedFileInfo: true);
+            Get().List.Add(item: linkTrackDetail);
         }
 
         /// <summary>
-        /// 追踪数据库
+        ///     追踪数据库
         /// </summary>
         public static TrackEnd TrackDatabase(string method, DbLinkTrackDetail dbLinkTrackDetail = null)
         {
@@ -79,76 +76,76 @@ namespace FS.Core.LinkTrack
                 CallMethod        = method
             };
 
-            Current.Set(linkTrackDetail);
-            return new TrackEnd(linkTrackDetail);
+            Current.Set(linkTrackDetail: linkTrackDetail);
+            return new TrackEnd(linkTrackDetail: linkTrackDetail);
         }
 
         /// <summary>
-        /// 追踪数据库
+        ///     追踪数据库
         /// </summary>
         public static TrackEnd TrackDatabase(string method, string connectionString)
         {
             var linkTrackDetail = new LinkTrackDetail
             {
                 CallType          = EumCallType.Database,
-                DbLinkTrackDetail = new DbLinkTrackDetail() { ConnectionString = connectionString },
+                DbLinkTrackDetail = new DbLinkTrackDetail { ConnectionString = connectionString },
                 CallMethod        = method
             };
 
-            Current.Set(linkTrackDetail);
-            return new TrackEnd(linkTrackDetail);
+            Current.Set(linkTrackDetail: linkTrackDetail);
+            return new TrackEnd(linkTrackDetail: linkTrackDetail);
         }
 
         /// <summary>
-        /// 追踪数据库
+        ///     追踪数据库
         /// </summary>
         public static TrackEnd TrackDatabase(string method, string connectionString, string tableName)
         {
             var linkTrackDetail = new LinkTrackDetail
             {
                 CallType          = EumCallType.Database,
-                DbLinkTrackDetail = new DbLinkTrackDetail() { ConnectionString = connectionString, TableName = tableName },
+                DbLinkTrackDetail = new DbLinkTrackDetail { ConnectionString = connectionString, TableName = tableName },
                 CallMethod        = method
             };
-            Current.Set(linkTrackDetail);
-            return new TrackEnd(linkTrackDetail);
+            Current.Set(linkTrackDetail: linkTrackDetail);
+            return new TrackEnd(linkTrackDetail: linkTrackDetail);
         }
 
         /// <summary>
-        /// 追踪数据库
+        ///     追踪数据库
         /// </summary>
         public static TrackEnd TrackDatabase(string method, string connectionString, CommandType commandType, string sql, params DbParameter[] parameters)
         {
             var linkTrackDetail = new LinkTrackDetail
             {
                 CallType = EumCallType.Database,
-                DbLinkTrackDetail = new DbLinkTrackDetail()
+                DbLinkTrackDetail = new DbLinkTrackDetail
                 {
                     ConnectionString = connectionString,
                     CommandType      = commandType,
                     Sql              = sql,
-                    SqlParam         = parameters.ToDictionary(o => o.ParameterName, o => o.Value.ToString())
+                    SqlParam         = parameters.ToDictionary(keySelector: o => o.ParameterName, elementSelector: o => o.Value.ToString())
                 },
                 CallMethod = method
             };
-            Current.Set(linkTrackDetail);
-            return new TrackEnd(linkTrackDetail);
+            Current.Set(linkTrackDetail: linkTrackDetail);
+            return new TrackEnd(linkTrackDetail: linkTrackDetail);
         }
 
         /// <summary>
-        /// 追踪ApiServer
+        ///     追踪ApiServer
         /// </summary>
         public static TrackEnd TrackApiServer(string domain, string path, string method, string contentType, Dictionary<string, string> headerDictionary, string requestBody, string ip)
         {
             // 移除charset的类型
-            if (contentType.Contains("charset"))
+            if (contentType.Contains(value: "charset"))
             {
                 var contentTypes = contentType.Split(';').ToList();
-                contentTypes.RemoveAll(o => o.Contains("charset"));
+                contentTypes.RemoveAll(match: o => o.Contains(value: "charset"));
 
                 // 如果有application，则直接获取
-                var application = contentTypes.Find(o => o.Contains("application"));
-                contentType = !string.IsNullOrWhiteSpace(application) ? application : string.Join(";", contentTypes);
+                var application = contentTypes.Find(match: o => o.Contains(value: "application"));
+                contentType = !string.IsNullOrWhiteSpace(value: application) ? application : string.Join(separator: ";", values: contentTypes);
             }
 
             var linkTrackContext = Current.Get();
@@ -160,11 +157,11 @@ namespace FS.Core.LinkTrack
             linkTrackContext.RequestBody = requestBody;
             linkTrackContext.RequestIp   = ip;
 
-            return new TrackEnd(linkTrackContext);
+            return new TrackEnd(linkTrackContext: linkTrackContext);
         }
 
         /// <summary>
-        /// 追踪Redis
+        ///     追踪Redis
         /// </summary>
         public static TrackEnd TrackRedis(string method, string key = "", string member = "")
         {
@@ -172,18 +169,18 @@ namespace FS.Core.LinkTrack
             {
                 CallType   = EumCallType.Redis,
                 CallMethod = method,
-                Data = new Dictionary<string, string>()
+                Data = new Dictionary<string, string>
                 {
                     { "RedisKey", key },
-                    { "RedisHashFields", member },
+                    { "RedisHashFields", member }
                 }
             };
-            Current.Set(linkTrackDetail);
-            return new TrackEnd(linkTrackDetail);
+            Current.Set(linkTrackDetail: linkTrackDetail);
+            return new TrackEnd(linkTrackDetail: linkTrackDetail);
         }
 
         /// <summary>
-        /// 追踪Elasticsearch
+        ///     追踪Elasticsearch
         /// </summary>
         public static TrackEnd TrackElasticsearch(string method)
         {
@@ -192,40 +189,40 @@ namespace FS.Core.LinkTrack
                 CallType   = EumCallType.Elasticsearch,
                 CallMethod = method
             };
-            Current.Set(linkTrackDetail);
-            return new TrackEnd(linkTrackDetail);
+            Current.Set(linkTrackDetail: linkTrackDetail);
+            return new TrackEnd(linkTrackDetail: linkTrackDetail);
         }
 
         /// <summary>
-        /// 追踪Mq消费
+        ///     追踪Mq消费
         /// </summary>
         public static TrackEnd TrackMqConsumer(string endPort, string queueName, string method)
         {
-            var linkTrackContext = Current.Set(SnowflakeId.GenerateId.ToString(), "");
+            var linkTrackContext = Current.Set(contextId: SnowflakeId.GenerateId.ToString(), parentAppId: "");
             linkTrackContext.Method      = method;
             linkTrackContext.Path        = queueName;
             linkTrackContext.Domain      = endPort;
             linkTrackContext.RequestIp   = IpHelper.GetIp;
             linkTrackContext.ContentType = "MessageQueue";
-            return new TrackEnd(linkTrackContext);
+            return new TrackEnd(linkTrackContext: linkTrackContext);
         }
 
         /// <summary>
-        /// 追踪Fss
+        ///     追踪Fss
         /// </summary>
         public static TrackEnd TrackFss(string clientHost, string jobName, int taskGroupId, int taskId)
         {
-            var linkTrackContext = Current.Set(SnowflakeId.GenerateId.ToString(), "");
+            var linkTrackContext = Current.Set(contextId: SnowflakeId.GenerateId.ToString(), parentAppId: "");
             linkTrackContext.Method      = jobName;
             linkTrackContext.Path        = $"{taskGroupId}/{taskId}";
             linkTrackContext.Domain      = clientHost;
             linkTrackContext.RequestIp   = IpHelper.GetIp;
             linkTrackContext.ContentType = "Fss";
-            return new TrackEnd(linkTrackContext);
+            return new TrackEnd(linkTrackContext: linkTrackContext);
         }
 
         /// <summary>
-        /// 追踪Mq
+        ///     追踪Mq
         /// </summary>
         public static TrackEnd TrackMqProduct(string method)
         {
@@ -234,12 +231,12 @@ namespace FS.Core.LinkTrack
                 CallType   = EumCallType.Mq,
                 CallMethod = method
             };
-            Current.Set(linkTrackDetail);
-            return new TrackEnd(linkTrackDetail);
+            Current.Set(linkTrackDetail: linkTrackDetail);
+            return new TrackEnd(linkTrackDetail: linkTrackDetail);
         }
 
         /// <summary>
-        /// 追踪Grpc
+        ///     追踪Grpc
         /// </summary>
         public static TrackEnd TrackGrpc(string server, string action)
         {
@@ -247,18 +244,18 @@ namespace FS.Core.LinkTrack
             {
                 CallType = EumCallType.GrpcClient,
                 StartTs  = DateTime.Now.ToTimestamps(),
-                Data = new Dictionary<string, string>()
+                Data = new Dictionary<string, string>
                 {
                     { "Server", server },
-                    { "Action", action },
+                    { "Action", action }
                 }
             };
-            Current.Set(linkTrackDetail);
-            return new TrackEnd(linkTrackDetail);
+            Current.Set(linkTrackDetail: linkTrackDetail);
+            return new TrackEnd(linkTrackDetail: linkTrackDetail);
         }
 
         /// <summary>
-        /// 追踪Http
+        ///     追踪Http
         /// </summary>
         public static TrackEnd TrackHttp(string url, string method, Dictionary<string, string> headerData, string requestBody)
         {
@@ -266,20 +263,20 @@ namespace FS.Core.LinkTrack
             {
                 CallType = EumCallType.HttpClient,
                 StartTs  = DateTime.Now.ToTimestamps(),
-                Data = new Dictionary<string, string>()
+                Data = new Dictionary<string, string>
                 {
                     { "Url", url },
                     { "Method", method },
                     { "RequestBody", requestBody },
-                    { "Header", headerData != null ? JsonConvert.SerializeObject(headerData) : "{}" },
+                    { "Header", headerData != null ? JsonConvert.SerializeObject(value: headerData) : "{}" }
                 }
             };
-            Current.Set(linkTrackDetail);
-            return new TrackEnd(linkTrackDetail);
+            Current.Set(linkTrackDetail: linkTrackDetail);
+            return new TrackEnd(linkTrackDetail: linkTrackDetail);
         }
 
         /// <summary>
-        /// 手动埋点
+        ///     手动埋点
         /// </summary>
         public static TrackEnd Track(string message)
         {
@@ -287,13 +284,13 @@ namespace FS.Core.LinkTrack
             {
                 CallType = EumCallType.Custom,
                 StartTs  = DateTime.Now.ToTimestamps(),
-                Data = new Dictionary<string, string>()
+                Data = new Dictionary<string, string>
                 {
                     { "Message", message }
                 }
             };
-            Current.Set(linkTrackDetail);
-            return new TrackEnd(linkTrackDetail);
+            Current.Set(linkTrackDetail: linkTrackDetail);
+            return new TrackEnd(linkTrackDetail: linkTrackDetail);
         }
     }
 }

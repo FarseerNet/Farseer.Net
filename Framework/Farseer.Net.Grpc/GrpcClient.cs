@@ -9,14 +9,13 @@ using Microsoft.Extensions.Logging;
 namespace Farseer.Net.Grpc
 {
     /// <summary>
-    /// CSL GRPC服务
+    ///     CSL GRPC服务
     /// </summary>
     public class GrpcClient : IGrpcClient
     {
         private readonly GrpcItemConfig _config;
-        private          GrpcChannel    _grpcChannel;
         private          CallInvoker    _callInvoker;
-        public           IIocManager    IocManager { get; set; }
+        private          GrpcChannel    _grpcChannel;
 
         public GrpcClient(GrpcItemConfig config)
         {
@@ -24,54 +23,56 @@ namespace Farseer.Net.Grpc
             Connect();
         }
 
-        private void Connect()
-        {
-            _grpcChannel?.Dispose();
-            _grpcChannel = GrpcChannel.ForAddress(_config.Server);
-            _callInvoker = _grpcChannel.Intercept(new GrpcInterceptor());
-        }
+        public IIocManager IocManager { get; set; }
 
         /// <summary>
-        /// 访问Grpc服务
+        ///     访问Grpc服务
         /// </summary>
-        /// <param name="func"></param>
-        /// <typeparam name="TClientBase"></typeparam>
-        /// <typeparam name="TResponse"></typeparam>
-        /// <returns></returns>
+        /// <param name="func"> </param>
+        /// <typeparam name="TClientBase"> </typeparam>
+        /// <typeparam name="TResponse"> </typeparam>
+        /// <returns> </returns>
         public TResponse Try<TClientBase, TResponse>(Func<TClientBase, TResponse> func) where TClientBase : ClientBase<TClientBase>
         {
             try
             {
-                var clientBase = (TClientBase) Activator.CreateInstance(typeof(TClientBase), _callInvoker);
-                return func(clientBase);
+                var clientBase = (TClientBase)Activator.CreateInstance(type: typeof(TClientBase), _callInvoker);
+                return func(arg: clientBase);
             }
             catch (RpcException e)
             {
-                return Catch<TResponse>(e, nameof(TClientBase));
+                return Catch<TResponse>(e: e, clientName: nameof(TClientBase));
             }
             catch (Exception e)
             {
-                IocManager.Logger<GrpcClient>().LogError(e.Message, e);
+                IocManager.Logger<GrpcClient>().LogError(message: e.Message, e);
                 throw;
             }
+        }
+
+        private void Connect()
+        {
+            _grpcChannel?.Dispose();
+            _grpcChannel = GrpcChannel.ForAddress(address: _config.Server);
+            _callInvoker = _grpcChannel.Intercept(interceptor: new GrpcInterceptor());
         }
 
         private TResponse Catch<TResponse>(RpcException e, string clientName)
         {
             switch (e.Status.StatusCode)
             {
-                case StatusCode.Internal when e.Status.Detail.Contains("timed out"):
-                    IocManager.Logger<GrpcClient>().LogWarning($"请求{clientName}超时，自动重连");
+                case StatusCode.Internal when e.Status.Detail.Contains(value: "timed out"):
+                    IocManager.Logger<GrpcClient>().LogWarning(message: $"请求{clientName}超时，自动重连");
                     Connect();
-                    throw new Exception($"请求{clientName}超时，请重试");
+                    throw new Exception(message: $"请求{clientName}超时，请重试");
                 case StatusCode.DeadlineExceeded:
-                    IocManager.Logger<GrpcClient>().LogWarning($"请求{clientName}超时 {e.ToString()}");
-                    throw new Exception($"请求{clientName}超时");
+                    IocManager.Logger<GrpcClient>().LogWarning(message: $"请求{clientName}超时 {e}");
+                    throw new Exception(message: $"请求{clientName}超时");
                 case StatusCode.Unimplemented:
-                    IocManager.Logger<GrpcClient>().LogWarning($"请求{clientName}的服务不存在");
-                    throw new Exception($"请求{clientName}的服务不存在");
+                    IocManager.Logger<GrpcClient>().LogWarning(message: $"请求{clientName}的服务不存在");
+                    throw new Exception(message: $"请求{clientName}的服务不存在");
                 default:
-                    IocManager.Logger<GrpcClient>().LogError(e, e.Message);
+                    IocManager.Logger<GrpcClient>().LogError(exception: e, message: e.Message);
                     throw e;
             }
         }

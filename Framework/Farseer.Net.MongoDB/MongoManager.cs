@@ -4,28 +4,27 @@ using MongoDB.Driver;
 namespace FS.MongoDB
 {
     /// <summary>
-    /// ES管理类
+    ///     ES管理类
     /// </summary>
     public class MongoManager : IMongoManager
     {
+        private static   MongoClient     _mongoClient;
         private readonly MongoItemConfig _config;
-        private static MongoClient _mongoClient;
+
+        /// <summary>
+        ///     构造函数
+        /// </summary>
+        /// <param name="config"> 配置 </param>
+        public MongoManager(MongoItemConfig config)
+        {
+            _config = config;
+            Client  = CreateMonggoInstance();
+        }
 
         public MongoClient Client { get; }
 
         /// <summary>
-        /// 构造函数
-        /// </summary>
-        /// <param name="config">配置</param>
-
-        public MongoManager(MongoItemConfig config)
-        {
-            _config = config;
-            Client = CreateMonggoInstance();
-        }
-
-        /// <summary>
-        /// 创建ElasticClient实例
+        ///     创建ElasticClient实例
         /// </summary>
         private MongoClient CreateMonggoInstance()
         {
@@ -37,8 +36,9 @@ namespace FS.MongoDB
                 //_elasticClient = new ElasticClient(settings);
 
                 var conStr = _config.Server;
-                _mongoClient = new MongoClient(conStr);
+                _mongoClient = new MongoClient(connectionString: conStr);
             }
+
             return _mongoClient;
         }
     }

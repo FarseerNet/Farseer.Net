@@ -9,29 +9,25 @@ using Confluent.Kafka;
 namespace FS.MQ.Kafka
 {
     /// <summary>
-    /// 
     /// </summary>
     public class KafkaClient
     {
         /// <summary>
-        /// 
         /// </summary>
         internal Consumer<string, string> Consumer { get; set; }
 
 
         /// <summary>
-        /// 
         /// </summary>
-        /// <param name="topic"></param>
-        /// <param name="handle"></param>
+        /// <param name="topic"> </param>
+        /// <param name="handle"> </param>
         public void Consume(string topic, Action<Message<string, string>> handle)
         {
             Consumer.OnMessage += (_, msg) =>
             {
-                if (topic == msg.Topic)
-                    handle(msg);
+                if (topic == msg.Topic) handle(obj: msg);
             };
-            Consumer.Subscribe(topic);
+            Consumer.Subscribe(topic: topic);
         }
     }
 }

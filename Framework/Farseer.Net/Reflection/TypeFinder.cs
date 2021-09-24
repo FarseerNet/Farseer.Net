@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Castle.Core.Internal;
-using Castle.Core.Logging;
 using FS.DI;
 using Microsoft.Extensions.Logging;
 
 namespace FS.Reflection
 {
     /// <summary>
-    /// 类型查找器
+    ///     类型查找器
     /// </summary>
     public class TypeFinder : ITypeFinder
     {
@@ -19,7 +18,7 @@ namespace FS.Reflection
         private          Type[]          _types;
 
         /// <summary>
-        /// 构造函数
+        ///     构造函数
         /// </summary>
         public TypeFinder(IAssemblyFinder assemblyFinder)
         {
@@ -27,20 +26,17 @@ namespace FS.Reflection
         }
 
         /// <summary>
-        /// 查找类型
+        ///     查找类型
         /// </summary>
-        public Type[] Find(Func<Type, bool> predicate)
-        {
-            return GetAllTypes().Where(predicate).ToArray();
-        }
+        public Type[] Find(Func<Type, bool> predicate) => GetAllTypes().Where(predicate: predicate).ToArray();
 
         /// <summary>
-        /// 查找所有的类型
+        ///     查找所有的类型
         /// </summary>
         public Type[] FindAll() => GetAllTypes().ToArray();
 
         /// <summary>
-        /// 获取所有的类型
+        ///     获取所有的类型
         /// </summary>
         private Type[] GetAllTypes()
         {
@@ -48,10 +44,7 @@ namespace FS.Reflection
             {
                 lock (_syncObj)
                 {
-                    if (_types == null)
-                    {
-                        _types = CreateTypeList().ToArray();
-                    }
+                    if (_types == null) _types = CreateTypeList().ToArray();
                 }
             }
 
@@ -59,9 +52,9 @@ namespace FS.Reflection
         }
 
         /// <summary>
-        /// 创建类型列表
+        ///     创建类型列表
         /// </summary>
-        /// <returns></returns>
+        /// <returns> </returns>
         private List<Type> CreateTypeList()
         {
             var allTypes = new List<Type>();
@@ -69,7 +62,6 @@ namespace FS.Reflection
             var assemblies = _assemblyFinder.GetAllAssemblies().Distinct();
 
             foreach (var assembly in assemblies)
-            {
                 try
                 {
                     Type[] typesInThisAssembly;
@@ -83,18 +75,14 @@ namespace FS.Reflection
                         typesInThisAssembly = ex.Types;
                     }
 
-                    if (typesInThisAssembly.IsNullOrEmpty())
-                    {
-                        continue;
-                    }
+                    if (typesInThisAssembly.IsNullOrEmpty()) continue;
 
-                    allTypes.AddRange(typesInThisAssembly.Where(type => type != null));
+                    allTypes.AddRange(collection: typesInThisAssembly.Where(predicate: type => type != null));
                 }
                 catch (Exception ex)
                 {
-                    IocManager.Instance.Logger<TypeFinder>().LogWarning(ex, ex.ToString());
+                    IocManager.Instance.Logger<TypeFinder>().LogWarning(exception: ex, message: ex.ToString());
                 }
-            }
 
             return allTypes;
         }

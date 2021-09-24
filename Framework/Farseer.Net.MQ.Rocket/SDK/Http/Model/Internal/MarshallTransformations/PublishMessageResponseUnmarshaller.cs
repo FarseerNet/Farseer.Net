@@ -3,7 +3,6 @@ using System.Net;
 using System.Xml;
 using FS.MQ.Rocket.SDK.Http.Model.exp;
 using FS.MQ.Rocket.SDK.Http.Runtime;
-using FS.MQ.Rocket.SDK.Http.Runtime.Internal;
 using FS.MQ.Rocket.SDK.Http.Runtime.Internal.Transform;
 using FS.MQ.Rocket.SDK.Http.Util;
 
@@ -11,13 +10,14 @@ namespace FS.MQ.Rocket.SDK.Http.Model.Internal.MarshallTransformations
 {
     internal class PublishMessageResponseUnmarshaller : XmlResponseUnmarshaller
     {
+        public static PublishMessageResponseUnmarshaller Instance { get; } = new PublishMessageResponseUnmarshaller();
+
         public override WebServiceResponse Unmarshall(XmlUnmarshallerContext context)
         {
-            XmlTextReader reader = new XmlTextReader(context.ResponseStream);
-            PublishMessageResponse response = new PublishMessageResponse();
+            var reader   = new XmlTextReader(input: context.ResponseStream);
+            var response = new PublishMessageResponse();
 
             while (reader.Read())
-            {
                 switch (reader.NodeType)
                 {
                     case XmlNodeType.Element:
@@ -36,39 +36,21 @@ namespace FS.MQ.Rocket.SDK.Http.Model.Internal.MarshallTransformations
                                 response.ReeceiptHandle = reader.Value;
                                 break;
                         }
+
                         break;
                 }
-            }
+
             reader.Close();
             return response;
         }
 
         public override AliyunServiceException UnmarshallException(XmlUnmarshallerContext context, Exception innerException, HttpStatusCode statusCode)
         {
-            ErrorResponse errorResponse = ErrorResponseUnmarshaller.Instance.Unmarshall(context);
-            if (errorResponse.Code != null && errorResponse.Code.Equals(ErrorCode.TopicNotExist))
-            {
-                return new TopicNotExistException(errorResponse.Message, innerException, errorResponse.Code, errorResponse.RequestId, errorResponse.HostId, statusCode);
-            }
-            if (errorResponse.Code != null && errorResponse.Code.Equals(ErrorCode.MalformedXML))
-            {
-                return new MalformedXMLException(errorResponse.Message, innerException, errorResponse.Code, errorResponse.RequestId, errorResponse.HostId, statusCode);
-            }
-            if (errorResponse.Code != null && errorResponse.Code.Equals(ErrorCode.InvalidArgument))
-            {
-                return new InvalidArgumentException(errorResponse.Message, innerException, errorResponse.Code, errorResponse.RequestId, errorResponse.HostId, statusCode);
-            }
-            return new MQException(errorResponse.Message, innerException, errorResponse.Code, errorResponse.RequestId, errorResponse.HostId, statusCode);
+            var errorResponse = ErrorResponseUnmarshaller.Instance.Unmarshall(context: context);
+            if (errorResponse.Code != null && errorResponse.Code.Equals(value: ErrorCode.TopicNotExist)) return new TopicNotExistException(message: errorResponse.Message, innerException: innerException, errorCode: errorResponse.Code, requestId: errorResponse.RequestId, hostId: errorResponse.HostId, statusCode: statusCode);
+            if (errorResponse.Code != null && errorResponse.Code.Equals(value: ErrorCode.MalformedXML)) return new MalformedXMLException(message: errorResponse.Message, innerException: innerException, errorCode: errorResponse.Code, requestId: errorResponse.RequestId, hostId: errorResponse.HostId, statusCode: statusCode);
+            if (errorResponse.Code != null && errorResponse.Code.Equals(value: ErrorCode.InvalidArgument)) return new InvalidArgumentException(message: errorResponse.Message, innerException: innerException, errorCode: errorResponse.Code, requestId: errorResponse.RequestId, hostId: errorResponse.HostId, statusCode: statusCode);
+            return new MQException(message: errorResponse.Message, innerException: innerException, errorCode: errorResponse.Code, requestId: errorResponse.RequestId, hostId: errorResponse.HostId, statusCode: statusCode);
         }
-
-        private static PublishMessageResponseUnmarshaller _instance = new PublishMessageResponseUnmarshaller();
-        public static PublishMessageResponseUnmarshaller Instance
-        {
-            get
-            {
-                return _instance;
-            }
-        }
-
     }
 }

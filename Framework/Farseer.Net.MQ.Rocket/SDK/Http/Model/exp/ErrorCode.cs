@@ -1,5 +1,4 @@
-﻿
-namespace FS.MQ.Rocket.SDK.Http.Model.exp
+﻿namespace FS.MQ.Rocket.SDK.Http.Model.exp
 {
     public static class ErrorCode
     {
@@ -9,13 +8,12 @@ namespace FS.MQ.Rocket.SDK.Http.Model.exp
 
         public const string MessageNotExist = "MessageNotExist";
 
-        public const string TopicNotExist = "TopicNotExist";
+        public const string TopicNotExist        = "TopicNotExist";
         public const string SubscriptionNotExist = "SubscriptionNotExist";
 
         public const string ReceiptHandleError = "ReceiptHandleError";
-        public const string MalformedXML = "MalformedXML";
+        public const string MalformedXML       = "MalformedXML";
 
         public const string AckMessageFail = "AckMessageFail";
-
     }
 }

@@ -1,9 +1,6 @@
 ﻿using System.Reflection;
-using FS.Configuration;
 using FS.DI;
-using FS.Log.Configuration;
 using FS.Modules;
-using Microsoft.Extensions.Logging;
 
 namespace FS.Log
 {
@@ -21,8 +18,8 @@ namespace FS.Log
         /// </summary>
         public override void Initialize()
         {
-            IocManager.Container.Install(new NLogInstaller(IocManager));
-            IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly(), new ConventionalRegistrationConfig { InstallInstallers = false });
+            IocManager.Container.Install(new NLogInstaller(iocResolver: IocManager));
+            IocManager.RegisterAssemblyByConvention(assembly: Assembly.GetExecutingAssembly(), config: new ConventionalRegistrationConfig { InstallInstallers = false });
         }
     }
 }

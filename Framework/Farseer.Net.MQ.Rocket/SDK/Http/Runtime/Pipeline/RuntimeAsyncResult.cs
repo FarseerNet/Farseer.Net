@@ -5,76 +5,68 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Pipeline
 {
     public class RuntimeAsyncResult : IAsyncResult, IDisposable
     {
-        private object _lockObj;
-        private ManualResetEvent _waitHandle;
-        private bool _disposed = false;
-        private bool _callbackInvoked = false;
+        private          bool             _callbackInvoked;
+        private          bool             _disposed;
+        private readonly object           _lockObj;
+        private          ManualResetEvent _waitHandle;
 
         public RuntimeAsyncResult(AsyncCallback asyncCallback, object asyncState)
         {
-            _lockObj = new object();
+            _lockObj         = new object();
             _callbackInvoked = false;
 
-            this.AsyncState = asyncState;
-            this.IsCompleted = false;
-            this.AsyncCallback = asyncCallback;
-            this.CompletedSynchronously = false;
+            AsyncState             = asyncState;
+            IsCompleted            = false;
+            AsyncCallback          = asyncCallback;
+            CompletedSynchronously = false;
         }
 
-        public AsyncCallback AsyncCallback { get; private set; }
-
-        public object AsyncState { get; private set; }
-
-        public WaitHandle AsyncWaitHandle
-        {
-            get
-            {
-                if (this._waitHandle != null)
-                {
-                    return this._waitHandle;
-                }
-
-                lock (this._lockObj)
-                {
-                    if (this._waitHandle == null)
-                    {
-                        this._waitHandle = new ManualResetEvent(this.IsCompleted);
-                    }
-                }
-                return this._waitHandle;
-            }
-        }
-
-        public bool CompletedSynchronously { get; private set; }
-
-        public bool IsCompleted { get; private set; }
+        public AsyncCallback AsyncCallback { get; }
 
         public Exception Exception { get; set; }
 
         public WebServiceResponse Response { get; set; }
 
+        public object AsyncState { get; }
+
+        public WaitHandle AsyncWaitHandle
+        {
+            get
+            {
+                if (_waitHandle != null) return _waitHandle;
+
+                lock (_lockObj)
+                {
+                    if (_waitHandle == null) _waitHandle = new ManualResetEvent(initialState: IsCompleted);
+                }
+
+                return _waitHandle;
+            }
+        }
+
+        public bool CompletedSynchronously { get; }
+
+        public bool IsCompleted { get; private set; }
+
         internal void SignalWaitHandle()
         {
-            this.IsCompleted = true;
-            if (this._waitHandle != null)
-            {
-                this._waitHandle.Set();
-            }
+            IsCompleted = true;
+            if (_waitHandle != null) _waitHandle.Set();
         }
 
         internal void HandleException(Exception exception)
         {
-            this.Exception = exception;
+            Exception = exception;
             InvokeCallback();
         }
 
         internal void InvokeCallback()
         {
-            this.SignalWaitHandle();
-            if (!_callbackInvoked && this.AsyncCallback != null)
+            SignalWaitHandle();
+            if (!_callbackInvoked && AsyncCallback != null)
             {
                 _callbackInvoked = true;
-                this.AsyncCallback(this);
+                AsyncCallback(ar: this);
             }
         }
 
@@ -82,7 +74,7 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Pipeline
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!this._disposed)
+            if (!_disposed)
             {
                 if (disposing && _waitHandle != null)
                 {
@@ -93,14 +85,15 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Pipeline
 #endif
                     _waitHandle = null;
                 }
-                this._disposed = true;
+
+                _disposed = true;
             }
         }
 
         public void Dispose()
         {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
+            Dispose(disposing: true);
+            GC.SuppressFinalize(obj: this);
         }
 
         #endregion

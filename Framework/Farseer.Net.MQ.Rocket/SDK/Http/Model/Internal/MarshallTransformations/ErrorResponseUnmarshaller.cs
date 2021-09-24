@@ -6,20 +6,21 @@ using FS.MQ.Rocket.SDK.Http.Util;
 namespace FS.MQ.Rocket.SDK.Http.Model.Internal.MarshallTransformations
 {
     /// <summary>
-    ///    Response Unmarshaller for all Errors
+    ///     Response Unmarshaller for all Errors
     /// </summary>
     internal class ErrorResponseUnmarshaller : IUnmarshaller<ErrorResponse, XmlUnmarshallerContext>
     {
+        public static ErrorResponseUnmarshaller Instance { get; } = new ErrorResponseUnmarshaller();
+
         /// <summary>
-        /// Build an ErrorResponse from XML 
+        ///     Build an ErrorResponse from XML
         /// </summary>
         public ErrorResponse Unmarshall(XmlUnmarshallerContext context)
         {
-            XmlTextReader reader = new XmlTextReader(context.ResponseStream);
+            var reader = new XmlTextReader(input: context.ResponseStream);
 
-            ErrorResponse errorResponse = new ErrorResponse();
+            var errorResponse = new ErrorResponse();
             while (reader.Read())
-            {
                 switch (reader.NodeType)
                 {
                     case XmlNodeType.Element:
@@ -28,31 +29,35 @@ namespace FS.MQ.Rocket.SDK.Http.Model.Internal.MarshallTransformations
                             reader.Read();
                             errorResponse.Code = reader.Value;
                         }
+
                         if (reader.LocalName == Constants.XML_ELEMENT_MESSAGE)
                         {
                             reader.Read();
                             errorResponse.Message = reader.Value;
                         }
+
                         if (reader.LocalName == Constants.XML_ELEMENT_REQUEST_ID)
                         {
                             reader.Read();
                             errorResponse.RequestId = reader.Value;
                         }
+
                         if (reader.LocalName == Constants.XML_ELEMENT_HOST_ID)
                         {
                             reader.Read();
                             errorResponse.HostId = reader.Value;
                         }
+
                         break;
                 }
-            }
+
             reader.Close();
             return errorResponse;
         }
 
         public ErrorResponse Unmarshall(XmlTextReader reader)
         {
-            ErrorResponse errorResponse = new ErrorResponse();
+            var errorResponse = new ErrorResponse();
             do
             {
                 switch (reader.NodeType)
@@ -63,35 +68,32 @@ namespace FS.MQ.Rocket.SDK.Http.Model.Internal.MarshallTransformations
                             reader.Read();
                             errorResponse.Code = reader.Value;
                         }
+
                         if (reader.LocalName == Constants.XML_ELEMENT_MESSAGE)
                         {
                             reader.Read();
                             errorResponse.Message = reader.Value;
                         }
+
                         if (reader.LocalName == Constants.XML_ELEMENT_REQUEST_ID)
                         {
                             reader.Read();
                             errorResponse.RequestId = reader.Value;
                         }
+
                         if (reader.LocalName == Constants.XML_ELEMENT_HOST_ID)
                         {
                             reader.Read();
                             errorResponse.HostId = reader.Value;
                         }
+
                         break;
                 }
-            } while (reader.Read());
+            }
+            while (reader.Read());
+
             reader.Close();
             return errorResponse;
-        }
-
-        private static ErrorResponseUnmarshaller _instance = new ErrorResponseUnmarshaller();
-        public static ErrorResponseUnmarshaller Instance
-        {
-            get
-            {
-                return _instance;
-            }
         }
     }
 }

@@ -6,56 +6,47 @@ using System.Linq;
 
 namespace FS.MQ.Rocket.SDK.Http.Runtime.Pipeline
 {
-    public partial class RuntimePipeline : IDisposable
+    public class RuntimePipeline : IDisposable
     {
-        #region Private members
+        #region Properties
 
-        bool _disposed;
-
-        // The top-most handler in the pipeline.
-        IPipelineHandler _handler;
+        public IPipelineHandler Handler { get; private set; }
 
         #endregion
 
-        #region Properties
+        #region Private members
 
-        public IPipelineHandler Handler
-        {
-            get { return _handler; }
-        }
+        private bool _disposed;
+
+        // The top-most handler in the pipeline.
 
         #endregion
 
         #region Constructors
 
-        public RuntimePipeline(IPipelineHandler handler) 
+        public RuntimePipeline(IPipelineHandler handler)
         {
-            if (handler == null)
-                throw new ArgumentNullException("handler");
+            if (handler == null) throw new ArgumentNullException(paramName: "handler");
 
-            _handler = handler;
+            Handler = handler;
         }
 
         public RuntimePipeline(IList<IPipelineHandler> handlers)
         {
-            if (handlers == null || handlers.Count == 0)
-                throw new ArgumentNullException("handlers");
-            
-            foreach (var handler in handlers)
-            {
-                this.AddHandler(handler);
-            }
+            if (handlers == null || handlers.Count == 0) throw new ArgumentNullException(paramName: "handlers");
+
+            foreach (var handler in handlers) AddHandler(handler: handler);
         }
 
         #endregion
 
         #region Invoke methods
-        
+
         public IResponseContext InvokeSync(IExecutionContext executionContext)
         {
             ThrowIfDisposed();
 
-            _handler.InvokeSync(executionContext);            
+            Handler.InvokeSync(executionContext: executionContext);
             return executionContext.ResponseContext;
         }
 
@@ -63,7 +54,7 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Pipeline
         {
             ThrowIfDisposed();
 
-            return _handler.InvokeAsync(executionContext);
+            return Handler.InvokeAsync(executionContext: executionContext);
         }
 
         #endregion
@@ -72,80 +63,80 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Pipeline
 
         public void AddHandler(IPipelineHandler handler)
         {
-            if (handler == null)
-                throw new ArgumentNullException("handler");
+            if (handler == null) throw new ArgumentNullException(paramName: "handler");
 
             ThrowIfDisposed();
 
-            var innerMostHandler = GetInnermostHandler(handler);
+            var innerMostHandler = GetInnermostHandler(handler: handler);
 
-            if (_handler != null)
+            if (Handler != null)
             {
-                innerMostHandler.InnerHandler = _handler;
-                _handler.OuterHandler = innerMostHandler;    
+                innerMostHandler.InnerHandler = Handler;
+                Handler.OuterHandler          = innerMostHandler;
             }
-            
-            _handler = handler;
 
-            SetHandlerProperties(handler);
+            Handler = handler;
+
+            SetHandlerProperties(handler: handler);
         }
-        
+
         public void AddHandlerAfter<T>(IPipelineHandler handler)
             where T : IPipelineHandler
         {
-            if (handler == null)
-                throw new ArgumentNullException("handler");
+            if (handler == null) throw new ArgumentNullException(paramName: "handler");
 
             ThrowIfDisposed();
 
-            var type = typeof(T);
-            var current = _handler;
+            var type    = typeof(T);
+            var current = Handler;
             while (current != null)
             {
                 if (current.GetType() == type)
                 {
-                    InsertHandler(handler, current);
-                    SetHandlerProperties(handler);
+                    InsertHandler(handler: handler, current: current);
+                    SetHandlerProperties(handler: handler);
                     return;
                 }
+
                 current = current.InnerHandler;
             }
+
             throw new InvalidOperationException(
-                string.Format(CultureInfo.InvariantCulture, "Cannot find a handler of type {0}", type.Name));
+                                                message: string.Format(provider: CultureInfo.InvariantCulture, format: "Cannot find a handler of type {0}", arg0: type.Name));
         }
-                        
+
         public void AddHandlerBefore<T>(IPipelineHandler handler)
             where T : IPipelineHandler
         {
-            if (handler == null)
-                throw new ArgumentNullException("handler");
+            if (handler == null) throw new ArgumentNullException(paramName: "handler");
 
             ThrowIfDisposed();
 
             var type = typeof(T);
-            if (_handler.GetType() == type)
+            if (Handler.GetType() == type)
             {
                 // Add the handler to the top of the pipeline
-                AddHandler(handler);
-                SetHandlerProperties(handler);
+                AddHandler(handler: handler);
+                SetHandlerProperties(handler: handler);
                 return;
             }
 
-            var current = _handler;
+            var current = Handler;
             while (current != null)
             {
-                if (current.InnerHandler != null &&
+                if (current.InnerHandler           != null &&
                     current.InnerHandler.GetType() == type)
                 {
-                    InsertHandler(handler, current);
-                    SetHandlerProperties(handler);
+                    InsertHandler(handler: handler, current: current);
+                    SetHandlerProperties(handler: handler);
                     return;
                 }
+
                 current = current.InnerHandler;
             }
 
             throw new InvalidOperationException(
-                string.Format(CultureInfo.InvariantCulture, "Cannot find a handler of type {0}", type.Name));
+                                                message: string.Format(provider: CultureInfo.InvariantCulture, format: "Cannot find a handler of type {0}", arg0: type.Name));
         }
 
         public void RemoveHandler<T>()
@@ -155,31 +146,28 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Pipeline
             var type = typeof(T);
 
             IPipelineHandler previous = null;
-            var current = _handler;
+            var              current  = Handler;
 
             while (current != null)
             {
                 if (current.GetType() == type)
                 {
                     // Cannot remove the handler if it's the only one in the pipeline
-                    if (current == _handler && _handler.InnerHandler == null)
+                    if (current == Handler && Handler.InnerHandler == null)
                     {
                         throw new InvalidOperationException(
-                            "The pipeline contains a single handler, cannot remove the only handler in the pipeline.");
+                                                            message: "The pipeline contains a single handler, cannot remove the only handler in the pipeline.");
                     }
 
                     // current is the top, point top to current's inner handler
-                    if (current == _handler)                    
-                        _handler = current.InnerHandler;
-                    
+                    if (current == Handler) Handler = current.InnerHandler;
+
 
                     // Wireup outer handler to current's inner handler
-                    if (current.OuterHandler != null)                    
-                        current.OuterHandler.InnerHandler = current.InnerHandler;
+                    if (current.OuterHandler != null) current.OuterHandler.InnerHandler = current.InnerHandler;
 
                     // Wireup inner handler to current's outer handler
-                    if (current.InnerHandler != null)
-                        current.InnerHandler.OuterHandler = current.OuterHandler;
+                    if (current.InnerHandler != null) current.InnerHandler.OuterHandler = current.OuterHandler;
 
                     // Cleanup current
                     current.InnerHandler = null;
@@ -189,24 +177,23 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Pipeline
                 }
 
                 previous = current;
-                current = current.InnerHandler;
+                current  = current.InnerHandler;
             }
 
             throw new InvalidOperationException(
-                string.Format(CultureInfo.InvariantCulture, "Cannot find a handler of type {0}", type.Name));
+                                                message: string.Format(provider: CultureInfo.InvariantCulture, format: "Cannot find a handler of type {0}", arg0: type.Name));
         }
 
         public void ReplaceHandler<T>(IPipelineHandler handler)
             where T : IPipelineHandler
         {
-            if (handler == null)
-                throw new ArgumentNullException("handler");
+            if (handler == null) throw new ArgumentNullException(paramName: "handler");
 
             ThrowIfDisposed();
 
-            var type = typeof(T);
+            var              type     = typeof(T);
             IPipelineHandler previous = null;
-            var current = _handler;
+            var              current  = Handler;
             while (current != null)
             {
                 if (current.GetType() == type)
@@ -214,7 +201,7 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Pipeline
                     // Replace current with handler.
                     handler.InnerHandler = current.InnerHandler;
                     handler.OuterHandler = current.OuterHandler;
-                    if(previous != null)
+                    if (previous != null)
                     {
                         // Wireup previous handler
                         previous.InnerHandler = handler;
@@ -222,7 +209,7 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Pipeline
                     else
                     {
                         // Current is the top, replace it.
-                        _handler = handler;                        
+                        Handler = handler;
                     }
 
                     if (current.InnerHandler != null)
@@ -230,19 +217,21 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Pipeline
                         // Wireup next handler
                         current.InnerHandler.OuterHandler = handler;
                     }
-                    
+
                     // Cleanup current
                     current.InnerHandler = null;
                     current.OuterHandler = null;
 
-                    SetHandlerProperties(handler);
+                    SetHandlerProperties(handler: handler);
                     return;
                 }
+
                 previous = current;
-                current = current.InnerHandler;                
+                current  = current.InnerHandler;
             }
+
             throw new InvalidOperationException(
-                string.Format(CultureInfo.InvariantCulture, "Cannot find a handler of type {0}", type.Name));
+                                                message: string.Format(provider: CultureInfo.InvariantCulture, format: "Cannot find a handler of type {0}", arg0: type.Name));
         }
 
         private static void InsertHandler(IPipelineHandler handler, IPipelineHandler current)
@@ -250,24 +239,21 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Pipeline
             var next = current.InnerHandler;
             current.InnerHandler = handler;
             handler.OuterHandler = current;
-            
-            if (next!=null)
+
+            if (next != null)
             {
-                var innerMostHandler = GetInnermostHandler(handler);
+                var innerMostHandler = GetInnermostHandler(handler: handler);
                 innerMostHandler.InnerHandler = next;
-                next.OuterHandler = innerMostHandler;
+                next.OuterHandler             = innerMostHandler;
             }
         }
 
         private static IPipelineHandler GetInnermostHandler(IPipelineHandler handler)
         {
-            Debug.Assert(handler != null);
+            Debug.Assert(condition: handler != null);
 
-            var current = handler;
-            while (current.InnerHandler != null)
-            {
-                current = current.InnerHandler;
-            }
+            var current                                  = handler;
+            while (current.InnerHandler != null) current = current.InnerHandler;
             return current;
         }
 
@@ -276,18 +262,12 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Pipeline
             ThrowIfDisposed();
         }
 
-        public List<IPipelineHandler> Handlers
-        {
-            get
-            {
-                return EnumerateHandlers().ToList();
-            }
-        }
+        public List<IPipelineHandler> Handlers => EnumerateHandlers().ToList();
 
         public IEnumerable<IPipelineHandler> EnumerateHandlers()
         {
-            var handler = this.Handler;
-            while(handler != null)
+            var handler = Handler;
+            while (handler != null)
             {
                 yield return handler;
                 handler = handler.InnerHandler;
@@ -300,26 +280,22 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Pipeline
 
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            Dispose(disposing: true);
+            GC.SuppressFinalize(obj: this);
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            if (_disposed)
-                return;
+            if (_disposed) return;
 
             if (disposing)
             {
-                var handler = this.Handler;
+                var handler = Handler;
                 while (handler != null)
                 {
                     var innerHandler = handler.InnerHandler;
-                    var disposable = handler as IDisposable;
-                    if (disposable != null)
-                    {
-                        disposable.Dispose();
-                    }
+                    var disposable   = handler as IDisposable;
+                    if (disposable != null) disposable.Dispose();
                     handler = innerHandler;
                 }
 
@@ -329,8 +305,7 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Pipeline
 
         private void ThrowIfDisposed()
         {
-            if (this._disposed)
-                throw new ObjectDisposedException(GetType().FullName);
+            if (_disposed) throw new ObjectDisposedException(objectName: GetType().FullName);
         }
 
         #endregion

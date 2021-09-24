@@ -9,28 +9,29 @@ using System.Runtime.Serialization;
 namespace FS.Core
 {
     /// <summary>
-    /// 数据分页列表及总数
+    ///     数据分页列表及总数
     /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
+    /// <typeparam name="TEntity"> </typeparam>
     [DataContract]
     public class DataSplitList<TEntity> where TEntity : class
     {
         /// <summary>
-        /// 数据分页列表及总数
+        ///     数据分页列表及总数
         /// </summary>
         public DataSplitList(List<TEntity> list, int totalCount)
         {
-            List = list;
+            List       = list;
             TotalCount = totalCount;
         }
 
         /// <summary>
-        /// 总页数
+        ///     总页数
         /// </summary>
         [DataMember]
         public int TotalCount { get; set; }
+
         /// <summary>
-        /// 数据列表
+        ///     数据列表
         /// </summary>
         [DataMember]
         public List<TEntity> List { get; set; }

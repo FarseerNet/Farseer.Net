@@ -13,8 +13,8 @@ namespace FS.Data.Map
         /// <summary>
         ///     关系映射
         /// </summary>
-        /// <param name="type">实体类Type</param>
-        /// <param name="context">上下文 </param>
+        /// <param name="type"> 实体类Type </param>
+        /// <param name="context"> 上下文 </param>
         public ContextPhysicsMap(Type type)
         {
             Type = type;
@@ -22,21 +22,16 @@ namespace FS.Data.Map
             // 当前调用的程序集，用于判断是否属于Farseer.Net.dll程序集
             var currentAssembly = Assembly.GetCallingAssembly();
             // 遍历所有Set属性(表、视图、存储过程的名称),取得对应使用标记名称
-            foreach (var propertyInfo in Type.GetProperties(BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.GetProperty | BindingFlags.Public))
+            foreach (var propertyInfo in Type.GetProperties(bindingAttr: BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.GetProperty | BindingFlags.Public))
             {
                 // 必须是Farseer.Net.dll程序集
-                if (!propertyInfo.CanWrite || propertyInfo.PropertyType.Assembly != currentAssembly || (propertyInfo.DeclaringType != null && propertyInfo.DeclaringType.Assembly == currentAssembly))
-                {
-                    continue;
-                }
+                if (!propertyInfo.CanWrite || propertyInfo.PropertyType.Assembly != currentAssembly || propertyInfo.DeclaringType != null && propertyInfo.DeclaringType.Assembly == currentAssembly) continue;
 
                 // 设置每个Set属性（目前有Set是非泛型的）
                 if (propertyInfo.PropertyType.IsGenericType)
-                {
-                    EntityMapList[propertyInfo] = SetMapCacheManger.Cache(propertyInfo.PropertyType.GetGenericArguments()[0]);
-                }
+                    EntityMapList[key: propertyInfo] = SetMapCacheManger.Cache(key: propertyInfo.PropertyType.GetGenericArguments()[0]);
                 else
-                    EntityMapList[propertyInfo] = null;
+                    EntityMapList[key: propertyInfo] = null;
             }
         }
 
@@ -53,6 +48,6 @@ namespace FS.Data.Map
         /// <summary>
         ///     通过实体类型，返回Mapping
         /// </summary>
-        public static implicit operator ContextPhysicsMap(Type type) => ContextMapCacheManger.Cache(type);
+        public static implicit operator ContextPhysicsMap(Type type) => ContextMapCacheManger.Cache(key: type);
     }
 }

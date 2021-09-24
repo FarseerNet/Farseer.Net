@@ -14,7 +14,7 @@ namespace FS.Cache
         /// </summary>
         private static readonly object LockObject = new();
 
-        private FieldStaticGetCacheManger(FieldInfo key) : base(key)
+        private FieldStaticGetCacheManger(FieldInfo key) : base(key: key)
         {
         }
 
@@ -25,21 +25,18 @@ namespace FS.Cache
         {
             lock (LockObject)
             {
-                if (CacheList.ContainsKey(Key)) { return CacheList[Key]; }
+                if (CacheList.ContainsKey(key: Key)) return CacheList[key: Key];
 
                 //缓存中没有找到，新建一个构造函数的委托
-                return (CacheList[Key] = ExpressionHelper.GetStaticValue(Key));
+                return CacheList[key: Key] = ExpressionHelper.GetStaticValue(fieldInfo: Key);
             }
         }
 
         /// <summary>
-        /// 赋值
+        ///     赋值
         /// </summary>
-        /// <param name="key">缓存Key</param>
-        /// <param name="instance">对象</param>
-        public static object Cache(FieldInfo key)
-        {
-            return new FieldStaticGetCacheManger(key).GetValue()(null);
-        }
+        /// <param name="key"> 缓存Key </param>
+        /// <param name="instance"> 对象 </param>
+        public static object Cache(FieldInfo key) => new FieldStaticGetCacheManger(key: key).GetValue()(arg: null);
     }
 }

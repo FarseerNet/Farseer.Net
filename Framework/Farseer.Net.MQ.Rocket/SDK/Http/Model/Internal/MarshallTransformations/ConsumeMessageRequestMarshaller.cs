@@ -6,52 +6,30 @@ using FS.MQ.Rocket.SDK.Http.Util;
 
 namespace FS.MQ.Rocket.SDK.Http.Model.Internal.MarshallTransformations
 {
-    class ConsumeMessageRequestMarshaller : IMarshaller<IRequest, ConsumeMessageRequest>, IMarshaller<IRequest, WebServiceRequest>
+    internal class ConsumeMessageRequestMarshaller : IMarshaller<IRequest, ConsumeMessageRequest>, IMarshaller<IRequest, WebServiceRequest>
     {
-        public IRequest Marshall(WebServiceRequest input)
-        {
-            return this.Marshall((ConsumeMessageRequest)input);
-        }
+        public static ConsumeMessageRequestMarshaller Instance { get; } = new ConsumeMessageRequestMarshaller();
 
         public IRequest Marshall(ConsumeMessageRequest publicRequest)
         {
-            IRequest request = new DefaultRequest(publicRequest, Constants.MQ_SERVICE_NAME);
+            IRequest request = new DefaultRequest(request: publicRequest, serviceName: Constants.MQ_SERVICE_NAME);
             request.HttpMethod = HttpMethod.GET.ToString();
             request.ResourcePath = Constants.TOPIC_PRE_RESOURCE + publicRequest.TopicName
-                + Constants.MESSAGE_SUB_RESOURCE;
-            PopulateSpecialParameters(publicRequest, request.Parameters);
+                                                                + Constants.MESSAGE_SUB_RESOURCE;
+            PopulateSpecialParameters(request: publicRequest, paramters: request.Parameters);
             return request;
         }
 
+        public IRequest Marshall(WebServiceRequest input) => Marshall(publicRequest: (ConsumeMessageRequest)input);
+
         private static void PopulateSpecialParameters(ConsumeMessageRequest request, IDictionary<string, string> paramters)
         {
-            paramters.Add(Constants.PARAMETER_CONSUMER, request.Consumer);
-            if (request.IsSetInstance()) 
-            {
-                paramters.Add(Constants.PARAMETER_NS, request.IntanceId);
-            }
-            if (request.IsSetWaitSeconds() && request.WaitSeconds > 0 && request.WaitSeconds < 31)
-            {
-                paramters.Add(Constants.PARAMETER_WAIT_SECONDS, request.WaitSeconds.ToString());
-            }
-            paramters.Add(Constants.PARAMETER_BATCH_SIZE, request.BatchSize.ToString());
-            if (request.IsSetMessageTag()) 
-            {
-                paramters.Add(Constants.PARAMETER_CONSUME_TAG, request.MessageTag);
-            }
-            if (request.IsSetTransaction())
-            {
-                paramters.Add(Constants.PARAMETER_TRANSACTION, request.Trasaction);
-            }
-        }
-
-        private static ConsumeMessageRequestMarshaller _instance = new ConsumeMessageRequestMarshaller();
-        public static ConsumeMessageRequestMarshaller Instance
-        {
-            get
-            {
-                return _instance;
-            }
+            paramters.Add(key: Constants.PARAMETER_CONSUMER, value: request.Consumer);
+            if (request.IsSetInstance()) paramters.Add(key: Constants.PARAMETER_NS, value: request.IntanceId);
+            if (request.IsSetWaitSeconds() && request.WaitSeconds > 0 && request.WaitSeconds < 31) paramters.Add(key: Constants.PARAMETER_WAIT_SECONDS, value: request.WaitSeconds.ToString());
+            paramters.Add(key: Constants.PARAMETER_BATCH_SIZE, value: request.BatchSize.ToString());
+            if (request.IsSetMessageTag()) paramters.Add(key: Constants.PARAMETER_CONSUME_TAG, value: request.MessageTag);
+            if (request.IsSetTransaction()) paramters.Add(key: Constants.PARAMETER_TRANSACTION, value: request.Trasaction);
         }
     }
 }

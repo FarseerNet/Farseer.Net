@@ -3,8 +3,12 @@
 // 时间：2016-08-22 10:20
 // ********************************************
 
+#if !CORE
+#else
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis.Scripting;
+#endif
 using System;
-using System.CodeDom.Compiler;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,44 +17,38 @@ using FS.Core;
 using FS.Data.Cache;
 using FS.Data.Infrastructure;
 using FS.Data.Map;
-using FS.DI;
 using FS.Extends;
 using FS.Utils.Common;
-#if !CORE
-#else
-using Microsoft.CodeAnalysis.CSharp.Scripting;
-using Microsoft.CodeAnalysis.Scripting;
-#endif
 
 namespace FS.Data.Internal
 {
     /// <summary>
-    /// 实体类动态生成DataRow、IDataReader类型转换构造函数
+    ///     实体类动态生成DataRow、IDataReader类型转换构造函数
     /// </summary>
     public class EntityDynamics
     {
         /// <summary>
-        /// 生成的派生类dll缓存起来
+        ///     生成的派生类dll缓存起来
         /// </summary>
         private static readonly ConcurrentDictionary<Type, Type> Cache = new();
 
         internal Type BuildType(Type entityType)
         {
-            if (Cache.ContainsKey(entityType)) return Cache[entityType];
+            if (Cache.ContainsKey(key: entityType)) return Cache[key: entityType];
 
-            var newType = BuildEntity(entityType);
-            Cache.TryAdd(entityType, newType);
+            var newType = BuildEntity(entityType: entityType);
+            Cache.TryAdd(key: entityType, value: newType);
             return newType;
         }
 
         /// <summary>
-        /// 根据TEntity实体，动态生成派生类
+        ///     根据TEntity实体，动态生成派生类
         /// </summary>
         private Type BuildEntity(Type entityType)
         {
             //var entityType = typeof(TEntity);
-            var setPhysicsMap = SetMapCacheManger.Cache(entityType); // new SetPhysicsMap(entityType); 
-            var clsName       = entityType.Name + "ByDataRow";       // 类名
+            var setPhysicsMap = SetMapCacheManger.Cache(key: entityType); // new SetPhysicsMap(entityType); 
+            var clsName       = entityType.Name + "ByDataRow";            // 类名
 
             var sb = new StringBuilder();
 #if !CORE
@@ -61,13 +59,13 @@ namespace FS.Data.Internal
             sb.AppendLine("using FS.Data.Infrastructure;");
             sb.AppendLine($"namespace {entityType.Namespace}\r\n{{");
 #endif
-            sb.AppendLine($"public class {clsName} : {entityType.FullName}\r\n{{");
+            sb.AppendLine(value: $"public class {clsName} : {entityType.FullName}\r\n{{");
             // DataRow构造
-            sb.AppendLine(CreateToList(entityType));
+            sb.AppendLine(value: CreateToList(entityType: entityType));
             // DataTable构造
-            sb.AppendLine(CreateToEntity(entityType, setPhysicsMap));
+            sb.AppendLine(value: CreateToEntity(entityType: entityType, setPhysicsMap: setPhysicsMap));
 
-            sb.AppendLine("}");
+            sb.AppendLine(value: "}");
 #if !CORE
             sb.AppendLine("}");
 #endif
@@ -145,11 +143,8 @@ namespace FS.Data.Internal
             foreach (var propertyInfo in properties)
             {
                 // 找到真实程序集
-                var declaringType = propertyInfo.PropertyType.GetNullableArguments();
-                while (declaringType.IsGenericType)
-                {
-                    declaringType = declaringType.GetGenericType();
-                }
+                var declaringType                                 = propertyInfo.PropertyType.GetNullableArguments();
+                while (declaringType.IsGenericType) declaringType = declaringType.GetGenericType();
 
                 scriptOptions = scriptOptions.AddReferences(declaringType.Assembly);
             }
@@ -162,10 +157,10 @@ namespace FS.Data.Internal
                 baseType      = baseType.BaseType;
             }
 
-            var scriptState = CSharpScript.Create(sb.ToString(), scriptOptions).RunAsync().Result;
+            var scriptState = CSharpScript.Create(code: sb.ToString(), options: scriptOptions).RunAsync().Result;
             var asmName     = scriptState.Script.GetCompilation().AssemblyName;
-            var assembly    = AppDomain.CurrentDomain.GetAssemblies().First(a => a.FullName.StartsWith(asmName, StringComparison.OrdinalIgnoreCase));
-            return assembly.DefinedTypes.FirstOrDefault(o => o.Name == clsName);
+            var assembly    = AppDomain.CurrentDomain.GetAssemblies().First(predicate: a => a.FullName.StartsWith(value: asmName, comparisonType: StringComparison.OrdinalIgnoreCase));
+            return assembly.DefinedTypes.FirstOrDefault(predicate: o => o.Name == clsName);
 #endif
         }
 
@@ -173,13 +168,13 @@ namespace FS.Data.Internal
         private string CreateToList(Type entityType)
         {
             var sb = new StringBuilder();
-            sb.AppendFormat(@"    
+            sb.AppendFormat(format: @"    
                             public static List<{0}> ToList(MapingData[] mapData)
                             {{
                                 var lst = new List<{0}>(mapData[0].DataList.Count);
                                 for (int i = 0; i < mapData[0].DataList.Count; i++) {{ lst.Add(ToEntity(mapData, i));}}
                                 return lst;
-                            }}", entityType.FullName);
+                            }}", arg0: entityType.FullName);
             return sb.ToString();
         }
 
@@ -187,7 +182,7 @@ namespace FS.Data.Internal
         private string CreateToEntity(Type entityType, SetPhysicsMap setPhysicsMap)
         {
             var sb = new StringBuilder();
-            sb.AppendFormat(@"    
+            sb.AppendFormat(format: @"    
             public static {0} ToEntity(MapingData[] mapData, int rowsIndex = 0)
             {{
                 if ( mapData == null || mapData.Length == 0 || mapData[0].DataList.Count == 0) {{ return null; }}
@@ -202,7 +197,7 @@ namespace FS.Data.Internal
                     }}
                 }}
                 return entity;
-            }}", entityType.FullName, CreateSwitchCase(setPhysicsMap));
+            }}", arg0: entityType.FullName, arg1: CreateSwitchCase(setPhysicsMap: setPhysicsMap));
             return sb.ToString();
         }
 
@@ -220,49 +215,39 @@ namespace FS.Data.Internal
                 var propertyAssign = $"entity.{map.Key.Name}";
 
                 // case 字段名
-                sb.Append($"\t\t\tcase \"{filedName.ToUpper()}\":\r\n\t\t\t\t");
+                sb.Append(value: $"\t\t\tcase \"{filedName.ToUpper()}\":\r\n\t\t\t\t");
                 // 使用FS的ConvertHelper 进行类型转换泛型类型
                 if (propertyType.IsGenericType)
                 {
                     if (propertyType.IsArray) // 数组类型
                     {
                         var asType = $"{propertyType.GetGenericArguments()[0].FullName}[]";
-                        sb.Append($"{propertyAssign} = ConvertHelper.ConvertType(col,typeof({asType})) as {asType}; ");
+                        sb.Append(value: $"{propertyAssign} = ConvertHelper.ConvertType(col,typeof({asType})) as {asType}; ");
                     }
                     else // List集合
-                    {
-                        sb.Append($"{propertyAssign} = StringHelper.ToList<{propertyType.GetGenericArguments()[0].FullName}>(col.ToString()); ");
-                    }
+                        sb.Append(value: $"{propertyAssign} = StringHelper.ToList<{propertyType.GetGenericArguments()[0].FullName}>(col.ToString()); ");
                 }
                 else
                 {
                     // 字符串不需要处理
                     if (propertyType == typeof(string))
-                    {
-                        sb.Append($"{propertyAssign} = col.ToString();");
-                    }
+                        sb.Append(value: $"{propertyAssign} = col.ToString();");
                     else if (propertyType.IsEnum)
-                    {
-                        sb.Append($"if (typeof({propertyType.FullName}).GetEnumUnderlyingType() == col.GetType()) {{ {propertyAssign} = ({propertyType.FullName})col; }} else {{ {propertyType.FullName} {filedName}_Out; if (System.Enum.TryParse(col.ToString(), out {filedName}_Out)) {{ {propertyAssign} = {filedName}_Out; }} }}");
-                    }
+                        sb.Append(value: $"if (typeof({propertyType.FullName}).GetEnumUnderlyingType() == col.GetType()) {{ {propertyAssign} = ({propertyType.FullName})col; }} else {{ {propertyType.FullName} {filedName}_Out; if (System.Enum.TryParse(col.ToString(), out {filedName}_Out)) {{ {propertyAssign} = {filedName}_Out; }} }}");
                     else if (propertyType == typeof(bool))
-                    {
-                        sb.Append($"{propertyAssign} = ConvertHelper.ConvertType(col,false);");
-                    }
+                        sb.Append(value: $"{propertyAssign} = ConvertHelper.ConvertType(col,false);");
                     else if (!propertyType.IsClass)
                     {
-                        sb.Append($"if (col is {propertyType.FullName}) {{ {propertyAssign} = ({propertyType.FullName})col; }} else {{ {propertyType.FullName} {filedName}_Out; if ({propertyType.FullName}.TryParse(col.ToString(), out {filedName}_Out)) {{ {propertyAssign} = {filedName}_Out; }} }}");
+                        sb.Append(value: $"if (col is {propertyType.FullName}) {{ {propertyAssign} = ({propertyType.FullName})col; }} else {{ {propertyType.FullName} {filedName}_Out; if ({propertyType.FullName}.TryParse(col.ToString(), out {filedName}_Out)) {{ {propertyAssign} = {filedName}_Out; }} }}");
                         // ClickHouse的DateTime类型，需要将UTC转为Local
-                        if (setPhysicsMap.InternalContext.ContextConnection.DbType == eumDbType.ClickHouse && propertyType == typeof(DateTime))
-                        {
-                            sb.Append(map.Key.PropertyType.IsGenericType ? $"{propertyAssign} = {propertyAssign}.GetValueOrDefault().ToLocalTime();" : $"{propertyAssign} = {propertyAssign}.ToLocalTime();");
-                        }
+                        if (setPhysicsMap.InternalContext.ContextConnection.DbType == eumDbType.ClickHouse && propertyType == typeof(DateTime)) sb.Append(value: map.Key.PropertyType.IsGenericType ? $"{propertyAssign} = {propertyAssign}.GetValueOrDefault().ToLocalTime();" : $"{propertyAssign} = {propertyAssign}.ToLocalTime();");
                     }
                 }
 
                 // 退出case
-                sb.AppendLine("break;");
+                sb.AppendLine(value: "break;");
             }
+
             return sb.ToString();
         }
     }

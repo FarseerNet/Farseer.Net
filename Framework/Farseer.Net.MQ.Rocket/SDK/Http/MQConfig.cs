@@ -1,28 +1,11 @@
-﻿
-using FS.MQ.Rocket.SDK.Http.Runtime;
+﻿using FS.MQ.Rocket.SDK.Http.Runtime;
 
 namespace FS.MQ.Rocket.SDK.Http
 {
-    public partial class MQConfig : ClientConfig
+    public class MQConfig : ClientConfig
     {
-        public MQConfig()
-        {
-        }
+        public override string ServiceVersion => "2015-06-06";
 
-        public override string ServiceVersion
-        {
-            get
-            {
-                return "2015-06-06";
-            }
-        }
-
-        public override string ServiceName
-        {
-            get
-            {
-                return "Aliyun.MQ";
-            }
-        }
+        public override string ServiceName => "Aliyun.MQ";
     }
 }

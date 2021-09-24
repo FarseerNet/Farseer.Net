@@ -7,15 +7,15 @@ namespace FS.LinkTrack
 {
     public class LinkTrackEsContext : EsContext<LinkTrackEsContext>
     {
-        public LinkTrackEsContext() : base("LinkTrack")
+        public LinkTrackEsContext() : base(configName: "LinkTrack")
         {
-        }
-
-        protected override void CreateModelInit(Dictionary<string, SetDataMap> map)
-        {
-            map["LinkTrackContext"].SetName($"link_track_{DateTime.Now:yyyy_MM}", 1, 0, "link_track");
         }
 
         public IndexSet<LinkTrackContextPO> LinkTrackContext { get; set; }
+
+        protected override void CreateModelInit(Dictionary<string, SetDataMap> map)
+        {
+            map[key: "LinkTrackContext"].SetName(indexName: $"link_track_{DateTime.Now:yyyy_MM}", shardsCount: 1, replicasCount: 0, "link_track");
+        }
     }
 }

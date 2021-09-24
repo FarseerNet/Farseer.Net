@@ -8,67 +8,69 @@ namespace FS.DI
     public static class IocRegistrarExtensions
     {
         #region RegisterIfNot
+
         /// <summary>
         ///     没注册则去注册
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="iocRegistrar"></param>
-        /// <param name="lifeStyle"></param>
-        /// <returns></returns>
+        /// <typeparam name="T"> </typeparam>
+        /// <param name="iocRegistrar"> </param>
+        /// <param name="lifeStyle"> </param>
+        /// <returns> </returns>
         public static bool RegisterIfNot<T>(this IIocRegistrar iocRegistrar, DependencyLifeStyle lifeStyle = DependencyLifeStyle.Singleton) where T : class
         {
             if (iocRegistrar.IsRegistered<T>()) return false;
 
-            iocRegistrar.Register<T>("", lifeStyle);
+            iocRegistrar.Register<T>(name: "", lifeStyle: lifeStyle);
             return true;
         }
 
         /// <summary>
         ///     没注册则去注册
         /// </summary>
-        /// <param name="iocRegistrar"></param>
-        /// <param name="type"></param>
-        /// <param name="lifeStyle"></param>
-        /// <returns></returns>
+        /// <param name="iocRegistrar"> </param>
+        /// <param name="type"> </param>
+        /// <param name="lifeStyle"> </param>
+        /// <returns> </returns>
         public static bool RegisterIfNot(this IIocRegistrar iocRegistrar, Type type, DependencyLifeStyle lifeStyle = DependencyLifeStyle.Singleton)
         {
-            if (iocRegistrar.IsRegistered(type)) return false;
+            if (iocRegistrar.IsRegistered(type: type)) return false;
 
-            iocRegistrar.Register(type, "", lifeStyle);
+            iocRegistrar.Register(type: type, name: "", lifeStyle: lifeStyle);
             return true;
         }
 
         /// <summary>
         ///     没注册则去注册
         /// </summary>
-        /// <typeparam name="TType"></typeparam>
-        /// <typeparam name="TImpl"></typeparam>
-        /// <param name="iocRegistrar"></param>
-        /// <param name="lifeStyle"></param>
-        /// <returns></returns>
+        /// <typeparam name="TType"> </typeparam>
+        /// <typeparam name="TImpl"> </typeparam>
+        /// <param name="iocRegistrar"> </param>
+        /// <param name="lifeStyle"> </param>
+        /// <returns> </returns>
         public static bool RegisterIfNot<TType, TImpl>(this IIocRegistrar iocRegistrar, DependencyLifeStyle lifeStyle = DependencyLifeStyle.Singleton) where TType : class where TImpl : class, TType
         {
             if (iocRegistrar.IsRegistered<TType>()) return false;
 
-            iocRegistrar.Register<TType, TImpl>("", lifeStyle);
+            iocRegistrar.Register<TType, TImpl>(name: "", lifeStyle: lifeStyle);
             return true;
         }
 
         /// <summary>
         ///     没注册则去注册
         /// </summary>
-        /// <param name="iocRegistrar"></param>
-        /// <param name="type"></param>
-        /// <param name="impl"></param>
-        /// <param name="lifeStyle"></param>
-        /// <returns></returns>
+        /// <param name="iocRegistrar"> </param>
+        /// <param name="type"> </param>
+        /// <param name="impl"> </param>
+        /// <param name="lifeStyle"> </param>
+        /// <returns> </returns>
         public static bool RegisterIfNot(this IIocRegistrar iocRegistrar, Type type, Type impl, DependencyLifeStyle lifeStyle = DependencyLifeStyle.Singleton)
         {
-            if (iocRegistrar.IsRegistered(type)) return false;
+            if (iocRegistrar.IsRegistered(type: type)) return false;
 
-            iocRegistrar.Register(type, impl, "", lifeStyle);
+            iocRegistrar.Register(type: type, impl: impl, name: "", lifeStyle: lifeStyle);
             return true;
         }
+
         #endregion
     }
 }

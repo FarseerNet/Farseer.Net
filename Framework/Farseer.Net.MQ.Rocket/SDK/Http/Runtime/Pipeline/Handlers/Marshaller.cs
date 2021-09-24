@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using FS.MQ.Rocket.SDK.Http.Runtime.Internal;
+﻿using System.Globalization;
 using FS.MQ.Rocket.SDK.Http.Util;
 
 namespace FS.MQ.Rocket.SDK.Http.Runtime.Pipeline.Handlers
@@ -10,48 +7,38 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Pipeline.Handlers
     {
         protected override void PreInvoke(IExecutionContext executionContext)
         {
-            try
-            {
-
-                IRequestContext requestContext = executionContext.RequestContext;
-                requestContext.Request = requestContext.Marshaller.Marshall(requestContext.OriginalRequest);
-                requestContext.Request.Endpoint = requestContext.ClientConfig.RegionEndpoint;
-                AddRequiredHeaders(requestContext);
-                AddOptionalHeaders(requestContext);
-            }
-            finally
-            {
-            }
+            var requestContext = executionContext.RequestContext;
+            requestContext.Request          = requestContext.Marshaller.Marshall(input: requestContext.OriginalRequest);
+            requestContext.Request.Endpoint = requestContext.ClientConfig.RegionEndpoint;
+            AddRequiredHeaders(requestContext: requestContext);
+            AddOptionalHeaders(requestContext: requestContext);
         }
 
         private void AddRequiredHeaders(IRequestContext requestContext)
         {
-            IDictionary<string, string> headers = requestContext.Request.Headers;
-            headers[Constants.UserAgentHeader] = requestContext.ClientConfig.UserAgent;
-            if (requestContext.Request.ContentStream != null)
-                headers[Constants.ContentLengthHeader] = requestContext.Request.ContentStream.Length.ToString(CultureInfo.InvariantCulture);
-            headers[Constants.DateHeader] = AliyunSDKUtils.FormattedCurrentTimestampRFC822;
-            headers[Constants.XMQVersionHeader] = requestContext.ClientConfig.ServiceVersion;
-            if (!headers.ContainsKey(Constants.HostHeader))
+            var headers = requestContext.Request.Headers;
+            headers[key: Constants.UserAgentHeader] = requestContext.ClientConfig.UserAgent;
+            if (requestContext.Request.ContentStream != null) headers[key: Constants.ContentLengthHeader] = requestContext.Request.ContentStream.Length.ToString(provider: CultureInfo.InvariantCulture);
+            headers[key: Constants.DateHeader]       = AliyunSDKUtils.FormattedCurrentTimestampRFC822;
+            headers[key: Constants.XMQVersionHeader] = requestContext.ClientConfig.ServiceVersion;
+            if (!headers.ContainsKey(key: Constants.HostHeader))
             {
-                Uri requestEndpoint = requestContext.Request.Endpoint;
-                var hostHeader = requestEndpoint.Host;
-                if (!requestEndpoint.IsDefaultPort)
-                    hostHeader += ":" + requestEndpoint.Port;
-                headers.Add(Constants.HostHeader, hostHeader);
+                var requestEndpoint                            = requestContext.Request.Endpoint;
+                var hostHeader                                 = requestEndpoint.Host;
+                if (!requestEndpoint.IsDefaultPort) hostHeader += ":" + requestEndpoint.Port;
+                headers.Add(key: Constants.HostHeader, value: hostHeader);
             }
         }
 
         private void AddOptionalHeaders(IRequestContext requestContext)
         {
-            WebServiceRequest originalRequest = requestContext.Request.OriginalRequest;
-            IDictionary<string, string> headers = requestContext.Request.Headers;
+            var originalRequest = requestContext.Request.OriginalRequest;
+            var headers         = requestContext.Request.Headers;
             if (originalRequest.IsSetContentType())
-                headers[Constants.ContentTypeHeader] = originalRequest.ContentType;
+                headers[key: Constants.ContentTypeHeader] = originalRequest.ContentType;
             else
-                headers[Constants.ContentTypeHeader] = Constants.ContentTypeTextXml;
-            if (originalRequest.IsSetContentMD5())
-                headers[Constants.ContentMD5Header] = originalRequest.ContentMD5;
+                headers[key: Constants.ContentTypeHeader] = Constants.ContentTypeTextXml;
+            if (originalRequest.IsSetContentMD5()) headers[key: Constants.ContentMD5Header] = originalRequest.ContentMD5;
         }
     }
 }

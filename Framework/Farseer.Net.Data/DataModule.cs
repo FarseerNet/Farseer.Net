@@ -1,15 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
-using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-using Castle.MicroKernel.Registration;
-using FS.Configuration;
-using FS.Data.Client;
-using FS.Data.Configuration;
-using FS.Data.Internal;
 using FS.DI;
 using FS.Modules;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 
 namespace FS.Data
@@ -25,15 +17,15 @@ namespace FS.Data
         public override void PreInitialize()
         {
         }
-        
+
         public static void OnChange(Func<IChangeToken> changeTokenProducer, Action changeTokenConsumer)
         {
             var token = changeTokenProducer();
-            token.RegisterChangeCallback(_ =>
+            token.RegisterChangeCallback(callback: _ =>
             {
                 changeTokenConsumer();
-                OnChange(changeTokenProducer, changeTokenConsumer);
-            }, new object());
+                OnChange(changeTokenProducer: changeTokenProducer, changeTokenConsumer: changeTokenConsumer);
+            }, state: new object());
         }
 
         /// <summary>
@@ -42,7 +34,7 @@ namespace FS.Data
         public override void Initialize()
         {
             IocManager.Container.Install(new DataInstaller());
-            IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly(), new ConventionalRegistrationConfig { InstallInstallers = false });
+            IocManager.RegisterAssemblyByConvention(assembly: Assembly.GetExecutingAssembly(), config: new ConventionalRegistrationConfig { InstallInstallers = false });
         }
     }
 }

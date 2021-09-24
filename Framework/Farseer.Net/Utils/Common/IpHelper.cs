@@ -6,16 +6,16 @@ using System.Net.Sockets;
 namespace FS.Utils.Common
 {
     /// <summary>
-    /// IP地址工具类
+    ///     IP地址工具类
     /// </summary>
     public static class IpHelper
     {
         private static string _localIp;
 
         /// <summary>
-        /// 获取当前节点IP
+        ///     获取当前节点IP
         /// </summary>
-        public static string GetIp => _localIp ??= IpHelper.GetIps().Select(o => o.Address.MapToIPv4().ToString()).FirstOrDefault();
+        public static string GetIp => _localIp ??= GetIps().Select(selector: o => o.Address.MapToIPv4().ToString()).FirstOrDefault();
 
         // /// <summary>
         // /// 获取网络IP
@@ -30,19 +30,19 @@ namespace FS.Utils.Common
         // }
 
         /// <summary>
-        /// 获取IP
+        ///     获取IP
         /// </summary>
-        /// <returns></returns>
+        /// <returns> </returns>
         public static UnicastIPAddressInformation[] GetIps()
         {
             return NetworkInterface
-                .GetAllNetworkInterfaces()
-                .Where(network => network.OperationalStatus == OperationalStatus.Up)
-                .Select(network => network.GetIPProperties())
-                .OrderByDescending(properties => properties.GatewayAddresses.Count)
-                .SelectMany(properties => properties.UnicastAddresses)
-                .Where(address => !IPAddress.IsLoopback(address.Address) && address.Address.AddressFamily == AddressFamily.InterNetwork)
-                .ToArray();
+                   .GetAllNetworkInterfaces()
+                   .Where(predicate: network => network.OperationalStatus == OperationalStatus.Up)
+                   .Select(selector: network => network.GetIPProperties())
+                   .OrderByDescending(keySelector: properties => properties.GatewayAddresses.Count)
+                   .SelectMany(selector: properties => properties.UnicastAddresses)
+                   .Where(predicate: address => !IPAddress.IsLoopback(address: address.Address) && address.Address.AddressFamily == AddressFamily.InterNetwork)
+                   .ToArray();
         }
     }
 }

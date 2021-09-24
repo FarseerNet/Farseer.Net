@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using FS.DI;
 using FS.ElasticSearch;
 using FS.Modules;
@@ -18,7 +17,6 @@ namespace FS.LinkTrack
 
         public override void PostInitialize()
         {
-            
         }
 
         /// <summary>
@@ -26,8 +24,8 @@ namespace FS.LinkTrack
         /// </summary>
         public override void Initialize()
         {
-            IocManager.Container.Install(new LinkTrackInstaller(IocManager));
-            IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly(), new ConventionalRegistrationConfig {InstallInstallers = false});
+            IocManager.Container.Install(new LinkTrackInstaller(iocResolver: IocManager));
+            IocManager.RegisterAssemblyByConvention(assembly: Assembly.GetExecutingAssembly(), config: new ConventionalRegistrationConfig { InstallInstallers = false });
         }
     }
 }

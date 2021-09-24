@@ -11,7 +11,7 @@ namespace FS.Data.Internal
         // <summary>
         // 保存一个DbContext对象下的所有Set实体类型
         // </summary>
-        public SetTypesInitializersPair(Dictionary<Type, List<string>> entityTypeToPropertyNameMap, Action<DbContext> setsInitializer) : base(entityTypeToPropertyNameMap, setsInitializer)
+        public SetTypesInitializersPair(Dictionary<Type, List<string>> entityTypeToPropertyNameMap, Action<DbContext> setsInitializer) : base(item1: entityTypeToPropertyNameMap, item2: setsInitializer)
         {
         }
 

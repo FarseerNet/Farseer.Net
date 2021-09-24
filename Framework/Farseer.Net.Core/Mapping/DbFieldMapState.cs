@@ -3,7 +3,7 @@ using FS.Core.Mapping.Attribute;
 namespace FS.Core.Mapping
 {
     /// <summary>
-    /// 数据库的字段映射
+    ///     数据库的字段映射
     /// </summary>
     public class DbFieldMapState : FieldMapState
     {

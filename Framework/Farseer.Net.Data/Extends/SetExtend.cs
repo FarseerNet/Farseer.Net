@@ -9,45 +9,45 @@ namespace FS.Extends
         /// <summary>
         ///     获取下一条记录
         /// </summary>
-        /// <param name="ID">当前ID</param>
-        /// <param name="ts">TableSet</param>
-        /// <typeparam name="TEntity">实体类</typeparam>
+        /// <param name="ID"> 当前ID </param>
+        /// <param name="ts"> TableSet </param>
+        /// <typeparam name="TEntity"> 实体类 </typeparam>
         public static TEntity ToNextEntity<TEntity>(this TableSet<TEntity> ts, int? ID) where TEntity : class, IEntity, new()
         {
-            return ts.Where(o => o.ID > ID).Asc(o => o.ID).ToEntity();
+            return ts.Where(where: o => o.ID > ID).Asc(asc: o => o.ID).ToEntity();
         }
 
         /// <summary>
         ///     获取上一条记录
         /// </summary>
-        /// <param name="ID">当前ID</param>
-        /// <param name="ts">TableSet</param>
-        /// <typeparam name="TEntity">实体类</typeparam>
+        /// <param name="ID"> 当前ID </param>
+        /// <param name="ts"> TableSet </param>
+        /// <typeparam name="TEntity"> 实体类 </typeparam>
         public static TEntity ToPreviousEntity<TEntity>(this TableSet<TEntity> ts, int? ID) where TEntity : class, IEntity, new()
         {
-            return ts.Where(o => o.ID < ID).Desc(o => o.ID).ToEntity();
+            return ts.Where(where: o => o.ID < ID).Desc(desc: o => o.ID).ToEntity();
         }
 
         /// <summary>
         ///     获取下一条记录
         /// </summary>
-        /// <param name="ID">当前ID</param>
-        /// <param name="ts">TableSet</param>
-        /// <typeparam name="TEntity">实体类</typeparam>
+        /// <param name="ID"> 当前ID </param>
+        /// <param name="ts"> TableSet </param>
+        /// <typeparam name="TEntity"> 实体类 </typeparam>
         public static TEntity ToNextEntity<TEntity>(this ViewSet<TEntity> ts, int? ID) where TEntity : class, IEntity, new()
         {
-            return ts.Where(o => o.ID > ID).Asc(o => o.ID).ToEntity();
+            return ts.Where(where: o => o.ID > ID).Asc(asc: o => o.ID).ToEntity();
         }
 
         /// <summary>
         ///     获取上一条记录
         /// </summary>
-        /// <param name="ID">当前ID</param>
-        /// <param name="ts">TableSet</param>
-        /// <typeparam name="TEntity">实体类</typeparam>
+        /// <param name="ID"> 当前ID </param>
+        /// <param name="ts"> TableSet </param>
+        /// <typeparam name="TEntity"> 实体类 </typeparam>
         public static TEntity ToPreviousEntity<TEntity>(this ViewSet<TEntity> ts, int? ID) where TEntity : class, IEntity, new()
         {
-            return ts.Where(o => o.ID < ID).Desc(o => o.ID).ToEntity();
+            return ts.Where(where: o => o.ID < ID).Desc(desc: o => o.ID).ToEntity();
         }
     }
 }

@@ -5,7 +5,7 @@ namespace FS.Data.Infrastructure
     /// <summary>
     ///     支持递归树节点的实体类
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T"> </typeparam>
     public interface ICate<T> : IEntity<T>
     {
         /// <summary>
@@ -24,5 +24,7 @@ namespace FS.Data.Infrastructure
         int? Sort { get; set; }
     }
 
-    public interface ICate : ICate<int?> { }
+    public interface ICate : ICate<int?>
+    {
+    }
 }

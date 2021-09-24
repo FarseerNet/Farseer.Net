@@ -17,21 +17,21 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Farseer.Net.Core\Farseer.Net.Core.csproj" />
-        <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />
+        <ProjectReference Include="..\Farseer.Net.Core\Farseer.Net.Core.csproj"/>
+        <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj"/>
     </ItemGroup>
-    
+
     <ItemGroup>
-        <PackageReference Include="Grpc" Version="2.40.0" />
-        <PackageReference Include="Grpc.Core" Version="2.40.0" />
+        <PackageReference Include="Grpc" Version="2.40.0"/>
+        <PackageReference Include="Grpc.Core" Version="2.40.0"/>
         <PackageReference Include="Grpc.Tools" Version="2.40.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Google.Protobuf" Version="3.17.3" />
-        <PackageReference Include="Grpc.Net.Client" Version="2.39.0" />
-        <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-        <PackageReference Include="Snowflake.Core" Version="2.0.0" />
-        <PackageReference Include="System.ServiceProcess.ServiceController" Version="5.0.0" />
+        <PackageReference Include="Google.Protobuf" Version="3.17.3"/>
+        <PackageReference Include="Grpc.Net.Client" Version="2.39.0"/>
+        <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0"/>
+        <PackageReference Include="Snowflake.Core" Version="2.0.0"/>
+        <PackageReference Include="System.ServiceProcess.ServiceController" Version="5.0.0"/>
     </ItemGroup>
 </Project>

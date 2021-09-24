@@ -4,13 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using FS.Core.LinkTrack;
 using FS.DI;
-using FS.LinkTrack;
 using Microsoft.AspNetCore.Http;
 
 namespace FS
 {
     /// <summary>
-    /// 链路追踪（Web Api入口）
+    ///     链路追踪（Web Api入口）
     /// </summary>
     public class LinkTrackMiddleware
     {
@@ -23,17 +22,17 @@ namespace FS
 
         public async Task Invoke(HttpContext httpContext, IIocManager _iocManager)
         {
-            if (string.IsNullOrWhiteSpace(httpContext.Request.ContentType))
+            if (string.IsNullOrWhiteSpace(value: httpContext.Request.ContentType))
             {
-                await _next.Invoke(httpContext);
+                await _next.Invoke(context: httpContext);
                 return;
             }
 
-            httpContext.Request.Headers.TryGetValue("FsContextId", out var contextId);
-            if (!string.IsNullOrWhiteSpace(contextId))
+            httpContext.Request.Headers.TryGetValue(key: "FsContextId", value: out var contextId);
+            if (!string.IsNullOrWhiteSpace(value: contextId))
             {
-                httpContext.Request.Headers.TryGetValue("FsAppId", out var parentAppId);
-                FsLinkTrack.Current.Set(contextId, parentAppId);
+                httpContext.Request.Headers.TryGetValue(key: "FsAppId", value: out var parentAppId);
+                FsLinkTrack.Current.Set(contextId: contextId, parentAppId: parentAppId);
             }
 
             // 读取请求入参
@@ -45,13 +44,13 @@ namespace FS
                     break;
                 default:
                 {
-                    if (!string.IsNullOrWhiteSpace(httpContext.Request.ContentType))
+                    if (!string.IsNullOrWhiteSpace(value: httpContext.Request.ContentType))
                     {
                         // 允许其他管道重复读流
                         httpContext.Request.EnableBuffering();
-                        requestContent = await new StreamReader(httpContext.Request.Body).ReadToEndAsync();
+                        requestContent = await new StreamReader(stream: httpContext.Request.Body).ReadToEndAsync();
                         // 将流定位到初始位置，以让mvc能读到完整的入参
-                        httpContext.Request.Body.Seek(0, SeekOrigin.Begin);
+                        httpContext.Request.Body.Seek(offset: 0, origin: SeekOrigin.Begin);
                     }
 
                     break;
@@ -59,10 +58,10 @@ namespace FS
             }
 
             // 读取响应Body
-            var path      = $"{httpContext.Request.Scheme}://{httpContext.Request.Host.Host}{httpContext.Request.Path.Value?.ToLower()}";
-            
-            var dicHeader = httpContext.Request.Headers.ToDictionary(o => o.Key, o => o.Value.ToString());
-            using (var trackEnd = FsLinkTrack.TrackApiServer(httpContext.Request.Host.Host, path, httpContext.Request.Method, httpContext.Request.ContentType, dicHeader, requestContent, httpContext.GetIP()))
+            var path = $"{httpContext.Request.Scheme}://{httpContext.Request.Host.Host}{httpContext.Request.Path.Value?.ToLower()}";
+
+            var dicHeader = httpContext.Request.Headers.ToDictionary(keySelector: o => o.Key, elementSelector: o => o.Value.ToString());
+            using (var trackEnd = FsLinkTrack.TrackApiServer(domain: httpContext.Request.Host.Host, path: path, method: httpContext.Request.Method, contentType: httpContext.Request.ContentType, headerDictionary: dicHeader, requestBody: requestContent, ip: httpContext.GetIP()))
             {
                 var originalBodyStream = httpContext.Response.Body;
                 await using (var responseBody = new MemoryStream())
@@ -72,25 +71,23 @@ namespace FS
 
                     try
                     {
-                        await _next.Invoke(httpContext);
+                        await _next.Invoke(context: httpContext);
 
-                        httpContext.Response.Body.Seek(0, SeekOrigin.Begin);
-                        var rspBody = await new StreamReader(httpContext.Response.Body).ReadToEndAsync();
-                        httpContext.Response.Body.Seek(0, SeekOrigin.Begin);
-                        await responseBody.CopyToAsync(originalBodyStream);
+                        httpContext.Response.Body.Seek(offset: 0, origin: SeekOrigin.Begin);
+                        var rspBody = await new StreamReader(stream: httpContext.Response.Body).ReadToEndAsync();
+                        httpContext.Response.Body.Seek(offset: 0, origin: SeekOrigin.Begin);
+                        await responseBody.CopyToAsync(destination: originalBodyStream);
 
                         // 如果是api接口，则记录返回值
-                        if (!string.IsNullOrWhiteSpace(httpContext.Response.ContentType) && (httpContext.Response.ContentType.Contains("json") ||
-                                                                                             httpContext.Response.ContentType.Contains("xml") ||
-                                                                                             httpContext.Response.ContentType.Contains("text")))
-                        {
-                            trackEnd.SetDownstreamResponseBody(rspBody);
-                        }
+                        if (!string.IsNullOrWhiteSpace(value: httpContext.Response.ContentType) && (httpContext.Response.ContentType.Contains(value: "json") ||
+                                                                                                    httpContext.Response.ContentType.Contains(value: "xml")  ||
+                                                                                                    httpContext.Response.ContentType.Contains(value: "text")))
+                            trackEnd.SetDownstreamResponseBody(responseBody: rspBody);
                     }
                     catch (Exception e)
                     {
-                        trackEnd.Exception(e);
-                        
+                        trackEnd.Exception(exception: e);
+
                         // 写入链路追踪
                         _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
                         throw;

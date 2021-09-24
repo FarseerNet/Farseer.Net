@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Castle.Core.Logging;
 using FS.Configuration.Startup;
 using FS.DI;
 
@@ -27,48 +26,58 @@ namespace FS.Modules
         /// <summary>
         ///     预初始化
         /// </summary>
-        public virtual void PreInitialize() { }
+        public virtual void PreInitialize()
+        {
+        }
 
         /// <summary>
         ///     初始化
         /// </summary>
-        public virtual void Initialize() { }
+        public virtual void Initialize()
+        {
+        }
 
         /// <summary>
         ///     初始化之后
         /// </summary>
-        public virtual void PostInitialize() { }
+        public virtual void PostInitialize()
+        {
+        }
 
         /// <summary>
         ///     应用关闭之前先关闭模块
         /// </summary>
-        public virtual void Shutdown() { }
+        public virtual void Shutdown()
+        {
+        }
 
         /// <summary>
         ///     获取模块附加的程序集
         /// </summary>
-        /// <returns></returns>
+        /// <returns> </returns>
         public virtual Assembly[] GetAdditionalAssemblies() => new Assembly[0];
 
         /// <summary>
         ///     给定类型是否FarseerModule
         /// </summary>
-        /// <param name="type">Type to check</param>
-        public static bool IsFarseerModule(Type type) => type.GetTypeInfo().IsClass && !type.GetTypeInfo().IsAbstract && !type.GetTypeInfo().IsGenericType && typeof(FarseerModule).IsAssignableFrom(type);
+        /// <param name="type"> Type to check </param>
+        public static bool IsFarseerModule(Type type) => type.GetTypeInfo().IsClass && !type.GetTypeInfo().IsAbstract && !type.GetTypeInfo().IsGenericType && typeof(FarseerModule).IsAssignableFrom(c: type);
 
         /// <summary>
         ///     查找模块依赖的模块
         /// </summary>
         public static List<Type> FindDependedModuleTypes(Type moduleType)
         {
-            if (!IsFarseerModule(moduleType)) throw new FarseerInitException("此类型不是一个有效的模块: " + moduleType.AssemblyQualifiedName);
+            if (!IsFarseerModule(type: moduleType)) throw new FarseerInitException(message: "此类型不是一个有效的模块: " + moduleType.AssemblyQualifiedName);
 
             var list = new List<Type>();
 
-            if (moduleType.GetTypeInfo().IsDefined(typeof(DependsOnAttribute), true))
+            if (moduleType.GetTypeInfo().IsDefined(attributeType: typeof(DependsOnAttribute), inherit: true))
             {
-                var dependsOnAttributes = moduleType.GetTypeInfo().GetCustomAttributes(typeof(DependsOnAttribute), true).Cast<DependsOnAttribute>();
-                foreach (var dependsOnAttribute in dependsOnAttributes) foreach (var dependedModuleType in dependsOnAttribute.DependedModuleTypes) list.Add(dependedModuleType);
+                var dependsOnAttributes = moduleType.GetTypeInfo().GetCustomAttributes(attributeType: typeof(DependsOnAttribute), inherit: true).Cast<DependsOnAttribute>();
+                foreach (var dependsOnAttribute in dependsOnAttributes)
+                    foreach (var dependedModuleType in dependsOnAttribute.DependedModuleTypes)
+                        list.Add(item: dependedModuleType);
             }
 
             return list;
@@ -80,26 +89,26 @@ namespace FS.Modules
         public static List<Type> FindDependedModuleTypesRecursively(Type moduleType)
         {
             var list = new List<Type>();
-            AddModuleAndDependenciesResursively(list, moduleType);
-            if (!list.Contains(typeof(FarseerKernelModule))) { list.Add(typeof(FarseerKernelModule));}
+            AddModuleAndDependenciesResursively(modules: list, module: moduleType);
+            if (!list.Contains(item: typeof(FarseerKernelModule))) list.Add(item: typeof(FarseerKernelModule));
             return list;
         }
 
         /// <summary>
         ///     递归魔惑所有依赖模块
         /// </summary>
-        /// <param name="modules"></param>
-        /// <param name="module"></param>
+        /// <param name="modules"> </param>
+        /// <param name="module"> </param>
         private static void AddModuleAndDependenciesResursively(List<Type> modules, Type module)
         {
-            if (!IsFarseerModule(module)) throw new FarseerInitException("此类型不是一个有效的模块: " + module.AssemblyQualifiedName);
+            if (!IsFarseerModule(type: module)) throw new FarseerInitException(message: "此类型不是一个有效的模块: " + module.AssemblyQualifiedName);
 
-            if (modules.Contains(module)) return;
+            if (modules.Contains(item: module)) return;
 
-            modules.Add(module);
+            modules.Add(item: module);
 
-            var dependedModules = FindDependedModuleTypes(module);
-            foreach (var dependedModule in dependedModules) AddModuleAndDependenciesResursively(modules, dependedModule);
+            var dependedModules = FindDependedModuleTypes(moduleType: module);
+            foreach (var dependedModule in dependedModules) AddModuleAndDependenciesResursively(modules: modules, module: dependedModule);
         }
     }
 }

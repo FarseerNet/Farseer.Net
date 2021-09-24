@@ -2,7 +2,7 @@
 
 namespace FS.MQ.Rocket.SDK.Http.Model
 {
-    public partial class AckMessageResponse : WebServiceResponse
+    public class AckMessageResponse : WebServiceResponse
     {
     }
 }

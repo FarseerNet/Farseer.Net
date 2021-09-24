@@ -4,30 +4,30 @@ using FS.MQ.Rocket.SDK.Http.Runtime.Internal.Transform;
 namespace FS.MQ.Rocket.SDK.Http.Runtime.Pipeline
 {
     /// <summary>
-    /// HttpErrorResponseException
+    ///     HttpErrorResponseException
     /// </summary>
     public class HttpErrorResponseException : Exception
     {
-        /// <summary>
-        /// Gets and sets original response data. 
-        /// </summary>
-        public IWebResponseData Response { get; private set; }
-
         public HttpErrorResponseException(IWebResponseData response)
         {
-            this.Response = response;
+            Response = response;
         }
 
         public HttpErrorResponseException(string message, IWebResponseData response)
-            : base(message)
+            : base(message: message)
         {
-            this.Response = response;
+            Response = response;
         }
 
-        public HttpErrorResponseException(string message, Exception innerException, IWebResponseData response) 
-            : base(message,innerException)
+        public HttpErrorResponseException(string message, Exception innerException, IWebResponseData response)
+            : base(message: message, innerException: innerException)
         {
-            this.Response = response;
+            Response = response;
         }
+
+        /// <summary>
+        ///     Gets and sets original response data.
+        /// </summary>
+        public IWebResponseData Response { get; }
     }
 }

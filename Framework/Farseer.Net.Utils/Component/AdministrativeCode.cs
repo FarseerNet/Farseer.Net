@@ -29,25 +29,27 @@ namespace FS.Utils.Component
         {
             LstAdministrativeCode = new List<AdministrativeCode>();
             // 将Code转化成对象
-            var lstTmp = Code.Split(';').Where(codes => !string.IsNullOrWhiteSpace(codes)).Select(codes => new AdministrativeCode() {ID = ConvertHelper.ConvertType(codes.Split(':')[0], 0), Caption = codes.Split(':')[1]}).ToList();
+            var lstTmp = Code.Split(';').Where(predicate: codes => !string.IsNullOrWhiteSpace(value: codes)).Select(selector: codes => new AdministrativeCode { ID = ConvertHelper.ConvertType(sourceValue: codes.Split(':')[0], defValue: 0), Caption = codes.Split(':')[1] }).ToList();
             // 添加一级行政
-            lstTmp.Where(o => o.ID.ToString().EndsWith("0000")).ToList().ForEach(o =>
-            {
-                LstAdministrativeCode.Add(o);
-                Init(lstTmp, o);
-            });
+            lstTmp.Where(predicate: o => o.ID.ToString().EndsWith(value: "0000"))
+                  .ToList()
+                  .ForEach(action: o =>
+                  {
+                      LstAdministrativeCode.Add(item: o);
+                      Init(lstTmp: lstTmp, code: o);
+                  });
             lstTmp.Clear();
         }
 
         /// <summary>
         ///     查找市、县代码表
         /// </summary>
-        /// <param name="lstTmp">所有行政列表</param>
-        /// <param name="code">当前行政代码</param>
+        /// <param name="lstTmp"> 所有行政列表 </param>
+        /// <param name="code"> 当前行政代码 </param>
         private static void Init(List<AdministrativeCode> lstTmp, AdministrativeCode code)
         {
-            if (code == null) { return; }
-            var id = code.ID.ToString().Substring(0, (code.Level + 1)*2);
+            if (code == null) return;
+            var id = code.ID.ToString().Substring(startIndex: 0, length: (code.Level + 1) * 2);
             code.SubAdministrativeCode = new List<AdministrativeCode>();
             var lst = new List<AdministrativeCode>();
 
@@ -57,7 +59,7 @@ namespace FS.Utils.Component
                 //  前2位省代码 + 后4位**00（固定）
                 case 1:
                 {
-                    lst = lstTmp.FindAll(o => o.ID.ToString().StartsWith(id) && !o.ID.ToString().EndsWith("0000") && o.ID.ToString().EndsWith("00"));
+                    lst = lstTmp.FindAll(match: o => o.ID.ToString().StartsWith(value: id) && !o.ID.ToString().EndsWith(value: "0000") && o.ID.ToString().EndsWith(value: "00"));
                     break;
                 }
 
@@ -65,61 +67,62 @@ namespace FS.Utils.Component
                 //  前4位市代码 + 后2位00（固定）
                 case 2:
                 {
-                    lst = lstTmp.FindAll(o => o.ID.ToString().StartsWith(id) && !o.ID.ToString().EndsWith("00"));
+                    lst = lstTmp.FindAll(match: o => o.ID.ToString().StartsWith(value: id) && !o.ID.ToString().EndsWith(value: "00"));
                     break;
                 }
             }
-            lst.ForEach(o =>
+
+            lst.ForEach(action: o =>
             {
-                code.SubAdministrativeCode.Add(o);
+                code.SubAdministrativeCode.Add(item: o);
                 o.Level = code.Level + 1;
-                Init(lstTmp, o);
+                Init(lstTmp: lstTmp, code: o);
             });
-            if (code.SubAdministrativeCode.Count == 0) { code.SubAdministrativeCode = null; }
+            if (code.SubAdministrativeCode.Count == 0) code.SubAdministrativeCode = null;
         }
 
         /// <summary>
         ///     查找行政区划代码
         /// </summary>
-        /// <param name="ID">行政区划代码</param>
+        /// <param name="ID"> 行政区划代码 </param>
         public static AdministrativeCode Find(int ID)
         {
-            if (ID == 0) { return null; }
-            return LstAdministrativeCode.Find(o => o.ID == ID) ?? Find(LstAdministrativeCode, ID);
+            if (ID == 0) return null;
+            return LstAdministrativeCode.Find(match: o => o.ID == ID) ?? Find(lst: LstAdministrativeCode, ID: ID);
         }
 
         /// <summary>
         ///     获取频道
         /// </summary>
-        /// <param name="lst">当前行政区划列表</param>
-        /// <param name="ID">行政区划代码</param>
+        /// <param name="lst"> 当前行政区划列表 </param>
+        /// <param name="ID"> 行政区划代码 </param>
         private static AdministrativeCode Find(List<AdministrativeCode> lst, int ID)
         {
-            if (lst == null) { return null; }
-            foreach (var code in lst.Where(code => code.ID == ID)) { return code; }
-            return lst.Select(o => Find(o.SubAdministrativeCode, ID)).FirstOrDefault(info => info != null);
+            if (lst == null) return null;
+            foreach (var code in lst.Where(predicate: code => code.ID == ID)) return code;
+            return lst.Select(selector: o => Find(lst: o.SubAdministrativeCode, ID: ID)).FirstOrDefault(predicate: info => info != null);
         }
 
         /// <summary>
         ///     查找行政区划代码
         /// </summary>
-        /// <param name="caption">行政区划名称</param>
+        /// <param name="caption"> 行政区划名称 </param>
         public static AdministrativeCode Find(string caption)
         {
-            if (string.IsNullOrWhiteSpace(caption)) { return null; }
-            return LstAdministrativeCode.Find(o => o.Caption == caption) ?? Find(LstAdministrativeCode, caption);
+            if (string.IsNullOrWhiteSpace(value: caption)) return null;
+            return LstAdministrativeCode.Find(match: o => o.Caption == caption) ?? Find(lst: LstAdministrativeCode, caption: caption);
         }
 
         /// <summary>
         ///     获取频道
         /// </summary>
-        /// <param name="lst">当前行政区划列表</param>
-        /// <param name="caption">行政区划名称</param>
+        /// <param name="lst"> 当前行政区划列表 </param>
+        /// <param name="caption"> 行政区划名称 </param>
         private static AdministrativeCode Find(List<AdministrativeCode> lst, string caption)
         {
-            if (lst == null) { return null; }
-            foreach (var code in lst.Where(code => code.Caption == caption)) { return code; }
-            return lst.Select(o => Find(o.SubAdministrativeCode, caption)).FirstOrDefault(info => info != null);
+            if (lst == null) return null;
+            foreach (var code in lst.Where(predicate: code => code.Caption == caption)) return code;
+            return lst.Select(selector: o => Find(lst: o.SubAdministrativeCode, caption: caption)).FirstOrDefault(predicate: info => info != null);
         }
 
         #region 属性
@@ -152,33 +155,32 @@ namespace FS.Utils.Component
         public List<AdministrativeCode> SubAdministrativeCode { get; set; }
 
         /// <summary>
-        /// 获取城市行政编号
+        ///     获取城市行政编号
         /// </summary>
-        /// <returns></returns>
+        /// <returns> </returns>
         public AdministrativeCode GetCity()
         {
             switch (Level)
             {
-                case 0:
-                    return SubAdministrativeCode[0];
-                case 2:
-                    return Find(ID/100*100);
+                case 0: return SubAdministrativeCode[index: 0];
+                case 2: return Find(ID: ID / 100 * 100);
             }
+
             return this;
         }
 
         /// <summary>
-        /// 获取省份行政编号
+        ///     获取省份行政编号
         /// </summary>
-        /// <returns></returns>
+        /// <returns> </returns>
         public AdministrativeCode GetProvince()
         {
             switch (Level)
             {
                 case 1:
-                case 2:
-                    return Find(ID/10000*10000);
+                case 2: return Find(ID: ID / 10000 * 10000);
             }
+
             return this;
         }
 

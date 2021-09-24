@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FS.Data.Infrastructure {
+namespace FS.Data.Infrastructure
+{
     /// <summary> 字段类型 </summary>
     public enum FieldType
     {
@@ -46,6 +47,6 @@ namespace FS.Data.Infrastructure {
 
         /// <summary> 浮点 </summary>
         [Display(Name = "Float")]
-        Float,
+        Float
     }
 }

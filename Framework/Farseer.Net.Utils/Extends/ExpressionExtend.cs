@@ -16,28 +16,22 @@ namespace FS.Extends
         /// <summary>
         ///     And 操作
         /// </summary>
-        /// <typeparam name="TEntity">实体类</typeparam>
-        /// <param name="left">左树</param>
-        /// <param name="right">右树</param>
-        public static Expression<Func<TEntity, bool>> AndAlso<TEntity>(this Expression<Func<TEntity, bool>> left, Expression<Func<TEntity, bool>> right) where TEntity : class
-        {
-            return ExpressionHelper.MergeAndAlsoExpression(left, right);
-        }
+        /// <typeparam name="TEntity"> 实体类 </typeparam>
+        /// <param name="left"> 左树 </param>
+        /// <param name="right"> 右树 </param>
+        public static Expression<Func<TEntity, bool>> AndAlso<TEntity>(this Expression<Func<TEntity, bool>> left, Expression<Func<TEntity, bool>> right) where TEntity : class => ExpressionHelper.MergeAndAlsoExpression(left: left, right: right);
 
         /// <summary>
         ///     OR 操作
         /// </summary>
-        /// <typeparam name="TEntity">实体类</typeparam>
-        /// <param name="left">左树</param>
-        /// <param name="right">右树</param>
-        public static Expression<Func<TEntity, bool>> OrElse<TEntity>(this Expression<Func<TEntity, bool>> left, Expression<Func<TEntity, bool>> right) where TEntity : class
-        {
-            return ExpressionHelper.MergeOrElseExpression(left, right);
-        }
+        /// <typeparam name="TEntity"> 实体类 </typeparam>
+        /// <param name="left"> 左树 </param>
+        /// <param name="right"> 右树 </param>
+        public static Expression<Func<TEntity, bool>> OrElse<TEntity>(this Expression<Func<TEntity, bool>> left, Expression<Func<TEntity, bool>> right) where TEntity : class => ExpressionHelper.MergeOrElseExpression(left: left, right: right);
 
 
         /// <summary>
-        /// 合并两个表达式树
+        ///     合并两个表达式树
         /// </summary>
         public static Expression<Func<TOuter, TInner>> Combine<TOuter, TMiddle, TInner>(Expression<Func<TOuter, TMiddle>> first, Expression<Func<TMiddle, TInner>> second)
         {
@@ -47,24 +41,24 @@ namespace FS.Extends
         /// <summary>
         ///     获取类属性成员名称
         /// </summary>
-        /// <param name="select">select表达式树</param>
-        /// <returns></returns>
+        /// <param name="select"> select表达式树 </param>
+        /// <returns> </returns>
         public static List<MemberExpression> GetMemberExpression(this Expression select)
         {
             switch (select.NodeType)
             {
                 case ExpressionType.New:
                 {
-                    return ((NewExpression) select).Arguments.Select(o => (MemberExpression) o).ToList();
+                    return ((NewExpression)select).Arguments.Select(selector: o => (MemberExpression)o).ToList();
                 }
-                case ExpressionType.Lambda:
-                    return GetMemberExpression(((LambdaExpression) select).Body);
+                case ExpressionType.Lambda: return GetMemberExpression(select: ((LambdaExpression)select).Body);
                 case ExpressionType.MemberAccess:
                 {
-                    return new List<MemberExpression> {((MemberExpression) select)};
+                    return new List<MemberExpression> { (MemberExpression)select };
                 }
                     ;
             }
+
             ;
             return new List<MemberExpression>();
         }

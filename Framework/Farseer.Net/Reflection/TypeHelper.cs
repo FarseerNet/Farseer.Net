@@ -11,8 +11,8 @@ namespace FS.Reflection
         /// <summary>
         ///     是否Func类型
         /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
+        /// <param name="obj"> </param>
+        /// <returns> </returns>
         public static bool IsFunc(object obj)
         {
             if (obj == null) return false;
@@ -26,22 +26,19 @@ namespace FS.Reflection
         /// <summary>
         ///     是否Func类型
         /// </summary>
-        /// <typeparam name="TReturn"></typeparam>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public static bool IsFunc<TReturn>(object obj) => (obj != null) && (obj.GetType() == typeof(Func<TReturn>));
+        /// <typeparam name="TReturn"> </typeparam>
+        /// <param name="obj"> </param>
+        /// <returns> </returns>
+        public static bool IsFunc<TReturn>(object obj) => obj != null && obj.GetType() == typeof(Func<TReturn>);
 
         /// <summary>
         ///     是否基元类型，包括Nullable类型
         /// </summary>
         public static bool IsPrimitiveExtendedIncludingNullable(Type type)
         {
-            if (IsPrimitiveExtended(type)) return true;
+            if (IsPrimitiveExtended(type: type)) return true;
 
-            if (type.GetTypeInfo().IsGenericType && (type.GetGenericTypeDefinition() == typeof(Nullable<>)))
-            {
-                return IsPrimitiveExtended(type.GenericTypeArguments[0]);
-            }
+            if (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>)) return IsPrimitiveExtended(type: type.GenericTypeArguments[0]);
             return false;
         }
 
@@ -52,7 +49,7 @@ namespace FS.Reflection
         {
             if (type.GetTypeInfo().IsPrimitive) return true;
 
-            return (type == typeof(string)) || (type == typeof(decimal)) || (type == typeof(DateTime)) || (type == typeof(DateTimeOffset)) || (type == typeof(TimeSpan)) || (type == typeof(Guid));
+            return type == typeof(string) || type == typeof(decimal) || type == typeof(DateTime) || type == typeof(DateTimeOffset) || type == typeof(TimeSpan) || type == typeof(Guid);
         }
     }
 }

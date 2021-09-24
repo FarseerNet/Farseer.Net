@@ -9,10 +9,24 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Pipeline.RetryHandler
 {
     public class DefaultRetryPolicy : RetryPolicy
     {
-        private int _maxBackoffInMilliseconds = (int)TimeSpan.FromSeconds(30).TotalMilliseconds;
+        // Set of error codes to retry on.
 
         // Set of web exception status codes to retry on.
-        private ICollection<WebExceptionStatus> _webExceptionStatusesToRetryOn = new HashSet<WebExceptionStatus>
+
+        public DefaultRetryPolicy(int maxRetries)
+        {
+            MaxRetries = maxRetries;
+        }
+
+        public int MaxBackoffInMilliseconds { get; set; } = (int)TimeSpan.FromSeconds(value: 30).TotalMilliseconds;
+
+        public ICollection<string> ErrorCodesToRetryOn { get; } = new HashSet<string>
+        {
+            "Throttling",
+            "RequestTimeout"
+        };
+
+        public ICollection<WebExceptionStatus> WebExceptionStatusesToRetryOn { get; } = new HashSet<WebExceptionStatus>
         {
             WebExceptionStatus.ConnectFailure,
             WebExceptionStatus.ConnectionClosed,
@@ -21,47 +35,15 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Pipeline.RetryHandler
             WebExceptionStatus.ReceiveFailure
         };
 
-        // Set of error codes to retry on.
-        private ICollection<string> _errorCodesToRetryOn = new HashSet<string>
-        {
-            "Throttling",
-            "RequestTimeout"
-        };
-
-        public int MaxBackoffInMilliseconds
-        {
-            get { return _maxBackoffInMilliseconds; }
-            set { _maxBackoffInMilliseconds = value; }
-        }
-
-        public ICollection<string> ErrorCodesToRetryOn
-        {
-            get { return _errorCodesToRetryOn; }
-        }
-
-        public ICollection<WebExceptionStatus> WebExceptionStatusesToRetryOn
-        {
-            get { return _webExceptionStatusesToRetryOn; }
-        }
-
-        public DefaultRetryPolicy(int maxRetries)
-        {
-            this.MaxRetries = maxRetries;
-        }
-
-        public override bool CanRetry(IExecutionContext executionContext)
-        {            
-            return executionContext.RequestContext.Request.IsRequestStreamRewindable();
-        }
+        public override bool CanRetry(IExecutionContext executionContext) => executionContext.RequestContext.Request.IsRequestStreamRewindable();
 
         public override bool RetryForException(IExecutionContext executionContext, Exception exception)
-        {            
+        {
             // An IOException was thrown by the underlying http client.
             if (exception is IOException)
             {
                 // Don't retry IOExceptions that are caused by a ThreadAbortException
-                if (IsInnerException<ThreadAbortException>(exception))
-                    return false;
+                if (IsInnerException<ThreadAbortException>(exception: exception)) return false;
 
                 // Retry all other IOExceptions
                 return true;
@@ -81,9 +63,7 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Pipeline.RetryHandler
                 */
                 if (serviceException.StatusCode == HttpStatusCode.InternalServerError ||
                     serviceException.StatusCode == HttpStatusCode.ServiceUnavailable)
-                {
                     return true;
-                }
 
                 /*
                  * Throttling is reported as a 400 or 503 error from services. To try and
@@ -91,51 +71,41 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Pipeline.RetryHandler
                  * hoping that the pause is long enough for the request to get through
                  * the next time.
                 */
-                if ((serviceException.StatusCode == HttpStatusCode.BadRequest ||
-                    serviceException.StatusCode == HttpStatusCode.ServiceUnavailable))
+                if (serviceException.StatusCode == HttpStatusCode.BadRequest ||
+                    serviceException.StatusCode == HttpStatusCode.ServiceUnavailable)
                 {
-                    string errorCode = serviceException.ErrorCode;
-                    if (this.ErrorCodesToRetryOn.Contains(errorCode))
-                    {
-                        return true;
-                    }
+                    var errorCode = serviceException.ErrorCode;
+                    if (ErrorCodesToRetryOn.Contains(item: errorCode)) return true;
                 }
 
                 WebException webException;
-                if (IsInnerException<WebException>(exception, out webException))
-                {
-                    if (this.WebExceptionStatusesToRetryOn.Contains(webException.Status))
-                    {
+                if (IsInnerException(exception: exception, inner: out webException))
+                    if (WebExceptionStatusesToRetryOn.Contains(item: webException.Status))
                         return true;
-                    }
-                }
             }
 
             return false;
         }
 
-        public override bool RetryLimitReached(IExecutionContext executionContext)
-        {
-            return executionContext.RequestContext.Retries >= this.MaxRetries;
-        }
+        public override bool RetryLimitReached(IExecutionContext executionContext) => executionContext.RequestContext.Retries >= MaxRetries;
 
         public override void WaitBeforeRetry(IExecutionContext executionContext)
-        {            
-            DefaultRetryPolicy.WaitBeforeRetry(executionContext.RequestContext.Retries, this.MaxBackoffInMilliseconds);
+        {
+            WaitBeforeRetry(retries: executionContext.RequestContext.Retries, maxBackoffInMilliseconds: MaxBackoffInMilliseconds);
         }
 
         public static void WaitBeforeRetry(int retries, int maxBackoffInMilliseconds)
         {
-            int delay = (int)(Math.Pow(4, retries) * 100);
-            delay = Math.Min(delay, maxBackoffInMilliseconds);
-            AliyunSDKUtils.Sleep(delay);
+            var delay = (int)(Math.Pow(x: 4, y: retries) * 100);
+            delay = Math.Min(val1: delay, val2: maxBackoffInMilliseconds);
+            AliyunSDKUtils.Sleep(ms: delay);
         }
 
         protected static bool IsInnerException<T>(Exception exception)
             where T : Exception
         {
             T innerException;
-            return IsInnerException<T>(exception, out innerException);
+            return IsInnerException(exception: exception, inner: out innerException);
         }
 
         protected static bool IsInnerException<T>(Exception exception, out T inner)
@@ -143,16 +113,14 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Pipeline.RetryHandler
         {
             inner = null;
             var innerExceptionType = typeof(T);
-            var currentException = exception;
+            var currentException   = exception;
             while (currentException.InnerException != null)
             {
                 inner = currentException.InnerException as T;
-                if (inner != null)
-                {
-                    return true;
-                }
+                if (inner != null) return true;
                 currentException = currentException.InnerException;
             }
+
             return false;
         }
     }

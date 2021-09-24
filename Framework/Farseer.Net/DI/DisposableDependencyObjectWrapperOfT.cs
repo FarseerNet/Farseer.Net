@@ -1,44 +1,49 @@
 namespace FS.DI
 {
     /// <summary>
-    ///     °ü×°Ò»¸ö´ÓIocÈÝÆ÷ÖÐ»ñÈ¡µÄ¶ÔÏóµÄÀà
-    ///     ´Ë¶ÔÏó¼Ì³Ð×ÔIDisposable
+    ///     ï¿½ï¿½×°Ò»ï¿½ï¿½ï¿½ï¿½Iocï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½È¡ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    ///     ï¿½Ë¶ï¿½ï¿½ï¿½Ì³ï¿½ï¿½ï¿½IDisposable
     /// </summary>
     internal class DisposableDependencyObjectWrapper : DisposableDependencyObjectWrapper<object>, IDisposableDependencyObjectWrapper
     {
         /// <summary>
-        ///     ¹¹Ôìº¯Êý
+        ///     ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½
         /// </summary>
-        /// <param name="iocResolver"></param>
-        /// <param name="obj"></param>
-        public DisposableDependencyObjectWrapper(IIocResolver iocResolver, object obj) : base(iocResolver, obj) { }
+        /// <param name="iocResolver"> </param>
+        /// <param name="obj"> </param>
+        public DisposableDependencyObjectWrapper(IIocResolver iocResolver, object obj) : base(iocResolver: iocResolver, obj: obj)
+        {
+        }
     }
 
     /// <summary>
-    ///     °ü×°Ò»¸ö´ÓIocÈÝÆ÷ÖÐ»ñÈ¡µÄ¶ÔÏóµÄ·ºÐÍÀà
-    ///     ´Ë¶ÔÏó¼Ì³Ð×ÔIDisposable
+    ///     ï¿½ï¿½×°Ò»ï¿½ï¿½ï¿½ï¿½Iocï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½È¡ï¿½Ä¶ï¿½ï¿½ï¿½Ä·ï¿½ï¿½ï¿½ï¿½ï¿½
+    ///     ï¿½Ë¶ï¿½ï¿½ï¿½Ì³ï¿½ï¿½ï¿½IDisposable
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T"> </typeparam>
     internal class DisposableDependencyObjectWrapper<T> : IDisposableDependencyObjectWrapper<T>
     {
         private readonly IIocResolver _iocResolver;
 
         /// <summary>
-        ///     ¹¹Ôìº¯Êý
+        ///     ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½
         /// </summary>
-        /// <param name="iocResolver"></param>
-        /// <param name="obj"></param>
+        /// <param name="iocResolver"> </param>
+        /// <param name="obj"> </param>
         public DisposableDependencyObjectWrapper(IIocResolver iocResolver, T obj)
         {
             _iocResolver = iocResolver;
-            Object = obj;
+            Object       = obj;
         }
 
         public T Object { get; }
 
         /// <summary>
-        ///     ÊÍ·Å¶ÔÏó
+        ///     ï¿½Í·Å¶ï¿½ï¿½ï¿½
         /// </summary>
-        public void Dispose() { _iocResolver.Release(Object); }
+        public void Dispose()
+        {
+            _iocResolver.Release(obj: Object);
+        }
     }
 }

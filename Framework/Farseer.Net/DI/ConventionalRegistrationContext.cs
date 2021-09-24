@@ -1,5 +1,4 @@
-﻿
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace FS.DI
 {
@@ -11,14 +10,14 @@ namespace FS.DI
         /// <summary>
         ///     构造函数
         /// </summary>
-        /// <param name="assembly"></param>
-        /// <param name="iocManager"></param>
-        /// <param name="config"></param>
+        /// <param name="assembly"> </param>
+        /// <param name="iocManager"> </param>
+        /// <param name="config"> </param>
         internal ConventionalRegistrationContext(Assembly assembly, IIocManager iocManager, ConventionalRegistrationConfig config)
         {
-            Assembly = assembly;
+            Assembly   = assembly;
             IocManager = iocManager;
-            Config = config;
+            Config     = config;
         }
 
         /// <summary>

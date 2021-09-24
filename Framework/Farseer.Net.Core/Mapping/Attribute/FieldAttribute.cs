@@ -6,7 +6,7 @@ namespace FS.Core.Mapping.Attribute
     /// <summary>
     ///     设置字段在数据库中的映射关系
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(validOn: AttributeTargets.Property)]
     public sealed class FieldAttribute : System.Attribute
     {
         /// <summary>
@@ -45,7 +45,7 @@ namespace FS.Core.Mapping.Attribute
         public int FieldLength { get; set; }
 
         /// <summary>
-        /// 字段在数据库的位置（SqlBulkCopy时用到）
+        ///     字段在数据库的位置（SqlBulkCopy时用到）
         /// </summary>
         public int FieldIndex { get; set; }
 

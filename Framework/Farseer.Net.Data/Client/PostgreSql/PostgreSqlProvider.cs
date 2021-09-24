@@ -1,7 +1,6 @@
 ﻿using System.Data.Common;
 using System.Reflection;
 using System.Text;
-using FS.Data.Infrastructure;
 using FS.Data.Internal;
 
 namespace FS.Data.Client.PostgreSql
@@ -11,28 +10,27 @@ namespace FS.Data.Client.PostgreSql
     /// </summary>
     public class PostgreSqlProvider : AbsDbProvider
     {
-        public override DbProviderFactory DbProviderFactory => (DbProviderFactory)Assembly.Load("Npgsql").GetType("Npgsql.NpgsqlFactory").GetField("Instance").GetValue(null);//(DbProviderFactory)InstanceCacheManger.Cache(Assembly.Load("Npgsql").GetType("Npgsql.NpgsqlFactory"));
-        public override AbsFunctionProvider FunctionProvider => new PostgreSqlFunctionProvider();
-        public override bool IsSupportTransaction => true;
-        public override string KeywordAegis(string fieldName)
-        {
-            //if (Regex.IsMatch(fieldName, "[\\(\\)\\,\\[\\]\\+\\= ]+")) { return fieldName; }
-            return $"\"{fieldName}\"";
-        }
+        public override DbProviderFactory   DbProviderFactory    => (DbProviderFactory)Assembly.Load(assemblyString: "Npgsql").GetType(name: "Npgsql.NpgsqlFactory").GetField(name: "Instance").GetValue(obj: null); //(DbProviderFactory)InstanceCacheManger.Cache(Assembly.Load("Npgsql").GetType("Npgsql.NpgsqlFactory"));
+        public override AbsFunctionProvider FunctionProvider     => new PostgreSqlFunctionProvider();
+        public override bool                IsSupportTransaction => true;
 
-        internal override AbsSqlBuilder CreateSqlBuilder(ExpressionBuilder expBuilder, string dbName, string tableName) => new PostgreSqlBuilder(this, expBuilder, dbName, tableName);
+        public override string KeywordAegis(string fieldName) =>
+            //if (Regex.IsMatch(fieldName, "[\\(\\)\\,\\[\\]\\+\\= ]+")) { return fieldName; }
+            $"\"{fieldName}\"";
+
+        internal override AbsSqlBuilder CreateSqlBuilder(ExpressionBuilder expBuilder, string dbName, string tableName) => new PostgreSqlBuilder(dbProvider: this, expBuilder: expBuilder, dbName: dbName, tableName: tableName);
 
         public override string CreateDbConnstring(string server, string port, string userId, string passWord = null, string catalog = null, string dataVer = null, string additional = null, int connectTimeout = 60, int poolMinSize = 16, int poolMaxSize = 100)
         {
-            var sb = new StringBuilder($"Data Source='{server}';User ID='{userId}';");
-            if (!string.IsNullOrWhiteSpace(port)) { sb.Append($"Port='{port}';"); }
-            if (!string.IsNullOrWhiteSpace(passWord)) { sb.Append($"Password='{passWord}';"); }
-            if (!string.IsNullOrWhiteSpace(catalog)) { sb.Append($"Database='{catalog}';"); }
+            var sb = new StringBuilder(value: $"Data Source='{server}';User ID='{userId}';");
+            if (!string.IsNullOrWhiteSpace(value: port)) sb.Append(value: $"Port='{port}';");
+            if (!string.IsNullOrWhiteSpace(value: passWord)) sb.Append(value: $"Password='{passWord}';");
+            if (!string.IsNullOrWhiteSpace(value: catalog)) sb.Append(value: $"Database='{catalog}';");
 
-            if (poolMinSize > 0) { sb.Append($"Min Pool Size='{poolMinSize}';"); }
-            if (poolMaxSize > 0) { sb.Append($"Max Pool Size='{poolMaxSize}';"); }
-            if (connectTimeout > 0) { sb.Append($"Connect Timeout='{connectTimeout}';"); }
-            sb.Append(additional);
+            if (poolMinSize    > 0) sb.Append(value: $"Min Pool Size='{poolMinSize}';");
+            if (poolMaxSize    > 0) sb.Append(value: $"Max Pool Size='{poolMaxSize}';");
+            if (connectTimeout > 0) sb.Append(value: $"Connect Timeout='{connectTimeout}';");
+            sb.Append(value: additional);
             return sb.ToString();
         }
     }

@@ -4,32 +4,22 @@
     {
         protected override void PreInvoke(IExecutionContext executionContext)
         {
-            if (ShouldSign(executionContext.RequestContext))
+            if (ShouldSign(requestContext: executionContext.RequestContext))
             {
-                SignRequest(executionContext.RequestContext);
+                SignRequest(requestContext: executionContext.RequestContext);
                 executionContext.RequestContext.IsSigned = true;
-            } 
+            }
         }
 
-        private static bool ShouldSign(IRequestContext requestContext)
-        {
-            return !requestContext.IsSigned;
-        }
+        private static bool ShouldSign(IRequestContext requestContext) => !requestContext.IsSigned;
 
         internal static void SignRequest(IRequestContext requestContext)
         {
-            ImmutableCredentials immutableCredentials = requestContext.ImmutableCredentials;
+            var immutableCredentials = requestContext.ImmutableCredentials;
 
-            if (immutableCredentials == null)
-                return;
+            if (immutableCredentials == null) return;
 
-            try
-            {
-                requestContext.Signer.Sign(requestContext.Request, immutableCredentials.AccessKey, immutableCredentials.SecretKey, immutableCredentials.SecurityToken);
-            }
-            finally
-            {
-            }
+            requestContext.Signer.Sign(request: requestContext.Request, accessKeyId: immutableCredentials.AccessKey, secretAccessKey: immutableCredentials.SecretKey, stsToken: immutableCredentials.SecurityToken);
         }
     }
 }

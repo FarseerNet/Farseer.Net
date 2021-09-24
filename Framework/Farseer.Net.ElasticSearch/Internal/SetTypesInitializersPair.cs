@@ -11,7 +11,7 @@ namespace FS.ElasticSearch.Internal
         // <summary>
         // 保存一个EsContext对象下的所有Set实体类型
         // </summary>
-        public SetTypesInitializersPair(Dictionary<Type, List<string>> entityTypeToPropertyNameMap, Action<EsContext> setsInitializer) : base(entityTypeToPropertyNameMap, setsInitializer)
+        public SetTypesInitializersPair(Dictionary<Type, List<string>> entityTypeToPropertyNameMap, Action<EsContext> setsInitializer) : base(item1: entityTypeToPropertyNameMap, item2: setsInitializer)
         {
         }
 

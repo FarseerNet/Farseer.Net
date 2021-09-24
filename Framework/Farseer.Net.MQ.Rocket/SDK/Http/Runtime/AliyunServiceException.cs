@@ -5,89 +5,67 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime
 {
     public class AliyunServiceException : Exception
     {
-        private HttpStatusCode statusCode;
-        private string errorCode;
-        private string requestId;
-        private string hostId;
-
         public AliyunServiceException()
-            : base()
         {
         }
 
         public AliyunServiceException(string message)
-            : base(message)
+            : base(message: message)
         {
         }
 
         public AliyunServiceException(string message, Exception innerException)
-            : base(message, innerException)
+            : base(message: message, innerException: innerException)
         {
         }
 
         public AliyunServiceException(string message, Exception innerException, HttpStatusCode statusCode)
-            : base(message, innerException)
+            : base(message: message, innerException: innerException)
         {
-            this.statusCode = statusCode;
+            this.StatusCode = statusCode;
         }
 
         public AliyunServiceException(Exception innerException)
-            : base(innerException.Message, innerException)
+            : base(message: innerException.Message, innerException: innerException)
         {
         }
 
         public AliyunServiceException(string message, string errorCode, string requestId, string hostId, HttpStatusCode statusCode)
-            : base(message)
+            : base(message: message)
         {
-            this.statusCode = statusCode;
-            this.errorCode = errorCode;
-            this.requestId = requestId;
-            this.hostId = hostId;
+            this.StatusCode = statusCode;
+            this.ErrorCode  = errorCode;
+            this.RequestId  = requestId;
+            this.HostId     = hostId;
         }
 
         public AliyunServiceException(string message, Exception innerException, string errorCode, string requestId, string hostId, HttpStatusCode statusCode)
-            : base(message, innerException)
+            : base(message: message, innerException: innerException)
         {
-            this.statusCode = statusCode;
-            this.errorCode = errorCode;
-            this.requestId = requestId;
-            this.hostId = hostId;
+            this.StatusCode = statusCode;
+            this.ErrorCode  = errorCode;
+            this.RequestId  = requestId;
+            this.HostId     = hostId;
         }
 
         /// <summary>
-        /// The HTTP status code from the service response
+        ///     The HTTP status code from the service response
         /// </summary>
-        public HttpStatusCode StatusCode
-        {
-            get { return this.statusCode; }
-            set { this.statusCode = value; }
-        }
+        public HttpStatusCode StatusCode { get; set; }
 
         /// <summary>
-        /// The error code returned by the service
+        ///     The error code returned by the service
         /// </summary>
-        public string ErrorCode
-        {
-            get { return this.errorCode; }
-            set { this.errorCode = value; }
-        }
+        public string ErrorCode { get; set; }
 
         /// <summary>
-        /// The id of the request which generated the exception.
+        ///     The id of the request which generated the exception.
         /// </summary>
-        public string RequestId
-        {
-            get { return this.requestId; }
-            set { this.requestId = value; }
-        }
+        public string RequestId { get; set; }
 
         /// <summary>
-        /// The host id of the request which generated the exception.
+        ///     The host id of the request which generated the exception.
         /// </summary>
-        public string HostId
-        {
-            get { return this.hostId; }
-            set { this.hostId = value; }
-        }
+        public string HostId { get; set; }
     }
 }

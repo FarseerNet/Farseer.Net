@@ -10,60 +10,60 @@ namespace FS.DI
         /// <summary>
         ///     获取实例
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="name"></param>
-        /// <returns></returns>
+        /// <typeparam name="T"> </typeparam>
+        /// <param name="name"> </param>
+        /// <returns> </returns>
         T Resolve<T>(string name = "");
 
         /// <summary>
         ///     获取实例
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="type"></param>
-        /// <param name="name"></param>
-        /// <returns></returns>
+        /// <typeparam name="T"> </typeparam>
+        /// <param name="type"> </param>
+        /// <param name="name"> </param>
+        /// <returns> </returns>
         T Resolve<T>(Type type, string name = "");
 
         /// <summary>
         ///     获取实例
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="name"></param>
-        /// <returns></returns>
+        /// <param name="type"> </param>
+        /// <param name="name"> </param>
+        /// <returns> </returns>
         object Resolve(Type type, string name = "");
 
         /// <summary>
         ///     获取所有实例
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
+        /// <typeparam name="T"> </typeparam>
+        /// <returns> </returns>
         T[] ResolveAll<T>();
 
         /// <summary>
         ///     获取所有实例
         /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
+        /// <param name="type"> </param>
+        /// <returns> </returns>
         object[] ResolveAll(Type type);
 
         /// <summary>
         ///     释放对象
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="obj"> </param>
         void Release(object obj);
 
         /// <summary>
         ///     是否注册
         /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
+        /// <param name="type"> </param>
+        /// <returns> </returns>
         bool IsRegistered(Type type);
 
         /// <summary>
         ///     是否注册
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
+        /// <typeparam name="T"> </typeparam>
+        /// <returns> </returns>
         bool IsRegistered<T>();
     }
 }

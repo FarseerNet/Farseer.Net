@@ -9,6 +9,14 @@ namespace FS.Configuration
     public class DictionaryBasedConfig : IDictionaryBasedConfig
     {
         /// <summary>
+        ///     构造函数
+        /// </summary>
+        protected DictionaryBasedConfig()
+        {
+            CustomSettings = new Dictionary<string, object>();
+        }
+
+        /// <summary>
         ///     自定义配置字典
         /// </summary>
         protected Dictionary<string, object> CustomSettings { get; }
@@ -16,84 +24,83 @@ namespace FS.Configuration
         /// <summary>
         ///     获取一个配置值
         /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
+        /// <param name="name"> </param>
+        /// <returns> </returns>
         public object this[string name]
         {
-            get => CustomSettings.ContainsKey(name) ? CustomSettings[name] : null;
-            set => CustomSettings[name] = value;
+            get => CustomSettings.ContainsKey(key: name) ? CustomSettings[key: name] : null;
+            set => CustomSettings[key: name] = value;
         }
-
-        /// <summary>
-        ///     构造函数
-        /// </summary>
-        protected DictionaryBasedConfig() { CustomSettings = new Dictionary<string, object>(); }
 
         /// <summary>
         ///     根据给定类型获取配置值
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="name"></param>
-        /// <returns></returns>
+        /// <typeparam name="T"> </typeparam>
+        /// <param name="name"> </param>
+        /// <returns> </returns>
         public T Get<T>(string name)
         {
-            var value = this[name];
-            return value == null ? default(T) : (T)Convert.ChangeType(value, typeof(T));
+            var value = this[name: name];
+            return value == null ? default : (T)Convert.ChangeType(value: value, conversionType: typeof(T));
         }
 
         /// <summary>
         ///     根据给定名称设置配置值
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        public void Set<T>(string name, T value) { this[name] = value; }
-
-        /// <summary>
-        ///     根据给定名称获取配置值
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public object Get(string name) { return Get(name, null); }
-
-        /// <summary>
-        ///     根据给定名称获取配置值
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="defaultValue"></param>
-        /// <returns></returns>
-        public object Get(string name, object defaultValue)
+        /// <typeparam name="T"> </typeparam>
+        /// <param name="name"> </param>
+        /// <param name="value"> </param>
+        public void Set<T>(string name, T value)
         {
-            var value = this[name];
-            if (value == null) return defaultValue;
-
-            return this[name];
+            this[name: name] = value;
         }
 
         /// <summary>
         ///     根据给定名称获取配置值
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="name"></param>
-        /// <param name="defaultValue"></param>
-        /// <returns></returns>
-        public T Get<T>(string name, T defaultValue) { return (T)Get(name, (object)defaultValue); }
+        /// <param name="name"> </param>
+        /// <returns> </returns>
+        public object Get(string name) => Get(name: name, defaultValue: null);
 
         /// <summary>
         ///     根据给定名称获取配置值
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="name"></param>
-        /// <param name="creator"></param>
-        /// <returns></returns>
+        /// <param name="name"> </param>
+        /// <param name="defaultValue"> </param>
+        /// <returns> </returns>
+        public object Get(string name, object defaultValue)
+        {
+            var value = this[name: name];
+            if (value == null) return defaultValue;
+
+            return this[name: name];
+        }
+
+        /// <summary>
+        ///     根据给定名称获取配置值
+        /// </summary>
+        /// <typeparam name="T"> </typeparam>
+        /// <param name="name"> </param>
+        /// <param name="defaultValue"> </param>
+        /// <returns> </returns>
+        public T Get<T>(string name, T defaultValue) => (T)Get(name: name, defaultValue: (object)defaultValue);
+
+        /// <summary>
+        ///     根据给定名称获取配置值
+        /// </summary>
+        /// <typeparam name="T"> </typeparam>
+        /// <param name="name"> </param>
+        /// <param name="creator"> </param>
+        /// <returns> </returns>
         public T GetOrCreate<T>(string name, Func<T> creator)
         {
-            var value = Get(name);
+            var value = Get(name: name);
             if (value == null)
             {
                 value = creator();
-                Set(name, value);
+                Set(name: name, value: value);
             }
+
             return (T)value;
         }
     }

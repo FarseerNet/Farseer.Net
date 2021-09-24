@@ -24,12 +24,12 @@ namespace FS.ElasticSearch.Map
         public SetPhysicsMap PhysicsMap { get; }
 
         /// <summary>
-        /// 副本数量（默认1）
+        ///     副本数量（默认1）
         /// </summary>
         public int ReplicasCount { get; private set; }
 
         /// <summary>
-        /// 分片数量（默认3）
+        ///     分片数量（默认3）
         /// </summary>
         public int ShardsCount { get; private set; }
 
@@ -48,16 +48,20 @@ namespace FS.ElasticSearch.Map
         /// <summary>
         ///     设置索引、别名、分片数量、副本数量
         /// </summary>
-        /// <param name="indexName">库名称 </param>
+        /// <param name="indexName"> 库名称 </param>
         /// <param name="shardsCount"> </param>
         /// <param name="replicasCount"> </param>
-        /// <param name="aliasNames">别名，多个使用数组 </param>
+        /// <param name="aliasNames"> 别名，多个使用数组 </param>
         public SetDataMap SetName(string indexName, int shardsCount = 3, int replicasCount = 1, params string[] aliasNames)
         {
-            this.IndexName     = indexName.ToLower();
-            this.ShardsCount   = shardsCount;
-            this.ReplicasCount = replicasCount;
-            if (aliasNames is {Length: > 0}) this.AliasNames    = aliasNames.Select(aliasName => aliasName.ToLower()).ToArray();
+            IndexName     = indexName.ToLower();
+            ShardsCount   = shardsCount;
+            ReplicasCount = replicasCount;
+            if (aliasNames is
+            {
+                Length: > 0
+            })
+                AliasNames = aliasNames.Select(selector: aliasName => aliasName.ToLower()).ToArray();
             return this;
         }
     }

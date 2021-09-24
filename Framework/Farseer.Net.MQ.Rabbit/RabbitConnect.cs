@@ -5,7 +5,7 @@ using RabbitMQ.Client;
 namespace FS.MQ.Rabbit
 {
     /// <summary>
-    /// Rabbit连接
+    ///     Rabbit连接
     /// </summary>
     public class RabbitConnect
     {
@@ -17,17 +17,12 @@ namespace FS.MQ.Rabbit
         private readonly IConnectionFactory _factoryInfo;
 
         /// <summary>
-        /// Rabbit连接
+        ///     初始化
         /// </summary>
-        public IConnection Connection { get; private set; }
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="config">配置</param>
+        /// <param name="config"> 配置 </param>
         public RabbitConnect(RabbitServerConfig config)
         {
-            if (string.IsNullOrWhiteSpace(config.VirtualHost)) config.VirtualHost = "/";
+            if (string.IsNullOrWhiteSpace(value: config.VirtualHost)) config.VirtualHost = "/";
             _config = config;
             _factoryInfo = new ConnectionFactory //创建连接工厂对象
             {
@@ -36,9 +31,14 @@ namespace FS.MQ.Rabbit
                 UserName                 = config.UserName,    //用户账号
                 Password                 = config.Password,    //用户密码
                 VirtualHost              = config.VirtualHost, // 虚拟主机
-                AutomaticRecoveryEnabled = true,
+                AutomaticRecoveryEnabled = true
             };
         }
+
+        /// <summary>
+        ///     Rabbit连接
+        /// </summary>
+        public IConnection Connection { get; private set; }
 
         /// <summary>
         ///     开启Rabbit
@@ -46,11 +46,11 @@ namespace FS.MQ.Rabbit
         public void Open()
         {
             var hostName = Dns.GetHostName();
-            Connection = _factoryInfo.CreateConnection($"{hostName}/{_config.UserName}");
+            Connection = _factoryInfo.CreateConnection(clientProvidedName: $"{hostName}/{_config.UserName}");
         }
 
         /// <summary>
-        /// 关闭Rabbit
+        ///     关闭Rabbit
         /// </summary>
         public void Close()
         {

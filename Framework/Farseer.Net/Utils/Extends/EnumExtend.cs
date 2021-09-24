@@ -14,8 +14,8 @@ namespace FS.Extends
         /// <summary>
         ///     获取枚举中文
         /// </summary>
-        /// <param name="eum">枚举值</param>
-        public static string GetName(this Enum eum) => new Enums(eum).GetName();
+        /// <param name="eum"> 枚举值 </param>
+        public static string GetName(this Enum eum) => new Enums(eum: eum).GetName();
 
         /// <summary>
         ///     获取枚举列表
@@ -23,16 +23,13 @@ namespace FS.Extends
         public static Dictionary<int, string> ToDictionary(this Type enumType)
         {
             var dic = new Dictionary<int, string>();
-            foreach (int value in Enum.GetValues(enumType)) { dic.Add(value, new Enums((Enum)Enum.ToObject(enumType, value)).GetName()); }
+            foreach (int value in Enum.GetValues(enumType: enumType)) dic.Add(key: value, value: new Enums(eum: (Enum)Enum.ToObject(enumType: enumType, value: value)).GetName());
             return dic;
         }
 
         /// <summary>
         ///     获取枚举列表
         /// </summary>
-        public static List<int> ToList(this Type enumType)
-        {
-            return Enum.GetValues(enumType).Cast<int>().ToList();
-        }
+        public static List<int> ToList(this Type enumType) => Enum.GetValues(enumType: enumType).Cast<int>().ToList();
     }
 }

@@ -6,87 +6,37 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Internal
 {
     public interface IRequest
     {
-        string RequestName
-        {
-            get;
-        }
+        string RequestName { get; }
 
-        IDictionary<string, string> Headers
-        {
-            get;
-        }
+        IDictionary<string, string> Headers { get; }
 
-        bool UseQueryString
-        {
-            get;
-            set;
-        }
+        bool UseQueryString { get; set; }
 
-        IDictionary<String, String> Parameters
-        {
-            get;
-        }
+        IDictionary<string, string> Parameters { get; }
 
-        IDictionary<string, string> SubResources
-        {
-            get;
-        }
+        IDictionary<string, string> SubResources { get; }
+
+        string HttpMethod { get; set; }
+
+        Uri Endpoint { get; set; }
+
+        string ResourcePath { get; set; }
+
+        byte[] Content { get; set; }
+
+        Stream ContentStream { get; set; }
+
+        long OriginalStreamPosition { get; set; }
+
+        string ServiceName { get; }
+
+        WebServiceRequest OriginalRequest { get; }
+
+        bool Suppress404Exceptions { get; set; }
 
         void AddSubResource(string subResource);
 
         void AddSubResource(string subResource, string value);
-
-        string HttpMethod
-        {
-            get;
-            set;
-        }
-
-        Uri Endpoint
-        {
-            get;
-            set;
-        }
-
-        string ResourcePath
-        {
-            get;
-            set;
-        }
-
-        byte[] Content
-        {
-            get;
-            set;
-        }
-
-        Stream ContentStream
-        {
-            get;
-            set;
-        }
-
-        long OriginalStreamPosition
-        {
-            get;
-            set;
-        }
-
-        string ServiceName
-        {
-            get;
-        }
-
-        WebServiceRequest OriginalRequest
-        {
-            get;
-        }
-
-        bool Suppress404Exceptions
-        {
-            get;
-            set;
-        }
 
         bool IsRequestStreamRewindable();
 

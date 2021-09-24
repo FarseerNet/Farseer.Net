@@ -10,6 +10,6 @@
         ReadOnly,
 
         /// <summary> 只读状态，但如果存在值时，将转换成==条件 </summary>
-        ReadCondition,
+        ReadCondition
     }
 }

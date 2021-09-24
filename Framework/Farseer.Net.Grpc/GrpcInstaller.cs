@@ -1,9 +1,7 @@
-﻿using System.Linq;
-using Castle.MicroKernel.Registration;
+﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using Farseer.Net.Grpc.Configuration;
-using Microsoft.Extensions.Configuration;
 
 namespace Farseer.Net.Grpc
 {
@@ -18,10 +16,7 @@ namespace Farseer.Net.Grpc
             // 读取配置
             var grpcItemConfigs = GrpcConfigRoot.Get();
 
-            foreach (var grpcItemConfig in grpcItemConfigs)
-            {
-                container.Register(Component.For<IGrpcClient>().Named(grpcItemConfig.Name).ImplementedBy<GrpcClient>().DependsOn(Dependency.OnValue<GrpcItemConfig>(grpcItemConfig)).LifestyleSingleton());
-            }
+            foreach (var grpcItemConfig in grpcItemConfigs) container.Register(Component.For<IGrpcClient>().Named(name: grpcItemConfig.Name).ImplementedBy<GrpcClient>().DependsOn(dependency: Dependency.OnValue<GrpcItemConfig>(value: grpcItemConfig)).LifestyleSingleton());
         }
     }
 }

@@ -3,9 +3,9 @@
 namespace FS.Data.Infrastructure
 {
     /// <summary>
-    /// 数据缓存操作接口
+    ///     数据缓存操作接口
     /// </summary>
-    public interface IDataCache<TEntity>  where TEntity : class, new()
+    public interface IDataCache<TEntity> where TEntity : class, new()
     {
         /// <summary>
         ///     从缓存中读取，并返回数据

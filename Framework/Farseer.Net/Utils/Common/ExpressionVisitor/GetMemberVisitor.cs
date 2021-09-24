@@ -8,14 +8,14 @@ namespace FS.Utils.Common.ExpressionVisitor
     /// </summary>
     public class GetMemberVisitor : AbsExpressionVisitor
     {
-        private readonly List<MemberExpression> _lst = new List<MemberExpression>();
+        private readonly List<MemberExpression> _lst = new();
 
         /// <summary>
         ///     获取表达式中的变量
         /// </summary>
         public IEnumerable<MemberExpression> Visit(params Expression[] exps)
         {
-            foreach (var exp in exps) { base.Visit(exp); }
+            foreach (var exp in exps) base.Visit(exp: exp);
             return _lst;
         }
 
@@ -24,9 +24,9 @@ namespace FS.Utils.Common.ExpressionVisitor
         /// </summary>
         protected override Expression VisitMemberAccess(MemberExpression m)
         {
-            base.VisitMemberAccess(m);
-            if (_lst.Exists(o => o.Member.Name == m.Member.Name && o.Type == m.Type)) { return m; }
-            _lst.Add(m);
+            base.VisitMemberAccess(m: m);
+            if (_lst.Exists(match: o => o.Member.Name == m.Member.Name && o.Type == m.Type)) return m;
+            _lst.Add(item: m);
             return m;
         }
     }

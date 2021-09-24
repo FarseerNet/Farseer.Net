@@ -5,9 +5,8 @@
 namespace FS.Extends
 {
     /// <summary>
-    /// 
     /// </summary>
-    public static partial class ConcurrentBagExtend
+    public static class ConcurrentBagExtend
     {
         /// <summary>
         ///     清除对象的数据
@@ -15,7 +14,9 @@ namespace FS.Extends
         public static void Clear<TEntity>(this ConcurrentBag<TEntity> lst)
         {
             TEntity entity;
-            while (lst.TryTake(out entity)) { }
+            while (lst.TryTake(result: out entity))
+            {
+            }
         }
     }
 }

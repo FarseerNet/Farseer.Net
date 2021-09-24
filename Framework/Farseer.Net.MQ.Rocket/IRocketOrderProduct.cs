@@ -10,10 +10,10 @@ namespace FS.MQ.Rocket
         /// <summary>
         ///     发送消息
         /// </summary>
-        /// <param name="message">消息主体</param>
-        /// <param name="shardingKey"></param>
-        /// <param name="tag">消息标签</param>
-        /// <param name="key">每条消息的唯一标识</param>
+        /// <param name="message"> 消息主体 </param>
+        /// <param name="shardingKey"> </param>
+        /// <param name="tag"> 消息标签 </param>
+        /// <param name="key"> 每条消息的唯一标识 </param>
         SendResultONS Send(string message, string shardingKey, string tag = null, string key = null);
 
         /// <summary>

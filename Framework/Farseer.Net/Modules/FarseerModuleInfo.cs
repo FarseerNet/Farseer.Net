@@ -10,6 +10,23 @@ namespace FS.Modules
     public class FarseerModuleInfo
     {
         /// <summary>
+        ///     构造函数
+        /// </summary>
+        /// <param name="type"> 模块类型 </param>
+        /// <param name="instance"> 模块实例 </param>
+        public FarseerModuleInfo(Type type, FarseerModule instance)
+        {
+            Check.NotNull(value: type, parameterName: type.ToString());
+            Check.NotNull(value: instance, parameterName: instance.ToString());
+
+            Type     = type;
+            Instance = instance;
+            Assembly = Type.GetTypeInfo().Assembly;
+
+            Dependencies = new List<FarseerModuleInfo>();
+        }
+
+        /// <summary>
         ///     包含模块定义的程序集
         /// </summary>
         public Assembly Assembly { get; }
@@ -30,26 +47,9 @@ namespace FS.Modules
         public List<FarseerModuleInfo> Dependencies { get; }
 
         /// <summary>
-        ///     构造函数
+        ///     重写，获取Type名称
         /// </summary>
-        /// <param name="type">模块类型</param>
-        /// <param name="instance">模块实例</param>
-        public FarseerModuleInfo(Type type, FarseerModule instance)
-        {
-            Check.NotNull(type, type.ToString());
-            Check.NotNull(instance, instance.ToString());
-
-            Type = type;
-            Instance = instance;
-            Assembly = Type.GetTypeInfo().Assembly;
-
-            Dependencies = new List<FarseerModuleInfo>();
-        }
-
-        /// <summary>
-        /// 重写，获取Type名称
-        /// </summary>
-        /// <returns></returns>
+        /// <returns> </returns>
         public override string ToString() => Type.AssemblyQualifiedName ?? Type.FullName;
     }
 }

@@ -6,43 +6,34 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Internal.Transform
 {
     public abstract class ResponseUnmarshaller : IResponseUnmarshaller<WebServiceResponse, UnmarshallerContext>
     {
-        public virtual UnmarshallerContext CreateContext(IWebResponseData response, Stream stream)
-        {
-            if (response == null)
-            {
-                throw new WebException("The Web Response for a successful request is null!");
-            }
-
-            return ConstructUnmarshallerContext(stream, response);
-        }
-
-        internal virtual bool HasStreamingProperty
-        {
-            get { return false; }
-        }
+        internal virtual bool HasStreamingProperty => false;
 
         #region IResponseUnmarshaller<WebServiceResponse,UnmarshallerContext> Members
 
-        public virtual AliyunServiceException UnmarshallException(UnmarshallerContext input, Exception innerException, HttpStatusCode statusCode)
-        {
-            throw new NotImplementedException();
-        }
+        public virtual AliyunServiceException UnmarshallException(UnmarshallerContext input, Exception innerException, HttpStatusCode statusCode) => throw new NotImplementedException();
 
         #endregion
-
-        public WebServiceResponse UnmarshallResponse(UnmarshallerContext context)
-        {
-            var response = this.Unmarshall(context);
-            response.ContentLength = context.ResponseData.ContentLength;
-            response.HttpStatusCode = context.ResponseData.StatusCode;
-            return response;
-        }
 
         #region IUnmarshaller<WebServiceResponse,UnmarshallerContext> Members
 
         public abstract WebServiceResponse Unmarshall(UnmarshallerContext input);
 
         #endregion
+
+        public virtual UnmarshallerContext CreateContext(IWebResponseData response, Stream stream)
+        {
+            if (response == null) throw new WebException(message: "The Web Response for a successful request is null!");
+
+            return ConstructUnmarshallerContext(responseStream: stream, response: response);
+        }
+
+        public WebServiceResponse UnmarshallResponse(UnmarshallerContext context)
+        {
+            var response = Unmarshall(input: context);
+            response.ContentLength  = context.ResponseData.ContentLength;
+            response.HttpStatusCode = context.ResponseData.StatusCode;
+            return response;
+        }
 
         protected abstract UnmarshallerContext ConstructUnmarshallerContext(Stream responseStream, IWebResponseData response);
     }
@@ -51,30 +42,25 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Internal.Transform
     {
         public override WebServiceResponse Unmarshall(UnmarshallerContext input)
         {
-            XmlUnmarshallerContext context = input as XmlUnmarshallerContext;
-            if (context == null)
-                throw new InvalidOperationException("Unsupported UnmarshallerContext");
+            var context = input as XmlUnmarshallerContext;
+            if (context == null) throw new InvalidOperationException(message: "Unsupported UnmarshallerContext");
 
-            WebServiceResponse response = this.Unmarshall(context);
+            var response = Unmarshall(input: context);
 
-            foreach (var headerName in context.ResponseData.GetHeaderNames())
-                response.Headers.Add(headerName, context.ResponseData.GetHeaderValue(headerName));
+            foreach (var headerName in context.ResponseData.GetHeaderNames()) response.Headers.Add(key: headerName, value: context.ResponseData.GetHeaderValue(headerName: headerName));
 
             return response;
         }
+
         public override AliyunServiceException UnmarshallException(UnmarshallerContext input, Exception innerException, HttpStatusCode statusCode)
         {
-            XmlUnmarshallerContext context = input as XmlUnmarshallerContext;
-            if (context == null)
-                throw new InvalidOperationException("Unsupported UnmarshallerContext");
+            var context = input as XmlUnmarshallerContext;
+            if (context == null) throw new InvalidOperationException(message: "Unsupported UnmarshallerContext");
 
-            return this.UnmarshallException(context, innerException, statusCode);
+            return UnmarshallException(input: context, innerException: innerException, statusCode: statusCode);
         }
 
-        protected override UnmarshallerContext ConstructUnmarshallerContext(Stream responseStream, IWebResponseData response)
-        {
-            return new XmlUnmarshallerContext(responseStream, response);
-        }
+        protected override UnmarshallerContext ConstructUnmarshallerContext(Stream responseStream, IWebResponseData response) => new XmlUnmarshallerContext(responseStream: responseStream, responseData: response);
 
         public abstract WebServiceResponse Unmarshall(XmlUnmarshallerContext input);
 

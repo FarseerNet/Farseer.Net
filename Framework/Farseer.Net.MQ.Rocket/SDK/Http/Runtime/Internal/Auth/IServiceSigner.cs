@@ -1,7 +1,7 @@
 ﻿namespace FS.MQ.Rocket.SDK.Http.Runtime.Internal.Auth
 {
-    public partial interface IServiceSigner
+    public interface IServiceSigner
     {
-         void Sign(IRequest request, string accessKeyId, string secretAccessKey, string stsToken);
+        void Sign(IRequest request, string accessKeyId, string secretAccessKey, string stsToken);
     }
 }

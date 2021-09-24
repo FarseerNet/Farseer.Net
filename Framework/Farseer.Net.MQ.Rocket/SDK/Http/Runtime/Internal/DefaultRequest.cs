@@ -6,202 +6,90 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Internal
 {
     internal class DefaultRequest : IRequest
     {
-        readonly IDictionary<string, string> parameters = new Dictionary<string, string>(StringComparer.Ordinal);
-        readonly IDictionary<string, string> headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        readonly IDictionary<string, string> subResources = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        private Stream contentStream;
 
-        Uri endpoint;
-        string resourcePath;
-        string serviceName;
-        readonly WebServiceRequest originalRequest;
-        byte[] content;
-        Stream contentStream;
-        string httpMethod = "GET";
-        bool useQueryString = false;
-        string requestName;
-        long originalStreamLength;
-
-        public DefaultRequest(WebServiceRequest request, String serviceName)
+        public DefaultRequest(WebServiceRequest request, string serviceName)
         {
-            if (request == null) throw new ArgumentNullException("request");
-            if (string.IsNullOrEmpty(serviceName)) throw new ArgumentNullException("serviceName");
+            if (request == null) throw new ArgumentNullException(paramName: "request");
+            if (string.IsNullOrEmpty(value: serviceName)) throw new ArgumentNullException(paramName: "serviceName");
 
-            this.serviceName = serviceName;
-            this.originalRequest = request;
-            this.requestName = this.originalRequest.GetType().Name;
+            ServiceName     = serviceName;
+            OriginalRequest = request;
+            RequestName     = OriginalRequest.GetType().Name;
 
-            foreach (var header in request.Headers)
-                this.Headers.Add(header.Key, header.Value);
-            foreach (var param in request.Parameters)
-                this.Parameters.Add(param.Key, param.Value);
+            foreach (var header in request.Headers) Headers.Add(key: header.Key, value: header.Value);
+            foreach (var param in request.Parameters) Parameters.Add(key: param.Key, value: param.Value);
         }
 
-        public string RequestName
-        {
-            get { return this.requestName; }
-        }
+        public string RequestName { get; }
 
-        public string HttpMethod
-        {
-            get
-            {
-                return this.httpMethod;
-            }
-            set
-            {
-                this.httpMethod = value;
-            }
-        }
+        public string HttpMethod { get; set; } = "GET";
 
-        public bool UseQueryString
-        {
-            get
-            {
-                return this.useQueryString;
-            }
-            set
-            {
-                this.useQueryString = value;
-            }
-        }
+        public bool UseQueryString { get; set; } = false;
 
-        public WebServiceRequest OriginalRequest
-        {
-            get
-            {
-                return originalRequest;
-            }
-        }
+        public WebServiceRequest OriginalRequest { get; }
 
-        public IDictionary<string, string> Headers
-        {
-            get
-            {
-                return this.headers;
-            }
-        }
+        public IDictionary<string, string> Headers { get; } = new Dictionary<string, string>(comparer: StringComparer.OrdinalIgnoreCase);
 
 
-        public IDictionary<string, string> Parameters
-        {
-            get
-            {
-                return this.parameters;
-            }
-        }
+        public IDictionary<string, string> Parameters { get; } = new Dictionary<string, string>(comparer: StringComparer.Ordinal);
 
-        public IDictionary<string, string> SubResources
-        {
-            get
-            {
-                return this.subResources;
-            }
-        }
+        public IDictionary<string, string> SubResources { get; } = new Dictionary<string, string>(comparer: StringComparer.OrdinalIgnoreCase);
 
         public void AddSubResource(string subResource)
         {
-            AddSubResource(subResource, null);
+            AddSubResource(subResource: subResource, value: null);
         }
 
         public void AddSubResource(string subResource, string value)
         {
-            SubResources.Add(subResource, value);
+            SubResources.Add(key: subResource, value: value);
         }
 
-        public Uri Endpoint
-        {
-            get
-            {
-                return this.endpoint;
-            }
-            set
-            {
-                this.endpoint = value;
-            }
-        }
+        public Uri Endpoint { get; set; }
 
-        public string ResourcePath
-        {
-            get
-            {
-                return this.resourcePath;
-            }
-            set
-            {
-                this.resourcePath = value;
-            }
-        }
+        public string ResourcePath { get; set; }
 
-        public byte[] Content
-        {
-            get
-            {
-                return this.content;
-            }
-            set
-            {
-                this.content = value;
-            }
-        }
+        public byte[] Content { get; set; }
 
         public Stream ContentStream
         {
-            get { return this.contentStream; }
+            get => contentStream;
             set
             {
-                this.contentStream = value;
+                contentStream          = value;
                 OriginalStreamPosition = -1;
-                if (this.contentStream != null && this.contentStream.CanSeek)
-                    OriginalStreamPosition = this.contentStream.Position;
+                if (contentStream != null && contentStream.CanSeek) OriginalStreamPosition = contentStream.Position;
             }
         }
 
-        public long OriginalStreamPosition
-        {
-            get { return this.originalStreamLength; }
-            set { this.originalStreamLength = value; }
-        }
+        public long OriginalStreamPosition { get; set; }
 
-        public string ServiceName
-        {
-            get
-            {
-                return this.serviceName;
-            }
-        }
+        public string ServiceName { get; }
 
-        public bool Suppress404Exceptions
-        {
-            get;
-            set;
-        }
+        public bool Suppress404Exceptions { get; set; }
 
         public bool IsRequestStreamRewindable()
         {
             // Retries may not be possible with a stream
-            if (this.ContentStream != null)
+            if (ContentStream != null)
             {
                 // Retry is possible if stream is seekable
-                return this.ContentStream.CanSeek;
+                return ContentStream.CanSeek;
             }
+
             return true;
         }
 
-        public bool MayContainRequestBody()
-        {
-            return !this.UseQueryString &&
-                (this.HttpMethod == "POST" ||
-                 this.HttpMethod == "PUT" ||
-                 this.HttpMethod == "DELETE");
-        }
+        public bool MayContainRequestBody() => !UseQueryString &&
+                                               (HttpMethod == "POST" ||
+                                                HttpMethod == "PUT"  ||
+                                                HttpMethod == "DELETE");
 
-        public bool HasRequestBody()
-        {
-            return (this.HttpMethod == "POST" ||
-                    this.HttpMethod == "PUT" ||
-                    this.HttpMethod == "DELETE") &&
-                ((this.Content != null) ||
-                        this.ContentStream != null);
-        }
+        public bool HasRequestBody() => (HttpMethod == "POST" ||
+                                         HttpMethod == "PUT"  ||
+                                         HttpMethod == "DELETE") &&
+                                        (Content       != null ||
+                                         ContentStream != null);
     }
 }

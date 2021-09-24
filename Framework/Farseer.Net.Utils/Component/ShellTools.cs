@@ -10,50 +10,46 @@ namespace FS.Utils.Component
     public class ShellTools
     {
         /// <summary>
-        /// 执行shell 命令
+        ///     执行shell 命令
         /// </summary>
-        /// <param name="cmd"></param>
-        /// <param name="arguments"></param>
-        /// <param name="actReceiveOutput">外部第一时间，处理拿到的消息 </param>
-        /// <param name="workingDirectory">设定Shell的工作目录 </param>
-        public static async Task<RunShellResult> Run(string cmd, string arguments, Action<string> actReceiveOutput, Dictionary<string, string> environment, string workingDirectory = null, CancellationToken cancellationToken = default(CancellationToken))
+        /// <param name="cmd"> </param>
+        /// <param name="arguments"> </param>
+        /// <param name="actReceiveOutput"> 外部第一时间，处理拿到的消息 </param>
+        /// <param name="workingDirectory"> 设定Shell的工作目录 </param>
+        public static async Task<RunShellResult> Run(string cmd, string arguments, Action<string> actReceiveOutput, Dictionary<string, string> environment, string workingDirectory = null, CancellationToken cancellationToken = default)
         {
             try
             {
                 // 打印当前执行的命令
-                if (actReceiveOutput != null) actReceiveOutput($"{cmd} {arguments}");
-                var psi = new ProcessStartInfo(cmd, arguments)
+                if (actReceiveOutput != null) actReceiveOutput(obj: $"{cmd} {arguments}");
+                var psi = new ProcessStartInfo(fileName: cmd, arguments: arguments)
                 {
                     RedirectStandardOutput = true,
                     RedirectStandardError  = true,
                     UseShellExecute        = false,
-                    WorkingDirectory       = workingDirectory,
+                    WorkingDirectory       = workingDirectory
                 };
 
                 // 添加环境变量
                 if (environment != null)
-                {
                     foreach (var env in environment)
-                    {
-                        psi.Environment.Add(env);
-                    }
-                }
+                        psi.Environment.Add(item: env);
 
                 // 结果
-                var runShellResult = new RunShellResult {IsError = false, Output = new List<string>()};
+                var runShellResult = new RunShellResult { IsError = false, Output = new List<string>() };
 
                 // 开始执行
-                using (var proc = Process.Start(psi))
+                using (var proc = Process.Start(startInfo: psi))
                 {
                     proc.EnableRaisingEvents = true;
 
                     // 收到回显后的处理
                     void ProcOnOutputDataReceived(object sender, DataReceivedEventArgs args)
                     {
-                        if (string.IsNullOrWhiteSpace(args.Data)) return;
-                        runShellResult.Output.Add(args.Data);
+                        if (string.IsNullOrWhiteSpace(value: args.Data)) return;
+                        runShellResult.Output.Add(item: args.Data);
                         // 外部第一时间，处理拿到的消息
-                        if (actReceiveOutput != null) actReceiveOutput(args.Data);
+                        if (actReceiveOutput != null) actReceiveOutput(obj: args.Data);
                     }
 
                     proc.OutputDataReceived += ProcOnOutputDataReceived;
@@ -62,11 +58,12 @@ namespace FS.Utils.Component
                     proc.BeginErrorReadLine();
 
                     // 增加取消令牌
-                    var tcs = new TaskCompletionSource<RunShellResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+                    var tcs = new TaskCompletionSource<RunShellResult>(creationOptions: TaskCreationOptions.RunContinuationsAsynchronously);
+
                     void ProcessExited(object sender, EventArgs e)
                     {
                         runShellResult.IsError = proc.ExitCode != 0;
-                        tcs.TrySetResult(runShellResult);
+                        tcs.TrySetResult(result: runShellResult);
                     }
 
                     proc.Exited += ProcessExited;
@@ -79,9 +76,9 @@ namespace FS.Utils.Component
                             return runShellResult;
                         }
 
-                        using (cancellationToken.Register(() => tcs.TrySetCanceled()))
+                        using (cancellationToken.Register(callback: () => tcs.TrySetCanceled()))
                         {
-                            await tcs.Task.ConfigureAwait(false);
+                            await tcs.Task.ConfigureAwait(continueOnCapturedContext: false);
                         }
                     }
                     finally
@@ -98,8 +95,8 @@ namespace FS.Utils.Component
             }
             catch (Exception e)
             {
-                if (actReceiveOutput != null) actReceiveOutput(e.Message);
-                return new RunShellResult(true, e.Message);
+                if (actReceiveOutput != null) actReceiveOutput(obj: e.Message);
+                return new RunShellResult(isError: true, output: e.Message);
             }
         }
     }

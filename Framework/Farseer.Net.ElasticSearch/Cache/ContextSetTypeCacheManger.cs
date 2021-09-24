@@ -17,7 +17,7 @@ namespace FS.ElasticSearch.Cache
         /// </summary>
         private static readonly object LockObject = new();
 
-        private ContextSetTypeCacheManger(Type key) : base(key)
+        private ContextSetTypeCacheManger(Type key) : base(key: key)
         {
         }
 
@@ -25,9 +25,9 @@ namespace FS.ElasticSearch.Cache
         {
             lock (LockObject)
             {
-                if (CacheList.ContainsKey(Key)) { return CacheList[Key]; }
+                if (CacheList.ContainsKey(key: Key)) return CacheList[key: Key];
 
-                var dbContextParam = Expression.Parameter(typeof (EsContext), "_context");
+                var dbContextParam = Expression.Parameter(type: typeof(EsContext), name: "_context");
 
                 var initDelegates = new List<Action<EsContext>>();
 
@@ -35,18 +35,19 @@ namespace FS.ElasticSearch.Cache
                 var setTypeList = new Dictionary<Type, List<string>>();
 
                 // 取得所有Set属性
-                foreach (var entityMap in ContextMapCacheManger.Cache(Key).EntityMapList)
+                foreach (var entityMap in ContextMapCacheManger.Cache(key: Key).EntityMapList)
                 {
                     // 实体类型，Set的泛型类型
                     var entityType = entityMap.Value != null ? entityMap.Key.PropertyType.GetGenericArguments()[0] : null;
 
                     // 查找这个Set类在当前EsContext中，出现过几次，并记录属性。
-                    if (!setTypeList.TryGetValue(entityMap.Key.PropertyType, out var propertyName))
+                    if (!setTypeList.TryGetValue(key: entityMap.Key.PropertyType, value: out var propertyName))
                     {
-                        propertyName = new List<string>();
-                        setTypeList[entityMap.Key.PropertyType] = propertyName;
+                        propertyName                                 = new List<string>();
+                        setTypeList[key: entityMap.Key.PropertyType] = propertyName;
                     }
-                    propertyName.Add(entityMap.Key.Name);
+
+                    propertyName.Add(item: entityMap.Key.Name);
 
                     // 属性set方法
                     var setter = entityMap.Key.GetSetMethod(nonPublic: true);
@@ -62,18 +63,21 @@ namespace FS.ElasticSearch.Cache
                         }
 
                         // 取得实例化
-                        var newExpression = Expression.Call(dbContextParam, setMethod, Expression.Constant(entityMap.Key));
+                        var newExpression = Expression.Call(instance: dbContextParam, method: setMethod, Expression.Constant(value: entityMap.Key));
 
                         // 赋值
-                        var setExpression = Expression.Call(Expression.Convert(dbContextParam, Key), setter, newExpression);
-                        initDelegates.Add(Expression.Lambda<Action<EsContext>>(setExpression, dbContextParam).Compile());
+                        var setExpression = Expression.Call(instance: Expression.Convert(expression: dbContextParam, type: Key), method: setter, newExpression);
+                        initDelegates.Add(item: Expression.Lambda<Action<EsContext>>(body: setExpression, dbContextParam).Compile());
                     }
                 }
 
                 // 实体化所有Set属性
-                Action<EsContext> initializer = context => { foreach (var initer in initDelegates) { initer(context); } };
-                var setInfo = new SetTypesInitializersPair(setTypeList, initializer);
-                CacheList.Add(Key, setInfo);
+                Action<EsContext> initializer = context =>
+                {
+                    foreach (var initer in initDelegates) initer(obj: context);
+                };
+                var setInfo = new SetTypesInitializersPair(entityTypeToPropertyNameMap: setTypeList, setsInitializer: initializer);
+                CacheList.Add(key: Key, value: setInfo);
                 return setInfo;
             }
         }
@@ -81,10 +85,7 @@ namespace FS.ElasticSearch.Cache
         /// <summary>
         ///     获取缓存
         /// </summary>
-        /// <param name="contextKey">上下文类型</param>
-        public static SetTypesInitializersPair Cache(Type contextKey)
-        {
-            return new ContextSetTypeCacheManger(contextKey).GetValue();
-        }
+        /// <param name="contextKey"> 上下文类型 </param>
+        public static SetTypesInitializersPair Cache(Type contextKey) => new ContextSetTypeCacheManger(key: contextKey).GetValue();
     }
 }

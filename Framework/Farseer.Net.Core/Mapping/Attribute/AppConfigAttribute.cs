@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Data;
 
 namespace FS.Core.Mapping.Attribute
 {
     /// <summary>
     ///     设置字段在数据库中的映射关系
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(validOn: AttributeTargets.Property)]
     public sealed class AppConfigAttribute : System.Attribute
     {
         /// <summary>

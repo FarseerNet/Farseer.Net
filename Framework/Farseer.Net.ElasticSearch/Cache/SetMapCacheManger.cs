@@ -14,23 +14,24 @@ namespace FS.ElasticSearch.Cache
         /// </summary>
         private static readonly object LockObject = new();
 
-        private SetMapCacheManger(Type key) : base(key)
+        private SetMapCacheManger(Type key) : base(key: key)
         {
         }
 
         protected override SetPhysicsMap SetCacheLock()
         {
-            lock (LockObject) { if (!CacheList.ContainsKey(Key)) { CacheList.Add(Key, new SetPhysicsMap(Key)); } }
-            return CacheList[Key];
+            lock (LockObject)
+            {
+                if (!CacheList.ContainsKey(key: Key)) CacheList.Add(key: Key, value: new SetPhysicsMap(type: Key));
+            }
+
+            return CacheList[key: Key];
         }
 
         /// <summary>
         ///     获取缓存
         /// </summary>
-        /// <param name="key">缓存Key</param>
-        public static SetPhysicsMap Cache(Type key)
-        {
-            return new SetMapCacheManger(key).GetValue();
-        }
+        /// <param name="key"> 缓存Key </param>
+        public static SetPhysicsMap Cache(Type key) => new SetMapCacheManger(key: key).GetValue();
     }
 }

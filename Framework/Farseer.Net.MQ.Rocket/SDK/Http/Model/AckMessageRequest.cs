@@ -1,66 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using FS.MQ.Rocket.SDK.Http.Runtime.Internal;
 
 namespace FS.MQ.Rocket.SDK.Http.Model
 {
-    public partial class AckMessageRequest: WebServiceRequest
+    public class AckMessageRequest : WebServiceRequest
     {
-        private string _instanceId;
-        private string _topicName;
-        private string _consumer;
-        private List<string> _receiptHandles = new List<string>();
-        private string _trans;
-
-        public AckMessageRequest(string topicName, string consumer, List<String> receiptHandles)
+        public AckMessageRequest(string topicName, string consumer, List<string> receiptHandles)
         {
-            this._topicName = topicName;
-            this._consumer = consumer;
-            this._receiptHandles = receiptHandles;
+            TopicName      = topicName;
+            Consumer       = consumer;
+            ReceiptHandles = receiptHandles;
         }
 
-        public string TopicName
-        {
-            get { return this._topicName; }
-        }
+        public string TopicName { get; }
 
-        public string Consumer
-        {
-            get { return this._consumer; }
-        }
+        public string Consumer { get; }
 
-        public List<string> ReceiptHandles
-        {
-            get { return this._receiptHandles; }
-            set { this._receiptHandles = value; }
-        }
+        public List<string> ReceiptHandles { get; set; } = new List<string>();
 
-        public bool IsSetReceiptHandles()
-        {
-            return _receiptHandles.Any();
-        }
+        public string IntanceId { get; set; }
 
-        public string IntanceId
-        {
-            get { return this._instanceId; }
-            set { this._instanceId = value; }
-        }
+        internal string Trasaction { set; get; }
 
-        public bool IsSetInstance()
-        {
-            return !string.IsNullOrEmpty(this._instanceId);
-        }
+        public bool IsSetReceiptHandles() => ReceiptHandles.Any();
 
-        internal string Trasaction
-        {
-            set { this._trans = value; }
-            get { return this._trans; }
-        }
+        public bool IsSetInstance() => !string.IsNullOrEmpty(value: IntanceId);
 
-        internal bool IsSetTransaction()
-        {
-            return !string.IsNullOrEmpty(this._trans);
-        }
+        internal bool IsSetTransaction() => !string.IsNullOrEmpty(value: Trasaction);
     }
 }

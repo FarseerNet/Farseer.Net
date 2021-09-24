@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using FS.Data.Client;
-using FS.Data.Infrastructure;
 using FS.Data.Map;
 
 namespace FS.Data.ExpressionVisitor
@@ -18,31 +16,31 @@ namespace FS.Data.ExpressionVisitor
         /// <summary>
         ///     提供字段插入表达式树的解析
         /// </summary>
-        /// <param name="dbProvider">数据库提供者（不同数据库的特性）</param>
-        /// <param name="map">字段映射</param>
-        /// <param name="paramList">SQL参数列表</param>
-        public InsertVisitor(AbsDbProvider dbProvider, SetDataMap map, List<DbParameter> paramList) : base(dbProvider, map, paramList)
+        /// <param name="dbProvider"> 数据库提供者（不同数据库的特性） </param>
+        /// <param name="map"> 字段映射 </param>
+        /// <param name="paramList"> SQL参数列表 </param>
+        public InsertVisitor(AbsDbProvider dbProvider, SetDataMap map, List<DbParameter> paramList) : base(dbProvider: dbProvider, map: map, paramList: paramList)
         {
         }
 
         public new string Visit(Expression exp)
         {
-            base.Visit(exp);
+            base.Visit(exp: exp);
             //  字段
             var strFields = new StringBuilder();
             //  值
             var strValues = new StringBuilder();
 
             var lst = SqlList.Reverse().ToList();
-            return "(" + string.Join(",", lst) + ") VALUES (" + string.Join(",", ParamList.Select(o => o.ParameterName)) + ")";
+            return "(" + string.Join(separator: ",", values: lst) + ") VALUES (" + string.Join(separator: ",", values: ParamList.Select(selector: o => o.ParameterName)) + ")";
             for (var i = 0; i < lst.Count; i++)
             {
                 //  添加参数到列表
-                strFields.Append($"{lst[i]},");
-                strValues.Append($"{ParamList[i].ParameterName},");
+                strFields.Append(value: $"{lst[index: i]},");
+                strValues.Append(value: $"{ParamList[index: i].ParameterName},");
             }
 
-            return "(" + strFields.Remove(strFields.Length - 1, 1) + ") VALUES (" + strValues.Remove(strValues.Length - 1, 1) + ")";
+            return "(" + strFields.Remove(startIndex: strFields.Length - 1, length: 1) + ") VALUES (" + strValues.Remove(startIndex: strValues.Length - 1, length: 1) + ")";
         }
 
         /// <summary>
@@ -50,10 +48,7 @@ namespace FS.Data.ExpressionVisitor
         /// </summary>
         protected override Expression VisitBinary(BinaryExpression b)
         {
-            if (b == null)
-            {
-                return null;
-            }
+            if (b == null) return null;
 
             var isReverse = false;
             var left      = b.Left;
@@ -67,28 +62,19 @@ namespace FS.Data.ExpressionVisitor
                 isReverse = true;
             }
 
-            left  = base.Visit(left);
-            right = base.Visit(right);
-            var conversion = base.Visit(b.Conversion);
+            left  = base.Visit(exp: left);
+            right = base.Visit(exp: right);
+            var conversion = base.Visit(exp: b.Conversion);
 
-            var contidion = isReverse ? (left != b.Right || right != b.Left) : (left != b.Left || right != b.Right);
+            var contidion = isReverse ? left != b.Right || right != b.Left : left != b.Left || right != b.Right;
             // 说明进过了换算
             if (contidion || conversion != b.Conversion)
             {
-                if (b.NodeType == ExpressionType.Coalesce && b.Conversion != null)
-                {
-                    return Expression.Coalesce(left, right, conversion as LambdaExpression);
-                }
-                else
-                {
-                    // 两边类型不同时，需要进行转换
-                    if (left.Type != right.Type)
-                    {
-                        right = Expression.Convert(right, left.Type);
-                    }
+                if (b.NodeType == ExpressionType.Coalesce && b.Conversion != null) return Expression.Coalesce(left: left, right: right, conversion: conversion as LambdaExpression);
+                // 两边类型不同时，需要进行转换
+                if (left.Type != right.Type) right = Expression.Convert(expression: right, type: left.Type);
 
-                    b = Expression.MakeBinary(b.NodeType, left, right, b.IsLiftedToNull, b.Method);
-                }
+                b = Expression.MakeBinary(binaryType: b.NodeType, left: left, right: right, liftToNull: b.IsLiftedToNull, method: b.Method);
             }
 
             // 清除状态（与或状态，不清除）
@@ -109,8 +95,8 @@ namespace FS.Data.ExpressionVisitor
             if (cexp == null) return null;
 
             //  查找组中是否存在已有的参数，有则直接取出
-            CurrentDbParameter = DbProvider.CreateDbParam("p" + ParamList.Count + "_" + CurrentFieldName, cexp.Value, cexp.Type);
-            ParamList.Add(CurrentDbParameter);
+            CurrentDbParameter = DbProvider.CreateDbParam(name: "p" + ParamList.Count + "_" + CurrentFieldName, value: cexp.Value, valType: cexp.Type);
+            ParamList.Add(item: CurrentDbParameter);
             CurrentFieldName = null;
             return cexp;
         }

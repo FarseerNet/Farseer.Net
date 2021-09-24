@@ -7,70 +7,59 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Internal.Transform
 {
     public class HttpWebRequestResponseData : IWebResponseData
     {
-        HttpWebResponse _response;
-        string[] _headerNames;
-        HashSet<string> _headerNamesSet;
-        HttpWebResponseBody _responseBody;
+        private          string[]            _headerNames;
+        private          HashSet<string>     _headerNamesSet;
+        private readonly HttpWebResponse     _response;
+        private readonly HttpWebResponseBody _responseBody;
 
         public HttpWebRequestResponseData(HttpWebResponse response)
         {
-            this._response = response;
-            _responseBody = new HttpWebResponseBody(response);
+            _response     = response;
+            _responseBody = new HttpWebResponseBody(response: response);
 
-            this.StatusCode = response.StatusCode;
-            this.IsSuccessStatusCode = this.StatusCode >= HttpStatusCode.OK && this.StatusCode <= (HttpStatusCode)299;
-            this.ContentType = response.ContentType;            
-            this.ContentLength = response.ContentLength;
+            StatusCode          = response.StatusCode;
+            IsSuccessStatusCode = StatusCode >= HttpStatusCode.OK && StatusCode <= (HttpStatusCode)299;
+            ContentType         = response.ContentType;
+            ContentLength       = response.ContentLength;
         }
 
-        public HttpStatusCode StatusCode { get; private set; }
+        public HttpStatusCode StatusCode { get; }
 
-        public bool IsSuccessStatusCode { get; private set; }
+        public bool IsSuccessStatusCode { get; }
 
-        public string ContentType { get; private set; }        
+        public string ContentType { get; }
 
-        public long ContentLength { get; private set; }
+        public long ContentLength { get; }
 
         public bool IsHeaderPresent(string headerName)
         {
-            if (_headerNamesSet == null)
-                SetHeaderNames();
-            return _headerNamesSet.Contains(headerName);
+            if (_headerNamesSet == null) SetHeaderNames();
+            return _headerNamesSet.Contains(item: headerName);
         }
 
         public string[] GetHeaderNames()
         {
-            if (_headerNames == null)
-            {
-                SetHeaderNames();
-            }
-            return _headerNames;            
+            if (_headerNames == null) SetHeaderNames();
+            return _headerNames;
         }
 
-        public string GetHeaderValue(string name)
-        {
-            return this._response.GetResponseHeader(name);
-        }
+        public string GetHeaderValue(string name) => _response.GetResponseHeader(headerName: name);
+
+        public IHttpResponseBody ResponseBody => _responseBody;
 
         private void SetHeaderNames()
         {
-            var keys = this._response.Headers.Keys;
+            var keys = _response.Headers.Keys;
             _headerNames = new string[keys.Count];
-            for (int i = 0; i < keys.Count; i++)
-                _headerNames[i] = keys[i];
-            _headerNamesSet = new HashSet<string>(_headerNames, StringComparer.OrdinalIgnoreCase);
-        }
-
-        public IHttpResponseBody ResponseBody
-        {
-            get { return _responseBody; }
+            for (var i = 0; i < keys.Count; i++) _headerNames[i] = keys[index: i];
+            _headerNamesSet = new HashSet<string>(collection: _headerNames, comparer: StringComparer.OrdinalIgnoreCase);
         }
     }
 
     public class HttpWebResponseBody : IHttpResponseBody
     {
-        HttpWebResponse _response;
-        bool _disposed = false;
+        private          bool            _disposed;
+        private readonly HttpWebResponse _response;
 
         public HttpWebResponseBody(HttpWebResponse response)
         {
@@ -79,27 +68,24 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Internal.Transform
 
         public Stream OpenResponse()
         {
-            if (_disposed)
-                throw new ObjectDisposedException("HttpWebResponseBody");
-            
+            if (_disposed) throw new ObjectDisposedException(objectName: "HttpWebResponseBody");
+
             return _response.GetResponseStream();
         }
 
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            Dispose(disposing: true);
+            GC.SuppressFinalize(obj: this);
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            if (_disposed)
-                return;
+            if (_disposed) return;
 
             if (disposing)
             {
-                if (_response != null)
-                    _response.Close();
+                if (_response != null) _response.Close();
 
                 _disposed = true;
             }

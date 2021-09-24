@@ -1,6 +1,4 @@
-﻿using FS.Data.Infrastructure;
-
-namespace FS.Data.Client.SqlServer
+﻿namespace FS.Data.Client.SqlServer
 {
     public class SqlServerFunctionProvider : AbsFunctionProvider
     {

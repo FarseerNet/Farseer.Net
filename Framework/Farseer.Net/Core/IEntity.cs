@@ -1,7 +1,7 @@
 ﻿namespace FS.Core
 {
     /// <summary> 通过实体类的继承后，后续Set、扩展方法提供针对主键的Where条件 </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T"> </typeparam>
     public interface IEntity<T>
     {
         /// <summary> 主键ID </summary>

@@ -10,31 +10,28 @@ namespace FS.Extends
         /// <summary>
         ///     生成测试数据
         /// </summary>
-        /// <typeparam name="TEntity">实体</typeparam>
-        /// <param name="info">任意对象</param>
-        /// <param name="subCount">如果成员包含List类型时，要填充的数量</param>
-        public static TEntity FillRandData<TEntity>(this TEntity info, int subCount = 10)
-        {
-            return FillRandData(info, 1, subCount);
-        }
+        /// <typeparam name="TEntity"> 实体 </typeparam>
+        /// <param name="info"> 任意对象 </param>
+        /// <param name="subCount"> 如果成员包含List类型时，要填充的数量 </param>
+        public static TEntity FillRandData<TEntity>(this TEntity info, int subCount = 10) => FillRandData(info: info, level: 1, subCount: subCount);
 
         /// <summary>
         ///     生成测试数据
         /// </summary>
-        /// <typeparam name="TEntity">实体</typeparam>
-        /// <param name="info">任意对象</param>
-        /// <param name="subCount">如果成员包含List类型时，要填充的数量</param>
-        /// <param name="level">防止无限层</param>
+        /// <typeparam name="TEntity"> 实体 </typeparam>
+        /// <param name="info"> 任意对象 </param>
+        /// <param name="subCount"> 如果成员包含List类型时，要填充的数量 </param>
+        /// <param name="level"> 防止无限层 </param>
         private static TEntity FillRandData<TEntity>(this TEntity info, int level, int subCount)
         {
             var type = info.GetType();
             foreach (var item in type.GetProperties())
             {
-                if (!item.CanWrite) { continue; }
+                if (!item.CanWrite) continue;
 
                 var argumType = item.PropertyType;
                 // 去掉Nullable的类型
-                if (argumType.IsGenericType && argumType.GetGenericTypeDefinition() == typeof (Nullable<>)) { argumType = argumType.GetGenericArguments()[0]; }
+                if (argumType.IsGenericType && argumType.GetGenericTypeDefinition() == typeof(Nullable<>)) argumType = argumType.GetGenericArguments()[0];
 
                 try
                 {
@@ -42,46 +39,53 @@ namespace FS.Extends
                     if (item.PropertyType.IsGenericType)
                     {
                         // 动态构造List
-                        var objLst = Activator.CreateInstance(item.PropertyType);
+                        var objLst = Activator.CreateInstance(type: item.PropertyType);
                         // List元素
-                        var objItem = Activator.CreateInstance(argumType.GetGenericArguments()[0]);
+                        var objItem = Activator.CreateInstance(type: argumType.GetGenericArguments()[0]);
 
                         // 防止无限层递归
-                        if (level < 3) { for (var i = 0; i < subCount; i++) { item.PropertyType.GetMethod("Add").Invoke(objLst, new[] {FillRandData(objItem, level + 1, subCount)}); } }
+                        if (level < 3)
+                        {
+                            for (var i = 0; i < subCount; i++) item.PropertyType.GetMethod(name: "Add").Invoke(obj: objLst, parameters: new[] { FillRandData(info: objItem, level: level + 1, subCount: subCount) });
+                        }
+
                         //item.SetValue(info, objLst, null);
-                        PropertySetCacheManger.Cache(item, info, objLst);
+                        PropertySetCacheManger.Cache(key: item, instance: info, value: objLst);
 
                         continue;
                     }
+
                     // 普通成员
                     //item.SetValue(info, DynamicOperate.FillRandData(argumType), null);
-                    PropertySetCacheManger.Cache(item, info, DynamicOperate.FillRandData(argumType));
+                    PropertySetCacheManger.Cache(key: item, instance: info, value: DynamicOperate.FillRandData(argumType: argumType));
                 }
-                catch {
+                catch
+                {
                 }
             }
+
             return info;
         }
 
         /// <summary>
         ///     设置对象属性值
         /// </summary>
-        /// <typeparam name="TEntity">实体类</typeparam>
-        /// <param name="info">当前实体类</param>
-        /// <param name="propertyName">属性名</param>
-        /// <param name="objValue">要填充的值</param>
+        /// <typeparam name="TEntity"> 实体类 </typeparam>
+        /// <param name="info"> 当前实体类 </param>
+        /// <param name="propertyName"> 属性名 </param>
+        /// <param name="objValue"> 要填充的值 </param>
         public static void SetValue<TEntity>(this TEntity info, string propertyName, object objValue) where TEntity : class
         {
-            if (info == null) { return; }
+            if (info == null) return;
             foreach (var property in info.GetType().GetProperties())
             {
-                if (property.Name != propertyName) { continue; }
-                if (!property.CanWrite) { return; }
+                if (property.Name != propertyName) continue;
+                if (!property.CanWrite) return;
                 //property.SetValue(info, objValue.ConvertType(property.PropertyType), null);
-                PropertySetCacheManger.Cache(property, info, objValue.ConvertType(property.PropertyType));
+                PropertySetCacheManger.Cache(key: property, instance: info, value: objValue.ConvertType(defType: property.PropertyType));
             }
         }
-        
+
         ///// <summary>
         /////     关联两个实体
         ///// </summary>

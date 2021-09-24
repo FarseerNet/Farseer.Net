@@ -4,13 +4,28 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime
 {
     public class ImmutableCredentials
     {
+        #region Public methods
+
+        public ImmutableCredentials Copy()
+        {
+            var credentials = new ImmutableCredentials
+            {
+                AccessKey     = AccessKey,
+                SecretKey     = SecretKey,
+                SecurityToken = SecurityToken
+            };
+            return credentials;
+        }
+
+        #endregion
+
         #region Properties
 
         public string AccessKey { get; private set; }
 
         public string SecretKey { get; private set; }
 
-		public string SecurityToken { get; private set;}
+        public string SecurityToken { get; private set; }
 
         #endregion
 
@@ -19,37 +34,20 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime
 
         public ImmutableCredentials(string accessKeyId, string secretAccessKey, string stsToken)
         {
-            if (string.IsNullOrEmpty(accessKeyId)) throw new ArgumentNullException("accessKeyId");
-            if (string.IsNullOrEmpty(secretAccessKey)) throw new ArgumentNullException("secretAccessKey");
-			if (string.IsNullOrEmpty(stsToken))
-			{
-				SecurityToken = null;
-			}
-			else {
-				SecurityToken = stsToken;
-			}
+            if (string.IsNullOrEmpty(value: accessKeyId)) throw new ArgumentNullException(paramName: "accessKeyId");
+            if (string.IsNullOrEmpty(value: secretAccessKey)) throw new ArgumentNullException(paramName: "secretAccessKey");
+            if (string.IsNullOrEmpty(value: stsToken))
+                SecurityToken = null;
+            else
+                SecurityToken = stsToken;
 
 
             AccessKey = accessKeyId;
             SecretKey = secretAccessKey;
         }
 
-        private ImmutableCredentials() { }
-
-        #endregion
-
-
-        #region Public methods
-
-        public ImmutableCredentials Copy()
+        private ImmutableCredentials()
         {
-			ImmutableCredentials credentials = new ImmutableCredentials
-			{
-				AccessKey = this.AccessKey,
-				SecretKey = this.SecretKey,
-				SecurityToken = this.SecurityToken,
-            };
-            return credentials;
         }
 
         #endregion
@@ -64,7 +62,7 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime
     {
         #region Private members
 
-        private ImmutableCredentials _credentials;
+        private readonly ImmutableCredentials _credentials;
 
         #endregion
 
@@ -73,10 +71,7 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime
 
         public BasicServiceCredentials(string accessKey, string secretKey, string stsToken)
         {
-            if (!string.IsNullOrEmpty(accessKey))
-            {
-				_credentials = new ImmutableCredentials(accessKey, secretKey, stsToken);
-            }
+            if (!string.IsNullOrEmpty(value: accessKey)) _credentials = new ImmutableCredentials(accessKeyId: accessKey, secretAccessKey: secretKey, stsToken: stsToken);
         }
 
         #endregion
@@ -86,13 +81,11 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime
 
         public override ImmutableCredentials GetCredentials()
         {
-            if (this._credentials == null)
-                return null;
+            if (_credentials == null) return null;
 
             return _credentials.Copy();
         }
 
         #endregion
-
     }
 }

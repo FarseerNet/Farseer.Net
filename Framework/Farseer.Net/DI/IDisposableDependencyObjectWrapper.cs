@@ -1,8 +1,10 @@
 namespace FS.DI
 {
     /// <summary>
-    ///     °ü×°Ò»¸ö´ÓIocÈÝÆ÷ÖÐ»ñÈ¡µÄ¶ÔÏóµÄ·ºÐÍ½Ó¿Ú
-    ///     ´Ë¶ÔÏó¼Ì³Ð×ÔIDisposable
+    ///     ï¿½ï¿½×°Ò»ï¿½ï¿½ï¿½ï¿½Iocï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½È¡ï¿½Ä¶ï¿½ï¿½ï¿½Ä·ï¿½ï¿½Í½Ó¿ï¿½
+    ///     ï¿½Ë¶ï¿½ï¿½ï¿½Ì³ï¿½ï¿½ï¿½IDisposable
     /// </summary>
-    public interface IDisposableDependencyObjectWrapper : IDisposableDependencyObjectWrapper<object> {}
+    public interface IDisposableDependencyObjectWrapper : IDisposableDependencyObjectWrapper<object>
+    {
+    }
 }

@@ -46,7 +46,7 @@ namespace FS.Data.Internal
         /// <summary>
         ///     添加筛选
         /// </summary>
-        /// <param name="select"></param>
+        /// <param name="select"> </param>
         internal void AddSelect(Expression select)
         {
             if (select == null) return;
@@ -56,7 +56,7 @@ namespace FS.Data.Internal
         /// <summary>
         ///     添加条件（主要是提供给逻辑删除使用）
         /// </summary>
-        /// <param name="where">查询条件</param>
+        /// <param name="where"> 查询条件 </param>
         private void AddWhere(Expression where)
         {
             if (where == null) return;
@@ -66,50 +66,50 @@ namespace FS.Data.Internal
         /// <summary>
         ///     添加条件
         /// </summary>
-        /// <param name="where">查询条件</param>
+        /// <param name="where"> 查询条件 </param>
         internal void AddWhere<TEntity>(Expression<Func<TEntity, bool>> where) where TEntity : class
         {
             if (where == null) return;
-            ExpWhere = ExpWhere == null ? where : ExpressionHelper.MergeAndAlsoExpression((Expression<Func<TEntity, bool>>) ExpWhere, where);
+            ExpWhere = ExpWhere == null ? where : ExpressionHelper.MergeAndAlsoExpression(left: (Expression<Func<TEntity, bool>>)ExpWhere, right: where);
         }
 
         /// <summary>
         ///     添加条件
         /// </summary>
-        /// <param name="where">查询条件</param>
+        /// <param name="where"> 查询条件 </param>
         internal void AddWhereOr<TEntity>(Expression<Func<TEntity, bool>> where) where TEntity : class
         {
             if (where == null) return;
-            ExpWhere = ExpWhere == null ? where : ExpressionHelper.MergeOrElseExpression((Expression<Func<TEntity, bool>>) ExpWhere, where);
+            ExpWhere = ExpWhere == null ? where : ExpressionHelper.MergeOrElseExpression(left: (Expression<Func<TEntity, bool>>)ExpWhere, right: where);
         }
 
         /// <summary>
         ///     添加排序
         /// </summary>
-        /// <param name="exp"></param>
-        /// <param name="isAsc"></param>
+        /// <param name="exp"> </param>
+        /// <param name="isAsc"> </param>
         internal void AddOrderBy(Expression exp, bool isAsc)
         {
-            if (ExpOrderBy == null) { ExpOrderBy = new Dictionary<Expression, bool>(); }
-            if (exp != null) { ExpOrderBy.Add(exp, isAsc); }
+            if (ExpOrderBy == null) ExpOrderBy = new Dictionary<Expression, bool>();
+            if (exp        != null) ExpOrderBy.Add(key: exp, value: isAsc);
         }
 
         /// <summary>
         ///     字段累加（字段 = 字段 + 值）
         /// </summary>
-        /// <param name="fieldName">字段选择器</param>
-        /// <param name="fieldValue">值</param>
+        /// <param name="fieldName"> 字段选择器 </param>
+        /// <param name="fieldValue"> 值 </param>
         internal void AddAssign(Expression fieldName, object fieldValue)
         {
-            if (fieldName == null) { return; }
-            var u = ExpressionHelper.MergeAssignExpression(fieldName, fieldValue);
+            if (fieldName == null) return;
+            var u = ExpressionHelper.MergeAssignExpression(exp: fieldName, val: fieldValue);
             ExpAssign = ExpressionHelper.MergeBlockExpression(ExpAssign, u);
         }
 
         /// <summary>
         ///     字段累加（字段 = 字段 + 值）
         /// </summary>
-        /// <param name="fieldName">字段选择器</param>
+        /// <param name="fieldName"> 字段选择器 </param>
         internal void AddAssign(Expression fieldName)
         {
             if (fieldName == null) return;
@@ -119,61 +119,63 @@ namespace FS.Data.Internal
         /// <summary>
         ///     Insert将实体类的赋值，转成表达式树
         /// </summary>
-        /// <typeparam name="TEntity">实体类型</typeparam>
-        /// <param name="entity">被赋值的实体</param>
+        /// <typeparam name="TEntity"> 实体类型 </typeparam>
+        /// <param name="entity"> 被赋值的实体 </param>
         internal void AssignInsert<TEntity>(TEntity entity) where TEntity : class, new()
         {
-            if (entity == null) { return; }
-            var oParameter = Expression.Parameter(entity.GetType(), "o");
-            var lstAssign = new List<Expression>();
+            if (entity == null) return;
+            var oParameter = Expression.Parameter(type: entity.GetType(), name: "o");
+            var lstAssign  = new List<Expression>();
 
             //  迭代实体赋值情况
             //  这里没有限定标识字段，允许客户手动设置标识数据
-            foreach (var kic in SetMap.PhysicsMap.MapList.Where(o => o.Value.Field.IsMap && !o.Value.Field.IsFun && o.Value.Field.InsertStatusType == StatusType.CanWrite))
+            foreach (var kic in SetMap.PhysicsMap.MapList.Where(predicate: o => o.Value.Field.IsMap && !o.Value.Field.IsFun && o.Value.Field.InsertStatusType == StatusType.CanWrite))
             {
-                var obj = PropertyGetCacheManger.Cache(kic.Key, entity);
-                if (obj == null) { continue; }
-                var member = Expression.MakeMemberAccess(oParameter, kic.Key);
+                var obj = PropertyGetCacheManger.Cache(key: kic.Key, instance: entity);
+                if (obj == null) continue;
+                var member = Expression.MakeMemberAccess(expression: oParameter, member: kic.Key);
 
-                var ass = Expression.Assign(member, Expression.Convert(Expression.Constant(obj), kic.Key.PropertyType));
-                lstAssign.Add(ass);
+                var ass = Expression.Assign(left: member, right: Expression.Convert(expression: Expression.Constant(value: obj), type: kic.Key.PropertyType));
+                lstAssign.Add(item: ass);
             }
-            ExpAssign = ExpressionHelper.MergeBlockExpression(lstAssign.ToArray());
+
+            ExpAssign = ExpressionHelper.MergeBlockExpression(exps: lstAssign.ToArray());
         }
 
         /// <summary>
         ///     Update将实体类的赋值，转成表达式树
         /// </summary>
-        /// <typeparam name="TEntity">实体类型</typeparam>
-        /// <param name="entity">被赋值的实体</param>
+        /// <typeparam name="TEntity"> 实体类型 </typeparam>
+        /// <param name="entity"> 被赋值的实体 </param>
         internal void AssignUpdate<TEntity>(TEntity entity) where TEntity : class, new()
         {
-            if (entity == null) { return; }
-            var oParameter = Expression.Parameter(entity.GetType(), "o");
-            var lstAssign = new List<Expression>();
+            if (entity == null) return;
+            var oParameter = Expression.Parameter(type: entity.GetType(), name: "o");
+            var lstAssign  = new List<Expression>();
 
             //  迭代实体赋值情况
-            foreach (var kic in SetMap.PhysicsMap.MapList.Where(o => o.Value.Field.IsMap && !o.Value.Field.IsFun && o.Value.Field.InsertStatusType == StatusType.CanWrite))
+            foreach (var kic in SetMap.PhysicsMap.MapList.Where(predicate: o => o.Value.Field.IsMap && !o.Value.Field.IsFun && o.Value.Field.InsertStatusType == StatusType.CanWrite))
             {
-                var obj = PropertyGetCacheManger.Cache(kic.Key, entity);
-                if (obj == null) { continue; }
-                var member = Expression.MakeMemberAccess(oParameter, kic.Key);
+                var obj = PropertyGetCacheManger.Cache(key: kic.Key, instance: entity);
+                if (obj == null) continue;
+                var member = Expression.MakeMemberAccess(expression: oParameter, member: kic.Key);
 
                 // 主键、只读条件、主键状态下，转为条件状态
-                if ((kic.Value.Field.UpdateStatusType == StatusType.ReadCondition || kic.Value.Field.IsPrimaryKey))
+                if (kic.Value.Field.UpdateStatusType == StatusType.ReadCondition || kic.Value.Field.IsPrimaryKey)
                 {
                     // 当前条件已存在该值时，跳过
-                    if (new GetMemberVisitor().Visit(ExpWhere).Any(o => o.Member == kic.Key)) { continue; }
-                    var expCondiction = ExpressionHelper.CreateBinaryExpression<TEntity>(obj, member);
-                    ExpWhere = ExpressionHelper.MergeAndAlsoExpression((Expression<Func<TEntity, bool>>) ExpWhere, expCondiction);
+                    if (new GetMemberVisitor().Visit(ExpWhere).Any(predicate: o => o.Member == kic.Key)) continue;
+                    var expCondiction = ExpressionHelper.CreateBinaryExpression<TEntity>(val: obj, memberName: member);
+                    ExpWhere = ExpressionHelper.MergeAndAlsoExpression(left: (Expression<Func<TEntity, bool>>)ExpWhere, right: expCondiction);
                 }
                 else
                 {
-                    var ass = Expression.Assign(member, Expression.Convert(Expression.Constant(obj), kic.Key.PropertyType));
-                    lstAssign.Add(ass);
+                    var ass = Expression.Assign(left: member, right: Expression.Convert(expression: Expression.Constant(value: obj), type: kic.Key.PropertyType));
+                    lstAssign.Add(item: ass);
                 }
             }
-            ExpAssign = ExpressionHelper.MergeBlockExpression(lstAssign.ToArray());
+
+            ExpAssign = ExpressionHelper.MergeBlockExpression(exps: lstAssign.ToArray());
         }
 
         /// <summary>
@@ -181,7 +183,7 @@ namespace FS.Data.Internal
         /// </summary>
         internal void DeleteSortCondition()
         {
-            if (SetMap.SortDelete != null) { AddWhere(SetMap.SortDelete.CondictionExpression); }
+            if (SetMap.SortDelete != null) AddWhere(where: SetMap.SortDelete.CondictionExpression);
         }
     }
 }

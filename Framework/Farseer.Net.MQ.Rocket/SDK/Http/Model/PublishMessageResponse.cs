@@ -1,54 +1,25 @@
-﻿
-using FS.MQ.Rocket.SDK.Http.Runtime;
+﻿using FS.MQ.Rocket.SDK.Http.Runtime;
 
 namespace FS.MQ.Rocket.SDK.Http.Model
 {
-    public partial class PublishMessageResponse : WebServiceResponse
+    public class PublishMessageResponse : WebServiceResponse
     {
-        private string _messageBodyMD5;
-        private string _messageId;
-        private string _receiptHandle;
+        public string MessageBodyMD5 { get; set; }
 
-        public string MessageBodyMD5
-        {
-            get { return this._messageBodyMD5; }
-            set { this._messageBodyMD5 = value; }
-        }
+        public string MessageId { get; set; }
+
+        public string ReeceiptHandle { get; set; }
 
         // Check to see if BodyMD5 property is set
-        internal bool IsSetMessageBodyMD5()
-        {
-            return this._messageBodyMD5 != null;
-        }
-
-        public string MessageId
-        {
-            get { return this._messageId; }
-            set { this._messageId = value; }
-        }
+        internal bool IsSetMessageBodyMD5() => MessageBodyMD5 != null;
 
         // Check to see if MessageId property is set
-        internal bool IsSetMessageId()
-        {
-            return this._messageId != null;
-        }
+        internal bool IsSetMessageId() => MessageId != null;
 
-        public string ReeceiptHandle
-        {
-            get { return this._receiptHandle; }
-            set { this._receiptHandle = value; }
-        }
+        internal bool IsSetReeceiptHandle() => !string.IsNullOrEmpty(value: ReeceiptHandle);
 
-        internal bool IsSetReeceiptHandle()
-        {
-            return !string.IsNullOrEmpty(_receiptHandle);
-        }
-
-        public override string ToString()
-        {
-            return IsSetReeceiptHandle()
-                ? string.Format("(MessageId {0}, MessageBodyMD5 {1}, Handle {2})", _messageId, _messageBodyMD5, _receiptHandle)
-                : string.Format("(MessageId {0}, MessageBodyMD5 {1})", _messageId, _messageBodyMD5);
-        }
+        public override string ToString() => IsSetReeceiptHandle()
+                                                 ? string.Format(format: "(MessageId {0}, MessageBodyMD5 {1}, Handle {2})", arg0: MessageId, arg1: MessageBodyMD5, arg2: ReeceiptHandle)
+                                                 : string.Format(format: "(MessageId {0}, MessageBodyMD5 {1})", arg0: MessageId, arg1: MessageBodyMD5);
     }
 }

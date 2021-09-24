@@ -1,6 +1,5 @@
 ﻿using System;
 using FS.Data.Client;
-using FS.Data.Infrastructure;
 using FS.Data.Map;
 
 namespace FS.Data.Internal
@@ -10,11 +9,31 @@ namespace FS.Data.Internal
     /// </summary>
     internal class Queue : IDisposable
     {
+        /// <summary>
+        ///     表达式持久化
+        /// </summary>
+        private ExpressionBuilder _expBuilder;
+
+        /// <summary>
+        ///     存储过程生成器
+        /// </summary>
+        private ProcBuilder _procBuilder;
+
+        /// <summary>
+        ///     SQL生成器
+        /// </summary>
+        private AbsSqlBuilder _sqlBuilder;
+
+        /// <summary>
+        ///     保存字段映射的信息
+        /// </summary>
+        internal SetDataMap Map;
+
         internal Queue(InternalContext context, SetDataMap map)
         {
-            ID       = Guid.NewGuid();
-            Context  = context;
-            Map      = map;
+            ID      = Guid.NewGuid();
+            Context = context;
+            Map     = map;
         }
 
         /// <summary>
@@ -27,15 +46,14 @@ namespace FS.Data.Internal
         /// </summary>
         private InternalContext Context { get; set; }
 
-        /// <summary>
-        ///     保存字段映射的信息
-        /// </summary>
-        internal SetDataMap Map;
+        internal ExpressionBuilder ExpBuilder  => _expBuilder ??= new ExpressionBuilder(map: Map);
+        internal AbsSqlBuilder     SqlBuilder  => _sqlBuilder ??= Context.DbProvider.CreateSqlBuilder(expBuilder: ExpBuilder, dbName: Map.DbName, tableName: Map.TableName);
+        internal ProcBuilder       ProcBuilder => _procBuilder ??= new ProcBuilder(dbProvider: Context.DbProvider, setMap: Map);
 
         /// <summary>
         ///     复制条件
         /// </summary>
-        /// <param name="queue">队列</param>
+        /// <param name="queue"> 队列 </param>
         internal void Copy(Queue queue)
         {
             ID          = queue.ID;
@@ -44,30 +62,12 @@ namespace FS.Data.Internal
             queue.Dispose();
         }
 
-        /// <summary>
-        ///     表达式持久化
-        /// </summary>
-        private ExpressionBuilder _expBuilder;
-        internal ExpressionBuilder ExpBuilder => _expBuilder ??= new ExpressionBuilder(Map);
-
-        /// <summary>
-        ///     SQL生成器
-        /// </summary>
-        private AbsSqlBuilder _sqlBuilder;
-        internal AbsSqlBuilder SqlBuilder => _sqlBuilder ??= Context.DbProvider.CreateSqlBuilder(ExpBuilder, Map.DbName, Map.TableName);
-
-        /// <summary>
-        ///     存储过程生成器
-        /// </summary>
-        private ProcBuilder _procBuilder;
-        internal ProcBuilder ProcBuilder => _procBuilder ??= new ProcBuilder(Context.DbProvider, Map);
-
         #region 释放
 
         /// <summary>
         ///     释放资源
         /// </summary>
-        /// <param name="disposing">是否释放托管资源</param>
+        /// <param name="disposing"> 是否释放托管资源 </param>
         private void Dispose(bool disposing)
         {
             //释放托管资源
@@ -86,8 +86,8 @@ namespace FS.Data.Internal
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            Dispose(disposing: true);
+            GC.SuppressFinalize(obj: this);
         }
 
         #endregion

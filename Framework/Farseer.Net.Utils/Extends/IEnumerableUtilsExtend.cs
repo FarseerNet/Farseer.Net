@@ -13,96 +13,84 @@ namespace FS.Extends
         /// </summary>
         public static List<T> Copy<T>(this IEnumerable<T> lst)
         {
-            if (lst == null) { return new List<T>(); }
-            var lstNew = new List<T>(lst.Count());
-            lstNew.AddRange(lst);
+            if (lst == null) return new List<T>();
+            var lstNew = new List<T>(capacity: lst.Count());
+            lstNew.AddRange(collection: lst);
             return lstNew;
         }
 
         /// <summary>
         ///     获取Info
         /// </summary>
-        /// <typeparam name="TEntity">实体类</typeparam>
-        /// <param name="lst">List列表</param>
-        public static TEntity ToEntity<TEntity>(this IEnumerable<TEntity> lst)
-        {
-            return lst.FirstOrDefault();
-        }
+        /// <typeparam name="TEntity"> 实体类 </typeparam>
+        /// <param name="lst"> List列表 </param>
+        public static TEntity ToEntity<TEntity>(this IEnumerable<TEntity> lst) => lst.FirstOrDefault();
 
         /// <summary>
         ///     判断是否存在记录
         /// </summary>
-        public static bool IsHaving<TEntity>(this IEnumerable<TEntity> lst)
-        {
-            return lst.Any();
-        }
+        public static bool IsHaving<TEntity>(this IEnumerable<TEntity> lst) => lst.Any();
 
         /// <summary>
         ///     获取单个值
         /// </summary>
-        /// <typeparam name="TEntity">实体类</typeparam>
-        /// <param name="lst">List列表</param>
-        /// <param name="select">字段选择器</param>
-        /// <param name="defValue">默认值</param>
-        /// <typeparam name="T">ModelInfo</typeparam>
-        public static T GetValue<TEntity, T>(this IEnumerable<TEntity> lst, Func<TEntity, T> select, T defValue = default(T))
+        /// <typeparam name="TEntity"> 实体类 </typeparam>
+        /// <param name="lst"> List列表 </param>
+        /// <param name="select"> 字段选择器 </param>
+        /// <param name="defValue"> 默认值 </param>
+        /// <typeparam name="T"> ModelInfo </typeparam>
+        public static T GetValue<TEntity, T>(this IEnumerable<TEntity> lst, Func<TEntity, T> select, T defValue = default)
         {
-            if (lst == null) { return defValue; }
-            var value = lst.Select(@select).FirstOrDefault();
+            if (lst == null) return defValue;
+            var value = lst.Select(selector: select).FirstOrDefault();
             return value == null ? defValue : value;
         }
 
         /// <summary>
         ///     获取单个值
         /// </summary>
-        /// <typeparam name="TEntity">实体类</typeparam>
-        /// <param name="lst">List列表</param>
-        /// <param name="ID">条件，等同于：o=> o.ID == ID 的操作</param>
-        /// <param name="select">字段选择器</param>
-        /// <param name="defValue">默认值</param>
-        /// <typeparam name="T">ModelInfo</typeparam>
-        public static T GetValue<TEntity, T>(this IEnumerable<TEntity> lst, int? ID, Func<TEntity, T> select, T defValue = default(T)) where TEntity : IEntity
+        /// <typeparam name="TEntity"> 实体类 </typeparam>
+        /// <param name="lst"> List列表 </param>
+        /// <param name="ID"> 条件，等同于：o=> o.ID == ID 的操作 </param>
+        /// <param name="select"> 字段选择器 </param>
+        /// <param name="defValue"> 默认值 </param>
+        /// <typeparam name="T"> ModelInfo </typeparam>
+        public static T GetValue<TEntity, T>(this IEnumerable<TEntity> lst, int? ID, Func<TEntity, T> select, T defValue = default) where TEntity : IEntity
         {
-            if (lst == null) { return defValue; }
-            lst = lst.Where(o => o.ID == ID).ToList();
-            if (!lst.Any()) { return defValue; }
+            if (lst == null) return defValue;
+            lst = lst.Where(predicate: o => o.ID == ID).ToList();
+            if (!lst.Any()) return defValue;
 
-            var value = lst.Select(@select).FirstOrDefault();
+            var value = lst.Select(selector: select).FirstOrDefault();
             return value == null ? defValue : value;
         }
 
         /// <summary>
         ///     字段选择器
         /// </summary>
-        /// <param name="top"></param>
-        /// <param name="select">字段选择器</param>
-        /// <param name="lst">列表</param>
-        public static List<T> ToSelectList<TEntity, T>(this IEnumerable<TEntity> lst, int top, Func<TEntity, T> select)
-        {
-            return lst.Select(@select).Take(top).ToList();
-        }
+        /// <param name="top"> </param>
+        /// <param name="select"> 字段选择器 </param>
+        /// <param name="lst"> 列表 </param>
+        public static List<T> ToSelectList<TEntity, T>(this IEnumerable<TEntity> lst, int top, Func<TEntity, T> select) => lst.Select(selector: select).Take(count: top).ToList();
 
         /// <summary>
         ///     克隆List
         /// </summary>
-        /// <typeparam name="T">要转换的类型</typeparam>
-        /// <param name="list"></param>
-        /// <returns></returns>
+        /// <typeparam name="T"> 要转换的类型 </typeparam>
+        /// <param name="list"> </param>
+        /// <returns> </returns>
         public static List<T> Clone<T>(this IEnumerable<T> list) where T : ICloneable
         {
-            return list?.Select(o => (T) o.Clone()).ToList();
+            return list?.Select(selector: o => (T)o.Clone()).ToList();
         }
 
         /// <summary>
         ///     判断value是否存在于列表中
         /// </summary>
-        /// <param name="lst">数据源</param>
-        /// <param name="value">要判断的值</param>
-        /// <returns></returns>
-        public static bool Contains(this IEnumerable<uint> lst, uint? value)
-        {
-            return Enumerable.Contains(lst, value.GetValueOrDefault());
-        }
+        /// <param name="lst"> 数据源 </param>
+        /// <param name="value"> 要判断的值 </param>
+        /// <returns> </returns>
+        public static bool Contains(this IEnumerable<uint> lst, uint? value) => Enumerable.Contains(source: lst, value: value.GetValueOrDefault());
 
         ///// <summary>
         ///// List转换成新的List

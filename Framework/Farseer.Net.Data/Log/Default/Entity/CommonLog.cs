@@ -11,7 +11,7 @@ namespace FS.Data.Log.Default.Entity
     /// <summary>
     ///     日志记录
     /// </summary>
-    [DataContract(Name ="Log")]
+    [DataContract(Name = "Log")]
     public class CommonLog
     {
         /// <summary> 执行行数 </summary>
@@ -62,15 +62,15 @@ namespace FS.Data.Log.Default.Entity
         /// </summary>
         internal void RecordExecuteMethod()
         {
-            CreateAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            CreateAt = DateTime.Now.ToString(format: "yyyy-MM-dd HH:mm:ss");
 
-            var lstFrames = Exp == null ? new StackTrace(true).GetFrames() : new StackTrace(Exp, true).GetFrames();
-            var stack = lstFrames?.LastOrDefault(o => o.GetFileLineNumber() != 0 && !o.GetMethod().Module.Name.Contains("Farseer.Net") && !StringHelper.IsEquals(o.GetMethod().Name, "Callback"));
+            var lstFrames = Exp == null ? new StackTrace(fNeedFileInfo: true).GetFrames() : new StackTrace(e: Exp, fNeedFileInfo: true).GetFrames();
+            var stack     = lstFrames?.LastOrDefault(predicate: o => o.GetFileLineNumber() != 0 && !o.GetMethod().Module.Name.Contains(value: "Farseer.Net") && !StringHelper.IsEquals(str: o.GetMethod().Name, str2: "Callback"));
             if (stack == null) return;
 
-            LineNo = stack.GetFileLineNumber();
+            LineNo     = stack.GetFileLineNumber();
             MethodName = stack.GetMethod().Name;
-            FileName = stack.GetFileName();
+            FileName   = stack.GetFileName();
         }
     }
 }

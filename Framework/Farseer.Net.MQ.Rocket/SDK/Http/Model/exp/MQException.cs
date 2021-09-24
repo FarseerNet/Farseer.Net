@@ -7,27 +7,27 @@ namespace FS.MQ.Rocket.SDK.Http.Model.exp
     public class MQException : AliyunServiceException
     {
         public MQException(string message)
-            : base(message)
+            : base(message: message)
         {
         }
 
         public MQException(string message, Exception innerException)
-            : base(message, innerException)
+            : base(message: message, innerException: innerException)
         {
         }
 
         public MQException(Exception innerException)
-            : base(innerException.Message, innerException)
+            : base(message: innerException.Message, innerException: innerException)
         {
         }
 
         public MQException(string message, string errorCode, string requestId, string hostId, HttpStatusCode statusCode)
-            : base(message, errorCode, requestId, hostId, statusCode)
+            : base(message: message, errorCode: errorCode, requestId: requestId, hostId: hostId, statusCode: statusCode)
         {
         }
 
         public MQException(string message, Exception innerException, string errorCode, string requestId, string hostId, HttpStatusCode statusCode)
-            : base(message, innerException, errorCode, requestId, hostId, statusCode)
+            : base(message: message, innerException: innerException, errorCode: errorCode, requestId: requestId, hostId: hostId, statusCode: statusCode)
         {
         }
     }

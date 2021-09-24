@@ -1,4 +1,3 @@
-using Castle.MicroKernel.Registration;
 using FS.Mapper;
 using FS.Modules;
 
@@ -13,8 +12,8 @@ namespace Farseer.net.AutoMapper.Test
 
         public override void PostInitialize()
         {
-            IocManager.RegisterAssemblyByConvention(GetType());
-            IocManager.Register(typeof(Test),typeof(Test));
+            IocManager.RegisterAssemblyByConvention(type: GetType());
+            IocManager.Register(type: typeof(Test), impl: typeof(Test));
         }
     }
 }

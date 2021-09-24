@@ -3,10 +3,10 @@ namespace FS.MQ.Rabbit.Configuration
     public class RabbitServerConfig
     {
         /// <summary>
-        /// Connect配置名称
+        ///     Connect配置名称
         /// </summary>
         public string Name { get; set; }
-        
+
         /// <summary> 用户名 </summary>
         public string UserName { get; set; }
 

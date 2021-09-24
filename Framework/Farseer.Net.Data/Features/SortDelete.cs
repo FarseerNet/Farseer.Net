@@ -26,9 +26,19 @@ namespace FS.Data.Features
         public object Value { private get; set; }
 
         /// <summary>
+        ///     生成的用于条件查询时，过滤已删除标记的数据
+        /// </summary>
+        internal Expression CondictionExpression { get; private set; }
+
+        /// <summary>
+        ///     用于删除数据时，转换为Update赋值方式
+        /// </summary>
+        internal Expression AssignExpression { get; private set; }
+
+        /// <summary>
         ///     初始化逻辑删除
         /// </summary>
-        /// <param name="entityType">实体类型</param>
+        /// <param name="entityType"> 实体类型 </param>
         public void Init(Type entityType)
         {
             Type fieldType;
@@ -39,43 +49,34 @@ namespace FS.Data.Features
                     break;
                 case eumSortDeleteType.DateTime:
                     fieldType = typeof(DateTime);
-                    Value = DateTime.Now;
+                    Value     = DateTime.Now;
                     break;
                 default:
                     fieldType = typeof(bool);
                     break;
             }
 
-            var dic = new Dictionary<string, Type> { [Name] = fieldType };
+            var dic = new Dictionary<string, Type> { [key: Name] = fieldType };
 
             // 如果当前类已包含该字段，则不创新派生类
-            var sortDeleteClassType = entityType.GetProperty(Name) != null ? entityType : DynamicsClassTypeCacheManger.Cache(dic, entityType);
-            var param = Expression.Parameter(sortDeleteClassType, "o");
-            var member = Expression.MakeMemberAccess(param, sortDeleteClassType.GetMember(Name)[0]);
+            var sortDeleteClassType = entityType.GetProperty(name: Name) != null ? entityType : DynamicsClassTypeCacheManger.Cache(addPropertys: dic, baseType: entityType);
+            var param               = Expression.Parameter(type: sortDeleteClassType, name: "o");
+            var member              = Expression.MakeMemberAccess(expression: param, member: sortDeleteClassType.GetMember(name: Name)[0]);
 
             // 时间类型字段，则以参数形式（解析时动态转为当前时间）
             if (FieldType == eumSortDeleteType.DateTime)
             {
-                AssignExpression = Expression.Assign(member, Expression.Parameter(fieldType)); //DateTime.Now 
-                CondictionExpression = Expression.Equal(member, Expression.Convert(Expression.Constant(null), fieldType));
+                AssignExpression     = Expression.Assign(left: member, right: Expression.Parameter(type: fieldType)); //DateTime.Now 
+                CondictionExpression = Expression.Equal(left: member, right: Expression.Convert(expression: Expression.Constant(value: null), type: fieldType));
             }
             else
             {
-                var valConstant = Expression.Constant(Value, member.Type);
-                AssignExpression = Expression.Assign(member, valConstant);
-                CondictionExpression = Expression.NotEqual(member, valConstant);
+                var valConstant = Expression.Constant(value: Value, type: member.Type);
+                AssignExpression     = Expression.Assign(left: member, right: valConstant);
+                CondictionExpression = Expression.NotEqual(left: member, right: valConstant);
             }
-            CondictionExpression = Expression.Lambda(CondictionExpression, param);
+
+            CondictionExpression = Expression.Lambda(body: CondictionExpression, param);
         }
-
-        /// <summary>
-        ///     生成的用于条件查询时，过滤已删除标记的数据
-        /// </summary>
-        internal Expression CondictionExpression { get; private set; }
-
-        /// <summary>
-        ///     用于删除数据时，转换为Update赋值方式
-        /// </summary>
-        internal Expression AssignExpression { get; private set; }
     }
 }

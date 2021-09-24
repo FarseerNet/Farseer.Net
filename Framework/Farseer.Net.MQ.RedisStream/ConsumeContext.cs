@@ -7,14 +7,14 @@ namespace FS.MQ.RedisStream
     public class ConsumeContext
     {
         /// <summary>
-        /// 依赖的Redis组件
-        /// </summary>
-        private readonly IRedisCacheManager _redisCacheManager;
-
-        /// <summary>
-        /// 队列名称
+        ///     队列名称
         /// </summary>
         private readonly string _queueName;
+
+        /// <summary>
+        ///     依赖的Redis组件
+        /// </summary>
+        private readonly IRedisCacheManager _redisCacheManager;
 
         public ConsumeContext(IRedisCacheManager redisCacheManager, string queueName)
         {
@@ -25,11 +25,11 @@ namespace FS.MQ.RedisStream
         public string[] MessageIds { get; internal set; }
 
         /// <summary>
-        /// 删除messageId
+        ///     删除messageId
         /// </summary>
         public async Task Ack(StreamEntry message)
         {
-            await _redisCacheManager.Db.StreamDeleteAsync(_queueName, new[] {message.Id});
+            await _redisCacheManager.Db.StreamDeleteAsync(key: _queueName, messageIds: new[] { message.Id });
         }
     }
 }

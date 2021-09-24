@@ -5,16 +5,16 @@ using System.Net;
 namespace FS.MQ.Rocket.SDK.Http.Runtime.Internal.Transform
 {
     public interface IWebResponseData
-    {        
-        long ContentLength { get; }
-        string ContentType { get; }
-        HttpStatusCode StatusCode { get; }
-        bool IsSuccessStatusCode { get; }
-        string[] GetHeaderNames();
-        bool IsHeaderPresent(string headerName);
-        string GetHeaderValue(string headerName);
+    {
+        long           ContentLength       { get; }
+        string         ContentType         { get; }
+        HttpStatusCode StatusCode          { get; }
+        bool           IsSuccessStatusCode { get; }
 
         IHttpResponseBody ResponseBody { get; }
+        string[]          GetHeaderNames();
+        bool              IsHeaderPresent(string headerName);
+        string            GetHeaderValue(string  headerName);
     }
 
     public interface IHttpResponseBody : IDisposable

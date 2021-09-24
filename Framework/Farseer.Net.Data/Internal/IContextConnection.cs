@@ -1,21 +1,26 @@
 using FS.Data.Infrastructure;
 
-namespace FS.Data.Internal {
-    public interface IContextConnection {
+namespace FS.Data.Internal
+{
+    public interface IContextConnection
+    {
         /// <summary>
-        ///     Á¬½Ó×Ö·û´®
+        ///     ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
         /// </summary>
         string ConnectionString { get; set; }
+
         /// <summary>
-        ///     Êý¾Ý¿âÀàÐÍ
+        ///     ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½ï¿½ï¿½ï¿½
         /// </summary>
         eumDbType DbType { get; set; }
+
         /// <summary>
-        ///     ÃüÁî³¬Ê±Ê±¼ä
+        ///     ï¿½ï¿½ï¿½î³¬Ê±Ê±ï¿½ï¿½
         /// </summary>
         int CommandTimeout { get; set; }
+
         /// <summary>
-        ///     Êý¾Ý¿â°æ±¾
+        ///     ï¿½ï¿½ï¿½Ý¿ï¿½æ±¾
         /// </summary>
         string DataVer { get; set; }
     }

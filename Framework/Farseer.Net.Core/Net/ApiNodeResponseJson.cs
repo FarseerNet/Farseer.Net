@@ -15,12 +15,13 @@ namespace FS.Core.Net
     public class ApiNodeResponseJson
     {
         /// <summary>
-        /// 服务名称
+        ///     服务名称
         /// </summary>
         [DataMember]
         public string SystemName { get; set; }
+
         /// <summary>
-        /// 节点名称
+        ///     节点名称
         /// </summary>
         [DataMember]
         public string NodeName { get; set; }
@@ -50,10 +51,11 @@ namespace FS.Core.Net
         public string StatusMessage { get; set; }
 
         /// <summary>
-        /// 服务版本
+        ///     服务版本
         /// </summary>
         [DataMember]
         public string ServiceVer { get; set; }
+
         /// <summary>
         ///     不同接口返回的值
         /// </summary>
@@ -61,72 +63,66 @@ namespace FS.Core.Net
         public dynamic Data { get; private set; }
 
         /// <summary>
-        /// 设置Data字段的值
+        ///     设置Data字段的值
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data"> </param>
         public void SetData(dynamic data)
         {
             Data = data;
         }
-        
+
 
         /// <summary>
         ///     接口调用成功后返回的Json
         /// </summary>
-        /// <param name="statusMessage">成功提示内容</param>
-        /// <param name="returnVal">成功返回值</param>
-        /// <param name="data">返回的数据列表</param>
-        public static ApiNodeResponseJson Success(string statusMessage, object returnVal = null, dynamic data = null)
+        /// <param name="statusMessage"> 成功提示内容 </param>
+        /// <param name="returnVal"> 成功返回值 </param>
+        /// <param name="data"> 返回的数据列表 </param>
+        public static ApiNodeResponseJson Success(string statusMessage, object returnVal = null, dynamic data = null) => new()
         {
-            return new ApiNodeResponseJson
-            {
-                Status = true,
-                StatusMessage = statusMessage,
-                StatusCode = 200,
-                ResultValue = returnVal?.ToString(),
-                Data = data,
-                //SystemName = RegisterInfomation.Register?.SystemName,
-                //NodeName = RegisterInfomation.Register?.NodeName
-            };
-        }
+            Status        = true,
+            StatusMessage = statusMessage,
+            StatusCode    = 200,
+            ResultValue   = returnVal?.ToString(),
+            Data          = data
+            //SystemName = RegisterInfomation.Register?.SystemName,
+            //NodeName = RegisterInfomation.Register?.NodeName
+        };
 
         /// <summary>
         ///     接口调用成功后返回的Json
         /// </summary>
-        /// <param name="statusMessage">成功提示内容</param>
-        /// <param name="returnVal">成功返回值</param>
-        /// <param name="data">返回的数据列表</param>
-        public static Task<ApiNodeResponseJson> SuccessAsync(string statusMessage, object returnVal = null, dynamic data = null) => Task.FromResult(Success(statusMessage, returnVal, data));
+        /// <param name="statusMessage"> 成功提示内容 </param>
+        /// <param name="returnVal"> 成功返回值 </param>
+        /// <param name="data"> 返回的数据列表 </param>
+        public static Task<ApiNodeResponseJson> SuccessAsync(string statusMessage, object returnVal = null, dynamic data = null) => Task.FromResult(result: Success(statusMessage: statusMessage, returnVal: returnVal, data: data));
 
         /// <summary>
         ///     接口调用失时返回的Json
         /// </summary>
-        /// <param name="statusMessage">失败提示内容</param>
-        /// <param name="returnVal">失败返回值</param>
-        /// <param name="statusCode">失败返回的状态码</param>
-        /// <param name="systemName">服务名称</param>
-        /// <param name="nodeName">节点名称</param>
-        public static ApiNodeResponseJson Error(string statusMessage, object returnVal = null, int statusCode = 403, string systemName = null, string nodeName = null)
+        /// <param name="statusMessage"> 失败提示内容 </param>
+        /// <param name="returnVal"> 失败返回值 </param>
+        /// <param name="statusCode"> 失败返回的状态码 </param>
+        /// <param name="systemName"> 服务名称 </param>
+        /// <param name="nodeName"> 节点名称 </param>
+        public static ApiNodeResponseJson Error(string statusMessage, object returnVal = null, int statusCode = 403, string systemName = null, string nodeName = null) => new()
         {
-            return new ApiNodeResponseJson
-            {
-                Status = false,
-                StatusMessage = statusMessage,
-                StatusCode = statusCode,
-                ResultValue = returnVal?.ToString(),
-                //SystemName = systemName ?? RegisterInfomation.Register?.SystemName,
-                //NodeName = nodeName ?? RegisterInfomation.Register?.NodeName
-            };
-        }
+            Status        = false,
+            StatusMessage = statusMessage,
+            StatusCode    = statusCode,
+            ResultValue   = returnVal?.ToString()
+            //SystemName = systemName ?? RegisterInfomation.Register?.SystemName,
+            //NodeName = nodeName ?? RegisterInfomation.Register?.NodeName
+        };
 
         /// <summary>
         ///     接口调用失时返回的Json
         /// </summary>
-        /// <param name="statusMessage">失败提示内容</param>
-        /// <param name="returnVal">失败返回值</param>
-        /// <param name="statusCode">失败返回的状态码</param>
-        /// <param name="systemName">服务名称</param>
-        /// <param name="nodeName">节点名称</param>
-        public static Task<ApiNodeResponseJson> ErrorAsync(string statusMessage, object returnVal = null, int statusCode = 403, string systemName = null, string nodeName = null) => Task.FromResult(Error(statusMessage, returnVal, statusCode, systemName, nodeName));
+        /// <param name="statusMessage"> 失败提示内容 </param>
+        /// <param name="returnVal"> 失败返回值 </param>
+        /// <param name="statusCode"> 失败返回的状态码 </param>
+        /// <param name="systemName"> 服务名称 </param>
+        /// <param name="nodeName"> 节点名称 </param>
+        public static Task<ApiNodeResponseJson> ErrorAsync(string statusMessage, object returnVal = null, int statusCode = 403, string systemName = null, string nodeName = null) => Task.FromResult(result: Error(statusMessage: statusMessage, returnVal: returnVal, statusCode: statusCode, systemName: systemName, nodeName: nodeName));
     }
 }

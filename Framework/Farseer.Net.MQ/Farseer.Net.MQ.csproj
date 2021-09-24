@@ -1,29 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Company>steden</Company>
-    <Copyright>http://www.fsgit.com</Copyright>
-    <Product>消息中间件组件</Product>
-    <Description>包括：消息中间件的基础组件</Description>
-    <AssemblyVersion>2.5.0</AssemblyVersion>
-    <FileVersion>2.5.0</FileVersion>
-    <Version>2.5.0</Version>
-    <Authors>steden</Authors>
-    <PackageTags>MQ</PackageTags>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <RootNamespace>FS.MQ</RootNamespace>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <Company>steden</Company>
+        <Copyright>http://www.fsgit.com</Copyright>
+        <Product>消息中间件组件</Product>
+        <Description>包括：消息中间件的基础组件</Description>
+        <AssemblyVersion>2.5.0</AssemblyVersion>
+        <FileVersion>2.5.0</FileVersion>
+        <Version>2.5.0</Version>
+        <Authors>steden</Authors>
+        <PackageTags>MQ</PackageTags>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <RootNamespace>FS.MQ</RootNamespace>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net461'">
-    <DefineConstants>net461</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <DefineConstants>CORE</DefineConstants>
-  </PropertyGroup>
+    <PropertyGroup Condition="'$(TargetFramework)' == 'net461'">
+        <DefineConstants>net461</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+        <DefineConstants>CORE</DefineConstants>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj"/>
+    </ItemGroup>
 
 </Project>

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace FS
 {
     /// <summary>
-    /// 错误的消息，使用Json格式返回
+    ///     错误的消息，使用Json格式返回
     /// </summary>
     public class BadRequestException : IResultFilter
     {
@@ -22,21 +22,17 @@ namespace FS
             {
                 if (badResult.Value is ValidationProblemDetails val)
                 {
-                    var lstError = val.Errors.SelectMany(o => o.Value).ToList();
-                    var error    = lstError.ToString(",");
-                    badResult.Value = ApiResponseJson.Error(error, statusCode: badResult.StatusCode.GetValueOrDefault());
+                    var lstError = val.Errors.SelectMany(selector: o => o.Value).ToList();
+                    var error    = lstError.ToString(sign: ",");
+                    badResult.Value = ApiResponseJson.Error(statusMessage: error, statusCode: badResult.StatusCode.GetValueOrDefault());
                     return;
                 }
             }
 
             // hread类型错误
             if (context.Result is ObjectResult objResult)
-            {
                 if (objResult.StatusCode == 415)
-                {
-                    objResult.Value = ApiResponseJson.Error("只能使用application/json的content-type请求", 415);
-                }
-            }
+                    objResult.Value = ApiResponseJson.Error(statusMessage: "只能使用application/json的content-type请求", statusCode: 415);
         }
     }
 }

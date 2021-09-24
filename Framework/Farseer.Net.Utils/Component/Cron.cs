@@ -5,10 +5,10 @@ using FS.Extends;
 
 namespace FS.Utils.Component
 {
-    /// <summary>轻量级Cron表达式</summary>
+    /// <summary> 轻量级Cron表达式 </summary>
     /// <remarks>
-    /// 基本构成：秒+分+时+天+月+星期
-    /// 每段构成：
+    ///     基本构成：秒+分+时+天+月+星期
+    ///     每段构成：
     ///     *全部，该类型片段全部可选
     ///     ?跳过
     ///     数字，具体某个数值可选
@@ -17,83 +17,90 @@ namespace FS.Utils.Component
     ///     /步进，在上述可选数字内，间隔多少选一个
     /// </remarks>
     /// <example>
-    /// */2 每两秒一次
-    /// 0,1,2 * * * * 每分钟的0秒1秒2秒各一次
-    /// 5/20 * * * * 每分钟的5秒25秒45秒各一次
-    /// * 1-10,13,25/3 * * * 每小时的1分4分7分10分13分25分，每一秒各一次
-    /// 0 0 0 1 * * 每个月1日的0点整
-    /// 0 0 2 * * 1-5 每个工作日的凌晨2点
+    ///     */2 每两秒一次
+    ///     0,1,2 * * * * 每分钟的0秒1秒2秒各一次
+    ///     5/20 * * * * 每分钟的5秒25秒45秒各一次
+    ///     * 1-10,13,25/3 * * * 每小时的1分4分7分10分13分25分，每一秒各一次
+    ///     0 0 0 1 * * 每个月1日的0点整
+    ///     0 0 2 * * 1-5 每个工作日的凌晨2点
     /// </example>
     public class Cron
     {
         #region 属性
-        /// <summary>秒数集合</summary>
-        public Int32[] Seconds;
 
-        /// <summary>分钟集合</summary>
-        public Int32[] Minutes;
+        /// <summary> 秒数集合 </summary>
+        public int[] Seconds;
 
-        /// <summary>小时集合</summary>
-        public Int32[] Hours;
+        /// <summary> 分钟集合 </summary>
+        public int[] Minutes;
 
-        /// <summary>日期集合</summary>
-        public Int32[] DaysOfMonth;
+        /// <summary> 小时集合 </summary>
+        public int[] Hours;
 
-        /// <summary>月份集合</summary>
-        public Int32[] Months;
+        /// <summary> 日期集合 </summary>
+        public int[] DaysOfMonth;
 
-        /// <summary>星期集合</summary>
-        public Int32[] DaysOfWeek;
+        /// <summary> 月份集合 </summary>
+        public int[] Months;
 
-        private String _expression;
+        /// <summary> 星期集合 </summary>
+        public int[] DaysOfWeek;
+
+        private string _expression;
+
         #endregion
 
         #region 构造
-        /// <summary>实例化Cron表达式</summary>
-        public Cron() { }
 
-        /// <summary>实例化Cron表达式</summary>
-        /// <param name="expression"></param>
-        public Cron(String expression) => Parse(expression);
+        /// <summary> 实例化Cron表达式 </summary>
+        public Cron()
+        {
+        }
 
-        /// <summary>已重载。</summary>
-        /// <returns></returns>
-        public override String ToString() => _expression;
+        /// <summary> 实例化Cron表达式 </summary>
+        /// <param name="expression"> </param>
+        public Cron(string expression)
+        {
+            Parse(expression: expression);
+        }
+
+        /// <summary> 已重载。 </summary>
+        /// <returns> </returns>
+        public override string ToString() => _expression;
+
         #endregion
 
         #region 方法
-        /// <summary>指定时间是否位于表达式之内</summary>
-        /// <param name="time"></param>
-        /// <returns></returns>
-        public bool IsTime(DateTime time)
-        {
-            return Seconds.Contains(time.Second) &&
-                   Minutes.Contains(time.Minute) &&
-                   Hours.Contains(time.Hour) &&
-                   DaysOfMonth.Contains(time.Day) &&
-                   Months.Contains(time.Month) &&
-                   DaysOfWeek.Contains((Int32)time.DayOfWeek);
-        }
 
-        /// <summary>分析表达式</summary>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        public bool Parse(String expression)
+        /// <summary> 指定时间是否位于表达式之内 </summary>
+        /// <param name="time"> </param>
+        /// <returns> </returns>
+        public bool IsTime(DateTime time) => Seconds.Contains(value: time.Second)  &&
+                                             Minutes.Contains(value: time.Minute)  &&
+                                             Hours.Contains(value: time.Hour)      &&
+                                             DaysOfMonth.Contains(value: time.Day) &&
+                                             Months.Contains(value: time.Month)    &&
+                                             DaysOfWeek.Contains(value: (int)time.DayOfWeek);
+
+        /// <summary> 分析表达式 </summary>
+        /// <param name="expression"> </param>
+        /// <returns> </returns>
+        public bool Parse(string expression)
         {
             var ss = expression.Split(' ');
             if (ss.Length == 0) return false;
 
-            if (!TryParse(ss[0], 0, 60, out var vs)) return false;
+            if (!TryParse(value: ss[0], start: 0, max: 60, vs: out var vs)) return false;
             Seconds = vs;
-            if (!TryParse(ss.Length > 1 ? ss[1] : "*", 0, 60, out vs)) return false;
+            if (!TryParse(value: ss.Length > 1 ? ss[1] : "*", start: 0, max: 60, vs: out vs)) return false;
             Minutes = vs;
-            if (!TryParse(ss.Length > 2 ? ss[2] : "*", 0, 24, out vs)) return false;
+            if (!TryParse(value: ss.Length > 2 ? ss[2] : "*", start: 0, max: 24, vs: out vs)) return false;
             Hours = vs;
-            if (!TryParse(ss.Length > 3 ? ss[3] : "*", 1, 32, out vs)) return false;
+            if (!TryParse(value: ss.Length > 3 ? ss[3] : "*", start: 1, max: 32, vs: out vs)) return false;
             DaysOfMonth = vs;
-            if (!TryParse(ss.Length > 4 ? ss[4] : "*", 1, 13, out vs)) return false;
+            if (!TryParse(value: ss.Length > 4 ? ss[4] : "*", start: 1, max: 13, vs: out vs)) return false;
             Months = vs;
-            if (!TryParse(ss.Length > 5 ? ss[5] : "*", 0, 7, out vs)) return false;
+            if (!TryParse(value: ss.Length > 5 ? ss[5] : "*", start: 0, max: 7, vs: out vs)) return false;
             DaysOfWeek = vs;
 
             _expression = expression;
@@ -101,76 +108,76 @@ namespace FS.Utils.Component
             return true;
         }
 
-        private bool TryParse(String value, Int32 start, Int32 max, out Int32[] vs)
+        private bool TryParse(string value, int start, int max, out int[] vs)
         {
             // 固定值，最为常见，优先计算
-            if (Int32.TryParse(value, out var n)) { vs = new Int32[] { n }; return true; }
+            if (int.TryParse(s: value, result: out var n))
+            {
+                vs = new[] { n };
+                return true;
+            }
 
-            var rs = new List<Int32>();
+            var rs = new List<int>();
             vs = null;
 
             // 递归处理混合值
-            if (Enumerable.Contains(value, ','))
+            if (value.Contains(value: ','))
             {
                 foreach (var item in value.Split(','))
                 {
-                    if (!TryParse(item, start, max, out var arr)) return false;
-                    if (arr.Length > 0) rs.AddRange(arr);
+                    if (!TryParse(value: item, start: start, max: max, vs: out var arr)) return false;
+                    if (arr.Length > 0) rs.AddRange(collection: arr);
                 }
+
                 vs = rs.ToArray();
                 return true;
             }
 
             // 步进值
             var step = 1;
-            var p = value.IndexOf('/');
+            var p    = value.IndexOf(value: '/');
             if (p > 0)
             {
-                step  = value.Substring(p + 1).ConvertType(0);
-                value = value.Substring(0, p);
+                step  = value.Substring(startIndex: p + 1).ConvertType(defValue: 0);
+                value = value.Substring(startIndex: 0, length: p);
             }
 
             // 连续范围
             var s = start;
             if (value == "*" || value == "?")
-            {
                 s = 0;
-            }
-            else if ((p = value.IndexOf('-')) > 0)
+            else if ((p = value.IndexOf(value: '-')) > 0)
             {
-                s   = value.Substring(0, p).ConvertType(0);
-                max = value.Substring(p + 1).ConvertType(0) + 1;
+                s   = value.Substring(startIndex: 0, length: p).ConvertType(defValue: 0);
+                max = value.Substring(startIndex: p + 1).ConvertType(defValue: 0) + 1;
             }
-            else if (Int32.TryParse(value, out n))
-            {
+            else if (int.TryParse(s: value, result: out n))
                 s = n;
-            }
             else
                 return false;
 
             for (var i = s; i < max; i += step)
-            {
-                if (i >= start) rs.Add(i);
-            }
+                if (i >= start)
+                    rs.Add(item: i);
 
             vs = rs.ToArray();
             return true;
         }
 
-        /// <summary>获得指定时间之后的下一次执行时间，不含指定时间</summary>
-        /// <param name="time"></param>
-        /// <returns></returns>
+        /// <summary> 获得指定时间之后的下一次执行时间，不含指定时间 </summary>
+        /// <param name="time"> </param>
+        /// <returns> </returns>
         public DateTime GetNext(DateTime time)
         {
             // 设置末尾，避免死循环越界
-            var end = time.AddYears(1);
-            for (var dt = time.AddSeconds(1); dt < end; dt = dt.AddSeconds(1))
-            {
-                if (IsTime(dt)) return dt;
-            }
+            var end = time.AddYears(value: 1);
+            for (var dt = time.AddSeconds(value: 1); dt < end; dt = dt.AddSeconds(value: 1))
+                if (IsTime(time: dt))
+                    return dt;
 
             return DateTime.MinValue;
         }
+
         #endregion
     }
 }

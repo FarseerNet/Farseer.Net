@@ -6,30 +6,30 @@ using FS.Data.Infrastructure;
 namespace FS.Data.Internal
 {
     /// <summary>
-    /// 默认的表、视图数据缓存处理方式（不支持分布式）
+    ///     默认的表、视图数据缓存处理方式（不支持分布式）
     /// </summary>
     public class DefaultDataCache<TEntity> : IDataCache<TEntity> where TEntity : class, new()
     {
+        private readonly AbsDbSet _set;
+
         public DefaultDataCache(AbsDbSet set)
         {
             _set = set;
         }
 
-        private readonly AbsDbSet _set;
-
         public IEnumerable<TEntity> Get()
         {
-            return EntityCacheManger.Cache<TEntity>(_set.SetMap.PhysicsMap, () =>
+            return EntityCacheManger.Cache<TEntity>(key: _set.SetMap.PhysicsMap, initCache: () =>
             {
-                var expBuilder = new ExpressionBuilder(_set.SetMap);
+                var expBuilder = new ExpressionBuilder(map: _set.SetMap);
                 expBuilder.DeleteSortCondition();
-                return _set.Context.Executeor.ToList<TEntity>($"{typeof(TEntity).Name}.Get",_set.Context.DbProvider.CreateSqlBuilder(expBuilder, _set.SetMap.DbName, _set.SetMap.TableName).ToList());
+                return _set.Context.Executeor.ToList<TEntity>(callMethod: $"{typeof(TEntity).Name}.Get", sqlParam: _set.Context.DbProvider.CreateSqlBuilder(expBuilder: expBuilder, dbName: _set.SetMap.DbName, tableName: _set.SetMap.TableName).ToList());
             });
         }
 
         public void Update(IEnumerable<TEntity> lst)
         {
-            EntityCacheManger.Update(_set.SetMap.PhysicsMap, (IList)lst);
+            EntityCacheManger.Update(key: _set.SetMap.PhysicsMap, value: (IList)lst);
         }
     }
 }

@@ -11,73 +11,76 @@ using System.Reflection;
 namespace FS.Reflection
 {
     /// <summary>
-    /// 使用表达式树的方式来赋值/读取对象的属性
+    ///     使用表达式树的方式来赋值/读取对象的属性
     /// </summary>
     internal static class ReflectionPropertyInfo
     {
         /// <summary>
-        /// 要反射的对象类型缓存
+        ///     要反射的对象类型缓存
         /// </summary>
-        private static readonly ConcurrentDictionary<PropertyInfo, Action<object, object>> SetCacheList = new ConcurrentDictionary<PropertyInfo, Action<object, object>>();
+        private static readonly ConcurrentDictionary<PropertyInfo, Action<object, object>> SetCacheList = new();
+
         /// <summary>
-        /// 要反射的对象类型缓存
+        ///     要反射的对象类型缓存
         /// </summary>
-        private static readonly ConcurrentDictionary<PropertyInfo, Func<object, object>> GetCacheList = new ConcurrentDictionary<PropertyInfo, Func<object, object>>();
+        private static readonly ConcurrentDictionary<PropertyInfo, Func<object, object>> GetCacheList = new();
 
         /// <summary>
         ///     动态构造赋值委托
         /// </summary>
-        /// <param name="propertyInfo">属性值类型</param>
-        /// <returns>强类型委托</returns>
+        /// <param name="propertyInfo"> 属性值类型 </param>
+        /// <returns> 强类型委托 </returns>
         public static Action<object, object> SetValue(PropertyInfo propertyInfo)
         {
             Action<object, object> val;
-            if (!SetCacheList.TryGetValue(propertyInfo, out val))
+            if (!SetCacheList.TryGetValue(key: propertyInfo, value: out val))
             {
                 // 实体类
-                var instanceParam = Expression.Parameter(typeof(object), "instance");
+                var instanceParam = Expression.Parameter(type: typeof(object), name: "instance");
                 // 要赋的值
-                var valueParam = Expression.Parameter(typeof(object), "value");
+                var valueParam = Expression.Parameter(type: typeof(object), name: "value");
 
                 //((T)instance)
-                var castInstanceExpression = Expression.Convert(instanceParam, propertyInfo.DeclaringType);
+                var castInstanceExpression = Expression.Convert(expression: instanceParam, type: propertyInfo.DeclaringType);
 
                 // (T)value
-                var castValueExpression = Expression.Convert(valueParam, propertyInfo.PropertyType);
+                var castValueExpression = Expression.Convert(expression: valueParam, type: propertyInfo.PropertyType);
 
                 // 调用PropertySet方法
-                var setter = propertyInfo.GetSetMethod();
-                var assignExpression = Expression.Call(castInstanceExpression, setter, castValueExpression);
+                var setter           = propertyInfo.GetSetMethod();
+                var assignExpression = Expression.Call(instance: castInstanceExpression, method: setter, castValueExpression);
 
-                var lambdaExpression = Expression.Lambda<Action<object, object>>(assignExpression, instanceParam, valueParam);
+                var lambdaExpression = Expression.Lambda<Action<object, object>>(body: assignExpression, instanceParam, valueParam);
                 val = lambdaExpression.Compile();
-                SetCacheList.TryAdd(propertyInfo, val);
+                SetCacheList.TryAdd(key: propertyInfo, value: val);
             }
+
             return val;
         }
 
         /// <summary>
         ///     动态构造获取值委托
         /// </summary>
-        /// <param name="propertyInfo">属性值类型</param>
-        /// <returns>强类型委托</returns>
+        /// <param name="propertyInfo"> 属性值类型 </param>
+        /// <returns> 强类型委托 </returns>
         public static Func<object, object> GetValue(PropertyInfo propertyInfo)
         {
             Func<object, object> val;
-            if (!GetCacheList.TryGetValue(propertyInfo, out val))
+            if (!GetCacheList.TryGetValue(key: propertyInfo, value: out val))
             {
                 // 实体类
-                var instanceParam = Expression.Parameter(typeof(object), "instance");
+                var instanceParam = Expression.Parameter(type: typeof(object), name: "instance");
                 //((T)instance)
-                var castInstanceExpression = Expression.Convert(instanceParam, propertyInfo.DeclaringType);
+                var castInstanceExpression = Expression.Convert(expression: instanceParam, type: propertyInfo.DeclaringType);
 
                 // 调用PropertyGet方法
-                var getter = propertyInfo.GetGetMethod();
-                var unaryVal = Expression.Call(castInstanceExpression, getter);
-                var lambdaExpression = Expression.Lambda<Func<object, object>>(Expression.Convert(unaryVal, typeof(object)), instanceParam);
+                var getter           = propertyInfo.GetGetMethod();
+                var unaryVal         = Expression.Call(instance: castInstanceExpression, method: getter);
+                var lambdaExpression = Expression.Lambda<Func<object, object>>(body: Expression.Convert(expression: unaryVal, type: typeof(object)), instanceParam);
                 val = lambdaExpression.Compile();
-                GetCacheList.TryAdd(propertyInfo, val);
+                GetCacheList.TryAdd(key: propertyInfo, value: val);
             }
+
             return val;
         }
     }

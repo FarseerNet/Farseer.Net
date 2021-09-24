@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using FS.Cache.Redis.Configuration;
+using FS.DI;
 using Newtonsoft.Json;
 using StackExchange.Redis;
-using FS.Cache.Redis.Configuration;
 
 namespace FS.Cache.Redis
 {
@@ -13,6 +13,8 @@ namespace FS.Cache.Redis
     /// </summary>
     public class RedisCacheManager : IRedisCacheManager
     {
+        private readonly RedisItemConfig _config;
+
         /// <summary>
         ///     Redis连接包装器
         /// </summary>
@@ -24,35 +26,34 @@ namespace FS.Cache.Redis
         private IDatabase _db;
 
         /// <summary>
+        ///     构造函数
+        /// </summary>
+        /// <param name="config"> 配置 </param>
+        /// <param name="connectionWrapper"> Redis连接 </param>
+        public RedisCacheManager(RedisItemConfig config, IRedisConnectionWrapper connectionWrapper)
+        {
+            Check.NotNull(value: config.Server, parameterName: "Redis连接字符串为空");
+            _config            = config;
+            _connectionWrapper = connectionWrapper;
+        }
+
+        /// <summary>
         ///     数据库
         /// </summary>
         public IDatabase Db
         {
-            get { return _db ??= new LinkTrackWarp(_connectionWrapper.Database()); }
+            get { return _db ??= new LinkTrackWarp(db: _connectionWrapper.Database()); }
         }
 
         /// <summary>
-        /// 支持缓存不存在，则写入
+        ///     支持缓存不存在，则写入
         /// </summary>
-        public ICacheManager CacheManager { get; internal set; }
+        public ICacheManager CacheManager => IocManager.Instance.Resolve<ICacheManager>(name: $"GetCacheInMemory_{_config.Name}");
 
         /// <summary>
-        /// Redis服务端
+        ///     Redis服务端
         /// </summary>
-        public string Server { get; }
-
-        /// <summary>
-        ///     构造函数
-        /// </summary>
-        /// <param name="config">配置</param>
-        /// <param name="connectionWrapper">Redis连接</param>
-        public RedisCacheManager(RedisItemConfig config, IRedisConnectionWrapper connectionWrapper)
-        {
-            Check.NotNull(config.Server, "Redis连接字符串为空");
-            Server             = config.Server;
-            _connectionWrapper = connectionWrapper;
-            
-        }
+        public string Server => _config.Server;
 
         /// <summary>
         ///     清楚所有缓存数据
@@ -61,9 +62,9 @@ namespace FS.Cache.Redis
         {
             foreach (var ep in _connectionWrapper.GetEndpoints())
             {
-                var server = _connectionWrapper.Server(ep);
+                var server = _connectionWrapper.Server(endPoint: ep);
                 var keys   = server.Keys();
-                foreach (var key in keys) Db.KeyDelete(key);
+                foreach (var key in keys) Db.KeyDelete(key: key);
             }
         }
 
@@ -79,40 +80,44 @@ namespace FS.Cache.Redis
         /// <summary>
         ///     事务，批量写入HASH
         /// </summary>
-        public void HashSetTransaction<TEntity>(string key, List<TEntity> lst, Func<TEntity, object> funcDataKey, Func<TEntity, string> funcData = null)
+        public void HashSetTransaction<TEntity>(string key, List<TEntity> lst, Func<TEntity, object> funcDataKey, Func<TEntity, string> funcData = null, TimeSpan? expiry = null)
         {
             if (lst == null || lst.Count == 0) return;
-            if (funcData == null) funcData = po => JsonConvert.SerializeObject(po);
+            if (funcData == null) funcData = po => JsonConvert.SerializeObject(value: po);
 
             var transaction = Db.CreateTransaction();
             var tasks       = new List<Task>();
             foreach (var po in lst)
             {
-                var dataKey = funcDataKey(po).ToString();
-                var data    = funcData(po);
-                tasks.Add(transaction.HashSetAsync(key, dataKey, data));
+                var dataKey = funcDataKey(arg: po).ToString();
+                var data    = funcData(arg: po);
+                tasks.Add(item: transaction.HashSetAsync(key: key, hashField: dataKey, value: data));
             }
 
+            // 设置过期时间
+            if (expiry != null) transaction.KeyExpireAsync(key: key, expiry: expiry.GetValueOrDefault());
             transaction.Execute();
-            Task.WaitAll(tasks.ToArray());
+            Task.WaitAll(tasks: tasks.ToArray());
         }
 
         /// <summary>
         ///     事务，批量写入HASH
         /// </summary>
-        public Task HashSetTransactionAsync<TEntity>(string key, List<TEntity> lst, Func<TEntity, object> funcDataKey, Func<TEntity, string> funcData = null)
+        public Task HashSetTransactionAsync<TEntity>(string key, List<TEntity> lst, Func<TEntity, object> funcDataKey, Func<TEntity, string> funcData = null, TimeSpan? expiry = null)
         {
-            if (lst == null || lst.Count == 0) return Task.FromResult(0);
-            funcData ??= po => JsonConvert.SerializeObject(po);
+            if (lst == null || lst.Count == 0) return Task.FromResult(result: 0);
+            funcData ??= po => JsonConvert.SerializeObject(value: po);
 
             var transaction = Db.CreateTransaction();
             foreach (var po in lst)
             {
-                var dataKey = funcDataKey(po).ToString();
-                var data    = funcData(po);
-                transaction.HashSetAsync(key, dataKey, data);
+                var dataKey = funcDataKey(arg: po).ToString();
+                var data    = funcData(arg: po);
+                transaction.HashSetAsync(key: key, hashField: dataKey, value: data);
             }
 
+            // 设置过期时间
+            if (expiry != null) transaction.KeyExpireAsync(key: key, expiry: expiry.GetValueOrDefault());
             return transaction.ExecuteAsync();
         }
     }

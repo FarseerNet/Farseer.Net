@@ -13,9 +13,9 @@ namespace FS.Core.Mapping
     public class EntityPhysicsMap
     {
         /// <summary>
-        /// 缓存类型
+        ///     缓存类型
         /// </summary>
-        private static readonly ConcurrentDictionary<Type, EntityPhysicsMap> Cache = new ConcurrentDictionary<Type, EntityPhysicsMap>();
+        private static readonly ConcurrentDictionary<Type, EntityPhysicsMap> Cache = new();
 
         /// <summary>
         ///     获取所有Set属性
@@ -23,17 +23,12 @@ namespace FS.Core.Mapping
         public readonly Dictionary<PropertyInfo, EntityPropertyMap> MapList;
 
         /// <summary>
-        ///     类型
-        /// </summary>
-        internal Type Type { get; }
-
-        /// <summary>
         ///     关系映射
         /// </summary>
-        /// <param name="type">实体类Type</param>
+        /// <param name="type"> 实体类Type </param>
         private EntityPhysicsMap(Type type)
         {
-            Type = type;
+            Type    = type;
             MapList = new Dictionary<PropertyInfo, EntityPropertyMap>();
 
             // 循环Set的字段
@@ -41,16 +36,16 @@ namespace FS.Core.Mapping
             {
                 var modelAtt = new EntityPropertyMap { ValidationList = new List<ValidationAttribute>() };
 
-                var attrs = propertyInfo.GetCustomAttributes(false);
+                var attrs = propertyInfo.GetCustomAttributes(inherit: false);
 
                 // 先获取描述特性
-                var displayAtt = attrs.FirstOrDefault(o => o is DisplayAttribute);
+                var displayAtt = attrs.FirstOrDefault(predicate: o => o is DisplayAttribute);
                 modelAtt.Display = displayAtt == null ? new DisplayAttribute { Name = propertyInfo.Name } : (DisplayAttribute)displayAtt;
-                if (string.IsNullOrEmpty(modelAtt.Display.Name)) { modelAtt.Display.Name = propertyInfo.Name; }
+                if (string.IsNullOrEmpty(value: modelAtt.Display.Name)) modelAtt.Display.Name = propertyInfo.Name;
 
                 // 找出所有验证特性
-                var vals = attrs.Where(o => o is ValidationAttribute).ToList();
-                if (vals == null) { return; }
+                var vals = attrs.Where(predicate: o => o is ValidationAttribute).ToList();
+                if (vals == null) return;
 
                 // 遍历所有特性
                 foreach (var item in vals)
@@ -58,43 +53,50 @@ namespace FS.Core.Mapping
                     // 字符串长度
                     if (item is StringLengthAttribute stringLengthAtt)
                     {
-                        if (string.IsNullOrEmpty(stringLengthAtt.ErrorMessage))
+                        if (string.IsNullOrEmpty(value: stringLengthAtt.ErrorMessage))
                         {
-                            if (stringLengthAtt.MinimumLength > 0 && stringLengthAtt.MaximumLength > 0) { stringLengthAtt.ErrorMessage = $"{modelAtt.Display.Name}，长度范围必须为：{stringLengthAtt.MinimumLength} - {stringLengthAtt.MaximumLength} 个字符之间！"; }
-                            else if (stringLengthAtt.MaximumLength > 0) { stringLengthAtt.ErrorMessage = $"{modelAtt.Display.Name}，长度不能大于{stringLengthAtt.MaximumLength}个字符！"; }
+                            if (stringLengthAtt.MinimumLength > 0 && stringLengthAtt.MaximumLength > 0)
+                                stringLengthAtt.ErrorMessage = $"{modelAtt.Display.Name}，长度范围必须为：{stringLengthAtt.MinimumLength} - {stringLengthAtt.MaximumLength} 个字符之间！";
+                            else if (stringLengthAtt.MaximumLength > 0)
+                                stringLengthAtt.ErrorMessage = $"{modelAtt.Display.Name}，长度不能大于{stringLengthAtt.MaximumLength}个字符！";
                             else
-                            { stringLengthAtt.ErrorMessage = $"{modelAtt.Display.Name}，长度不能小于{stringLengthAtt.MinimumLength}个字符！"; }
+                                stringLengthAtt.ErrorMessage = $"{modelAtt.Display.Name}，长度不能小于{stringLengthAtt.MinimumLength}个字符！";
                         }
                     }
 
                     // 是否必填
                     else if (item is RequiredAttribute requiredAtt)
                     {
-                        if (string.IsNullOrEmpty(requiredAtt.ErrorMessage))
-                        {
-                            requiredAtt.ErrorMessage = $"{modelAtt.Display.Name}，不能为空！";
-                        }
+                        if (string.IsNullOrEmpty(value: requiredAtt.ErrorMessage)) requiredAtt.ErrorMessage = $"{modelAtt.Display.Name}，不能为空！";
                     }
                     // 范围
                     else if (item is RangeAttribute rangeAtt)
                     {
-                        if (string.IsNullOrEmpty(rangeAtt.ErrorMessage))
+                        if (string.IsNullOrEmpty(value: rangeAtt.ErrorMessage))
                         {
-                            decimal.TryParse(rangeAtt.Minimum.ToString(), out var minnum);
-                            decimal.TryParse(rangeAtt.Minimum.ToString(), out var maximum);
+                            decimal.TryParse(s: rangeAtt.Minimum.ToString(), result: out var minnum);
+                            decimal.TryParse(s: rangeAtt.Minimum.ToString(), result: out var maximum);
 
-                            if (minnum > 0 && maximum > 0) { rangeAtt.ErrorMessage = $"{modelAtt.Display.Name}，的值范围必须为：{minnum} - {maximum} 之间！"; }
-                            else if (maximum > 0) { rangeAtt.ErrorMessage = $"{modelAtt.Display.Name}，的值不能大于{maximum}！"; }
+                            if (minnum > 0 && maximum > 0)
+                                rangeAtt.ErrorMessage = $"{modelAtt.Display.Name}，的值范围必须为：{minnum} - {maximum} 之间！";
+                            else if (maximum > 0)
+                                rangeAtt.ErrorMessage = $"{modelAtt.Display.Name}，的值不能大于{maximum}！";
                             else
-                            { rangeAtt.ErrorMessage = $"{modelAtt.Display.Name}，的值不能小于{minnum}！"; }
+                                rangeAtt.ErrorMessage = $"{modelAtt.Display.Name}，的值不能小于{minnum}！";
                         }
                     }
-                    modelAtt.ValidationList.Add((ValidationAttribute)item);
+
+                    modelAtt.ValidationList.Add(item: (ValidationAttribute)item);
                 }
 
-                MapList.Add(propertyInfo, modelAtt);
+                MapList.Add(key: propertyInfo, value: modelAtt);
             }
         }
+
+        /// <summary>
+        ///     类型
+        /// </summary>
+        internal Type Type { get; }
 
         /// <summary>
         ///     普通实体类的 映射关系
@@ -102,8 +104,8 @@ namespace FS.Core.Mapping
         public static EntityPhysicsMap Map(Type type)
         {
             // 不存在缓存，则加入
-            if (!Cache.ContainsKey(type)) Cache.TryAdd(type, new EntityPhysicsMap(type));
-            return Cache[type];
+            if (!Cache.ContainsKey(key: type)) Cache.TryAdd(key: type, value: new EntityPhysicsMap(type: type));
+            return Cache[key: type];
         }
     }
 }

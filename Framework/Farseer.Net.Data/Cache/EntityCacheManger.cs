@@ -14,31 +14,32 @@ namespace FS.Data.Cache
         /// <summary>
         ///     线程锁
         /// </summary>
-        private static readonly object LockObject = new object();
-
-        private EntityCacheManger(SetPhysicsMap key, Func<IList> initCache) : base(key)
-        {
-            this._initCache = initCache;
-        }
+        private static readonly object LockObject = new();
 
         // 不存在数据时，初始化操作
         private readonly Func<IList> _initCache;
 
+        private EntityCacheManger(SetPhysicsMap key, Func<IList> initCache) : base(key: key)
+        {
+            _initCache = initCache;
+        }
+
         protected override IList SetCacheLock()
         {
-            if (_initCache == null) { return null; }
-            lock (LockObject) { if (!CacheList.ContainsKey(Key)) { CacheList.Add(Key, _initCache()); } }
-            return CacheList[Key];
+            if (_initCache == null) return null;
+            lock (LockObject)
+            {
+                if (!CacheList.ContainsKey(key: Key)) CacheList.Add(key: Key, value: _initCache());
+            }
+
+            return CacheList[key: Key];
         }
 
         /// <summary>
         ///     获取缓存
         /// </summary>
-        /// <param name="key">缓存Key</param>
-        /// <param name="initCache">不存在数据时，初始化操作</param>
-        public static List<TEntity> Cache<TEntity>(SetPhysicsMap key, Func<IList> initCache = null)
-        {
-            return new EntityCacheManger(key, initCache).GetValue() as List<TEntity>;
-        }
+        /// <param name="key"> 缓存Key </param>
+        /// <param name="initCache"> 不存在数据时，初始化操作 </param>
+        public static List<TEntity> Cache<TEntity>(SetPhysicsMap key, Func<IList> initCache = null) => new EntityCacheManger(key: key, initCache: initCache).GetValue() as List<TEntity>;
     }
 }

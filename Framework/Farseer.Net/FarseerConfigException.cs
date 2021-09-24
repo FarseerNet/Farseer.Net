@@ -4,30 +4,36 @@
 // ********************************************
 
 using System;
-using System.Runtime.Serialization;
 
 namespace FS
 {
-	/// <summary>
-	/// 配置文件不正确
-	/// </summary>
-	public class FarseerConfigException : FarseerException
+    /// <summary>
+    ///     配置文件不正确
+    /// </summary>
+    public class FarseerConfigException : FarseerException
     {
-		/// <summary>
-		///     构造函数
-		/// </summary>
-		public FarseerConfigException() { }
-		/// <summary>
-		///     构造函数
-		/// </summary>
-		/// <param name="message">Exception message</param>
-		public FarseerConfigException(string message) : base(message) { }
+        /// <summary>
+        ///     构造函数
+        /// </summary>
+        public FarseerConfigException()
+        {
+        }
 
-		/// <summary>
-		///     构造函数
-		/// </summary>
-		/// <param name="message">Exception message</param>
-		/// <param name="innerException">Inner exception</param>
-		public FarseerConfigException(string message, Exception innerException) : base(message, innerException) { }
-	}
+        /// <summary>
+        ///     构造函数
+        /// </summary>
+        /// <param name="message"> Exception message </param>
+        public FarseerConfigException(string message) : base(message: message)
+        {
+        }
+
+        /// <summary>
+        ///     构造函数
+        /// </summary>
+        /// <param name="message"> Exception message </param>
+        /// <param name="innerException"> Inner exception </param>
+        public FarseerConfigException(string message, Exception innerException) : base(message: message, innerException: innerException)
+        {
+        }
+    }
 }

@@ -4,27 +4,17 @@
     {
         public CredentialsRetriever(ServiceCredentials credentials)
         {
-            this.Credentials = credentials;
+            Credentials = credentials;
         }
 
-        protected ServiceCredentials Credentials
-        {
-            get;
-            private set;
-        }
+        protected ServiceCredentials Credentials { get; }
 
         protected override void PreInvoke(IExecutionContext executionContext)
         {
             ImmutableCredentials ic = null;
-            if (Credentials != null && (Credentials is BasicServiceCredentials))
+            if (Credentials != null && Credentials is BasicServiceCredentials)
             {
-                try
-                {
-                    ic = Credentials.GetCredentials();
-                }
-                finally
-                {
-                }
+                ic = Credentials.GetCredentials();
             }
 
             executionContext.RequestContext.ImmutableCredentials = ic;

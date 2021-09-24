@@ -30,158 +30,144 @@ namespace FS.Utils.Component
         /// <summary>
         ///     间隔执行
         /// </summary>
-        /// <param name="millisecond">间隔时间</param>
-        /// <param name="callback">执行的方法</param>
-        public static Timer Interval(Action<object> callback, int millisecond)
-        {
-            return Interval(callback, 0, 0, 0, 0, millisecond);
-        }
+        /// <param name="millisecond"> 间隔时间 </param>
+        /// <param name="callback"> 执行的方法 </param>
+        public static Timer Interval(Action<object> callback, int millisecond) => Interval(callback: callback, day: 0, hour: 0, minute: 0, second: 0, millisecond: millisecond);
+
         /// <summary>
         ///     间隔执行
         /// </summary>
-        /// <param name="second">间隔时间</param>
-        /// <param name="millisecond">间隔时间</param>
-        /// <param name="callback">执行的方法</param>
-        public static Timer Interval(Action<object> callback, int second, int millisecond)
-        {
-            return Interval(callback, 0, 0, 0, second, millisecond);
-        }
+        /// <param name="second"> 间隔时间 </param>
+        /// <param name="millisecond"> 间隔时间 </param>
+        /// <param name="callback"> 执行的方法 </param>
+        public static Timer Interval(Action<object> callback, int second, int millisecond) => Interval(callback: callback, day: 0, hour: 0, minute: 0, second: second, millisecond: millisecond);
+
         /// <summary>
         ///     间隔执行
         /// </summary>
-        /// <param name="minute">间隔时间</param>
-        /// <param name="second">间隔时间</param>
-        /// <param name="millisecond">间隔时间</param>
-        /// <param name="callback">执行的方法</param>
-        public static Timer Interval(Action<object> callback, int minute, int second, int millisecond)
-        {
-            return Interval(callback, 0, 0, minute, second, millisecond);
-        }
+        /// <param name="minute"> 间隔时间 </param>
+        /// <param name="second"> 间隔时间 </param>
+        /// <param name="millisecond"> 间隔时间 </param>
+        /// <param name="callback"> 执行的方法 </param>
+        public static Timer Interval(Action<object> callback, int minute, int second, int millisecond) => Interval(callback: callback, day: 0, hour: 0, minute: minute, second: second, millisecond: millisecond);
+
         /// <summary>
         ///     间隔执行
         /// </summary>
-        /// <param name="hour">间隔时间</param>
-        /// <param name="minute">间隔时间</param>
-        /// <param name="second">间隔时间</param>
-        /// <param name="millisecond">间隔时间</param>
-        /// <param name="callback">执行的方法</param>
-        public static Timer Interval(Action<object> callback, int hour, int minute, int second, int millisecond)
-        {
-            return Interval(callback, 0, hour, minute, second, millisecond);
-        }
+        /// <param name="hour"> 间隔时间 </param>
+        /// <param name="minute"> 间隔时间 </param>
+        /// <param name="second"> 间隔时间 </param>
+        /// <param name="millisecond"> 间隔时间 </param>
+        /// <param name="callback"> 执行的方法 </param>
+        public static Timer Interval(Action<object> callback, int hour, int minute, int second, int millisecond) => Interval(callback: callback, day: 0, hour: hour, minute: minute, second: second, millisecond: millisecond);
+
         /// <summary>
         ///     间隔执行
         /// </summary>
-        /// <param name="day">间隔时间</param>
-        /// <param name="hour">间隔时间</param>
-        /// <param name="minute">间隔时间</param>
-        /// <param name="second">间隔时间</param>
-        /// <param name="millisecond">间隔时间</param>
-        /// <param name="callback">执行的方法</param>
+        /// <param name="day"> 间隔时间 </param>
+        /// <param name="hour"> 间隔时间 </param>
+        /// <param name="minute"> 间隔时间 </param>
+        /// <param name="second"> 间隔时间 </param>
+        /// <param name="millisecond"> 间隔时间 </param>
+        /// <param name="callback"> 执行的方法 </param>
         public static Timer Interval(Action<object> callback, int day, int hour, int minute, int second, int millisecond)
         {
-            var period = 0;
-            if (day > 0) { period += 1000 * 60 * 60 * 24 * day; }
-            if (hour > 0) { period += 1000 * 60 * 60 * hour; }
-            if (minute > 0) { period += 1000 * 60 * minute; }
-            if (second > 0) { period += 1000 * second; }
-            if (millisecond > 0) { period += millisecond; }
+            var period                  = 0;
+            if (day         > 0) period += 1000 * 60 * 60 * 24 * day;
+            if (hour        > 0) period += 1000 * 60 * 60 * hour;
+            if (minute      > 0) period += 1000 * 60 * minute;
+            if (second      > 0) period += 1000 * second;
+            if (millisecond > 0) period += millisecond;
 
-            var timer = new Timer(new TimerCallback(callback), null, period, period);
-            lstTasks.Add(timer);
+            var timer = new Timer(callback: new TimerCallback(callback), state: null, dueTime: period, period: period);
+            lstTasks.Add(item: timer);
             return timer;
         }
-
 
 
         /// <summary>
         ///     定时执行
         /// </summary>
-        /// <param name="day">指定时间</param>
-        /// <param name="hour">指定时间</param>
-        /// <param name="minute">指定时间</param>
-        /// <param name="second">指定时间</param>
-        /// <param name="callback">执行的方法</param>
+        /// <param name="day"> 指定时间 </param>
+        /// <param name="hour"> 指定时间 </param>
+        /// <param name="minute"> 指定时间 </param>
+        /// <param name="second"> 指定时间 </param>
+        /// <param name="callback"> 执行的方法 </param>
         public static Timer Timing(Action<object> callback, int day, int hour, int minute, int second)
         {
-            var period = 1;
-            if (day > 0) { period = 1000*60*60*24; }
-            if (hour > -1) { period = 1000*60*60; }
-            if (minute > -1) { period = 1000*60; }
-            if (second > -1) { period = 1000; }
+            var period              = 1;
+            if (day    > 0) period  = 1000 * 60 * 60 * 24;
+            if (hour   > -1) period = 1000 * 60 * 60;
+            if (minute > -1) period = 1000 * 60;
+            if (second > -1) period = 1000;
 
-            var timer = new Timer(o =>
+            var timer = new Timer(callback: o =>
             {
                 var dt = DateTime.Now;
-                if (day > 0 && dt.Day != day) { return; }
-                if (hour > -1 && dt.Hour != hour) { return; }
-                if (minute > -1 && dt.Minute != minute) { return; }
-                if (second > -1 && dt.Second != second) { return; }
+                if (day    > 0  && dt.Day    != day) return;
+                if (hour   > -1 && dt.Hour   != hour) return;
+                if (minute > -1 && dt.Minute != minute) return;
+                if (second > -1 && dt.Second != second) return;
 
-                callback(o);
-            }, null, 0, period);
-            lstTasks.Add(timer);
+                callback(obj: o);
+            }, state: null, dueTime: 0, period: period);
+            lstTasks.Add(item: timer);
             return timer;
         }
+
         /// <summary>
         ///     定时执行
         /// </summary>
-        /// <param name="week">星期</param>
-        /// <param name="hour">指定时间</param>
-        /// <param name="minute">指定时间</param>
-        /// <param name="second">指定时间</param>
-        /// <param name="callback">执行的方法</param>
+        /// <param name="week"> 星期 </param>
+        /// <param name="hour"> 指定时间 </param>
+        /// <param name="minute"> 指定时间 </param>
+        /// <param name="second"> 指定时间 </param>
+        /// <param name="callback"> 执行的方法 </param>
         public static Timer Timing(Action<object> callback, DayOfWeek week, int hour, int minute, int second)
         {
-            var period = 1000*60*60*24;
-            if (hour > -1) { period = 1000*60*60; }
-            if (minute > -1) { period = 1000*60; }
-            if (second > -1) { period = 1000; }
+            var period              = 1000 * 60 * 60 * 24;
+            if (hour   > -1) period = 1000 * 60 * 60;
+            if (minute > -1) period = 1000 * 60;
+            if (second > -1) period = 1000;
 
-            var timer = new Timer(o =>
+            var timer = new Timer(callback: o =>
             {
                 var dt = DateTime.Now;
-                if (dt.DayOfWeek != week) { return; }
-                if (hour > -1 && dt.Hour != hour) { return; }
-                if (minute > -1 && dt.Minute != minute) { return; }
-                if (second > -1 && dt.Second != second) { return; }
+                if (dt.DayOfWeek != week) return;
+                if (hour   > -1 && dt.Hour   != hour) return;
+                if (minute > -1 && dt.Minute != minute) return;
+                if (second > -1 && dt.Second != second) return;
 
-                callback(o);
-            }, null, 0, period);
-            lstTasks.Add(timer);
+                callback(obj: o);
+            }, state: null, dueTime: 0, period: period);
+            lstTasks.Add(item: timer);
 
             return timer;
         }
+
         /// <summary>
         ///     定时执行
         /// </summary>
-        /// <param name="second">指定时间</param>
-        /// <param name="callback">执行的方法</param>
-        public static Timer Timing(Action<object> callback, int second)
-        {
-            return Timing(callback, -1, -1, -1, second);
-        }
+        /// <param name="second"> 指定时间 </param>
+        /// <param name="callback"> 执行的方法 </param>
+        public static Timer Timing(Action<object> callback, int second) => Timing(callback: callback, day: -1, hour: -1, minute: -1, second: second);
+
         /// <summary>
         ///     定时执行
         /// </summary>
-        /// <param name="minute">指定时间</param>
-        /// <param name="second">指定时间</param>
-        /// <param name="callback">执行的方法</param>
-        public static Timer Timing(Action<object> callback, int minute, int second)
-        {
-            return Timing(callback, -1, -1, minute, second);
-        }
+        /// <param name="minute"> 指定时间 </param>
+        /// <param name="second"> 指定时间 </param>
+        /// <param name="callback"> 执行的方法 </param>
+        public static Timer Timing(Action<object> callback, int minute, int second) => Timing(callback: callback, day: -1, hour: -1, minute: minute, second: second);
+
         /// <summary>
         ///     定时执行
         /// </summary>
-        /// <param name="hour">指定时间</param>
-        /// <param name="minute">指定时间</param>
-        /// <param name="second">指定时间</param>
-        /// <param name="callback">执行的方法</param>
-        public static Timer Timing(Action<object> callback, int hour, int minute, int second)
-        {
-            return Timing(callback, -1, hour, minute, second);
-        }
+        /// <param name="hour"> 指定时间 </param>
+        /// <param name="minute"> 指定时间 </param>
+        /// <param name="second"> 指定时间 </param>
+        /// <param name="callback"> 执行的方法 </param>
+        public static Timer Timing(Action<object> callback, int hour, int minute, int second) => Timing(callback: callback, day: -1, hour: hour, minute: minute, second: second);
     }
 
     #region 调用Demo

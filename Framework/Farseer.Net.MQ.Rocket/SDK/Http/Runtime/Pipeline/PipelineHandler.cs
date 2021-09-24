@@ -2,7 +2,7 @@
 
 namespace FS.MQ.Rocket.SDK.Http.Runtime.Pipeline
 {
-    public abstract partial class PipelineHandler : IPipelineHandler
+    public abstract class PipelineHandler : IPipelineHandler
     {
         public IPipelineHandler InnerHandler { get; set; }
 
@@ -10,32 +10,29 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Pipeline
 
         public virtual void InvokeSync(IExecutionContext executionContext)
         {
-            if (this.InnerHandler != null)
+            if (InnerHandler != null)
             {
-                InnerHandler.InvokeSync(executionContext);
+                InnerHandler.InvokeSync(executionContext: executionContext);
                 return;
             }
-            throw new InvalidOperationException("Cannot invoke InnerHandler. InnerHandler is not set.");
+
+            throw new InvalidOperationException(message: "Cannot invoke InnerHandler. InnerHandler is not set.");
         }
 
         public virtual IAsyncResult InvokeAsync(IAsyncExecutionContext executionContext)
         {
-            if (this.InnerHandler != null)
-            {
-                return InnerHandler.InvokeAsync(executionContext);
-            }
-            throw new InvalidOperationException("Cannot invoke InnerHandler. InnerHandler is not set.");
+            if (InnerHandler != null) return InnerHandler.InvokeAsync(executionContext: executionContext);
+            throw new InvalidOperationException(message: "Cannot invoke InnerHandler. InnerHandler is not set.");
         }
 
         public void AsyncCallback(IAsyncExecutionContext executionContext)
         {
             try
             {
-                this.InvokeAsyncCallback(executionContext);
+                InvokeAsyncCallback(executionContext: executionContext);
             }
             catch (Exception exception)
             {
-
                 // An unhandled exception occured in the callback implementation.
                 // Capture the exception and end the callback processing by signalling the
                 // wait handle.
@@ -43,31 +40,23 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Pipeline
                 var asyncResult = executionContext.ResponseContext.AsyncResult;
                 asyncResult.Exception = exception;
                 asyncResult.SignalWaitHandle();
-                if (asyncResult.AsyncCallback != null)
-                {
-                    asyncResult.AsyncCallback(asyncResult);
-                }
+                if (asyncResult.AsyncCallback != null) asyncResult.AsyncCallback(ar: asyncResult);
             }
         }
 
         protected virtual void InvokeAsyncCallback(IAsyncExecutionContext executionContext)
         {
-            if (this.OuterHandler!=null)
-            {
-                this.OuterHandler.AsyncCallback(executionContext);    
-            }
+            if (OuterHandler != null)
+                OuterHandler.AsyncCallback(executionContext: executionContext);
             else
             {
                 // No more outer handlers to process, signal completion
                 executionContext.ResponseContext.AsyncResult.Response =
-                    executionContext.ResponseContext.Response;                
-                
-                var asyncResult = executionContext.ResponseContext.AsyncResult;                
+                    executionContext.ResponseContext.Response;
+
+                var asyncResult = executionContext.ResponseContext.AsyncResult;
                 asyncResult.SignalWaitHandle();
-                if (asyncResult.AsyncCallback != null)
-                {
-                    asyncResult.AsyncCallback(asyncResult);
-                }
+                if (asyncResult.AsyncCallback != null) asyncResult.AsyncCallback(ar: asyncResult);
             }
         }
     }

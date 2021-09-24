@@ -14,11 +14,8 @@ namespace FS.Data.Internal
     {
         public SqlParam(string sql, params DbParameter[] parameters)
         {
-            Sql = new StringBuilder(sql);
-            if (parameters != null)
-            {
-                Param = parameters.ToList();
-            }
+            Sql = new StringBuilder(value: sql);
+            if (parameters != null) Param = parameters.ToList();
         }
 
         public SqlParam(IProcParam procParam)
@@ -38,7 +35,7 @@ namespace FS.Data.Internal
         /// <summary>
         ///     释放资源
         /// </summary>
-        /// <param name="disposing">是否释放托管资源</param>
+        /// <param name="disposing"> 是否释放托管资源 </param>
         private void Dispose(bool disposing)
         {
             //释放托管资源
@@ -55,8 +52,8 @@ namespace FS.Data.Internal
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            Dispose(disposing: true);
+            GC.SuppressFinalize(obj: this);
         }
 
         #endregion

@@ -3,23 +3,27 @@
 namespace FS.Data.Log
 {
     /// <summary>
-    /// 日志信息等级
+    ///     日志信息等级
     /// </summary>
     public enum EumLogType
     {
-        /// <summary> 错误信息  </summary>
-        [Display(Name= "错误信息")]
+        /// <summary> 错误信息 </summary>
+        [Display(Name = "错误信息")]
         Error,
-        /// <summary> 调试信息  </summary>
+
+        /// <summary> 调试信息 </summary>
         [Display(Name = "调试信息")]
         Debug,
-        /// <summary> 严重信息  </summary>
+
+        /// <summary> 严重信息 </summary>
         [Display(Name = "严重信息")]
         Fatal,
-        /// <summary> 一般信息  </summary>
+
+        /// <summary> 一般信息 </summary>
         [Display(Name = "一般信息")]
         Info,
-        /// <summary> 警告信息  </summary>
+
+        /// <summary> 警告信息 </summary>
         [Display(Name = "警告信息")]
         Warn
     }

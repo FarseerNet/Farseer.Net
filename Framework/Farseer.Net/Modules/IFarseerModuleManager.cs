@@ -21,7 +21,7 @@ namespace FS.Modules
         /// <summary>
         ///     初始化
         /// </summary>
-        /// <param name="startupModule"></param>
+        /// <param name="startupModule"> </param>
         void Initialize(Type startupModule);
 
         /// <summary>

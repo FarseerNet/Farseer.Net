@@ -19,40 +19,65 @@ namespace FS.Data
     public class DbContext : IDisposable
     {
         /// <summary>
+        ///     当事务提交后，会调用该委托
+        /// </summary>
+        private readonly List<Action> CommitCallback = new();
+
+        /// <summary>
+        ///     跨事务时，主上下文
+        /// </summary>
+        private DbContext _masterContext;
+
+        /// <summary>
         ///     通过数据库配置，连接数据库
         /// </summary>
-        /// <param name="name">数据库配置名称</param>
-        /// <param name="isUnitOfWork">是否工作单元模式</param>
-        public DbContext(string name, bool isUnitOfWork = false) : this(isUnitOfWork)
+        /// <param name="name"> 数据库配置名称 </param>
+        /// <param name="isUnitOfWork"> 是否工作单元模式 </param>
+        public DbContext(string name, bool isUnitOfWork = false) : this(isUnitOfWork: isUnitOfWork)
         {
             var dbConnectionName = $"dbConnection_{name}";
-            if (!IocManager.Instance.IsRegistered(dbConnectionName)) throw new FarseerException($"未找到数据库的配置：{name}");
-            _internalContext.ContextConnection = IocManager.Instance.Resolve<IContextConnection>(dbConnectionName);
+            if (!IocManager.Instance.IsRegistered(name: dbConnectionName)) throw new FarseerException(message: $"未找到数据库的配置：{name}");
+            _internalContext.ContextConnection = IocManager.Instance.Resolve<IContextConnection>(name: dbConnectionName);
         }
 
         /// <summary>
         ///     通过自定义数据链接符，连接数据库
         /// </summary>
-        /// <param name="connectionString">数据库连接字符串</param>
-        /// <param name="db">数据库类型</param>
-        /// <param name="commandTimeout">SQL执行超时时间</param>
-        /// <param name="dataVer">数据库版本（针对不同的数据库版本的优化）</param>
-        /// <param name="isUnitOfWork">是否工作单元模式</param>
-        public DbContext(string connectionString, eumDbType db, int commandTimeout = 30, string dataVer = null, bool isUnitOfWork = false) : this(isUnitOfWork)
+        /// <param name="connectionString"> 数据库连接字符串 </param>
+        /// <param name="db"> 数据库类型 </param>
+        /// <param name="commandTimeout"> SQL执行超时时间 </param>
+        /// <param name="dataVer"> 数据库版本（针对不同的数据库版本的优化） </param>
+        /// <param name="isUnitOfWork"> 是否工作单元模式 </param>
+        public DbContext(string connectionString, eumDbType db, int commandTimeout = 30, string dataVer = null, bool isUnitOfWork = false) : this(isUnitOfWork: isUnitOfWork)
         {
-            _internalContext.ContextConnection = new ContextConnection(connectionString, db, commandTimeout, dataVer);
+            _internalContext.ContextConnection = new ContextConnection(connectionString: connectionString, dbType: db, commandTimeout: commandTimeout, dataVer: dataVer);
         }
 
         /// <summary>
-        /// 不初始化ContextConnection（用于动态改变数据库连接方式）
+        ///     不初始化ContextConnection（用于动态改变数据库连接方式）
         /// </summary>
-        /// <param name="isUnitOfWork">是否工作单元模式</param>
+        /// <param name="isUnitOfWork"> 是否工作单元模式 </param>
         protected DbContext(bool isUnitOfWork)
         {
-            _internalContext = new InternalContext(this.GetType(), isUnitOfWork);
+            _internalContext = new InternalContext(contextType: GetType(), isUnitOfWork: isUnitOfWork);
             // 实例化子类中，所有Set属性
-            ContextSetTypeCacheManger.Cache(this.GetType()).Item2(this);
+            ContextSetTypeCacheManger.Cache(contextKey: GetType()).Item2(obj: this);
         }
+
+        /// <summary>
+        ///     数据库提供者（不同数据库的特性）
+        /// </summary>
+        public AbsDbProvider DbProvider => InternalContext.DbProvider;
+
+        /// <summary>
+        ///     手动编写SQL
+        /// </summary>
+        public ManualSql ManualSql => InternalContext.ManualSql;
+
+        /// <summary>
+        ///     上下文数据库连接信息
+        /// </summary>
+        public IContextConnection ContextConnection => InternalContext.ContextConnection;
 
         /// <summary>
         ///     实现动态链接数据库（比如：分库）
@@ -62,11 +87,11 @@ namespace FS.Data
         /// <summary>
         ///     创建来自其它上下文的共享
         /// </summary>
-        /// <param name="masterContext">其它上下文（主上下文）</param>
+        /// <param name="masterContext"> 其它上下文（主上下文） </param>
         internal static TNewDbContext TransactionInstance<TNewDbContext>(DbContext masterContext) where TNewDbContext : DbContext, new()
         {
             var newInstance = new TNewDbContext();
-            newInstance._internalContext.TransactionInstance(typeof(TNewDbContext), masterContext.InternalContext);
+            newInstance._internalContext.TransactionInstance(currentContextType: typeof(TNewDbContext), masterContext: masterContext.InternalContext);
             newInstance._masterContext = masterContext;
             return newInstance;
         }
@@ -88,38 +113,15 @@ namespace FS.Data
         }
 
         /// <summary>
-        ///     数据库提供者（不同数据库的特性）
-        /// </summary>
-        public AbsDbProvider DbProvider => InternalContext.DbProvider;
-
-        /// <summary>
-        ///     手动编写SQL
-        /// </summary>
-        public ManualSql ManualSql => InternalContext.ManualSql;
-
-        /// <summary>
-        ///     上下文数据库连接信息
-        /// </summary>
-        public IContextConnection ContextConnection => InternalContext.ContextConnection;
-
-        /// <summary>
-        /// 跨事务时，主上下文
-        /// </summary>
-        private DbContext _masterContext;
-
-        /// <summary>
-        /// 当事务提交后，会调用该委托
-        /// </summary>
-        private readonly List<Action> CommitCallback = new();
-
-        /// <summary>
-        /// 当事务提交后，会调用该委托
+        ///     当事务提交后，会调用该委托
         /// </summary>
         public void AddCallback(Action act)
         {
             // 如果是来自其它事务，则用主上下文来添加
-            if (_masterContext != null) _masterContext.CommitCallback.Add(act);
-            else CommitCallback.Add(act);
+            if (_masterContext != null)
+                _masterContext.CommitCallback.Add(item: act);
+            else
+                CommitCallback.Add(item: act);
         }
 
         /// <summary>
@@ -134,12 +136,9 @@ namespace FS.Data
                 InternalContext.Executeor.DataBase.CloseTran();
             }
 
-            InternalContext.Executeor.DataBase.Close(true);
+            InternalContext.Executeor.DataBase.Close(dispose: true);
 
-            foreach (var action in CommitCallback)
-            {
-                action();
-            }
+            foreach (var action in CommitCallback) action();
         }
 
         /// <summary>
@@ -154,7 +153,7 @@ namespace FS.Data
                 InternalContext.Executeor.DataBase.CloseTran();
             }
 
-            InternalContext.Executeor.DataBase.Close(true);
+            InternalContext.Executeor.DataBase.Close(dispose: true);
         }
 
         /// <summary>
@@ -170,8 +169,8 @@ namespace FS.Data
         /// <summary>
         ///     改变事务级别
         /// </summary>
-        /// <param name="tranLevel">事务方式</param>
-        public void ChangeTransaction(IsolationLevel tranLevel) => InternalContext.Executeor.DataBase.OpenTran(tranLevel);
+        /// <param name="tranLevel"> 事务方式 </param>
+        public void ChangeTransaction(IsolationLevel tranLevel) => InternalContext.Executeor.DataBase.OpenTran(tranLevel: tranLevel);
 
         /// <summary>
         ///     在创建模型时调用
@@ -197,10 +196,7 @@ namespace FS.Data
                 if (!_internalContext.IsInitializer)
                 {
                     // 分库方案
-                    if (_internalContext.ContextConnection == null)
-                    {
-                        _internalContext.ContextConnection = SplitDatabase();
-                    }
+                    if (_internalContext.ContextConnection == null) _internalContext.ContextConnection = SplitDatabase();
 
                     _internalContext.Initializer();
                 }
@@ -208,7 +204,7 @@ namespace FS.Data
                 if (!_internalContext.IsInitModelName)
                 {
                     // 初始化模型映射
-                    CreateModelInit(_internalContext.ContextMap.SetDataList.ToDictionary(o => o.TableName));
+                    CreateModelInit(map: _internalContext.ContextMap.SetDataList.ToDictionary(keySelector: o => o.TableName));
                     _internalContext.IsInitModelName = true;
                 }
 
@@ -223,166 +219,139 @@ namespace FS.Data
         /// <summary>
         ///     动态返回Set类型
         /// </summary>
-        /// <param name="propertyName">当有多个相同类型TEntity时，须使用propertyName来寻找唯一</param>
-        /// <typeparam name="TEntity"></typeparam>
+        /// <param name="propertyName"> 当有多个相同类型TEntity时，须使用propertyName来寻找唯一 </param>
+        /// <typeparam name="TEntity"> </typeparam>
         public TableSet<TEntity> TableSet<TEntity>(string propertyName = null) where TEntity : class, new()
         {
-            var pInfo = GetSetPropertyInfo(typeof(TableSet<TEntity>), propertyName);
-            return new TableSet<TEntity>(this, pInfo);
+            var pInfo = GetSetPropertyInfo(setType: typeof(TableSet<TEntity>), propertyName: propertyName);
+            return new TableSet<TEntity>(context: this, pInfo: pInfo);
         }
 
         /// <summary>
         ///     动态返回Set类型
         /// </summary>
-        /// <param name="propertyInfo">上下文中的属性</param>
-        /// <typeparam name="TEntity"></typeparam>
-        public TableSet<TEntity> TableSet<TEntity>(PropertyInfo propertyInfo) where TEntity : class, new()
-        {
-            return new TableSet<TEntity>(this, propertyInfo);
-        }
+        /// <param name="propertyInfo"> 上下文中的属性 </param>
+        /// <typeparam name="TEntity"> </typeparam>
+        public TableSet<TEntity> TableSet<TEntity>(PropertyInfo propertyInfo) where TEntity : class, new() => new(context: this, pInfo: propertyInfo);
 
         /// <summary>
         ///     动态返回Set类型
         /// </summary>
-        /// <param name="propertyName">当有多个相同类型TEntity时，须使用propertyName来寻找唯一</param>
-        /// <typeparam name="TEntity"></typeparam>
+        /// <param name="propertyName"> 当有多个相同类型TEntity时，须使用propertyName来寻找唯一 </param>
+        /// <typeparam name="TEntity"> </typeparam>
         public TableSetCache<TEntity> TableSetCache<TEntity>(string propertyName = null) where TEntity : class, new()
         {
-            var pInfo = GetSetPropertyInfo(typeof(TableSetCache<TEntity>), propertyName);
-            return new TableSetCache<TEntity>(this, pInfo);
+            var pInfo = GetSetPropertyInfo(setType: typeof(TableSetCache<TEntity>), propertyName: propertyName);
+            return new TableSetCache<TEntity>(context: this, pInfo: pInfo);
         }
 
         /// <summary>
         ///     动态返回Set类型
         /// </summary>
-        /// <param name="propertyInfo">上下文中的属性</param>
-        /// <typeparam name="TEntity"></typeparam>
-        public TableSetCache<TEntity> TableSetCache<TEntity>(PropertyInfo propertyInfo) where TEntity : class, new()
-        {
-            return new TableSetCache<TEntity>(this, propertyInfo);
-        }
+        /// <param name="propertyInfo"> 上下文中的属性 </param>
+        /// <typeparam name="TEntity"> </typeparam>
+        public TableSetCache<TEntity> TableSetCache<TEntity>(PropertyInfo propertyInfo) where TEntity : class, new() => new(context: this, pInfo: propertyInfo);
 
         /// <summary>
         ///     动态返回Set类型
         /// </summary>
-        /// <param name="propertyName">当有多个相同类型TEntity时，须使用propertyName来寻找唯一</param>
-        /// <typeparam name="TEntity"></typeparam>
+        /// <param name="propertyName"> 当有多个相同类型TEntity时，须使用propertyName来寻找唯一 </param>
+        /// <typeparam name="TEntity"> </typeparam>
         public ViewSet<TEntity> ViewSet<TEntity>(string propertyName = null) where TEntity : class, new()
         {
-            var pInfo = GetSetPropertyInfo(typeof(ViewSet<TEntity>), propertyName);
-            return new ViewSet<TEntity>(this, pInfo);
+            var pInfo = GetSetPropertyInfo(setType: typeof(ViewSet<TEntity>), propertyName: propertyName);
+            return new ViewSet<TEntity>(context: this, pInfo: pInfo);
         }
 
         /// <summary>
         ///     动态返回Set类型
         /// </summary>
-        /// <param name="propertyInfo">上下文中的属性</param>
-        /// <typeparam name="TEntity"></typeparam>
-        public ViewSet<TEntity> ViewSet<TEntity>(PropertyInfo propertyInfo) where TEntity : class, new()
-        {
-            return new ViewSet<TEntity>(this, propertyInfo);
-        }
+        /// <param name="propertyInfo"> 上下文中的属性 </param>
+        /// <typeparam name="TEntity"> </typeparam>
+        public ViewSet<TEntity> ViewSet<TEntity>(PropertyInfo propertyInfo) where TEntity : class, new() => new(context: this, pInfo: propertyInfo);
 
         /// <summary>
         ///     动态返回Set类型
         /// </summary>
-        /// <param name="propertyName">当有多个相同类型TEntity时，须使用propertyName来寻找唯一</param>
-        /// <typeparam name="TEntity"></typeparam>
+        /// <param name="propertyName"> 当有多个相同类型TEntity时，须使用propertyName来寻找唯一 </param>
+        /// <typeparam name="TEntity"> </typeparam>
         public ViewSetCache<TEntity> ViewSetCache<TEntity>(string propertyName = null) where TEntity : class, new()
         {
-            var pInfo = GetSetPropertyInfo(typeof(ViewSetCache<TEntity>), propertyName);
-            return new ViewSetCache<TEntity>(this, pInfo);
+            var pInfo = GetSetPropertyInfo(setType: typeof(ViewSetCache<TEntity>), propertyName: propertyName);
+            return new ViewSetCache<TEntity>(context: this, pInfo: pInfo);
         }
 
         /// <summary>
         ///     动态返回Set类型
         /// </summary>
-        /// <param name="propertyInfo">上下文中的属性</param>
-        /// <typeparam name="TEntity"></typeparam>
-        public ViewSetCache<TEntity> ViewSetCache<TEntity>(PropertyInfo propertyInfo) where TEntity : class, new()
-        {
-            return new ViewSetCache<TEntity>(this, propertyInfo);
-        }
+        /// <param name="propertyInfo"> 上下文中的属性 </param>
+        /// <typeparam name="TEntity"> </typeparam>
+        public ViewSetCache<TEntity> ViewSetCache<TEntity>(PropertyInfo propertyInfo) where TEntity : class, new() => new(context: this, pInfo: propertyInfo);
 
         /// <summary>
         ///     动态返回Set类型
         /// </summary>
-        /// <param name="propertyName">当有多个相同类型TEntity时，须使用propertyName来寻找唯一</param>
-        /// <typeparam name="TEntity"></typeparam>
+        /// <param name="propertyName"> 当有多个相同类型TEntity时，须使用propertyName来寻找唯一 </param>
+        /// <typeparam name="TEntity"> </typeparam>
         public ProcSet<TEntity> ProcSet<TEntity>(string propertyName = null) where TEntity : class, new()
         {
-            var pInfo = GetSetPropertyInfo(typeof(ProcSet<TEntity>), propertyName);
-            return new ProcSet<TEntity>(this, pInfo);
+            var pInfo = GetSetPropertyInfo(setType: typeof(ProcSet<TEntity>), propertyName: propertyName);
+            return new ProcSet<TEntity>(context: this, pInfo: pInfo);
         }
 
         /// <summary>
         ///     动态返回Set类型
         /// </summary>
-        /// <param name="propertyInfo">上下文中的属性</param>
-        /// <typeparam name="TEntity"></typeparam>
-        public ProcSet<TEntity> ProcSet<TEntity>(PropertyInfo propertyInfo) where TEntity : class, new()
-        {
-            return new ProcSet<TEntity>(this, propertyInfo);
-        }
+        /// <param name="propertyInfo"> 上下文中的属性 </param>
+        /// <typeparam name="TEntity"> </typeparam>
+        public ProcSet<TEntity> ProcSet<TEntity>(PropertyInfo propertyInfo) where TEntity : class, new() => new(context: this, pInfo: propertyInfo);
 
         /// <summary>
         ///     动态返回Set类型
         /// </summary>
-        /// <param name="propertyName">当有多个相同类型TEntity时，须使用propertyName来寻找唯一</param>
-        /// <typeparam name="TEntity"></typeparam>
+        /// <param name="propertyName"> 当有多个相同类型TEntity时，须使用propertyName来寻找唯一 </param>
+        /// <typeparam name="TEntity"> </typeparam>
         public SqlSet<TEntity> SqlSet<TEntity>(string propertyName = null) where TEntity : class, new()
         {
-            var pInfo = GetSetPropertyInfo(typeof(SqlSet<TEntity>), propertyName);
-            return new SqlSet<TEntity>(this, pInfo);
+            var pInfo = GetSetPropertyInfo(setType: typeof(SqlSet<TEntity>), propertyName: propertyName);
+            return new SqlSet<TEntity>(context: this, pInfo: pInfo);
         }
 
         /// <summary>
         ///     动态返回Set类型
         /// </summary>
-        /// <param name="propertyInfo">上下文中的属性</param>
-        /// <typeparam name="TEntity"></typeparam>
-        public SqlSet<TEntity> SqlSet<TEntity>(PropertyInfo propertyInfo) where TEntity : class, new()
-        {
-            return new SqlSet<TEntity>(this, propertyInfo);
-        }
+        /// <param name="propertyInfo"> 上下文中的属性 </param>
+        /// <typeparam name="TEntity"> </typeparam>
+        public SqlSet<TEntity> SqlSet<TEntity>(PropertyInfo propertyInfo) where TEntity : class, new() => new(context: this, pInfo: propertyInfo);
 
         /// <summary>
         ///     动态返回Set类型
         /// </summary>
-        /// <param name="propertyName">当有多个相同类型TEntity时，须使用propertyName来寻找唯一</param>
+        /// <param name="propertyName"> 当有多个相同类型TEntity时，须使用propertyName来寻找唯一 </param>
         public SqlSet SqlSet(string propertyName = null)
         {
-            var pInfo = GetSetPropertyInfo(typeof(SqlSet), propertyName);
-            return new SqlSet(this, pInfo);
+            var pInfo = GetSetPropertyInfo(setType: typeof(SqlSet), propertyName: propertyName);
+            return new SqlSet(context: this, pInfo: pInfo);
         }
 
         /// <summary>
         ///     动态返回Set类型
         /// </summary>
-        /// <param name="propertyInfo">上下文中的属性</param>
-        public SqlSet SqlSet(PropertyInfo propertyInfo)
-        {
-            return new SqlSet(this, propertyInfo);
-        }
+        /// <param name="propertyInfo"> 上下文中的属性 </param>
+        public SqlSet SqlSet(PropertyInfo propertyInfo) => new(context: this, pInfo: propertyInfo);
 
         /// <summary>
         ///     动态返回Set类型的属性数据
         /// </summary>
-        /// <param name="setType">Set的类型</param>
-        /// <param name="propertyName">当有多个相同类型TEntity时，须使用propertyName来寻找唯一</param>
+        /// <param name="setType"> Set的类型 </param>
+        /// <param name="propertyName"> 当有多个相同类型TEntity时，须使用propertyName来寻找唯一 </param>
         private PropertyInfo GetSetPropertyInfo(Type setType, string propertyName = null)
         {
-            var lstPropertyInfo = this.GetType().GetProperties();
-            var lst             = lstPropertyInfo.Where(propertyInfo => propertyInfo.CanWrite && propertyInfo.PropertyType == setType).Where(propertyInfo => propertyName == null || propertyInfo.Name == propertyName);
-            if (lst == null)
-            {
-                throw new Exception("未找到当前类型的Set属性：" + setType.GetGenericArguments()[0]);
-            }
+            var lstPropertyInfo = GetType().GetProperties();
+            var lst             = lstPropertyInfo.Where(predicate: propertyInfo => propertyInfo.CanWrite && propertyInfo.PropertyType == setType).Where(predicate: propertyInfo => propertyName == null || propertyInfo.Name == propertyName);
+            if (lst == null) throw new Exception(message: "未找到当前类型的Set属性：" + setType.GetGenericArguments()[0]);
 
-            if (lst.Count() > 1)
-            {
-                throw new Exception("找到多个Set属性，请指定propertyName确定唯一。：" + setType.GetGenericArguments()[0]);
-            }
+            if (lst.Count() > 1) throw new Exception(message: "找到多个Set属性，请指定propertyName确定唯一。：" + setType.GetGenericArguments()[0]);
 
             return lst.FirstOrDefault();
         }
@@ -391,52 +360,37 @@ namespace FS.Data
 
         #region 禁用智能提示
 
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public override bool Equals(object obj)
-        {
-            return base.Equals(obj);
-        }
+        [EditorBrowsable(state: EditorBrowsableState.Never)]
+        public override bool Equals(object obj) => base.Equals(obj: obj);
 
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+        [EditorBrowsable(state: EditorBrowsableState.Never)]
+        public override int GetHashCode() => base.GetHashCode();
 
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public override string ToString()
-        {
-            return base.ToString();
-        }
+        [EditorBrowsable(state: EditorBrowsableState.Never)]
+        public override string ToString() => base.ToString();
 
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public new Type GetType()
-        {
-            return base.GetType();
-        }
+        [EditorBrowsable(state: EditorBrowsableState.Never)]
+        public new Type GetType() => base.GetType();
 
         /// <summary>
         ///     释放资源
         /// </summary>
-        /// <param name="disposing">是否释放托管资源</param>
-        [EditorBrowsable(EditorBrowsableState.Never)]
+        /// <param name="disposing"> 是否释放托管资源 </param>
+        [EditorBrowsable(state: EditorBrowsableState.Never)]
         protected virtual void Dispose(bool disposing)
         {
             //释放托管资源
-            if (disposing)
-            {
-                InternalContext.Dispose();
-            }
+            if (disposing) InternalContext.Dispose();
         }
 
         /// <summary>
         ///     释放资源
         /// </summary>
-        [EditorBrowsable(EditorBrowsableState.Never)]
+        [EditorBrowsable(state: EditorBrowsableState.Never)]
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            Dispose(disposing: true);
+            GC.SuppressFinalize(obj: this);
         }
 
         #endregion

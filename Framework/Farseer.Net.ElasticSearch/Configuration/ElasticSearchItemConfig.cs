@@ -1,7 +1,7 @@
 ﻿namespace FS.ElasticSearch.Configuration
 {
     /// <summary>
-    /// ES配置项类
+    ///     ES配置项类
     /// </summary>
     public class ElasticSearchItemConfig
     {

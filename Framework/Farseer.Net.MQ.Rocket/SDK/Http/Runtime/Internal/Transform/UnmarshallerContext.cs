@@ -5,38 +5,36 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Internal.Transform
 {
     public abstract class UnmarshallerContext : IDisposable
     {
-        private bool disposed = false;
+        private   bool             disposed;
         protected IWebResponseData WebResponseData { get; set; }
 
         public Stream ResponseStream { get; set; }
 
-        public IWebResponseData ResponseData
-        {
-            get { return WebResponseData; }
-        }
+        public IWebResponseData ResponseData => WebResponseData;
 
         #region Dispose Pattern Implementation
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!this.disposed)
+            if (!disposed)
             {
                 if (disposing)
                 {
-                    if (this.ResponseStream != null)
+                    if (ResponseStream != null)
                     {
                         ResponseStream.Dispose();
                         ResponseStream = null;
                     }
                 }
-                this.disposed = true;
+
+                disposed = true;
             }
         }
 
         public void Dispose()
         {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
+            Dispose(disposing: true);
+            GC.SuppressFinalize(obj: this);
         }
 
         #endregion
@@ -44,13 +42,12 @@ namespace FS.MQ.Rocket.SDK.Http.Runtime.Internal.Transform
 
     public class XmlUnmarshallerContext : UnmarshallerContext
     {
-
         #region Constructors
 
         public XmlUnmarshallerContext(Stream responseStream, IWebResponseData responseData)
         {
-            this.ResponseStream = responseStream;
-            this.WebResponseData = responseData;
+            ResponseStream  = responseStream;
+            WebResponseData = responseData;
         }
 
         #endregion

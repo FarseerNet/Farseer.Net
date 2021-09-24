@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Reflection;
 using Castle.Core;
-using Microsoft.Extensions.Logging;
 using Castle.Windsor;
+using Microsoft.Extensions.Logging;
 
 namespace FS.DI
 {
@@ -18,22 +18,22 @@ namespace FS.DI
         IWindsorContainer Container { get; }
 
         /// <summary>
-        /// 日志接口
+        ///     日志接口
         /// </summary>
         ILogger Logger<T>();
 
         /// <summary>
         ///     是否注册
         /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
+        /// <param name="type"> </param>
+        /// <returns> </returns>
         new bool IsRegistered(Type type);
 
         /// <summary>
         ///     是否注册
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
+        /// <typeparam name="T"> </typeparam>
+        /// <returns> </returns>
         new bool IsRegistered<T>();
 
         /// <summary>
@@ -44,14 +44,14 @@ namespace FS.DI
         /// <summary>
         ///     注册
         /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
+        /// <param name="name"> </param>
+        /// <returns> </returns>
         bool IsRegistered(string name);
 
         /// <summary>
-        /// 获取当前业务注册的IOC
+        ///     获取当前业务注册的IOC
         /// </summary>
-        /// <returns></returns>
+        /// <returns> </returns>
         List<ComponentModel> GetCustomComponent();
     }
 }

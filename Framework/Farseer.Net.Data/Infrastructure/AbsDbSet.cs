@@ -29,12 +29,12 @@ namespace FS.Data.Infrastructure
         /// <summary>
         ///     保存字段映射的信息
         /// </summary>
-        public SetDataMap SetMap => Context.ContextMap.GetEntityMap(_setPropertyInfo);
+        public SetDataMap SetMap => Context.ContextMap.GetEntityMap(setPropertyInfo: _setPropertyInfo);
 
         /// <summary>
         ///     当前队列
         /// </summary>
-        internal virtual Queue Queue => Context.QueueManger.CreateQueue(SetMap);
+        internal virtual Queue Queue => Context.QueueManger.CreateQueue(map: SetMap);
 
         /// <summary>
         ///     队列管理
@@ -44,39 +44,27 @@ namespace FS.Data.Infrastructure
         /// <summary>
         ///     设置所属上下文
         /// </summary>
-        /// <param name="context">上下文</param>
-        /// <param name="pInfo">当前在上下文中的属性</param>
+        /// <param name="context"> 上下文 </param>
+        /// <param name="pInfo"> 当前在上下文中的属性 </param>
         internal void SetContext(DbContext context, PropertyInfo pInfo)
         {
-            _dbContext = context;
-            this._setPropertyInfo = pInfo;
+            _dbContext       = context;
+            _setPropertyInfo = pInfo;
         }
 
         #region 禁用智能提示
 
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public override bool Equals(object obj)
-        {
-            return base.Equals(obj);
-        }
+        [EditorBrowsable(state: EditorBrowsableState.Never)]
+        public override bool Equals(object obj) => base.Equals(obj: obj);
 
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+        [EditorBrowsable(state: EditorBrowsableState.Never)]
+        public override int GetHashCode() => base.GetHashCode();
 
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public override string ToString()
-        {
-            return base.ToString();
-        }
+        [EditorBrowsable(state: EditorBrowsableState.Never)]
+        public override string ToString() => base.ToString();
 
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public new Type GetType()
-        {
-            return base.GetType();
-        }
+        [EditorBrowsable(state: EditorBrowsableState.Never)]
+        public new Type GetType() => base.GetType();
 
         #endregion
     }

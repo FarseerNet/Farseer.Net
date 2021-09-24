@@ -5,96 +5,68 @@ using FS.MQ.Rocket.SDK.Http.Runtime;
 
 namespace FS.MQ.Rocket.SDK.Http
 {
-    public partial class MQConsumer
+    public class MQConsumer
     {
-        private string _instanceId;
-        private string _topicName;
-        private string _consumer;
-        private string _messageTag;
         private readonly AliyunServiceClient _serviceClient;
 
         public MQConsumer(string instanceId, string topicName, string consumer, string messageTag, AliyunServiceClient serviceClient)
         {
-            this._instanceId = instanceId;
-            this._topicName = topicName;
-            this._consumer = consumer;
-            this._messageTag = messageTag;
-            this._serviceClient = serviceClient;
+            IntanceId      = instanceId;
+            TopicName      = topicName;
+            Consumer       = consumer;
+            MessageTag     = messageTag;
+            _serviceClient = serviceClient;
         }
 
-        public string IntanceId
-        {
-            get { return this._instanceId; }
-        }
+        public string IntanceId { get; }
 
-        public bool IsSetInstance()
-        {
-            return !string.IsNullOrEmpty(this._instanceId);
-        }
+        public string TopicName { get; }
 
-        public string TopicName
-        {
-            get { return this._topicName; }
-        }
+        public string Consumer { get; }
 
-        public bool IsSetTopicName()
-        {
-            return this._topicName != null;
-        }
+        public string MessageTag { get; }
 
-        public string Consumer
-        {
-            get { return this._consumer; }
-        }
+        public bool IsSetInstance() => !string.IsNullOrEmpty(value: IntanceId);
 
-        public bool IsSetConsumer()
-        {
-            return this._consumer != null;
-        }
+        public bool IsSetTopicName() => TopicName != null;
 
-        public string MessageTag
-        {
-            get { return this._messageTag; }
-        }
+        public bool IsSetConsumer() => Consumer != null;
 
-        public bool IsSetMessageTag()
-        {
-            return this._messageTag != null;
-        }
+        public bool IsSetMessageTag() => MessageTag != null;
 
         public AckMessageResponse AckMessage(List<string> receiptHandles)
         {
-            var request = new AckMessageRequest(this._topicName, this._consumer, receiptHandles);
-            request.IntanceId = this._instanceId;
-            var marshaller = new AckMessageRequestMarshaller();
+            var request = new AckMessageRequest(topicName: TopicName, consumer: Consumer, receiptHandles: receiptHandles);
+            request.IntanceId = IntanceId;
+            var marshaller   = new AckMessageRequestMarshaller();
             var unmarshaller = AckMessageResponseUnmarshaller.Instance;
 
-            return _serviceClient.Invoke<AckMessageRequest, AckMessageResponse>(request, marshaller, unmarshaller);
+            return _serviceClient.Invoke<AckMessageRequest, AckMessageResponse>(request: request, marshaller: marshaller, unmarshaller: unmarshaller);
         }
 
-        public List<Model.Message> ConsumeMessage(uint batchSize)
+        public List<Message> ConsumeMessage(uint batchSize)
         {
-            var request = new ConsumeMessageRequest(this._topicName, this._consumer, this._messageTag);
-            request.IntanceId = this._instanceId;
+            var request = new ConsumeMessageRequest(topicName: TopicName, consumer: Consumer, messageTag: MessageTag);
+            request.IntanceId = IntanceId;
             request.BatchSize = batchSize;
-            var marshaller = ConsumeMessageRequestMarshaller.Instance;
+            var marshaller   = ConsumeMessageRequestMarshaller.Instance;
             var unmarshaller = ConsumeMessageResponseUnmarshaller.Instance;
 
-            ConsumeMessageResponse result = _serviceClient.Invoke<ConsumeMessageRequest, ConsumeMessageResponse>(request, marshaller, unmarshaller);
+            var result = _serviceClient.Invoke<ConsumeMessageRequest, ConsumeMessageResponse>(request: request, marshaller: marshaller, unmarshaller: unmarshaller);
 
             return result.Messages;
         }
 
-        public List<Model.Message> ConsumeMessage(uint batchSize, uint waitSeconds)
+        public List<Message> ConsumeMessage(uint batchSize, uint waitSeconds)
         {
-            var request = new ConsumeMessageRequest(this._topicName, this._consumer, this._messageTag);
-            request.IntanceId = this._instanceId;
-            request.BatchSize = batchSize;
+            var request = new ConsumeMessageRequest(topicName: TopicName, consumer: Consumer, messageTag: MessageTag);
+            request.IntanceId   = IntanceId;
+            request.BatchSize   = batchSize;
             request.WaitSeconds = waitSeconds;
-            var marshaller = ConsumeMessageRequestMarshaller.Instance;
+            var marshaller   = ConsumeMessageRequestMarshaller.Instance;
             var unmarshaller = ConsumeMessageResponseUnmarshaller.Instance;
 
-            ConsumeMessageResponse result = _serviceClient.Invoke<ConsumeMessageRequest, ConsumeMessageResponse>(request, marshaller, unmarshaller);
+            var result = _serviceClient.Invoke<ConsumeMessageRequest, ConsumeMessageResponse>(request: request, marshaller: marshaller, unmarshaller: unmarshaller);
 
             return result.Messages;
         }

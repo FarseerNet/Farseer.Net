@@ -17,31 +17,34 @@ namespace FS.DI.Installers
 
         public LoggerInstaller(Action<ILoggingBuilder> configure)
         {
-            _configure = configure ?? (builder => { builder.AddFarseerJsonConsole(); });
+            _configure = configure ?? (builder =>
+                                          {
+                                              builder.AddFarseerJsonConsole();
+                                          });
         }
 
         /// <summary>
         ///     注册
         /// </summary>
-        /// <param name="container">容器</param>
-        /// <param name="store"></param>
+        /// <param name="container"> 容器 </param>
+        /// <param name="store"> </param>
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             // 注册配置文件
             var configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json",                                                                 optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true) //增加环境配置文件
-                .AddEnvironmentVariables()
-                .Build();
-            container.Register(Component.For<IConfigurationRoot>().Instance(configuration).LifestyleSingleton());
+                                .AddJsonFile(path: "appsettings.json", optional: true, reloadOnChange: true)
+                                .AddJsonFile(path: $"appsettings.{Environment.GetEnvironmentVariable(variable: "ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true) //增加环境配置文件
+                                .AddEnvironmentVariables()
+                                .Build();
+            container.Register(Component.For<IConfigurationRoot>().Instance(instance: configuration).LifestyleSingleton());
 
             // 注册默认日志组件
-            var loggerFactory = LoggerFactory.Create(o =>
+            var loggerFactory = LoggerFactory.Create(configure: o =>
             {
-                _configure(o);
-                o.AddConfiguration(configuration.GetSection("Logging"));
+                _configure(obj: o);
+                o.AddConfiguration(configuration: configuration.GetSection(key: "Logging"));
             });
-            container.Register(Component.For<ILoggerFactory>().Instance(loggerFactory).LifestyleSingleton());
+            container.Register(Component.For<ILoggerFactory>().Instance(instance: loggerFactory).LifestyleSingleton());
         }
     }
 }

@@ -1,30 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Company>steden</Company>
-    <Copyright>http://www.fsgit.com</Copyright>
-    <Product>RocketMQ组件</Product>
-    <Description>包括：RocketMQ组件</Description>
-    <AssemblyVersion>2.5.0</AssemblyVersion>
-    <FileVersion>2.5.0</FileVersion>
-    <Version>2.5.0</Version>
-    <Authors>steden</Authors>
-    <PackageTags>RocketMQ组件</PackageTags>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <RootNamespace>FS.MQ.Rocket</RootNamespace>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <Company>steden</Company>
+        <Copyright>http://www.fsgit.com</Copyright>
+        <Product>RocketMQ组件</Product>
+        <Description>包括：RocketMQ组件</Description>
+        <AssemblyVersion>2.5.0</AssemblyVersion>
+        <FileVersion>2.5.0</FileVersion>
+        <Version>2.5.0</Version>
+        <Authors>steden</Authors>
+        <PackageTags>RocketMQ组件</PackageTags>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <RootNamespace>FS.MQ.Rocket</RootNamespace>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <DefineConstants>CORE</DefineConstants>
-  </PropertyGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-  </ItemGroup>
+    <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+        <DefineConstants>CORE</DefineConstants>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj"/>
+    </ItemGroup>
 
 </Project>

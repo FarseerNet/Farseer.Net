@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using FS.Configuration;
+﻿using System.Reflection;
 using FS.DI;
 using FS.Modules;
-using FS.MongoDB.Configuration;
 
 namespace FS.MongoDB
 {
@@ -21,8 +18,8 @@ namespace FS.MongoDB
         /// </summary>
         public override void Initialize()
         {
-            IocManager.Container.Install(new MongoInstaller(IocManager));
-            IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly(), new ConventionalRegistrationConfig { InstallInstallers = false });
+            IocManager.Container.Install(new MongoInstaller(iocResolver: IocManager));
+            IocManager.RegisterAssemblyByConvention(assembly: Assembly.GetExecutingAssembly(), config: new ConventionalRegistrationConfig { InstallInstallers = false });
         }
     }
 }

@@ -11,27 +11,27 @@ namespace FS.Core.LinkTrack
         public string ConnectionString { get; set; }
 
         /// <summary>
-        /// 数据库名称
+        ///     数据库名称
         /// </summary>
         public string DataBaseName { get; set; }
 
         /// <summary>
-        /// 表名称
+        ///     表名称
         /// </summary>
         public string TableName { get; set; }
 
         /// <summary>
-        /// 执行方式
+        ///     执行方式
         /// </summary>
         public CommandType CommandType { get; set; }
 
         /// <summary>
-        /// SQL文本
+        ///     SQL文本
         /// </summary>
         public string Sql { get; set; }
 
         /// <summary>
-        /// SQL参数化
+        ///     SQL参数化
         /// </summary>
         public Dictionary<string, string> SqlParam { get; set; }
     }

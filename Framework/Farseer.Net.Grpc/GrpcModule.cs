@@ -19,7 +19,7 @@ namespace Farseer.Net.Grpc
         {
             //模块初始化，实现IOC信息的注册
             IocManager.Container.Install(new GrpcInstaller());
-            IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly(), new ConventionalRegistrationConfig {InstallInstallers = false});
+            IocManager.RegisterAssemblyByConvention(assembly: Assembly.GetExecutingAssembly(), config: new ConventionalRegistrationConfig { InstallInstallers = false });
         }
     }
 }

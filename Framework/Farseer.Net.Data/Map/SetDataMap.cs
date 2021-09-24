@@ -13,14 +13,14 @@ namespace FS.Data.Map
         internal SetDataMap(KeyValuePair<PropertyInfo, SetPhysicsMap> entityPhysicsMap)
         {
             ClassProperty = entityPhysicsMap.Key;
-            PhysicsMap = entityPhysicsMap.Value;
-            TableName = ClassProperty.Name;// 默认使用属性名称作为表名，一般此处会被SetName覆盖
+            PhysicsMap    = entityPhysicsMap.Value;
+            TableName     = ClassProperty.Name; // 默认使用属性名称作为表名，一般此处会被SetName覆盖
         }
 
         /// <summary>
         ///     物理结构
         /// </summary>
-        public SetPhysicsMap PhysicsMap { get; private set; }
+        public SetPhysicsMap PhysicsMap { get; }
 
         /// <summary>
         ///     库名称
@@ -31,6 +31,7 @@ namespace FS.Data.Map
         ///     表/视图/存储过程名称
         /// </summary>
         public string TableName { get; private set; }
+
         /// <summary>
         ///     类属性
         /// </summary>
@@ -44,7 +45,7 @@ namespace FS.Data.Map
         /// <summary>
         ///     设置表/视图/存储过程名称
         /// </summary>
-        /// <param name="tableName">表/视图/存储过程名称</param>
+        /// <param name="tableName"> 表/视图/存储过程名称 </param>
         public SetDataMap SetName(string tableName)
         {
             TableName = tableName;
@@ -54,11 +55,11 @@ namespace FS.Data.Map
         /// <summary>
         ///     设置表/视图/存储过程名称
         /// </summary>
-        /// <param name="dbName">库名称 </param>
-        /// <param name="tableName">表/视图/存储过程名称</param>
+        /// <param name="dbName"> 库名称 </param>
+        /// <param name="tableName"> 表/视图/存储过程名称 </param>
         public SetDataMap SetName(string dbName, string tableName)
         {
-            DbName = dbName;
+            DbName    = dbName;
             TableName = tableName;
             return this;
         }
@@ -66,15 +67,15 @@ namespace FS.Data.Map
         /// <summary>
         ///     设置逻辑删除方案
         /// </summary>
-        /// <param name="name">软删除标记字段名称</param>
-        /// <param name="sortDeleteType">数据库字段类型</param>
-        /// <param name="value">标记值</param>
+        /// <param name="name"> 软删除标记字段名称 </param>
+        /// <param name="sortDeleteType"> 数据库字段类型 </param>
+        /// <param name="value"> 标记值 </param>
         public SetDataMap SetSortDelete(string name, eumSortDeleteType sortDeleteType, object value)
         {
-            Check.NotEmpty(name, "字段名称不能为空");
-            Check.IsTure(sortDeleteType != eumSortDeleteType.DateTime && value == null, "非时间类型时，value不能为空");
+            Check.NotEmpty(value: name, parameterName: "字段名称不能为空");
+            Check.IsTure(isTrue: sortDeleteType != eumSortDeleteType.DateTime && value == null, parameterName: "非时间类型时，value不能为空");
 
-            SortDelete = SortDeleteCacheManger.Cache(name, sortDeleteType, value, ClassProperty.PropertyType.GetGenericArguments()[0]);
+            SortDelete = SortDeleteCacheManger.Cache(name: name, field: sortDeleteType, value: value, entityType: ClassProperty.PropertyType.GetGenericArguments()[0]);
             return this;
         }
     }

@@ -10,27 +10,27 @@ using System.ComponentModel.DataAnnotations;
 namespace FS.Utils.Component
 {
     /// <summary>
-    /// 枚举帮助器
+    ///     枚举帮助器
     /// </summary>
     public class Enums
     {
-        private readonly Enum _eum;
-        private readonly Type _eumType;
-        private readonly string _enumName;
-
         /// <summary>
         ///     缓存类
         /// </summary>
-        private static readonly Dictionary<string, string> CacheList = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> CacheList = new();
+
+        private readonly string _enumName;
+        private readonly Enum   _eum;
+        private readonly Type   _eumType;
 
         /// <summary>
-        /// 枚举帮助器
+        ///     枚举帮助器
         /// </summary>
         public Enums(Enum eum)
         {
-            this._eum = eum;
-            this._eumType = eum.GetType();
-            this._enumName = eum.ToString();
+            _eum      = eum;
+            _eumType  = eum.GetType();
+            _enumName = eum.ToString();
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace FS.Utils.Component
         {
             var key = $"{_eumType.FullName}.{_eum.ToString()}";
 
-            if (!CacheList.ContainsKey(key))
+            if (!CacheList.ContainsKey(key: key))
             {
                 foreach (var fieldInfo in _eumType.GetFields())
                 {
@@ -48,19 +48,21 @@ namespace FS.Utils.Component
                     if (fieldInfo.Name != _enumName) continue;
 
                     //反射出自定义属性   
-                    foreach (Attribute attr in fieldInfo.GetCustomAttributes(true))
+                    foreach (Attribute attr in fieldInfo.GetCustomAttributes(inherit: true))
                     {
                         //类型转换找到一个Description，用Description作为成员名称
                         var dscript = attr as DisplayAttribute;
-                        if (dscript == null) { continue; }
-                        if (!CacheList.ContainsKey(key)) { CacheList.Add(key, dscript.Name); }
+                        if (dscript == null) continue;
+                        if (!CacheList.ContainsKey(key: key)) CacheList.Add(key: key, value: dscript.Name);
                         return dscript.Name;
                     }
                 }
+
                 // 还是找不到时，返回空
                 return string.Empty;
             }
-            return CacheList[key];
+
+            return CacheList[key: key];
         }
     }
 }

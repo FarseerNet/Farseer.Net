@@ -1,24 +1,23 @@
-﻿
-using System;
+﻿using System;
 
 namespace FS.Reflection
 {
     /// <summary>
-    /// 类型查找器
+    ///     类型查找器
     /// </summary>
     public interface ITypeFinder
     {
         /// <summary>
-        /// 根据条件查找类型
+        ///     根据条件查找类型
         /// </summary>
-        /// <param name="predicate"></param>
-        /// <returns></returns>
+        /// <param name="predicate"> </param>
+        /// <returns> </returns>
         Type[] Find(Func<Type, bool> predicate);
 
         /// <summary>
-        /// 查找所有的类型
+        ///     查找所有的类型
         /// </summary>
-        /// <returns></returns>
+        /// <returns> </returns>
         Type[] FindAll();
     }
 }

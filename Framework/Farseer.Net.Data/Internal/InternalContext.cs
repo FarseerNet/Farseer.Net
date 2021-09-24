@@ -1,13 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Data;
-using FS.Configuration;
-using FS.Core;
 using FS.Data.Client;
 using FS.Data.Data;
 using FS.Data.Infrastructure;
 using FS.Data.Map;
-using FS.DI;
 
 namespace FS.Data.Internal
 {
@@ -19,41 +16,14 @@ namespace FS.Data.Internal
         /// <summary>
         ///     上下文初始化器（只赋值，不初始化，有可能被重复创建两次）
         /// </summary>
-        /// <param name="contextType">外部上下文类型</param>
-        /// <param name="isUnitOfWork">是否启用单元工作模式</param>
-        /// <param name="contextConnection">上下文数据库连接信息</param>
+        /// <param name="contextType"> 外部上下文类型 </param>
+        /// <param name="isUnitOfWork"> 是否启用单元工作模式 </param>
+        /// <param name="contextConnection"> 上下文数据库连接信息 </param>
         public InternalContext(Type contextType, bool isUnitOfWork, ContextConnection contextConnection = null)
         {
-            this.ContextType       = contextType;
-            this.IsUnitOfWork      = isUnitOfWork;
-            this.ContextConnection = contextConnection;
-        }
-
-        /// <summary>
-        ///     初始化数据库环境（共享自其它上下文）、实例化子类中，所有Set属性
-        /// </summary>
-        /// <param name="currentContextType">外部上下文类型</param>
-        /// <param name="masterContext">其它上下文（主上下文）</param>
-        public void TransactionInstance(Type currentContextType, InternalContext masterContext)
-        {
-            this.ContextType  = currentContextType;
-            this.IsUnitOfWork = masterContext.IsUnitOfWork;
-            //  连接字符串
-            this.ContextConnection = masterContext.ContextConnection;
-            // 手动编写SQL
-            ManualSql = masterContext.ManualSql;
-            // 默认SQL执行者
-            Executeor = masterContext.Executeor;
-            // 数据库提供者
-            DbProvider = masterContext.DbProvider;
-            // 队列管理者
-            QueueManger = new QueueManger(masterContext); //masterContext.QueueManger;
-
-
-            // 上下文映射关系
-            ContextMap = new ContextDataMap(ContextType, this);
-            // 不再需要初始化
-            IsInitializer = true;
+            ContextType       = contextType;
+            IsUnitOfWork      = isUnitOfWork;
+            ContextConnection = contextConnection;
         }
 
         /// <summary>
@@ -108,30 +78,64 @@ namespace FS.Data.Internal
         public ManualSql ManualSql { get; internal set; }
 
         /// <summary>
+        ///     释放资源
+        /// </summary>
+        [EditorBrowsable(state: EditorBrowsableState.Never)]
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(obj: this);
+        }
+
+        /// <summary>
+        ///     初始化数据库环境（共享自其它上下文）、实例化子类中，所有Set属性
+        /// </summary>
+        /// <param name="currentContextType"> 外部上下文类型 </param>
+        /// <param name="masterContext"> 其它上下文（主上下文） </param>
+        public void TransactionInstance(Type currentContextType, InternalContext masterContext)
+        {
+            ContextType  = currentContextType;
+            IsUnitOfWork = masterContext.IsUnitOfWork;
+            //  连接字符串
+            ContextConnection = masterContext.ContextConnection;
+            // 手动编写SQL
+            ManualSql = masterContext.ManualSql;
+            // 默认SQL执行者
+            Executeor = masterContext.Executeor;
+            // 数据库提供者
+            DbProvider = masterContext.DbProvider;
+            // 队列管理者
+            QueueManger = new QueueManger(provider: masterContext); //masterContext.QueueManger;
+
+
+            // 上下文映射关系
+            ContextMap = new ContextDataMap(type: ContextType, context: this);
+            // 不再需要初始化
+            IsInitializer = true;
+        }
+
+        /// <summary>
         ///     初始化数据库环境、实例化子类中，所有Set属性
         /// </summary>
         public void Initializer()
         {
-            if (IsInitializer)
-            {
-                return;
-            }
+            if (IsInitializer) return;
 
             // 数据库提供者
-            DbProvider = AbsDbProvider.CreateInstance(ContextConnection.DbType, ContextConnection.DataVer);
+            DbProvider = AbsDbProvider.CreateInstance(dbType: ContextConnection.DbType, dataVer: ContextConnection.DataVer);
 
             // 默认SQL执行者
-            Executeor = new ExecuteSql(new DbExecutor(ContextConnection.ConnectionString, ContextConnection.DbType, ContextConnection.CommandTimeout, !IsUnitOfWork && DbProvider.IsSupportTransaction ? IsolationLevel.RepeatableRead : IsolationLevel.Unspecified, DbProvider), this);
+            Executeor = new ExecuteSql(dataBase: new DbExecutor(connectionString: ContextConnection.ConnectionString, dbType: ContextConnection.DbType, commandTimeout: ContextConnection.CommandTimeout, tranLevel: !IsUnitOfWork && DbProvider.IsSupportTransaction ? IsolationLevel.RepeatableRead : IsolationLevel.Unspecified, dbProvider: DbProvider), contextProvider: this);
 
             // 记录执行链路
-            Executeor = new ExecuteSqlMonitorProxy(Executeor, DbProvider);
+            Executeor = new ExecuteSqlMonitorProxy(db: Executeor, dbProvider: DbProvider);
 
             // 队列管理者
-            QueueManger = new QueueManger(this);
+            QueueManger = new QueueManger(provider: this);
             // 手动编写SQL
-            ManualSql = new ManualSql(this);
+            ManualSql = new ManualSql(context: this);
             // 上下文映射关系
-            this.ContextMap = new ContextDataMap(ContextType, this);
+            ContextMap = new ContextDataMap(type: ContextType, context: this);
 
             IsInitializer = true;
         }
@@ -139,8 +143,8 @@ namespace FS.Data.Internal
         /// <summary>
         ///     释放资源
         /// </summary>
-        /// <param name="disposing">是否释放托管资源</param>
-        [EditorBrowsable(EditorBrowsableState.Never)]
+        /// <param name="disposing"> 是否释放托管资源 </param>
+        [EditorBrowsable(state: EditorBrowsableState.Never)]
         protected virtual void Dispose(bool disposing)
         {
             //释放托管资源
@@ -149,16 +153,6 @@ namespace FS.Data.Internal
                 QueueManger.Dispose();
                 Executeor.DataBase.Dispose();
             }
-        }
-
-        /// <summary>
-        ///     释放资源
-        /// </summary>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
     }
 }

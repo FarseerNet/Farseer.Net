@@ -19,18 +19,18 @@ namespace FS.LinkTrack
         [Keyword]
         public override string ParentAppId { get; set; }
 
-        [Number(NumberType.Long)]
+        [Number(type: NumberType.Long)]
         public override long StartTs { get; set; }
 
-        [Number(NumberType.Long)]
+        [Number(type: NumberType.Long)]
         public override long EndTs { get; set; }
-        
+
         [Keyword]
         public override string Domain { get; set; }
 
         [Text]
         public override string Path { get; set; }
-        
+
         [Keyword]
         public override string Method { get; set; }
 

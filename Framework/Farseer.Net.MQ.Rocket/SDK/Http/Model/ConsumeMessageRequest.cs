@@ -2,86 +2,47 @@
 
 namespace FS.MQ.Rocket.SDK.Http.Model
 {
-    public partial class ConsumeMessageRequest: WebServiceRequest
+    public class ConsumeMessageRequest : WebServiceRequest
     {
-        private string _instanceId;
-        private string _topicName;
-        private string _consumer;
-        private string _messageTag;
-        private uint _batchSize;
         private uint? _waitSeconds;
-        private string _trans;
 
         public ConsumeMessageRequest(string topicName, string consumer)
         {
-            this._topicName = topicName;
-            this._consumer = consumer;
+            TopicName = topicName;
+            Consumer  = consumer;
         }
 
         public ConsumeMessageRequest(string topicName, string consumer, string messageTag)
         {
-            this._topicName = topicName;
-            this._consumer = consumer;
-            this._messageTag = messageTag;
+            TopicName  = topicName;
+            Consumer   = consumer;
+            MessageTag = messageTag;
         }
 
-        public string TopicName
-        {
-            get { return this._topicName; }
-        }
+        public string TopicName { get; }
 
-        public string Consumer
-        {
-            get { return this._consumer; }
-        }
+        public string Consumer { get; }
 
-        public string MessageTag
-        {
-            get { return this._messageTag; }
-        }
-
-        public bool IsSetMessageTag()
-        {
-            return this._messageTag != null;
-        }
-
-        public bool IsSetWaitSeconds()
-        {
-            return this._waitSeconds.HasValue;
-        }
+        public string MessageTag { get; }
 
         public uint WaitSeconds
         {
-            get { return this._waitSeconds.GetValueOrDefault(); }
-            set { this._waitSeconds = value; }
+            get => _waitSeconds.GetValueOrDefault();
+            set => _waitSeconds = value;
         }
 
-        public uint BatchSize
-        {
-            get { return this._batchSize; }
-            set { this._batchSize = value; }
-        }
+        public uint BatchSize { get; set; }
 
-        public string IntanceId
-        {
-            get { return this._instanceId; }
-            set { this._instanceId = value; }
-        }
+        public string IntanceId { get; set; }
 
-        public bool IsSetInstance()
-        {
-            return !string.IsNullOrEmpty(this._instanceId);
-        }
+        internal string Trasaction { set; get; }
 
-        internal string Trasaction
-        {
-            set { this._trans = value; }
-            get { return this._trans; }
-        }
+        public bool IsSetMessageTag() => MessageTag != null;
 
-        internal bool IsSetTransaction()
-        {
-            return !string.IsNullOrEmpty(this._trans);
-        }
+        public bool IsSetWaitSeconds() => _waitSeconds.HasValue;
+
+        public bool IsSetInstance() => !string.IsNullOrEmpty(value: IntanceId);
+
+        internal bool IsSetTransaction() => !string.IsNullOrEmpty(value: Trasaction);
     }
 }

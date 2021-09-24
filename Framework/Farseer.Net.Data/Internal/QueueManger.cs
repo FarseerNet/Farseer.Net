@@ -10,9 +10,14 @@ namespace FS.Data.Internal
     internal class QueueManger : IDisposable
     {
         /// <summary>
+        ///     当前组查询队列（支持批量提交SQL）
+        /// </summary>
+        private Queue _queue;
+
+        /// <summary>
         ///     队列管理模块
         /// </summary>
-        /// <param name="provider">数据库上下文</param>
+        /// <param name="provider"> 数据库上下文 </param>
         internal QueueManger(InternalContext provider)
         {
             ContextProvider = provider;
@@ -24,70 +29,53 @@ namespace FS.Data.Internal
         private InternalContext ContextProvider { get; }
 
         /// <summary>
-        ///     当前组查询队列（支持批量提交SQL）
-        /// </summary>
-        private Queue _queue;
-
-        /// <summary>
         ///     获取当前队列（不存在，则创建）
         /// </summary>
-        /// <param name="map">字段映射</param>
-        internal Queue CreateQueue(SetDataMap map) => _queue ??= new Queue(ContextProvider, map);
+        /// <param name="map"> 字段映射 </param>
+        internal Queue CreateQueue(SetDataMap map) => _queue ??= new Queue(context: ContextProvider, map: map);
 
         /// <summary>
         ///     立即执行
         /// </summary>
-        /// <param name="act">要延迟操作的委托</param>
-        /// <param name="map">字段映射</param>
-        /// <param name="joinSoftDeleteCondition">是否加入逻辑删除数据过滤</param>
+        /// <param name="act"> 要延迟操作的委托 </param>
+        /// <param name="map"> 字段映射 </param>
+        /// <param name="joinSoftDeleteCondition"> 是否加入逻辑删除数据过滤 </param>
         internal TReturn Commit<TReturn>(SetDataMap map, Func<Queue, TReturn> act, bool joinSoftDeleteCondition)
         {
             try
             {
                 // 立即删除时，先提交队列中的数据
-                var queue = CreateQueue(map);
-                if (joinSoftDeleteCondition)
-                {
-                    queue.ExpBuilder.DeleteSortCondition();
-                }
+                var queue = CreateQueue(map: map);
+                if (joinSoftDeleteCondition) queue.ExpBuilder.DeleteSortCondition();
 
-                return act(queue);
+                return act(arg: queue);
             }
             finally
             {
                 Clear();
-                if (ContextProvider.IsUnitOfWork)
-                {
-                    ContextProvider.Executeor.DataBase.Close(true);
-                }
+                if (ContextProvider.IsUnitOfWork) ContextProvider.Executeor.DataBase.Close(dispose: true);
             }
         }
 
         /// <summary>
         ///     立即执行
         /// </summary>
-        /// <param name="act">要延迟操作的委托</param>
-        /// <param name="map">字段映射</param>
-        /// <param name="joinSoftDeleteCondition">是否加入逻辑删除数据过滤</param>
+        /// <param name="act"> 要延迟操作的委托 </param>
+        /// <param name="map"> 字段映射 </param>
+        /// <param name="joinSoftDeleteCondition"> 是否加入逻辑删除数据过滤 </param>
         internal async Task<TReturn> CommitAsync<TReturn>(SetDataMap map, Func<Queue, Task<TReturn>> act, bool joinSoftDeleteCondition)
         {
             try
             {
-                var queue = CreateQueue(map);
-                if (joinSoftDeleteCondition)
-                {
-                    queue.ExpBuilder.DeleteSortCondition();
-                }
+                var queue = CreateQueue(map: map);
+                if (joinSoftDeleteCondition) queue.ExpBuilder.DeleteSortCondition();
 
-                return await act(queue);
+                return await act(arg: queue);
             }
             finally
             {
                 Clear();
-                if (ContextProvider.IsUnitOfWork)
-                {
-                    ContextProvider.Executeor.DataBase.Close(true);
-                }
+                if (ContextProvider.IsUnitOfWork) ContextProvider.Executeor.DataBase.Close(dispose: true);
             }
         }
 
@@ -104,7 +92,7 @@ namespace FS.Data.Internal
         /// <summary>
         ///     释放资源
         /// </summary>
-        /// <param name="disposing">是否释放托管资源</param>
+        /// <param name="disposing"> 是否释放托管资源 </param>
         private void Dispose(bool disposing)
         {
             //释放托管资源
@@ -118,8 +106,8 @@ namespace FS.Data.Internal
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            Dispose(disposing: true);
+            GC.SuppressFinalize(obj: this);
         }
 
         #endregion

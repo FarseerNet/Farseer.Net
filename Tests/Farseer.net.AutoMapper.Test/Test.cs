@@ -4,7 +4,7 @@ namespace Farseer.net.AutoMapper.Test
     {
         public void Console()
         {
-            System.Console.WriteLine("test");
+            System.Console.WriteLine(value: "test");
         }
     }
 }

@@ -7,6 +7,6 @@ namespace FS.ElasticSearch.Internal
     /// </summary>
     public static class SetInitializer
     {
-        public static readonly MethodInfo IndexSetMethod = typeof (EsContext).GetMethod("IndexSet", new[] {typeof (PropertyInfo)});
+        public static readonly MethodInfo IndexSetMethod = typeof(EsContext).GetMethod(name: "IndexSet", types: new[] { typeof(PropertyInfo) });
     }
 }

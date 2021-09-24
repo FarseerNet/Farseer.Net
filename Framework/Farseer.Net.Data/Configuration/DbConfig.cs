@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using FS.Configuration;
 
 namespace FS.Data.Configuration
 {

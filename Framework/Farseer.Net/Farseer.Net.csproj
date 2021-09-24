@@ -1,46 +1,46 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Company>steden</Company>
-    <Copyright>http://www.fsgit.com</Copyright>
-    <Product>基础组件</Product>
-    <Authors>steden</Authors>
-    <Description>包括：IOC框架、模块化思想、模块启动器、配置文件接口</Description>
-    <PackageTags>IOC框架、模块化思想、模块启动器、配置文件接口</PackageTags>
-    <AssemblyVersion>2.5.3</AssemblyVersion>
-    <FileVersion>2.5.3</FileVersion>
-    <Version>2.5.3</Version>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <RootNamespace>FS</RootNamespace>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-  
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <DefineConstants>CORE</DefineConstants>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <Company>steden</Company>
+        <Copyright>http://www.fsgit.com</Copyright>
+        <Product>基础组件</Product>
+        <Authors>steden</Authors>
+        <Description>包括：IOC框架、模块化思想、模块启动器、配置文件接口</Description>
+        <PackageTags>IOC框架、模块化思想、模块启动器、配置文件接口</PackageTags>
+        <AssemblyVersion>2.5.3</AssemblyVersion>
+        <FileVersion>2.5.3</FileVersion>
+        <Version>2.5.3</Version>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <RootNamespace>FS</RootNamespace>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Castle.Core" Version="4.4.1" />
-    <PackageReference Include="Castle.Windsor" Version="5.1.1" />
-    <PackageReference Include="Castle.Windsor.Extensions.DependencyInjection" Version="5.1.1" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Primitives" Version="5.0.1" />
-    <PackageReference Include="Microsoft.NETCore.Platforms" Version="5.0.2" />
-    <PackageReference Include="Microsoft.NETCore.Targets" Version="5.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
-    <PackageReference Include="System.Data.Common" Version="4.3.0" />
-    <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
-  </ItemGroup>
+    <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+        <DefineConstants>CORE</DefineConstants>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Castle.Core" Version="4.4.1"/>
+        <PackageReference Include="Castle.Windsor" Version="5.1.1"/>
+        <PackageReference Include="Castle.Windsor.Extensions.DependencyInjection" Version="5.1.1"/>
+        <PackageReference Include="Microsoft.CSharp" Version="4.7.0"/>
+        <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="5.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="5.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="5.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="5.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Primitives" Version="5.0.1"/>
+        <PackageReference Include="Microsoft.NETCore.Platforms" Version="5.0.2"/>
+        <PackageReference Include="Microsoft.NETCore.Targets" Version="5.0.0"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
+        <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0"/>
+        <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0"/>
+        <PackageReference Include="System.Data.Common" Version="4.3.0"/>
+        <PackageReference Include="System.Collections.Concurrent" Version="4.3.0"/>
+    </ItemGroup>
 </Project>

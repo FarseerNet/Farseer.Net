@@ -10,24 +10,24 @@ using FS.MQ.Rocket.SDK.Http.Model.exp;
 
 namespace FS.MQ.Rocket.SDK.Http.Util
 {
-    public static partial class AliyunSDKUtils
+    public static class AliyunSDKUtils
     {
         #region Internal Constants
 
-        internal const string SDKVersionNumber = "1.0.1";
+        internal const  string SDKVersionNumber   = "1.0.1";
         internal static string _userAgentBaseName = "mq-csharp-sdk";
 
         private const int DefaultConnectionLimit = 50;
-        private const int DefaultMaxIdleTime = 50 * 1000; // 50 seconds
+        private const int DefaultMaxIdleTime     = 50 * 1000; // 50 seconds
 
-        internal static readonly DateTime EPOCH_START = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+        internal static readonly DateTime EPOCH_START = new DateTime(year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, millisecond: 0, kind: DateTimeKind.Utc);
 
         internal const int DefaultBufferSize = 8192;
 
         internal static Dictionary<int, string> RFCEncodingSchemes = new Dictionary<int, string>
         {
-            { 3986,  ValidUrlCharacters },
-            { 1738,  ValidUrlCharactersRFC1738 }
+            { 3986, ValidUrlCharacters },
+            { 1738, ValidUrlCharactersRFC1738 }
         };
 
         #endregion
@@ -38,7 +38,7 @@ namespace FS.MQ.Rocket.SDK.Http.Util
 
         public const string ValidUrlCharactersRFC1738 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.";
 
-        private static string ValidPathCharacters = DetermineValidPathCharacters();
+        private static readonly string ValidPathCharacters = DetermineValidPathCharacters();
 
         private static string DetermineValidPathCharacters()
         {
@@ -47,10 +47,10 @@ namespace FS.MQ.Rocket.SDK.Http.Util
             var sb = new StringBuilder();
             foreach (var c in basePathCharacters)
             {
-                var escaped = Uri.EscapeUriString(c.ToString());
-                if (escaped.Length == 1 && escaped[0] == c)
-                    sb.Append(c);
+                var escaped = Uri.EscapeUriString(stringToEscape: c.ToString());
+                if (escaped.Length == 1 && escaped[index: 0] == c) sb.Append(value: c);
             }
+
             return sb.ToString();
         }
 
@@ -62,83 +62,65 @@ namespace FS.MQ.Rocket.SDK.Http.Util
 
         #region UserAgent
 
-        static string _versionNumber;
-        static string _sdkUserAgent;
+        private static string _versionNumber;
 
-        public static string SDKUserAgent
-        {
-            get
-            {
-                return _sdkUserAgent;
-            }
-        }
+        public static string SDKUserAgent { get; private set; }
 
         static AliyunSDKUtils()
         {
             BuildUserAgentString();
         }
 
-        static void BuildUserAgentString()
+        private static void BuildUserAgentString()
         {
-            if (_versionNumber == null)
-            {
-                _versionNumber = SDKVersionNumber;
-            }
+            if (_versionNumber == null) _versionNumber = SDKVersionNumber;
 
             try
             {
-                _sdkUserAgent = string.Format(CultureInfo.InvariantCulture, "{0}/{1}(.NET/{2} {3}/{4})",
-                    _userAgentBaseName,
-                    _versionNumber,
-                    DetermineRuntime(),
-                    Environment.OSVersion.Platform,
-                    DetermineOSVersion());
+                SDKUserAgent = string.Format(provider: CultureInfo.InvariantCulture, format: "{0}/{1}(.NET/{2} {3}/{4})",
+                                             _userAgentBaseName,
+                                             _versionNumber,
+                                             DetermineRuntime(),
+                                             Environment.OSVersion.Platform,
+                                             DetermineOSVersion());
             }
             catch (Exception)
             {
-                _sdkUserAgent = string.Format(CultureInfo.InvariantCulture, "{0}/{1}", _userAgentBaseName, _versionNumber);
+                SDKUserAgent = string.Format(provider: CultureInfo.InvariantCulture, format: "{0}/{1}", arg0: _userAgentBaseName, arg1: _versionNumber);
             }
         }
 
-        static string DetermineRuntime()
-        {
-            return string.Format(CultureInfo.InvariantCulture, "{0}.{1}", Environment.Version.Major, Environment.Version.MajorRevision);
-        }
+        private static string DetermineRuntime() => string.Format(provider: CultureInfo.InvariantCulture, format: "{0}.{1}", arg0: Environment.Version.Major, arg1: Environment.Version.MajorRevision);
 
-        static string DetermineOSVersion()
-        {
-            return Environment.OSVersion.Version.ToString();
-        }
+        private static string DetermineOSVersion() => Environment.OSVersion.Version.ToString();
 
         #endregion
 
         #region HTTP Connection Configurations
 
         private const int _defaultConnectionLimit = 2;
+
         internal static int GetConnectionLimit(int? clientConfigValue)
         {
             // Connection limit has been explicitly set on the client.
-            if (clientConfigValue.HasValue)
-                return clientConfigValue.Value;
+            if (clientConfigValue.HasValue) return clientConfigValue.Value;
 
             // If default has been left at the system default return the SDK default.
-            if (ServicePointManager.DefaultConnectionLimit == _defaultConnectionLimit)
-                return DefaultConnectionLimit;
+            if (ServicePointManager.DefaultConnectionLimit == _defaultConnectionLimit) return DefaultConnectionLimit;
 
             // The system default has been explicitly changed so we will honor that value.
             return ServicePointManager.DefaultConnectionLimit;
         }
 
         private const int _defaultMaxIdleTime = 100 * 1000;
+
         internal static int GetMaxIdleTime(int? clientConfigValue)
         {
             // MaxIdleTime has been explicitly set on the client.
-            if (clientConfigValue.HasValue)
-                return clientConfigValue.Value;
+            if (clientConfigValue.HasValue) return clientConfigValue.Value;
 
             // If default has been left at the system default return the SDK default.
-            if (ServicePointManager.MaxServicePointIdleTime == _defaultMaxIdleTime)
-                return DefaultMaxIdleTime;
+            if (ServicePointManager.MaxServicePointIdleTime == _defaultMaxIdleTime) return DefaultMaxIdleTime;
 
             // The system default has been explicitly changed so we will honor that value.
             return ServicePointManager.MaxServicePointIdleTime;
@@ -148,63 +130,56 @@ namespace FS.MQ.Rocket.SDK.Http.Util
 
         #region Internal Methods
 
-
         internal static string GetParametersAsString(IDictionary<string, string> parameters)
         {
-            string[] keys = new string[parameters.Keys.Count];
-            parameters.Keys.CopyTo(keys, 0);
-            Array.Sort<string>(keys);
+            var keys = new string[parameters.Keys.Count];
+            parameters.Keys.CopyTo(array: keys, arrayIndex: 0);
+            Array.Sort(array: keys);
 
-            StringBuilder data = new StringBuilder(512);
-            foreach (string key in keys)
+            var data = new StringBuilder(capacity: 512);
+            foreach (var key in keys)
             {
-                string value = parameters[key];
+                var value = parameters[key: key];
                 if (value != null)
                 {
-                    data.Append(key);
-                    data.Append('=');
-                    data.Append(value);
-                    data.Append('&');
+                    data.Append(value: key);
+                    data.Append(value: '=');
+                    data.Append(value: value);
+                    data.Append(value: '&');
                 }
             }
-            string result = data.ToString();
-            if (result.Length == 0)
-                return string.Empty;
 
-            return result.Remove(result.Length - 1);
+            var result = data.ToString();
+            if (result.Length == 0) return string.Empty;
+
+            return result.Remove(startIndex: result.Length - 1);
         }
 
         public static void CopyTo(this Stream input, Stream output)
         {
-            byte[] buffer = new byte[16 * 1024];
+            var buffer = new byte[16 * 1024];
             int bytesRead;
 
-            while ((bytesRead = input.Read(buffer, 0, buffer.Length)) > 0)
-            {
-                output.Write(buffer, 0, bytesRead);
-            }
+            while ((bytesRead = input.Read(buffer: buffer, offset: 0, count: buffer.Length)) > 0) output.Write(buffer: buffer, offset: 0, count: bytesRead);
         }
 
         /// <summary>
-        /// Utility method for converting Unix epoch seconds to DateTime structure.
+        ///     Utility method for converting Unix epoch seconds to DateTime structure.
         /// </summary>
-        /// <param name="milliSeconds">The number of milliSeconds since January 1, 1970.</param>
-        /// <returns>Converted DateTime structure</returns>
-        public static DateTime ConvertFromUnixEpochSeconds(long milliSeconds)
-        {
-            return new DateTime(milliSeconds * 10000L + EPOCH_START.Ticks, DateTimeKind.Utc).ToLocalTime();
-        }
+        /// <param name="milliSeconds"> The number of milliSeconds since January 1, 1970. </param>
+        /// <returns> Converted DateTime structure </returns>
+        public static DateTime ConvertFromUnixEpochSeconds(long milliSeconds) => new DateTime(ticks: milliSeconds * 10000L + EPOCH_START.Ticks, kind: DateTimeKind.Utc).ToLocalTime();
 
         public static long GetUnixTimeStamp(DateTime dateTime)
         {
-            TimeSpan ts = dateTime - EPOCH_START;
+            var ts = dateTime - EPOCH_START;
             return (long)ts.TotalMilliseconds;
         }
 
         public static long GetNowTimeStamp()
         {
-            TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
-            return Convert.ToInt64(ts.TotalMilliseconds);
+            var ts = DateTime.UtcNow - new DateTime(year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, millisecond: 0);
+            return Convert.ToInt64(value: ts.TotalMilliseconds);
         }
 
         #endregion
@@ -212,109 +187,96 @@ namespace FS.MQ.Rocket.SDK.Http.Util
         #region Public Methods and Properties
 
         /// <summary>
-        /// Formats the current date as ISO 8601 timestamp
+        ///     Formats the current date as ISO 8601 timestamp
         /// </summary>
-        /// <returns>An ISO 8601 formatted string representation
-        /// of the current date and time
+        /// <returns>
+        ///     An ISO 8601 formatted string representation
+        ///     of the current date and time
         /// </returns>
-        public static string FormattedCurrentTimestampRFC822
-        {
-            get
-            {
-                return GetFormattedTimestampRFC822(0);
-            }
-        }
+        public static string FormattedCurrentTimestampRFC822 => GetFormattedTimestampRFC822(minutesFromNow: 0);
 
         /// <summary>
-        /// Gets the RFC822 formatted timestamp that is minutesFromNow
-        /// in the future.
+        ///     Gets the RFC822 formatted timestamp that is minutesFromNow
+        ///     in the future.
         /// </summary>
-        /// <param name="minutesFromNow">The number of minutes from the current instant
-        /// for which the timestamp is needed.</param>
-        /// <returns>The ISO8601 formatted future timestamp.</returns>
+        /// <param name="minutesFromNow">
+        ///     The number of minutes from the current instant
+        ///     for which the timestamp is needed.
+        /// </param>
+        /// <returns> The ISO8601 formatted future timestamp. </returns>
         public static string GetFormattedTimestampRFC822(int minutesFromNow)
         {
-            DateTime dateTime = DateTime.UtcNow.AddMinutes(minutesFromNow);
-            DateTime formatted = new DateTime(
-                dateTime.Year,
-                dateTime.Month,
-                dateTime.Day,
-                dateTime.Hour,
-                dateTime.Minute,
-                dateTime.Second,
-                dateTime.Millisecond,
-                DateTimeKind.Local
-                );
+            var dateTime = DateTime.UtcNow.AddMinutes(value: minutesFromNow);
+            var formatted = new DateTime(
+                                         year: dateTime.Year,
+                                         month: dateTime.Month,
+                                         day: dateTime.Day,
+                                         hour: dateTime.Hour,
+                                         minute: dateTime.Minute,
+                                         second: dateTime.Second,
+                                         millisecond: dateTime.Millisecond,
+                                         kind: DateTimeKind.Local
+                                        );
             return formatted.ToString(
-                RFC822DateFormat,
-                CultureInfo.InvariantCulture
-                );
+                                      format: RFC822DateFormat,
+                                      provider: CultureInfo.InvariantCulture
+                                     );
         }
 
 
         /// <summary>
-        /// URL encodes a string per RFC3986. If the path property is specified,
-        /// the accepted path characters {/+:} are not encoded.
+        ///     URL encodes a string per RFC3986. If the path property is specified,
+        ///     the accepted path characters {/+:} are not encoded.
         /// </summary>
-        /// <param name="data">The string to encode</param>
-        /// <param name="path">Whether the string is a URL path or not</param>
-        /// <returns>The encoded string</returns>
-        public static string UrlEncode(string data, bool path)
-        {
-            return UrlEncode(3986, data, path);
-        }
+        /// <param name="data"> The string to encode </param>
+        /// <param name="path"> Whether the string is a URL path or not </param>
+        /// <returns> The encoded string </returns>
+        public static string UrlEncode(string data, bool path) => UrlEncode(rfcNumber: 3986, data: data, path: path);
 
         /// <summary>
-        /// URL encodes a string per the specified RFC. If the path property is specified,
-        /// the accepted path characters {/+:} are not encoded.
+        ///     URL encodes a string per the specified RFC. If the path property is specified,
+        ///     the accepted path characters {/+:} are not encoded.
         /// </summary>
-        /// <param name="rfcNumber">RFC number determing safe characters</param>
-        /// <param name="data">The string to encode</param>
-        /// <param name="path">Whether the string is a URL path or not</param>
-        /// <returns>The encoded string</returns>
+        /// <param name="rfcNumber"> RFC number determing safe characters </param>
+        /// <param name="data"> The string to encode </param>
+        /// <param name="path"> Whether the string is a URL path or not </param>
+        /// <returns> The encoded string </returns>
         /// <remarks>
-        /// Currently recognised RFC versions are 1738 (Dec '94) and 3986 (Jan '05). 
-        /// If the specified RFC is not recognised, 3986 is used by default.
+        ///     Currently recognised RFC versions are 1738 (Dec '94) and 3986 (Jan '05).
+        ///     If the specified RFC is not recognised, 3986 is used by default.
         /// </remarks>
         internal static string UrlEncode(int rfcNumber, string data, bool path)
         {
-            StringBuilder encoded = new StringBuilder(data.Length * 2);
+            var    encoded = new StringBuilder(capacity: data.Length * 2);
             string validUrlCharacters;
-            if (!RFCEncodingSchemes.TryGetValue(rfcNumber, out validUrlCharacters))
-                validUrlCharacters = ValidUrlCharacters;
+            if (!RFCEncodingSchemes.TryGetValue(key: rfcNumber, value: out validUrlCharacters)) validUrlCharacters = ValidUrlCharacters;
 
-            string unreservedChars = String.Concat(validUrlCharacters, (path ? ValidPathCharacters : ""));
+            var unreservedChars = string.Concat(str0: validUrlCharacters, str1: path ? ValidPathCharacters : "");
 
-            foreach (char symbol in Encoding.UTF8.GetBytes(data))
-            {
-                if (unreservedChars.IndexOf(symbol) != -1)
-                {
-                    encoded.Append(symbol);
-                }
+            foreach (char symbol in Encoding.UTF8.GetBytes(s: data))
+                if (unreservedChars.IndexOf(value: symbol) != -1)
+                    encoded.Append(value: symbol);
                 else
-                {
-                    encoded.Append("%").Append(string.Format(CultureInfo.InvariantCulture, "{0:X2}", (int)symbol));
-                }
-            }
+                    encoded.Append(value: "%").Append(value: string.Format(provider: CultureInfo.InvariantCulture, format: "{0:X2}", arg0: (int)symbol));
 
             return encoded.ToString();
         }
 
         public static void Sleep(int ms)
         {
-            Thread.Sleep(ms);
+            Thread.Sleep(millisecondsTimeout: ms);
         }
 
-        static readonly object _preserveStackTraceLookupLock = new object();
-        static bool _preserveStackTraceLookup = false;
-        static MethodInfo _preserveStackTrace;
+        private static readonly object     _preserveStackTraceLookupLock = new object();
+        private static          bool       _preserveStackTraceLookup;
+        private static          MethodInfo _preserveStackTrace;
 
         /// <summary>
-        /// This method is used preserve the stacktrace used from clients that support async calls.  This 
-        /// make sure that exceptions thrown during EndXXX methods has the orignal stacktrace that happen 
-        /// in the background thread.
+        ///     This method is used preserve the stacktrace used from clients that support async calls.  This
+        ///     make sure that exceptions thrown during EndXXX methods has the orignal stacktrace that happen
+        ///     in the background thread.
         /// </summary>
-        /// <param name="exception"></param>
+        /// <param name="exception"> </param>
         internal static void PreserveStackTrace(Exception exception)
         {
             if (!_preserveStackTraceLookup)
@@ -324,88 +286,73 @@ namespace FS.MQ.Rocket.SDK.Http.Util
                     _preserveStackTraceLookup = true;
                     try
                     {
-                        _preserveStackTrace = typeof(Exception).GetMethod("InternalPreserveStackTrace",
-                            BindingFlags.Instance | BindingFlags.NonPublic);
+                        _preserveStackTrace = typeof(Exception).GetMethod(name: "InternalPreserveStackTrace",
+                                                                          bindingAttr: BindingFlags.Instance | BindingFlags.NonPublic);
                     }
-                    catch { }
+                    catch
+                    {
+                    }
                 }
             }
 
-            if (_preserveStackTrace != null)
-            {
-                _preserveStackTrace.Invoke(exception, null);
-            }
+            if (_preserveStackTrace != null) _preserveStackTrace.Invoke(obj: exception, parameters: null);
         }
 
         /// <summary>
-        /// IDictionary to string.
+        ///     IDictionary to string.
         /// </summary>
-        /// <returns>The to string.</returns>
-        /// <param name="dict">Dict.</param>
+        /// <returns> The to string. </returns>
+        /// <param name="dict"> Dict. </param>
         public static string DictToString(IDictionary<string, string> dict)
         {
-            if (dict == null || dict.Count == 0)
+            if (dict == null || dict.Count == 0) return string.Empty;
+            var data = new StringBuilder(capacity: 64);
+            foreach (var key in dict.Keys)
             {
-                return string.Empty;
+                var value = dict[key: key];
+                CheckPropValid(key: key, value: value);
+                data.Append(value: key).Append(value: ":").Append(value: value).Append(value: "|");
             }
-            StringBuilder data = new StringBuilder(64);
-            foreach(string key in dict.Keys)
-            {
-                string value = dict[key];
-                CheckPropValid(key, value);
-                data.Append(key).Append(":").Append(value).Append("|");
-            }
+
             return data.ToString();
         }
 
         /// <summary>
-        /// Strings to IDictionary.
+        ///     Strings to IDictionary.
         /// </summary>
-        /// <param name="str">String.</param>
-        /// <param name="dict">Dict.</param>
+        /// <param name="str"> String. </param>
+        /// <param name="dict"> Dict. </param>
         public static void StringToDict(string str, IDictionary<string, string> dict)
         {
-            if (string.IsNullOrEmpty(str) || dict == null)
-            {
-                return;
-            }
+            if (string.IsNullOrEmpty(value: str) || dict == null) return;
 
-            string[] str_array = str.Split('|');
-            foreach(string kv in str_array)
+            var str_array = str.Split('|');
+            foreach (var kv in str_array)
             {
-                string[] kv_array = kv.Split(':');
-                if (kv_array.Length != 2)
-                {
-                    continue;
-                }
-                dict.Add(kv_array[0], kv_array[1]);
+                var kv_array = kv.Split(':');
+                if (kv_array.Length != 2) continue;
+                dict.Add(key: kv_array[0], value: kv_array[1]);
             }
         }
 
         internal static void CheckPropValid(string key, string value)
         {
-            if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(value))
-            {
-                throw new MQException("Message's property can't be null or empty");
-            }
+            if (string.IsNullOrEmpty(value: key) || string.IsNullOrEmpty(value: value)) throw new MQException(message: "Message's property can't be null or empty");
 
-            if (IsContainSpecialChar(key) || IsContainSpecialChar(value)) 
+            if (IsContainSpecialChar(str: key) || IsContainSpecialChar(str: value))
             {
                 throw new MQException(
-                    string.Format(
-                        "Message's property[{0}:{1}] can't contains: & \" ' < > : |",
-                        key, value
-                    )
-                );
+                                      message: string.Format(
+                                                             format: "Message's property[{0}:{1}] can't contains: & \" ' < > : |",
+                                                             arg0: key, arg1: value
+                                                            )
+                                     );
             }
         }
 
-        internal static bool IsContainSpecialChar(string str)
-        {
-            return str.Contains("&") || str.Contains("<") || str.Contains(">")
-                      || str.Contains("\"") || str.Contains("\'")
-                      || str.Contains("|") || str.Contains(":");
-        }
+        internal static bool IsContainSpecialChar(string str) => str.Contains(value: "&")     || str.Contains(value: "<") || str.Contains(value: ">")
+                                                                 || str.Contains(value: "\"") || str.Contains(value: "\'")
+                                                                 || str.Contains(value: "|")  || str.Contains(value: ":");
 
         #endregion
     }

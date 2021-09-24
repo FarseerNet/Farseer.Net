@@ -8,14 +8,14 @@ namespace FS.Utils.Common.ExpressionVisitor
     /// </summary>
     public class GetBinaryVisitor : AbsExpressionVisitor
     {
-        private readonly List<Expression> _lst = new List<Expression>();
+        private readonly List<Expression> _lst = new();
 
         /// <summary>
         ///     获取表达式中的变量
         /// </summary>
         public new IEnumerable<Expression> Visit(Expression exp)
         {
-            base.Visit(exp);
+            base.Visit(exp: exp);
             return _lst;
         }
 
@@ -24,7 +24,7 @@ namespace FS.Utils.Common.ExpressionVisitor
         /// </summary>
         protected override Expression VisitBinary(BinaryExpression b)
         {
-            _lst.Add(b);
+            _lst.Add(item: b);
             return b;
         }
     }

@@ -7,12 +7,12 @@ using Microsoft.Extensions.Logging;
 namespace FS.Core.LinkTrack
 {
     /// <summary>
-    /// 本次操作完成
+    ///     本次操作完成
     /// </summary>
     public class TrackEnd : IDisposable
     {
-        private readonly LinkTrackDetail  _linkTrackDetail;
         private readonly LinkTrackContext _linkTrackContext;
+        private readonly LinkTrackDetail  _linkTrackDetail;
 
         public TrackEnd(LinkTrackContext linkTrackContext)
         {
@@ -25,7 +25,15 @@ namespace FS.Core.LinkTrack
         }
 
         /// <summary>
-        /// 设置下游系统API响应内容
+        ///     完成本次追踪
+        /// </summary>
+        public void Dispose()
+        {
+            End();
+        }
+
+        /// <summary>
+        ///     设置下游系统API响应内容
         /// </summary>
         public void SetDownstreamResponseBody(string responseBody)
         {
@@ -33,15 +41,15 @@ namespace FS.Core.LinkTrack
         }
 
         /// <summary>
-        /// 设置Http响应内容
+        ///     设置Http响应内容
         /// </summary>
         public void SetHttpResponseBody(string responseBody)
         {
-            _linkTrackDetail.Data["ResponseBody"] = responseBody;
+            _linkTrackDetail.Data[key: "ResponseBody"] = responseBody;
         }
 
         /// <summary>
-        /// 完成本次追踪
+        ///     完成本次追踪
         /// </summary>
         public void End()
         {
@@ -58,25 +66,17 @@ namespace FS.Core.LinkTrack
                         $"ContentType：{_linkTrackContext.ContentType}",
                         $"Time：{_linkTrackContext.UseTs} ms"
                     };
-                    if (!string.IsNullOrWhiteSpace(_linkTrackContext.RequestBody)) lst.Add($"Body：{_linkTrackContext.RequestBody}");
-                    IocManager.Instance.Logger<FsLinkTrack>().LogInformation($"{lst.ToString("\r\n")}");
+                    if (!string.IsNullOrWhiteSpace(value: _linkTrackContext.RequestBody)) lst.Add(item: $"Body：{_linkTrackContext.RequestBody}");
+                    IocManager.Instance.Logger<FsLinkTrack>().LogInformation(message: $"{lst.ToString(sign: "\r\n")}");
                 }
             }
-        }
-
-        /// <summary>
-        /// 完成本次追踪
-        /// </summary>
-        public void Dispose()
-        {
-            End();
         }
 
         public void Exception(System.Exception exception)
         {
             if (_linkTrackDetail != null)
             {
-                SetHttpResponseBody(exception.ToString());
+                SetHttpResponseBody(responseBody: exception.ToString());
                 _linkTrackDetail.IsException      = true;
                 _linkTrackDetail.ExceptionMessage = exception.ToString();
             }

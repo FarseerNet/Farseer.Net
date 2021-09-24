@@ -8,6 +8,21 @@ namespace FS.Data.Internal
     public class ContextConnection : IContextConnection
     {
         /// <summary>
+        ///     上下文初始化器（只赋值，不初始化，有可能被重复创建两次）
+        /// </summary>
+        /// <param name="connectionString"> 连接字符串 </param>
+        /// <param name="dbType"> 数据库类型 </param>
+        /// <param name="commandTimeout"> 命令超时时间 </param>
+        /// <param name="dataVer"> 数据库版本 </param>
+        public ContextConnection(string connectionString, eumDbType dbType, int commandTimeout, string dataVer)
+        {
+            ConnectionString = connectionString;
+            DbType           = dbType;
+            CommandTimeout   = commandTimeout;
+            DataVer          = dataVer;
+        }
+
+        /// <summary>
         ///     连接字符串
         /// </summary>
         public string ConnectionString { get; set; }
@@ -26,20 +41,5 @@ namespace FS.Data.Internal
         ///     数据库版本
         /// </summary>
         public string DataVer { get; set; }
-
-        /// <summary>
-        ///     上下文初始化器（只赋值，不初始化，有可能被重复创建两次）
-        /// </summary>
-        /// <param name="connectionString">连接字符串</param>
-        /// <param name="dbType">数据库类型</param>
-        /// <param name="commandTimeout">命令超时时间</param>
-        /// <param name="dataVer">数据库版本</param>
-        public ContextConnection(string connectionString, eumDbType dbType, int commandTimeout, string dataVer)
-        {
-            this.ConnectionString = connectionString;
-            this.DbType = dbType;
-            this.CommandTimeout = commandTimeout;
-            this.DataVer = dataVer;
-        }
     }
 }

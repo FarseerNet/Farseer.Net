@@ -1,43 +1,43 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Company>steden</Company>
-    <Copyright>http://www.fsgit.com</Copyright>
-    <Product>日志组件</Product>
-    <Description>包括：NLog日志组件</Description>
-    <Authors>steden</Authors>
-    <AssemblyVersion>2.5.0</AssemblyVersion>
-    <FileVersion>2.5.0</FileVersion>
-    <Version>2.5.0</Version>
-    <PackageTags>Log</PackageTags>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageReleaseNotes />
-    <RootNamespace>FS.Log</RootNamespace>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <Company>steden</Company>
+        <Copyright>http://www.fsgit.com</Copyright>
+        <Product>日志组件</Product>
+        <Description>包括：NLog日志组件</Description>
+        <Authors>steden</Authors>
+        <AssemblyVersion>2.5.0</AssemblyVersion>
+        <FileVersion>2.5.0</FileVersion>
+        <Version>2.5.0</Version>
+        <PackageTags>Log</PackageTags>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageReleaseNotes/>
+        <RootNamespace>FS.Log</RootNamespace>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net461'">
-    <DefineConstants>net461</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <DefineConstants>CORE</DefineConstants>
-  </PropertyGroup>
+    <PropertyGroup Condition="'$(TargetFramework)' == 'net461'">
+        <DefineConstants>net461</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+        <DefineConstants>CORE</DefineConstants>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="INLogManager.cs" />
-    <Compile Remove="NLogClient.cs" />
-    <Compile Remove="NLogManager.cs" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="Castle.Core-NLog" Version="4.4.1" />
-    <PackageReference Include="Castle.LoggingFacility" Version="5.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
-    <PackageReference Include="NLog" Version="4.7.11" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <Compile Remove="INLogManager.cs"/>
+        <Compile Remove="NLogClient.cs"/>
+        <Compile Remove="NLogManager.cs"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Castle.Core-NLog" Version="4.4.1"/>
+        <PackageReference Include="Castle.LoggingFacility" Version="5.1.1"/>
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0"/>
+        <PackageReference Include="NLog" Version="4.7.11"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj"/>
+    </ItemGroup>
 
 </Project>

@@ -1,5 +1,4 @@
-﻿using System;
-using FS.Mapper;
+﻿using FS.Mapper;
 
 namespace Farseer.net.AutoMapper.Test.Entity
 {
@@ -10,9 +9,11 @@ namespace Farseer.net.AutoMapper.Test.Entity
     public class UserPO
     {
         /// <summary> </summary>
-        [MapFieldAttribute(IsIgnore = true)] public int? Id { get; set; }
+        [MapFieldAttribute(IsIgnore = true)]
+        public int? Id { get; set; }
 
         /// <summary> 用户账号 </summary>
-        [MapFieldAttribute(FromName = "Name")] public string UserName { get; set; }
+        [MapFieldAttribute(FromName = "Name")]
+        public string UserName { get; set; }
     }
 }

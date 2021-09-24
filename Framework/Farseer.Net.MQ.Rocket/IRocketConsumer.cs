@@ -10,8 +10,8 @@ namespace FS.MQ.Rocket
         /// <summary>
         ///     消费订阅
         /// </summary>
-        /// <param name="listen">消息监听处理</param>
-        /// <param name="subExpression">标签</param>
+        /// <param name="listen"> 消息监听处理 </param>
+        /// <param name="subExpression"> 标签 </param>
         void Start(MessageListener listen, string subExpression = "*");
 
         /// <summary>

@@ -8,36 +8,30 @@ using Microsoft.Extensions.Logging;
 namespace FS.Job.Entity
 {
     /// <summary>
-    /// 任务接收的上下文
+    ///     任务接收的上下文
     /// </summary>
     public class ReceiveContext
     {
-        private readonly Stopwatch   _sw;
-        internal         int         Progress { get; set; }
-        private          long        _nextTimespan;
-        private          TimeSpan?   _ts;
-        private          EumTaskType TaskStatus;
-
         /// <summary>
-        /// 是否为本地Debug模式
+        ///     是否为本地Debug模式
         /// </summary>
         private readonly bool _isDebug;
 
-        /// <summary>
-        /// 任务组的参数
-        /// </summary>
-        public TaskVO Meta { get; }
+        private readonly Stopwatch   _sw;
+        private          long        _nextTimespan;
+        private          TimeSpan?   _ts;
+        private          EumTaskType TaskStatus;
 
         public ReceiveContext(TaskVO task, Stopwatch sw)
         {
             Meta       =   task;
             _sw        =   sw;
-            Meta.Data  ??= new();
+            Meta.Data  ??= new Dictionary<string, string>();
             TaskStatus =   EumTaskType.Working;
         }
 
         /// <summary>
-        /// DEBUG模式
+        ///     DEBUG模式
         /// </summary>
         internal ReceiveContext(IIocManager ioc, Stopwatch sw, Dictionary<string, string> debugMetaData)
         {
@@ -45,7 +39,7 @@ namespace FS.Job.Entity
             {
                 Caption = "调试",
                 JobName = null,
-                Data    = debugMetaData,
+                Data    = debugMetaData
             };
 
             _isDebug   = true;
@@ -53,18 +47,25 @@ namespace FS.Job.Entity
             TaskStatus = EumTaskType.Working;
         }
 
+        internal int Progress { get; set; }
+
         /// <summary>
-        /// 返回进度0-100
+        ///     任务组的参数
+        /// </summary>
+        public TaskVO Meta { get; }
+
+        /// <summary>
+        ///     返回进度0-100
         /// </summary>
         public Task SetProgressAsync(int rate)
         {
-            if (rate is < 0 or > 100) throw new Exception("ReceiveContext.SetProgress的rate只能是0-100");
+            if (rate is < 0 or > 100) throw new Exception(message: "ReceiveContext.SetProgress的rate只能是0-100");
             Progress = rate;
             return ActivateTask();
         }
 
         /// <summary>
-        /// 本次执行完后，下一次执行的间隔时间
+        ///     本次执行完后，下一次执行的间隔时间
         /// </summary>
         public void SetNextAt(TimeSpan ts)
         {
@@ -72,14 +73,14 @@ namespace FS.Job.Entity
         }
 
         /// <summary>
-        /// 写入到FSS平台的日志
+        ///     写入到FSS平台的日志
         /// </summary>
         public async Task LoggerAsync(LogLevel logLevel, string log)
         {
-            IocManager.Instance.Logger<ReceiveContext>().Log(logLevel, log);
+            IocManager.Instance.Logger<ReceiveContext>().Log(logLevel: logLevel, message: log);
             if (!_isDebug)
             {
-                await TaskManager.JobInvokeAsync(new JobInvokeRequest
+                await TaskManager.JobInvokeAsync(request: new JobInvokeRequest
                 {
                     TaskGroupId  = Meta.TaskGroupId,
                     Id           = Meta.Id,
@@ -99,7 +100,7 @@ namespace FS.Job.Entity
         }
 
         /// <summary>
-        /// 成功后执行
+        ///     成功后执行
         /// </summary>
         internal async Task SuccessAsync(LogRequest log = null)
         {
@@ -108,7 +109,7 @@ namespace FS.Job.Entity
             TaskStatus = EumTaskType.Success;
             if (!_isDebug)
             {
-                await TaskManager.JobInvokeAsync(new JobInvokeRequest
+                await TaskManager.JobInvokeAsync(request: new JobInvokeRequest
                 {
                     TaskGroupId  = Meta.TaskGroupId,
                     Id           = Meta.Id,
@@ -123,7 +124,7 @@ namespace FS.Job.Entity
         }
 
         /// <summary>
-        /// 执行失败
+        ///     执行失败
         /// </summary>
         public async Task FailAsync(LogRequest log = null)
         {
@@ -132,7 +133,7 @@ namespace FS.Job.Entity
             TaskStatus = EumTaskType.Fail;
             if (!_isDebug)
             {
-                await TaskManager.JobInvokeAsync(new JobInvokeRequest
+                await TaskManager.JobInvokeAsync(request: new JobInvokeRequest
                 {
                     TaskGroupId  = Meta.TaskGroupId,
                     Id           = Meta.Id,
@@ -147,13 +148,13 @@ namespace FS.Job.Entity
         }
 
         /// <summary>
-        /// 激活任务
+        ///     激活任务
         /// </summary>
         public async Task ActivateTask()
         {
             if (!_isDebug)
             {
-                await TaskManager.JobInvokeAsync(new JobInvokeRequest
+                await TaskManager.JobInvokeAsync(request: new JobInvokeRequest
                 {
                     TaskGroupId  = Meta.TaskGroupId,
                     Id           = Meta.Id,

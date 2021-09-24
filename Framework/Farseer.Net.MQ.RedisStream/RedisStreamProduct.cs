@@ -14,21 +14,21 @@ namespace FS.MQ.RedisStream
 
         public RedisStreamProduct(IRedisCacheManager redisCacheManager, ProductItemConfig productItemConfig)
         {
-            this._redisCacheManager = redisCacheManager;
-            this._productItemConfig = productItemConfig;
-            if (this._productItemConfig.MaxLength == 0) this._productItemConfig.MaxLength = 9999999;
+            _redisCacheManager = redisCacheManager;
+            _productItemConfig = productItemConfig;
+            if (_productItemConfig.MaxLength == 0) _productItemConfig.MaxLength = 9999999;
         }
 
         /// <summary>
         ///     发送消息
         /// </summary>
         /// <param name="field"> </param>
-        /// <param name="message">消息主体</param>
+        /// <param name="message"> 消息主体 </param>
         public bool Send(string message, string field = "data")
         {
-            using (FsLinkTrack.TrackMqProduct($"RedisStream.Send.{_productItemConfig.QueueName}"))
+            using (FsLinkTrack.TrackMqProduct(method: $"RedisStream.Send.{_productItemConfig.QueueName}"))
             {
-                var redisValue = _redisCacheManager.Db.StreamAdd(_productItemConfig.QueueName, field, message, maxLength: _productItemConfig.MaxLength, useApproximateMaxLength: true);
+                var redisValue = _redisCacheManager.Db.StreamAdd(key: _productItemConfig.QueueName, streamField: field, streamValue: message, maxLength: _productItemConfig.MaxLength, useApproximateMaxLength: true);
                 return redisValue.HasValue;
             }
         }
@@ -37,13 +37,13 @@ namespace FS.MQ.RedisStream
         ///     发送消息
         /// </summary>
         /// <param name="field"> </param>
-        /// <param name="entity">消息主体</param>
+        /// <param name="entity"> 消息主体 </param>
         public bool Send(object entity, string field = "data")
         {
-            using (FsLinkTrack.TrackMqProduct($"RedisStream.Send.{_productItemConfig.QueueName}"))
+            using (FsLinkTrack.TrackMqProduct(method: $"RedisStream.Send.{_productItemConfig.QueueName}"))
             {
-                var json       = JsonConvert.SerializeObject(entity);
-                var redisValue = _redisCacheManager.Db.StreamAdd(_productItemConfig.QueueName, field, json, maxLength: _productItemConfig.MaxLength, useApproximateMaxLength: true);
+                var json       = JsonConvert.SerializeObject(value: entity);
+                var redisValue = _redisCacheManager.Db.StreamAdd(key: _productItemConfig.QueueName, streamField: field, streamValue: json, maxLength: _productItemConfig.MaxLength, useApproximateMaxLength: true);
                 return redisValue.HasValue;
             }
         }
@@ -52,12 +52,12 @@ namespace FS.MQ.RedisStream
         ///     发送消息
         /// </summary>
         /// <param name="field"> </param>
-        /// <param name="message">消息主体</param>
+        /// <param name="message"> 消息主体 </param>
         public async Task<bool> SendAsync(string message, string field = "data")
         {
-            using (FsLinkTrack.TrackMqProduct($"RedisStream.Send.{_productItemConfig.QueueName}"))
+            using (FsLinkTrack.TrackMqProduct(method: $"RedisStream.Send.{_productItemConfig.QueueName}"))
             {
-                var redisValue = await _redisCacheManager.Db.StreamAddAsync(_productItemConfig.QueueName, field, message, maxLength: _productItemConfig.MaxLength, useApproximateMaxLength: true);
+                var redisValue = await _redisCacheManager.Db.StreamAddAsync(key: _productItemConfig.QueueName, streamField: field, streamValue: message, maxLength: _productItemConfig.MaxLength, useApproximateMaxLength: true);
                 return redisValue.HasValue;
             }
         }
@@ -66,13 +66,13 @@ namespace FS.MQ.RedisStream
         ///     发送消息
         /// </summary>
         /// <param name="field"> </param>
-        /// <param name="entity">消息主体</param>
+        /// <param name="entity"> 消息主体 </param>
         public async Task<bool> SendAsync(object entity, string field = "data")
         {
-            using (FsLinkTrack.TrackMqProduct($"RedisStream.Send.{_productItemConfig.QueueName}"))
+            using (FsLinkTrack.TrackMqProduct(method: $"RedisStream.Send.{_productItemConfig.QueueName}"))
             {
-                var json       = JsonConvert.SerializeObject(entity);
-                var redisValue = await _redisCacheManager.Db.StreamAddAsync(_productItemConfig.QueueName, field, json, maxLength: _productItemConfig.MaxLength, useApproximateMaxLength: true);
+                var json       = JsonConvert.SerializeObject(value: entity);
+                var redisValue = await _redisCacheManager.Db.StreamAddAsync(key: _productItemConfig.QueueName, streamField: field, streamValue: json, maxLength: _productItemConfig.MaxLength, useApproximateMaxLength: true);
                 return redisValue.HasValue;
             }
         }

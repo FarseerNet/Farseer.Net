@@ -11,43 +11,38 @@ namespace FS.MQ.Rocket.SDK.Http.Model.Internal.MarshallTransformations
 {
     public class AckMessageResponseUnmarshaller : XmlResponseUnmarshaller
     {
-        public override WebServiceResponse Unmarshall(XmlUnmarshallerContext context)
-        {
-            return new AckMessageResponse();
-        }
+        public static AckMessageResponseUnmarshaller Instance { get; } = new AckMessageResponseUnmarshaller();
+
+        public override WebServiceResponse Unmarshall(XmlUnmarshallerContext context) => new AckMessageResponse();
 
         public override AliyunServiceException UnmarshallException(XmlUnmarshallerContext context, Exception innerException, HttpStatusCode statusCode)
         {
-            XmlTextReader reader = new XmlTextReader(context.ResponseStream);
+            var reader = new XmlTextReader(input: context.ResponseStream);
 
-            ErrorResponse errorResponse = new ErrorResponse();
+            var errorResponse = new ErrorResponse();
             while (reader.Read())
-            {
                 switch (reader.NodeType)
                 {
                     case XmlNodeType.Element:
                         if (reader.LocalName == Constants.XML_ROOT_ERROR_RESPONSE)
-                        {
-                            return UnmarshallNormalError(reader, innerException, statusCode);
-                        }
+                            return UnmarshallNormalError(reader: reader, innerException: innerException, statusCode: statusCode);
                         else
                         {
-                            AckMessageException ackMessageException = UnmarshallAckMessageError(reader);
-                            ackMessageException.RequestId = context.ResponseData.GetHeaderValue("x-mq-request-id");
+                            var ackMessageException = UnmarshallAckMessageError(reader: reader);
+                            ackMessageException.RequestId = context.ResponseData.GetHeaderValue(headerName: "x-mq-request-id");
                             return ackMessageException;
                         }
                 }
-            }
-            return new MQException(errorResponse.Message, innerException, errorResponse.Code, errorResponse.RequestId, errorResponse.HostId, statusCode);
+
+            return new MQException(message: errorResponse.Message, innerException: innerException, errorCode: errorResponse.Code, requestId: errorResponse.RequestId, hostId: errorResponse.HostId, statusCode: statusCode);
         }
 
         private AckMessageException UnmarshallAckMessageError(XmlTextReader reader)
         {
-            AckMessageException ackMessageException = new AckMessageException();
-            AckMessageErrorItem item = null;
- 
+            var                 ackMessageException = new AckMessageException();
+            AckMessageErrorItem item                = null;
+
             while (reader.Read())
-            {
                 switch (reader.NodeType)
                 {
                     case XmlNodeType.Element:
@@ -69,46 +64,32 @@ namespace FS.MQ.Rocket.SDK.Http.Model.Internal.MarshallTransformations
                                 item.ReceiptHandle = reader.Value;
                                 break;
                         }
+
                         break;
                     case XmlNodeType.EndElement:
-                        if (reader.LocalName == Constants.XML_ROOT_ERROR_RESPONSE)
-                        {
-                            ackMessageException.ErrorItems.Add(item);
-                        }
+                        if (reader.LocalName == Constants.XML_ROOT_ERROR_RESPONSE) ackMessageException.ErrorItems.Add(item: item);
                         break;
                 }
-            }
+
             reader.Close();
             return ackMessageException;
         }
 
         private AliyunServiceException UnmarshallNormalError(XmlTextReader reader, Exception innerException, HttpStatusCode statusCode)
         {
-            ErrorResponse errorResponse = ErrorResponseUnmarshaller.Instance.Unmarshall(reader);
+            var errorResponse = ErrorResponseUnmarshaller.Instance.Unmarshall(reader: reader);
             if (errorResponse.Code != null)
             {
                 switch (errorResponse.Code)
                 {
-                    case ErrorCode.SubscriptionNotExist:
-                        return new SubscriptionNotExistException(errorResponse.Message, innerException, errorResponse.Code, errorResponse.RequestId, errorResponse.HostId, statusCode);
-                    case ErrorCode.TopicNotExist:
-                        return new TopicNotExistException(errorResponse.Message, innerException, errorResponse.Code, errorResponse.RequestId, errorResponse.HostId, statusCode);
-                    case ErrorCode.InvalidArgument:
-                        return new InvalidArgumentException(errorResponse.Message, innerException, errorResponse.Code, errorResponse.RequestId, errorResponse.HostId, statusCode);
-                    case ErrorCode.ReceiptHandleError:
-                        return new ReceiptHandleErrorException(errorResponse.Message, innerException, errorResponse.Code, errorResponse.RequestId, errorResponse.HostId, statusCode);
+                    case ErrorCode.SubscriptionNotExist: return new SubscriptionNotExistException(message: errorResponse.Message, innerException: innerException, errorCode: errorResponse.Code, requestId: errorResponse.RequestId, hostId: errorResponse.HostId, statusCode: statusCode);
+                    case ErrorCode.TopicNotExist:        return new TopicNotExistException(message: errorResponse.Message, innerException: innerException, errorCode: errorResponse.Code, requestId: errorResponse.RequestId, hostId: errorResponse.HostId, statusCode: statusCode);
+                    case ErrorCode.InvalidArgument:      return new InvalidArgumentException(message: errorResponse.Message, innerException: innerException, errorCode: errorResponse.Code, requestId: errorResponse.RequestId, hostId: errorResponse.HostId, statusCode: statusCode);
+                    case ErrorCode.ReceiptHandleError:   return new ReceiptHandleErrorException(message: errorResponse.Message, innerException: innerException, errorCode: errorResponse.Code, requestId: errorResponse.RequestId, hostId: errorResponse.HostId, statusCode: statusCode);
                 }
             }
-            return new MQException(errorResponse.Message, innerException, errorResponse.Code, errorResponse.RequestId, errorResponse.HostId, statusCode);
-        }
 
-        private static AckMessageResponseUnmarshaller _instance = new AckMessageResponseUnmarshaller();
-        public static AckMessageResponseUnmarshaller Instance
-        {
-            get
-            {
-                return _instance;
-            }
+            return new MQException(message: errorResponse.Message, innerException: innerException, errorCode: errorResponse.Code, requestId: errorResponse.RequestId, hostId: errorResponse.HostId, statusCode: statusCode);
         }
     }
 }

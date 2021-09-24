@@ -6,17 +6,17 @@ using Microsoft.Extensions.Configuration;
 namespace FS.Cache.Redis.Configuration
 {
     /// <summary>
-    /// 读取Redis配置
+    ///     读取Redis配置
     /// </summary>
     public class RedisConfigRoot
     {
         /// <summary>
-        /// 读取配置
+        ///     读取配置
         /// </summary>
         public static List<RedisItemConfig> Get()
         {
-            var configurationSection = IocManager.Instance.Resolve<IConfigurationRoot>().GetSection("Redis");
-            return configurationSection.GetChildren().Select(o => o.Get<RedisItemConfig>()).ToList();
+            var configurationSection = IocManager.Instance.Resolve<IConfigurationRoot>().GetSection(key: "Redis");
+            return configurationSection.GetChildren().Select(selector: o => o.Get<RedisItemConfig>()).ToList();
         }
     }
 }

@@ -14,32 +14,27 @@ namespace FS.Utils.Common
         /// <summary>
         ///     压缩
         /// </summary>
-        /// <param name="str">字符串</param>
-        public static string EnString(string str)
-        {
+        /// <param name="str"> 字符串 </param>
+        public static string EnString(string str) =>
             //因输入的字符串不是Base64所以转换为Base64,因为HTTP如果不传递Base64则会发生http 400错误
-            return Convert.ToBase64String(EnBytes(Convert.FromBase64String(Convert.ToBase64String(Encoding.Default.GetBytes(str)))));
-        }
+            Convert.ToBase64String(inArray: EnBytes(bytes: Convert.FromBase64String(s: Convert.ToBase64String(inArray: Encoding.Default.GetBytes(s: str)))));
 
         /// <summary>
         ///     解压
         /// </summary>
-        /// <param name="str">字符串</param>
-        public static string DnString(string str)
-        {
-            return Encoding.Default.GetString(DeBytes(Convert.FromBase64String(str)));
-        }
+        /// <param name="str"> 字符串 </param>
+        public static string DnString(string str) => Encoding.Default.GetString(bytes: DeBytes(bytes: Convert.FromBase64String(s: str)));
 
         /// <summary>
         ///     压缩
         /// </summary>
-        /// <param name="bytes">字节组</param>
+        /// <param name="bytes"> 字节组 </param>
         public static byte[] EnBytes(byte[] bytes)
         {
             using (var ms = new MemoryStream())
             {
-                var compress = new GZipStream(ms, CompressionMode.Compress);
-                compress.Write(bytes, 0, bytes.Length);
+                var compress = new GZipStream(stream: ms, mode: CompressionMode.Compress);
+                compress.Write(array: bytes, offset: 0, count: bytes.Length);
                 compress.Close();
                 return ms.ToArray();
             }
@@ -48,15 +43,15 @@ namespace FS.Utils.Common
         /// <summary>
         ///     解压
         /// </summary>
-        /// <param name="bytes">字节组</param>
+        /// <param name="bytes"> 字节组 </param>
         public static byte[] DeBytes(byte[] bytes)
         {
             using (var tempMs = new MemoryStream())
             {
-                using (var ms = new MemoryStream(bytes))
+                using (var ms = new MemoryStream(buffer: bytes))
                 {
-                    var decompress = new GZipStream(ms, CompressionMode.Decompress);
-                    decompress.CopyTo(tempMs);
+                    var decompress = new GZipStream(stream: ms, mode: CompressionMode.Decompress);
+                    decompress.CopyTo(destination: tempMs);
                     decompress.Close();
                     return tempMs.ToArray();
                 }
@@ -66,10 +61,10 @@ namespace FS.Utils.Common
         /// <summary>
         ///     解压文件
         /// </summary>
-        /// <param name="rarPath">解决压缩文件安装程序路径</param>
-        /// <param name="filePath">压缩包文件路径</param>
-        /// <param name="toPath">解压到路径</param>
-        /// <returns></returns>
+        /// <param name="rarPath"> 解决压缩文件安装程序路径 </param>
+        /// <param name="filePath"> 压缩包文件路径 </param>
+        /// <param name="toPath"> 解压到路径 </param>
+        /// <returns> </returns>
         public static bool DeRar(string filePath, string toPath, string rarPath)
         {
             //取得系统临时目录
@@ -86,14 +81,14 @@ namespace FS.Utils.Common
             //string shellArguments = string.Format("x -o+ \"{0}\" \"{1}\\\"",
             //    rarFilePath, unrarDestPath);
 
-            Directory.CreateDirectory(toPath);
+            Directory.CreateDirectory(path: toPath);
 
             var shellArguments = $"x -o+ \"{filePath}\" \"{toPath}\\\"";
 
             //用Process调用
             using (var unrar = new Process())
             {
-                unrar.StartInfo.FileName = rarPath;
+                unrar.StartInfo.FileName  = rarPath;
                 unrar.StartInfo.Arguments = shellArguments;
                 //隐藏rar本身的窗口
                 unrar.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
@@ -102,6 +97,7 @@ namespace FS.Utils.Common
                 unrar.WaitForExit();
                 unrar.Close();
             }
+
             return true;
 
 

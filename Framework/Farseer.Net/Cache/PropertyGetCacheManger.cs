@@ -12,9 +12,9 @@ namespace FS.Cache
         /// <summary>
         ///     线程锁
         /// </summary>
-        private static readonly object LockObject = new object();
+        private static readonly object LockObject = new();
 
-        private PropertyGetCacheManger(PropertyInfo key) : base(key)
+        private PropertyGetCacheManger(PropertyInfo key) : base(key: key)
         {
         }
 
@@ -25,21 +25,18 @@ namespace FS.Cache
         {
             lock (LockObject)
             {
-                if (CacheList.ContainsKey(Key)) { return CacheList[Key]; }
+                if (CacheList.ContainsKey(key: Key)) return CacheList[key: Key];
 
                 //缓存中没有找到，新建一个构造函数的委托
-                return (CacheList[Key] = ExpressionHelper.GetValue(Key));
+                return CacheList[key: Key] = ExpressionHelper.GetValue(propertyInfo: Key);
             }
         }
 
         /// <summary>
         ///     赋值
         /// </summary>
-        /// <param name="key">缓存Key</param>
-        /// <param name="instance">对象</param>
-        public static object Cache(PropertyInfo key, object instance)
-        {
-            return new PropertyGetCacheManger(key).GetValue()(instance);
-        }
+        /// <param name="key"> 缓存Key </param>
+        /// <param name="instance"> 对象 </param>
+        public static object Cache(PropertyInfo key, object instance) => new PropertyGetCacheManger(key: key).GetValue()(arg: instance);
     }
 }

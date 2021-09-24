@@ -8,8 +8,8 @@
         /// <summary>
         ///     消费订阅
         /// </summary>
-        /// <param name="listen">消息监听处理</param>
-        /// <param name="tag">标签</param>
+        /// <param name="listen"> 消息监听处理 </param>
+        /// <param name="tag"> 标签 </param>
         void Start(HttpMessageListener listen, string tag = "*");
 
         /// <summary>

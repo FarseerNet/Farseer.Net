@@ -31,19 +31,19 @@ namespace FS.Utils.Component
         /// </summary>
         public void Dispose()
         {
-            ListResult.Last(o => o.Timer.IsRunning).Timer.Stop();
+            ListResult.Last(predicate: o => o.Timer.IsRunning).Timer.Stop();
         }
 
         /// <summary>
         ///     开始计数
         /// </summary>
-        /// <param name="keyName"></param>
-        /// <returns></returns>
+        /// <param name="keyName"> </param>
+        /// <returns> </returns>
         public SpeedResult Begin(string keyName)
         {
-            if (string.IsNullOrWhiteSpace(keyName)) { throw new Exception("必须设置keyName的值！"); }
+            if (string.IsNullOrWhiteSpace(value: keyName)) throw new Exception(message: "必须设置keyName的值！");
 
-            var result = Create(keyName);
+            var result = Create(keyName: keyName);
             result.Timer.Start();
             return result;
         }
@@ -65,10 +65,10 @@ namespace FS.Utils.Component
         /// </summary>
         public void Stop(string keyName)
         {
-            if (string.IsNullOrWhiteSpace(keyName)) { throw new Exception("必须设置keyName的值！"); }
+            if (string.IsNullOrWhiteSpace(value: keyName)) throw new Exception(message: "必须设置keyName的值！");
 
-            Create(keyName);
-            ListResult.FirstOrDefault(o => o.KeyName == keyName)?.Timer.Stop();
+            Create(keyName: keyName);
+            ListResult.FirstOrDefault(predicate: o => o.KeyName == keyName)?.Timer.Stop();
         }
 
         /// <summary>
@@ -76,12 +76,13 @@ namespace FS.Utils.Component
         /// </summary>
         private SpeedResult Create(string keyName)
         {
-            var result = ListResult.Find(o => o.KeyName == keyName);
+            var result = ListResult.Find(match: o => o.KeyName == keyName);
             if (result != null) return result;
             lock (_objLock)
             {
-                if (ListResult.Count(o => o.KeyName == keyName) == 0) { ListResult.Add((result = new SpeedResult { KeyName = keyName, Timer = new Stopwatch() })); }
+                if (ListResult.Count(predicate: o => o.KeyName == keyName) == 0) ListResult.Add(item: result = new SpeedResult { KeyName = keyName, Timer = new Stopwatch() });
             }
+
             return result;
         }
 
@@ -101,20 +102,20 @@ namespace FS.Utils.Component
             public Stopwatch Timer;
 
             /// <summary>
-            ///     停止工作
-            /// </summary>
-            public void Stop()
-            {
-                Timer.Stop();
-            }
-
-            /// <summary>
             ///     使用完后，自动计算时间
             /// </summary>
             public void Dispose()
             {
                 Stop();
                 Timer.Reset();
+            }
+
+            /// <summary>
+            ///     停止工作
+            /// </summary>
+            public void Stop()
+            {
+                Timer.Stop();
             }
         }
     }
