@@ -4,35 +4,31 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FS;
-using FS.DI;
 
 namespace Farseer.Net.Demo
 {
-    class Program
+    internal class Program
     {
-        static async Task Main(string[] args)
+        private static async Task Main(string[] args)
         {
             FarseerApplication.Run<StartupModule>().Initialize();
 
-            var lst = new List<int>()
+            var lst = new List<int>
             {
                 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
             };
 
-            var dic = lst.ToDictionary(o => o, ThrowAsync);
-            await Task.WhenAll(dic.Select(o => o.Value));
-            foreach (var kv in dic)
-            {
-                Console.WriteLine(kv.Value.Result);
-            }
+            var dic = lst.ToDictionary(keySelector: o => o, elementSelector: ThrowAsync);
+            await Task.WhenAll(tasks: dic.Select(selector: o => o.Value));
+            foreach (var kv in dic) Console.WriteLine(value: kv.Value.Result);
             return;
-            
-            Thread.Sleep(-1);
+
+            Thread.Sleep(millisecondsTimeout: -1);
         }
 
         public static async Task<int> ThrowAsync(int index)
         {
-            await Task.Delay(5000);
+            await Task.Delay(millisecondsDelay: 5000);
             return index;
         }
     }

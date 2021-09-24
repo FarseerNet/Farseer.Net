@@ -7,11 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Framework\Farseer.Net\Farseer.Net.csproj" />
+        <ProjectReference Include="..\..\Framework\Farseer.Net\Farseer.Net.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Remove="test.cs" />
+        <Compile Remove="test.cs"/>
     </ItemGroup>
 
 </Project>

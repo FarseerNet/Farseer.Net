@@ -11,6 +11,6 @@ namespace Farseer.Net.DataDemo
         [Display(Name = "未指定")]
         None = -1,
         Credit = 0,
-        Cash = 1
+        Cash   = 1
     }
 }

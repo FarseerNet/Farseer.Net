@@ -7,7 +7,7 @@ using StackExchange.Redis;
 namespace Farseer.Net.MQ.RedisStreamDemo.Consumer
 {
     /// <summary>
-    /// 消费客户端
+    ///     消费客户端
     /// </summary>
     [Consumer(Enable = true, RedisName = "default", GroupName = "", QueueName = "test2", PullCount = 2, ConsumeThreadNums = 1)]
     public class TestConsumer : IListenerMessage
@@ -16,11 +16,11 @@ namespace Farseer.Net.MQ.RedisStreamDemo.Consumer
         {
             foreach (var message in messages)
             {
-                System.Console.WriteLine("接收到信息为:" + message.Values[0]);
-                ea.Ack(message);
+                Console.WriteLine(value: "接收到信息为:" + message.Values[0]);
+                ea.Ack(message: message);
             }
 
-            return Task.FromResult(true);
+            return Task.FromResult(result: true);
         }
 
         public Task<bool> FailureHandling(StreamEntry[] messages, ConsumeContext ea) => throw new NotImplementedException();

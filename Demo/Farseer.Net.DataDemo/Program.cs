@@ -1,16 +1,15 @@
-﻿using System.Threading.Tasks;
-using FS;
+﻿using FS;
 
 namespace Farseer.Net.DataDemo
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             FarseerApplication.Run<StartupModule>().Initialize();
 
             var lst = new UserCoinsAgent().ToCreditList();
-            var a = 1;
+            var a   = 1;
             a++;
         }
     }

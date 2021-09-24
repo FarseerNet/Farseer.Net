@@ -4,9 +4,9 @@ using FS.Modules;
 namespace Farseer.Net.LinkTrackDemo
 {
     /// <summary>
-    /// 启动模块
+    ///     启动模块
     /// </summary>
-    [DependsOn()]
+    [DependsOn]
     public class StartupModule : FarseerModule
     {
         public override void PreInitialize()

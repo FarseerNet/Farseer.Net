@@ -5,17 +5,17 @@ using FS.Core.LinkTrack;
 
 namespace Farseer.Net.LinkTrackDemo
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             FarseerApplication.Run<StartupModule>().Initialize();
-            using (var trackEnd = FsLinkTrack.Track(""))
+            using (var trackEnd = FsLinkTrack.Track(message: ""))
             {
-                throw new Exception("aaaaa");
+                throw new Exception(message: "aaaaa");
             }
-            
-            Thread.Sleep(-1);
+
+            Thread.Sleep(millisecondsTimeout: -1);
         }
     }
 }

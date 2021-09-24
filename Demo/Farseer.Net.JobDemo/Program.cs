@@ -11,7 +11,7 @@ namespace Farseer.Net.JobDemo
         {
             // 初始化模块
             FarseerApplication.Run<StartupModule>().Initialize();
-            Thread.Sleep(-1);
+            Thread.Sleep(millisecondsTimeout: -1);
         }
     }
 }

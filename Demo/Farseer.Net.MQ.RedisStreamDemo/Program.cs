@@ -9,31 +9,31 @@ using FS.MQ.RedisStream.Attr;
 namespace Farseer.Net.MQ.RedisStreamDemo
 {
     [RedisStream]
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             // 项目启动时初始化
             FarseerApplication.Run<StartupModule>().Initialize();
 
             // ******************** 以下演示消息发送 *********************
-            var redisStreamProduct = IocManager.Instance.Resolve<IRedisStreamProduct>("test2");
-            redisStreamProduct.Send(DateTime.Now).ToString();
+            var redisStreamProduct = IocManager.Instance.Resolve<IRedisStreamProduct>(name: "test2");
+            redisStreamProduct.Send(entity: DateTime.Now).ToString();
 
             // ******************** 以下为了准备测试1S内，能发多少条消息 *********************
             var startNew = Stopwatch.StartNew();
             startNew.Start();
-            Thread.Sleep(1000);
+            Thread.Sleep(millisecondsTimeout: 1000);
             startNew.Stop();
             // 以上为了JIT，以防测试差异较大
 
             // ******************** 测试1秒内，能发送多少条消息 *********************
-            Send(redisStreamProduct);
+            Send(redisStreamProduct: redisStreamProduct);
 
-            Thread.Sleep(-1);
+            Thread.Sleep(millisecondsTimeout: -1);
         }
 
-        static void Send(IRedisStreamProduct redisStreamProduct)
+        private static void Send(IRedisStreamProduct redisStreamProduct)
         {
             var startNew = Stopwatch.StartNew();
             var count    = 0;
@@ -41,11 +41,11 @@ namespace Farseer.Net.MQ.RedisStreamDemo
             startNew.Restart();
             while (startNew.ElapsedMilliseconds < 1000)
             {
-                redisStreamProduct.Send(count.ToString());
+                redisStreamProduct.Send(message: count.ToString());
                 count++;
             }
 
-            Console.WriteLine(count);
+            Console.WriteLine(value: count);
         }
     }
 }

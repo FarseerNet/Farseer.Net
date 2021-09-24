@@ -18,7 +18,7 @@ namespace Farseer.Net.DataDemo
 
         public List<UserCoinsPO> ToCreditList()
         {
-            return _context.UserCoins.SetName("lottery_company_dt", "account_user_coins").Where(o => o.CoinsType == EumCoinsType.Credit && o.Quota != o.Coins).ToList();
+            return _context.UserCoins.SetName(dbName: "lottery_company_dt", tableName: "account_user_coins").Where(@where: o => o.CoinsType == EumCoinsType.Credit && o.Quota != o.Coins).ToList();
         }
     }
 }

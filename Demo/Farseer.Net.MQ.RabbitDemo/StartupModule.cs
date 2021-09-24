@@ -4,7 +4,7 @@ using FS.MQ.Rabbit;
 namespace Farseer.Net.MQ.RabbitDemo
 {
     /// <summary>
-    /// 启动模块
+    ///     启动模块
     /// </summary>
     [DependsOn(typeof(RabbitModule))]
     public class StartupModule : FarseerModule

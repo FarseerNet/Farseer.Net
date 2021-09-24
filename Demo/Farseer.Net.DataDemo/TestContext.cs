@@ -14,14 +14,15 @@ namespace Farseer.Net.DataDemo
     /// </summary>
     public class TestContext : DbContext<TestContext>
     {
-        public TestContext() : base("test", false) { }
+        public TestContext() : base(name: "test")
+        {
+        }
+
+        public TableSet<UserCoinsPO> UserCoins { get; set; }
 
         protected override void CreateModelInit(Dictionary<string, SetDataMap> map)
         {
-            map["UserCoins"].SetName("account_user_coins");
+            map[key: "UserCoins"].SetName(tableName: "account_user_coins");
         }
-        
-        public TableSet<UserCoinsPO> UserCoins { get; set; }
-
     }
 }

@@ -3,13 +3,13 @@ using FS;
 
 namespace Farseer.Net.ElasticSearchDemo
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             FarseerApplication.Run<StartupModule>().Initialize();
 
-            TestContext.Data.User.Insert(new UserPo
+            TestContext.Data.User.Insert(model: new UserPo
             {
                 UserName = DateTime.Now.ToString()
             });

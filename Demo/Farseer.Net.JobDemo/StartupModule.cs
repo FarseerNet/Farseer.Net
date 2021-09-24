@@ -4,7 +4,7 @@ using FS.Modules;
 namespace Farseer.Net.JobDemo
 {
     /// <summary>
-    /// 启动模块
+    ///     启动模块
     /// </summary>
     [DependsOn(typeof(JobModule))] // 依赖Job模块
     public class StartupModule : FarseerModule

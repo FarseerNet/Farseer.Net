@@ -7,14 +7,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Content Include="appsettings.json">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
+        <Content Include="appsettings.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Framework\Farseer.Net.MQ.RedisStream\Farseer.Net.MQ.RedisStream.csproj" />
-      <ProjectReference Include="..\..\Framework\Farseer.Net\Farseer.Net.csproj" />
+        <ProjectReference Include="..\..\Framework\Farseer.Net.MQ.RedisStream\Farseer.Net.MQ.RedisStream.csproj"/>
+        <ProjectReference Include="..\..\Framework\Farseer.Net\Farseer.Net.csproj"/>
     </ItemGroup>
 
 </Project>

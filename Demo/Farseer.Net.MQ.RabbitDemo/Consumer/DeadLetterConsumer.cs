@@ -11,8 +11,8 @@ namespace Farseer.Net.MQ.RabbitDemo.Consumer
     {
         public Task<bool> Consumer(string message, object sender, BasicDeliverEventArgs ea)
         {
-            System.Console.WriteLine(ea.ConsumerTag + "死信消息:" + message);
-            return Task.FromResult(true);
+            Console.WriteLine(value: ea.ConsumerTag + "死信消息:" + message);
+            return Task.FromResult(result: true);
         }
     }
 }
