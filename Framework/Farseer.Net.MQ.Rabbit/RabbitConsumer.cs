@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using FS.Core.LinkTrack;
 using FS.DI;
+using FS.MQ.Rabbit.Attr;
 using FS.MQ.Rabbit.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client.Exceptions;
@@ -18,7 +21,7 @@ namespace FS.MQ.Rabbit
         /// <summary>
         ///     消费监听
         /// </summary>
-        private readonly string _consumerType;
+        private readonly string _consumerTypeName;
 
         /// <summary>
         ///     线程数（默认8）
@@ -29,6 +32,8 @@ namespace FS.MQ.Rabbit
         ///     ioc
         /// </summary>
         private readonly IIocManager _iocManager;
+
+        private readonly Type _consumerType;
 
         /// <summary>
         ///     最后ACK多少秒超时则重连（默认5分钟）
@@ -77,7 +82,8 @@ namespace FS.MQ.Rabbit
         public RabbitConsumer(IIocManager iocManager, Type consumerType, RabbitItemConfig rabbitItemConfig, string queueName, int lastAckTimeoutRestart, uint consumeThreadNums)
         {
             _iocManager            = iocManager;
-            _consumerType          = consumerType.FullName;
+            _consumerType          = consumerType;
+            _consumerTypeName      = consumerType.FullName;
             _rabbitConnect         = new RabbitConnect(config: rabbitItemConfig);
             _lastAckTimeoutRestart = lastAckTimeoutRestart > 0 ? lastAckTimeoutRestart : 5 * 60;
             _consumeThreadNums     = consumeThreadNums     == 0 ? (uint)Environment.ProcessorCount : consumeThreadNums;
@@ -168,7 +174,7 @@ namespace FS.MQ.Rabbit
                 ea.BasicProperties.Headers ??= new Dictionary<string, object>();
                 ea.BasicProperties.Headers.Add(key: "QueueName", value: _queueName);
 
-                var listener = _iocManager.Resolve<IListenerMessage>(name: _consumerType);
+                var listener = _iocManager.Resolve<IListenerMessage>(name: _consumerTypeName);
                 var result   = false;
                 var message  = Encoding.UTF8.GetString(bytes: ea.Body.ToArray());
                 try
@@ -206,6 +212,25 @@ namespace FS.MQ.Rabbit
                     {
                         IocManager.Instance.Logger<RabbitConsumer>().LogError(exception: exception, message: "失败处理出现异常：" + listener.GetType().FullName);
                         result = false;
+                    }
+                    finally
+                    {
+                        // 消息仍然失败，则对消息累加ErrorCount。
+                        if (!result)
+                        {
+                            var json = JsonConvert.DeserializeObject<Dictionary<string, object>>(message);
+                            if (json.ContainsKey("ErrorCount"))
+                            {
+                                int.TryParse(json["ErrorCount"].ToString(), out var errorCount);
+                                json["ErrorCount"] = errorCount + 1;
+                                message            = JsonConvert.SerializeObject(json);
+                            }
+
+                            // 重新发消息
+                            var consumerAtt   = _consumerType.GetCustomAttribute<ConsumerAttribute>();
+                            var rabbitProduct = new RabbitProduct(_rabbitConnect, new ProductConfig() { UseConfirmModel = true, ExchangeType = consumerAtt.ExchangeType });
+                            result = rabbitProduct.Send(message, consumerAtt.RoutingKey, consumerAtt.ExchangeName);
+                        }
                     }
                 }
                 finally
