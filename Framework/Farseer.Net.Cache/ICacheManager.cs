@@ -12,185 +12,162 @@ namespace FS.Cache
         /// <summary>
         ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
-        /// <param name="cacheKey"> 缓存Key </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         /// <param name="get"> 数据源获取 </param>
         /// <param name="getEntityId"> 实体的ID（必须是具有唯一性） </param>
-        /// <param name="cacheOption"> 缓存策略 </param>
-        List<TEntity> GetList<TEntity>(string cacheKey, Func<List<TEntity>> get, Func<TEntity, object> getEntityId, CacheOption cacheOption = null);
+        List<TEntity> GetList<TEntity, TEntityId>(CacheKey cacheKey, Func<List<TEntity>> get, Func<TEntity, TEntityId> getEntityId);
 
         /// <summary>
         ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
-        /// <param name="cacheKey"> 缓存Key </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         /// <param name="get"> 数据源获取 </param>
         /// <param name="getEntityId"> 实体的ID（必须是具有唯一性） </param>
-        /// <param name="cacheOption"> 缓存策略 </param>
-        Task<List<TEntity>> GetListAsync<TEntity>(string cacheKey, Func<List<TEntity>> get, Func<TEntity, object> getEntityId, CacheOption cacheOption = null);
+        Task<List<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey cacheKey, Func<List<TEntity>> get, Func<TEntity, TEntityId> getEntityId);
 
         /// <summary>
         ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
-        /// <param name="cacheKey"> 缓存Key </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         /// <param name="get"> 数据源获取 </param>
         /// <param name="getEntityId"> 实体的ID（必须是具有唯一性） </param>
-        /// <param name="cacheOption"> 缓存策略 </param>
-        Task<List<TEntity>> GetListAsync<TEntity>(string cacheKey, Func<Task<List<TEntity>>> get, Func<TEntity, object> getEntityId, CacheOption cacheOption = null);
+        Task<List<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey cacheKey, Func<Task<List<TEntity>>> get, Func<TEntity, TEntityId> getEntityId);
 
         /// <summary>
         ///     保存列表到缓存中
         /// </summary>
-        /// <param name="cacheKey"> 缓存Key </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         /// <param name="lst"> 数据源获取 </param>
         /// <param name="getEntityId"> 实体的ID（必须是具有唯一性） </param>
-        /// <param name="cacheOption"> 缓存配置项 </param>
-        void SaveList<TEntity>(string cacheKey, List<TEntity> lst, Func<TEntity, object> getEntityId, CacheOption cacheOption = null);
+        void SaveList<TEntity, TEntityId>(CacheKey cacheKey, List<TEntity> lst, Func<TEntity, TEntityId> getEntityId);
 
         /// <summary>
         ///     保存列表到缓存中
         /// </summary>
-        /// <param name="cacheKey"> 缓存Key </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         /// <param name="entity"> 数据源获取 </param>
         /// <param name="getEntityId"> 实体的ID（必须是具有唯一性） </param>
-        /// <param name="cacheOption"> 缓存配置项 </param>
-        void SaveItem<TEntity>(string cacheKey, TEntity entity, object getEntityId, CacheOption cacheOption = null);
+        void SaveItem<TEntity, TEntityId>(CacheKey cacheKey, TEntity entity, TEntityId getEntityId);
 
         /// <summary>
         ///     删除缓存item
         /// </summary>
-        /// <param name="cacheKey"> 缓存KEY </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         /// <param name="fieldKey"> 缓存Field </param>
-        /// <param name="cacheStoreType"> 缓存策略 </param>
-        void Remove(string cacheKey, string fieldKey, EumCacheStoreType cacheStoreType);
+        void Remove<TEntityId>(CacheKey cacheKey, TEntityId fieldKey);
 
         /// <summary>
         ///     删除整个缓存
         /// </summary>
-        /// <param name="cacheKey"> 缓存KEY </param>
-        /// <param name="cacheStoreType"> 缓存策略 </param>
-        void Remove(string cacheKey, EumCacheStoreType cacheStoreType);
+        /// <param name="cacheKey"> 缓存策略 </param>
+        void Remove(CacheKey cacheKey);
 
         /// <summary>
         ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
-        /// <param name="cacheKey"> 缓存Key </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         /// <param name="fieldKey"> hash里的field值 </param>
         /// <param name="get"> 数据源获取 </param>
         /// <param name="getEntityId"> 实体的ID（必须是具有唯一性） </param>
-        /// <param name="cacheOption"> 缓存策略 </param>
-        TEntity GetItem<TEntity>(string cacheKey, string fieldKey, Func<List<TEntity>> get, Func<TEntity, object> getEntityId, CacheOption cacheOption = null);
+        TEntity GetItem<TEntity, TEntityId>(CacheKey cacheKey, TEntityId fieldKey, Func<List<TEntity>> get, Func<TEntity, TEntityId> getEntityId);
 
         /// <summary>
         ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
-        /// <param name="cacheKey"> 缓存Key </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         /// <param name="fieldKey"> hash里的field值 </param>
         /// <param name="get"> 数据源获取 </param>
         /// <param name="getEntityId"> 实体的ID（必须是具有唯一性） </param>
-        /// <param name="cacheOption"> 缓存策略 </param>
-        Task<TEntity> GetItemAsync<TEntity>(string cacheKey, string fieldKey, Func<Task<List<TEntity>>> get, Func<TEntity, object> getEntityId, CacheOption cacheOption = null);
+        Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey cacheKey, TEntityId fieldKey, Func<Task<List<TEntity>>> get, Func<TEntity, TEntityId> getEntityId);
 
         /// <summary>
         ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
-        /// <param name="cacheKey"> 缓存Key </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         /// <param name="fieldKey"> hash里的field值 </param>
         /// <param name="get"> 数据源获取 </param>
         /// <param name="getEntityId"> 实体的ID（必须是具有唯一性） </param>
-        /// <param name="cacheOption"> 缓存策略 </param>
-        Task<TEntity> GetItemAsync<TEntity>(string cacheKey, string fieldKey, Func<List<TEntity>> get, Func<TEntity, object> getEntityId, CacheOption cacheOption = null);
+        Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey cacheKey, TEntityId fieldKey, Func<List<TEntity>> get, Func<TEntity, TEntityId> getEntityId);
 
         /// <summary>
         ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
-        /// <param name="cacheKey"> 缓存Key </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         /// <param name="fieldKey"> hash里的field值 </param>
         /// <param name="get"> 数据源获取 </param>
         /// <param name="getEntityId"> 实体的ID（必须是具有唯一性） </param>
-        /// <param name="cacheOption"> 缓存策略 </param>
-        Task<TEntity> GetItemAsync<TEntity>(string cacheKey, string fieldKey, Func<TEntity> get, Func<TEntity, object> getEntityId, CacheOption cacheOption = null);
+        Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey cacheKey, TEntityId fieldKey, Func<TEntity> get, Func<TEntity, TEntityId> getEntityId);
 
         /// <summary>
         ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
-        /// <param name="cacheKey"> 缓存Key </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         /// <param name="fieldKey"> hash里的field值 </param>
         /// <param name="get"> 数据源获取 </param>
         /// <param name="getEntityId"> 实体的ID（必须是具有唯一性） </param>
-        /// <param name="cacheOption"> 缓存策略 </param>
-        Task<TEntity> GetItemAsync<TEntity>(string cacheKey, string fieldKey, Func<Task<TEntity>> get, Func<TEntity, object> getEntityId, CacheOption cacheOption = null);
+        Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey cacheKey, TEntityId fieldKey, Func<Task<TEntity>> get, Func<TEntity, TEntityId> getEntityId);
 
         /// <summary>
         ///     删除缓存item
         /// </summary>
-        /// <param name="cacheKey"> 缓存KEY </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         /// <param name="fieldKey"> 缓存Field </param>
-        /// <param name="cacheStoreType"> 缓存策略 </param>
-        Task RemoveAsync(string cacheKey, string fieldKey, EumCacheStoreType cacheStoreType);
+        Task RemoveAsync<TEntityId>(CacheKey cacheKey, TEntityId fieldKey);
 
         /// <summary>
         ///     删除整个缓存
         /// </summary>
-        /// <param name="cacheKey"> 缓存KEY </param>
-        /// <param name="cacheStoreType"> 缓存策略 </param>
-        Task RemoveAsync(string cacheKey, EumCacheStoreType cacheStoreType);
+        Task RemoveAsync(CacheKey cacheKey);
 
         /// <summary>
         ///     保存列表到缓存中
         /// </summary>
-        /// <param name="cacheKey"> 缓存Key </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         /// <param name="lst"> 数据源获取 </param>
         /// <param name="getEntityId"> 实体的ID（必须是具有唯一性） </param>
-        /// <param name="cacheOption"> 缓存配置项 </param>
-        Task SaveListAsync<TEntity>(string cacheKey, List<TEntity> lst, Func<TEntity, object> getEntityId, CacheOption cacheOption = null);
+        Task SaveListAsync<TEntity, TEntityId>(CacheKey cacheKey, List<TEntity> lst, Func<TEntity, TEntityId> getEntityId);
 
         /// <summary>
         ///     保存列表到缓存中
         /// </summary>
-        /// <param name="cacheKey"> 缓存Key </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         /// <param name="entity"> 数据源获取 </param>
         /// <param name="getEntityId"> 实体的ID（必须是具有唯一性） </param>
-        /// <param name="cacheOption"> 缓存配置项 </param>
-        Task SaveItemAsync<TEntity>(string cacheKey, TEntity entity, object getEntityId, CacheOption cacheOption = null);
+        Task SaveItemAsync<TEntity, TEntityId>(CacheKey cacheKey, TEntity entity, TEntityId getEntityId);
 
         /// <summary>
         ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
-        /// <param name="cacheKey"> 缓存Key </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         /// <param name="get"> 数据源获取 </param>
-        /// <param name="cacheOption"> 缓存策略 </param>
-        TEntity Get<TEntity>(string cacheKey, Func<TEntity> get, CacheOption cacheOption = null);
+        TEntity Get<TEntity>(CacheKey cacheKey, Func<TEntity> get);
 
         /// <summary>
         ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
-        /// <param name="cacheKey"> 缓存Key </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         /// <param name="get"> 数据源获取 </param>
-        /// <param name="cacheOption"> 缓存策略 </param>
-        Task<TEntity> GetAsync<TEntity>(string cacheKey, Func<TEntity> get, CacheOption cacheOption = null);
-
+        Task<TEntity> GetAsync<TEntity>(CacheKey cacheKey, Func<TEntity> get);
 
         /// <summary>
         ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
-        /// <param name="cacheKey"> 缓存Key </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         /// <param name="get"> 数据源获取 </param>
-        /// <param name="cacheOption"> 缓存策略 </param>
-        Task<TEntity> GetAsync<TEntity>(string cacheKey, Func<Task<TEntity>> get, CacheOption cacheOption = null);
+        Task<TEntity> GetAsync<TEntity>(CacheKey cacheKey, Func<Task<TEntity>> get);
 
         /// <summary>
         ///     保存对象
         /// </summary>
-        /// <param name="cacheKey"> 缓存Key </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         /// <param name="entity"> 保存对象 </param>
-        /// <param name="cacheOption"> 缓存策略 </param>
-        void Save<TEntity>(string cacheKey, TEntity entity, CacheOption cacheOption);
+        void Save<TEntity>(CacheKey cacheKey, TEntity entity);
 
         /// <summary>
         ///     保存对象
         /// </summary>
-        /// <param name="cacheKey"> 缓存Key </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         /// <param name="entity"> 保存对象 </param>
-        /// <param name="cacheOption"> 缓存策略 </param>
-        Task SaveAsync<TEntity>(string cacheKey, TEntity entity, CacheOption cacheOption);
+        Task SaveAsync<TEntity>(CacheKey cacheKey, TEntity entity);
     }
 }

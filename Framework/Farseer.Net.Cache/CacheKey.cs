@@ -5,18 +5,23 @@ namespace FS.Cache
     /// <summary>
     ///     读写缓存的选项设置
     /// </summary>
-    public class CacheOption
+    public class CacheKey
     {
-        public CacheOption()
+        public CacheKey()
         {
         }
 
-        public CacheOption(EumCacheStoreType cacheStoreType, TimeSpan? redisExpiry = null, TimeSpan? memoryExpiry = null)
+        public CacheKey(string key, EumCacheStoreType cacheStoreType, TimeSpan? redisExpiry = null, TimeSpan? memoryExpiry = null)
         {
+            Key            = key;
             CacheStoreType = cacheStoreType;
             RedisExpiry    = redisExpiry;
             MemoryExpiry   = memoryExpiry;
         }
+        /// <summary>
+        /// 缓存KEY
+        /// </summary>
+        public string Key { get; set; }
 
         /// <summary>
         ///     缓存策略（默认Memory模式）
