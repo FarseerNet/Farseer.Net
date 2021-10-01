@@ -61,10 +61,7 @@ namespace FS.Core.LinkTrack
                 {
                     var lst = new List<string>
                     {
-                        $"Path：{_linkTrackContext.Path}",
-                        $"Method：{_linkTrackContext.Method}",
-                        $"ContentType：{_linkTrackContext.ContentType}",
-                        $"Time：{_linkTrackContext.UseTs} ms"
+                        $"{_linkTrackContext.ContentType} {_linkTrackContext.Method}：{_linkTrackContext.Path} {_linkTrackContext.UseTs} ms",
                     };
                     if (!string.IsNullOrWhiteSpace(value: _linkTrackContext.RequestBody)) lst.Add(item: $"Body：{_linkTrackContext.RequestBody}");
                     IocManager.Instance.Logger<FsLinkTrack>().LogInformation(message: $"{lst.ToString(sign: "\r\n")}");
