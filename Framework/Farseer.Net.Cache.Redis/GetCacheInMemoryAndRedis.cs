@@ -117,6 +117,68 @@ namespace FS.Cache.Redis
         }
 
         /// <summary>
+        /// 是否存在此项数据
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        public bool Exists(CacheKey cacheKey)
+        {
+            // 先从本地缓存获取，如果为false，则从redis再次获取（双重验证）
+            var isExists            = _memoryCache.Exists(cacheKey);
+            if (!isExists) isExists = _redisCache.Exists(cacheKey);
+            return isExists;
+        }
+
+        /// <summary>
+        /// 是否存在此项数据
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        public async Task<bool> ExistsAsync(CacheKey cacheKey)
+        {
+            // 先从本地缓存获取，如果为false，则从redis再次获取（双重验证）
+            var isExists            = await _memoryCache.ExistsAsync(cacheKey);
+            if (!isExists) isExists = await _redisCache.ExistsAsync(cacheKey);
+            return isExists;
+        }
+
+        /// <summary>
+        /// 是否存在此项数据
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        /// <param name="fieldKey"> 实体的ID（必须是具有唯一性） </param>
+        public bool ExistsItem<TEntityId>(CacheKey cacheKey, TEntityId fieldKey)
+        {
+            // 先从本地缓存获取，如果为false，则从redis再次获取（双重验证）
+            var isExists            = _memoryCache.ExistsItem(cacheKey, fieldKey);
+            if (!isExists) isExists = _redisCache.ExistsItem(cacheKey, fieldKey);
+            return isExists;
+        }
+
+        /// <summary>
+        /// 是否存在此项数据
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        /// <param name="fieldKey"> 实体的ID（必须是具有唯一性） </param>
+        public async Task<bool> ExistsItemAsync<TEntityId>(CacheKey cacheKey, TEntityId fieldKey)
+        {
+            // 先从本地缓存获取，如果为false，则从redis再次获取（双重验证）
+            var isExists            = await _memoryCache.ExistsItemAsync(cacheKey, fieldKey);
+            if (!isExists) isExists = await _redisCache.ExistsItemAsync(cacheKey, fieldKey);
+            return isExists;
+        }
+
+        /// <summary>
+        /// 获取集合的数量
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        public long GetCount(CacheKey cacheKey) => _memoryCache.GetCount(cacheKey);
+
+        /// <summary>
+        /// 获取集合的数量
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        public Task<long> GetCountAsync(CacheKey cacheKey) => _memoryCache.GetCountAsync(cacheKey);
+
+        /// <summary>
         ///     将实体保存到缓存中
         /// </summary>
         public void SaveItem<TEntity, TEntityId>(CacheKey cacheKey, TEntity entity, Func<TEntity, TEntityId> getEntityId)
@@ -197,7 +259,7 @@ namespace FS.Cache.Redis
         /// <summary>
         ///     从缓存集合中读取实体
         /// </summary>
-        /// <param name="cacheKeyion"> 缓存策略 </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         public TEntity Get<TEntity>(CacheKey cacheKey)
         {
             // 先读memory
@@ -214,7 +276,7 @@ namespace FS.Cache.Redis
         /// <summary>
         ///     从缓存集合中读取实体
         /// </summary>
-        /// <param name="cacheKeyion"> 缓存策略 </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         public async Task<TEntity> GetAsync<TEntity>(CacheKey cacheKey)
         {
             // 先读memory
@@ -236,7 +298,7 @@ namespace FS.Cache.Redis
         ///     保存对象
         /// </summary>
         /// <param name="entity"> 保存对象 </param>
-        /// <param name="cacheKeyion"> 缓存策略 </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         public void Save<TEntity>(CacheKey cacheKey, TEntity entity)
         {
             _redisCache.Save(cacheKey, entity: entity);
@@ -248,7 +310,7 @@ namespace FS.Cache.Redis
         ///     保存对象
         /// </summary>
         /// <param name="entity"> 保存对象 </param>
-        /// <param name="cacheKeyion"> 缓存策略 </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         public async Task SaveAsync<TEntity>(CacheKey cacheKey, TEntity entity)
         {
             await _redisCache.SaveAsync(cacheKey, entity: entity);

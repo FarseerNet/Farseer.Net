@@ -54,6 +54,56 @@ namespace FS.Cache
         public Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey cacheKey, TEntityId fieldKey, Func<TEntity, TEntityId> getEntityId) => Task.FromResult(result: GetItem(cacheKey, fieldKey: fieldKey, getEntityId: getEntityId));
 
         /// <summary>
+        /// 是否存在此项数据
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        public bool Exists(CacheKey cacheKey) => MyCache.TryGetValue(cacheKey, result: out _);
+
+        /// <summary>
+        /// 是否存在此项数据
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        public Task<bool> ExistsAsync(CacheKey cacheKey) => Task.FromResult(Exists(cacheKey));
+
+        /// <summary>
+        /// 是否存在此项数据
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        /// <param name="fieldKey"> 实体的ID（必须是具有唯一性） </param>
+        public bool ExistsItem<TEntityId>(CacheKey cacheKey, TEntityId fieldKey)
+        {
+            if (MyCache.TryGetValue(cacheKey, result: out var result))
+            {
+                var dic = (IDictionary)result;
+                return dic.Contains(fieldKey);
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 是否存在此项数据
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        /// <param name="fieldKey"> 实体的ID（必须是具有唯一性） </param>
+        public Task<bool> ExistsItemAsync<TEntityId>(CacheKey cacheKey, TEntityId fieldKey) => Task.FromResult(result: ExistsItem(cacheKey, fieldKey));
+
+        /// <summary>
+        /// 获取集合的数量
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        public long GetCount(CacheKey cacheKey)
+        {
+            return MyCache.Count;
+        }
+
+        /// <summary>
+        /// 获取集合的数量
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        public Task<long> GetCountAsync(CacheKey cacheKey) => Task.FromResult(result: GetCount(cacheKey));
+
+        /// <summary>
         ///     将实体保存到缓存中
         /// </summary>
         public void SaveItem<TEntity, TEntityId>(CacheKey cacheKey, TEntity entity, Func<TEntity, TEntityId> getEntityId)
@@ -70,7 +120,7 @@ namespace FS.Cache
 
             // 设置过期时间
             if (cacheKey.MemoryExpiry != null) cacheEntry.AbsoluteExpirationRelativeToNow = cacheKey.MemoryExpiry.GetValueOrDefault();
-            var newDic                                                                       = new ConcurrentDictionary<TEntityId, TEntity>();
+            var newDic                                                                    = new ConcurrentDictionary<TEntityId, TEntity>();
             newDic.TryAdd(fieldKey, entity);
             cacheEntry.Value = newDic;
         }
@@ -154,7 +204,7 @@ namespace FS.Cache
         /// <summary>
         ///     从缓存集合中读取实体
         /// </summary>
-        /// <param name="cacheKeyion"> 缓存策略 </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         public TEntity Get<TEntity>(CacheKey cacheKey)
         {
             if (MyCache.TryGetValue(cacheKey, result: out var result))
@@ -168,14 +218,14 @@ namespace FS.Cache
         /// <summary>
         ///     从缓存集合中读取实体
         /// </summary>
-        /// <param name="cacheKeyion"> 缓存策略 </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         public Task<TEntity> GetAsync<TEntity>(CacheKey cacheKey) => Task.FromResult(result: Get<TEntity>(cacheKey));
 
         /// <summary>
         ///     保存对象
         /// </summary>
         /// <param name="entity"> 保存对象 </param>
-        /// <param name="cacheKeyion"> 缓存策略 </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         public void Save<TEntity>(CacheKey cacheKey, TEntity entity)
         {
             var cacheEntry = MyCache.CreateEntry(cacheKey);
@@ -190,7 +240,7 @@ namespace FS.Cache
         ///     保存对象
         /// </summary>
         /// <param name="entity"> 保存对象 </param>
-        /// <param name="cacheKeyion"> 缓存策略 </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         public Task SaveAsync<TEntity>(CacheKey cacheKey, TEntity entity)
         {
             Save(cacheKey, entity: entity);

@@ -115,5 +115,37 @@ namespace FS.Cache
         /// <param name="entity"> 保存对象 </param>
         /// <param name="cacheKeyion"> 缓存策略 </param>
         Task SaveAsync<TEntity>(CacheKey cacheKey, TEntity entity);
+        /// <summary>
+        /// 是否存在此项数据
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        /// <param name="fieldKey"> 实体的ID（必须是具有唯一性） </param>
+        bool ExistsItem<TEntityId>(CacheKey cacheKey, TEntityId fieldKey);
+        /// <summary>
+        /// 是否存在此项数据
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        /// <param name="fieldKey"> 实体的ID（必须是具有唯一性） </param>
+        Task<bool> ExistsItemAsync<TEntityId>(CacheKey cacheKey, TEntityId fieldKey);
+        /// <summary>
+        /// 获取集合的数量
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        long GetCount(CacheKey cacheKey);
+        /// <summary>
+        /// 获取集合的数量
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        Task<long> GetCountAsync(CacheKey cacheKey);
+        /// <summary>
+        /// 是否存在此项数据
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        bool Exists(CacheKey cacheKey);
+        /// <summary>
+        /// 是否存在此项数据
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        Task<bool> ExistsAsync(CacheKey cacheKey);
     }
 }

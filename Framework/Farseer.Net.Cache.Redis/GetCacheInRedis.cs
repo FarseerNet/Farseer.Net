@@ -54,6 +54,62 @@ namespace FS.Cache.Redis
         }
 
         /// <summary>
+        /// 是否存在此项数据
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        /// <param name="fieldKey"> 实体的ID（必须是具有唯一性） </param>
+        public bool ExistsItem<TEntityId>(CacheKey cacheKey, TEntityId fieldKey)
+        {
+            return _redisCacheManager.Db.HashExists(cacheKey.Key, fieldKey.ToString());
+        }
+
+        /// <summary>
+        /// 是否存在此项数据
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        public bool Exists(CacheKey cacheKey)
+        {
+            return _redisCacheManager.Db.KeyExists(cacheKey.Key);
+        }
+
+        /// <summary>
+        /// 是否存在此项数据
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        public Task<bool> ExistsAsync(CacheKey cacheKey)
+        {
+            return _redisCacheManager.Db.KeyExistsAsync(cacheKey.Key);
+        }
+
+        /// <summary>
+        /// 是否存在此项数据
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        /// <param name="fieldKey"> 实体的ID（必须是具有唯一性） </param>
+        public Task<bool> ExistsItemAsync<TEntityId>(CacheKey cacheKey, TEntityId fieldKey)
+        {
+            return _redisCacheManager.Db.HashExistsAsync(cacheKey.Key, fieldKey.ToString());
+        }
+
+        /// <summary>
+        /// 获取集合的数量
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        public long GetCount(CacheKey cacheKey)
+        {
+            return _redisCacheManager.Db.HashLength(cacheKey.Key);
+        }
+
+        /// <summary>
+        /// 获取集合的数量
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        public Task<long> GetCountAsync(CacheKey cacheKey)
+        {
+            return _redisCacheManager.Db.HashLengthAsync(cacheKey.Key);
+        }
+
+        /// <summary>
         ///     将实体保存到缓存中
         /// </summary>
         public void SaveItem<TEntity, TEntityId>(CacheKey cacheKey, TEntity entity, Func<TEntity, TEntityId> getEntityId)
