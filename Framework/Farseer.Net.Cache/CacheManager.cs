@@ -37,10 +37,32 @@ namespace FS.Cache
             if (lst != null && lst.Count != 0) return lst;
 
             // 缓存没有，则通过get委托获取（一般是数据库的数据源）
-            lst = get();
-            if (lst?.Count > 0) _getCache.SaveList(cacheKey, lst: lst);
-
+            if (get != null)
+            {
+                lst = get();
+                if (lst?.Count > 0) _getCache.SaveList(cacheKey, lst: lst);
+            }
             return lst;
+        }
+
+        /// <summary>
+        ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        public List<TEntity> GetList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey)
+        {
+            SetCache(cacheKey: cacheKey);
+            return _getCache.GetList(cacheKey);
+        }
+
+        /// <summary>
+        ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        public Task<List<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey)
+        {
+            SetCache(cacheKey: cacheKey);
+            return _getCache.GetListAsync(cacheKey);
         }
 
         /// <summary>
@@ -56,9 +78,11 @@ namespace FS.Cache
             if (lst != null && lst.Count != 0) return lst;
 
             // 缓存没有，则通过get委托获取（一般是数据库的数据源）
-            lst = get();
-            if (lst?.Count > 0) await _getCache.SaveListAsync(cacheKey, lst: lst);
-
+            if (get != null)
+            {
+                lst = get();
+                if (lst?.Count > 0) await _getCache.SaveListAsync(cacheKey, lst: lst);
+            }
             return lst;
         }
 
@@ -75,9 +99,11 @@ namespace FS.Cache
             if (lst != null && lst.Count != 0) return lst;
 
             // 缓存没有，则通过get委托获取（一般是数据库的数据源）
-            lst = await get();
-            if (lst?.Count > 0) await _getCache.SaveListAsync(cacheKey, lst: lst);
-
+            if (get != null)
+            {
+                lst = await get();
+                if (lst?.Count > 0) await _getCache.SaveListAsync(cacheKey, lst: lst);
+            }
             return lst;
         }
 
@@ -188,7 +214,7 @@ namespace FS.Cache
         /// <param name="get"> 数据源获取 </param>
         /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public async Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<TEntity> get)
+        public async Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<TEntity> get = null)
         {
             SetCache(cacheKey: cacheKey);
 
@@ -197,13 +223,15 @@ namespace FS.Cache
             if (entity != null) return entity;
 
             // 缓存没有，则通过get委托获取（一般是数据库的数据源）
-            entity = get();
-            if (entity != null)
+            if (get != null)
             {
-                await _getCache.SaveItemAsync(cacheKey, entity: entity);
-                return entity;
+                entity = get();
+                if (entity != null)
+                {
+                    await _getCache.SaveItemAsync(cacheKey, entity: entity);
+                    return entity;
+                }
             }
-
             return default;
         }
 
@@ -392,7 +420,7 @@ namespace FS.Cache
         /// </summary>
         /// <param name="get"> 数据源获取 </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public TEntity Get<TEntity>(CacheKey<TEntity> cacheKey, Func<TEntity> get = null)
+        public TEntity Get<TEntity>(CacheKey<TEntity> cacheKey, Func<TEntity> get)
         {
             SetCache(cacheKey: cacheKey);
 
@@ -401,11 +429,32 @@ namespace FS.Cache
             if (entity != null) return entity;
 
             // 缓存没有，则通过get委托获取（一般是数据库的数据源）
-            if (get == null) return default;
-            entity = get();
-            if (entity != null) _getCache.Save(cacheKey, entity: entity);
-
+            if (get != null)
+            {
+                entity = get();
+                if (entity != null) _getCache.Save(cacheKey, entity: entity);
+            }
             return entity;
+        }
+
+        /// <summary>
+        ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        public TEntity Get<TEntity>(CacheKey<TEntity> cacheKey)
+        {
+            SetCache(cacheKey: cacheKey);
+            return _getCache.Get(cacheKey);
+        }
+
+        /// <summary>
+        ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        public Task<TEntity> GetAsync<TEntity>(CacheKey<TEntity> cacheKey)
+        {
+            SetCache(cacheKey: cacheKey);
+            return _getCache.GetAsync(cacheKey);
         }
 
         /// <summary>
@@ -413,7 +462,7 @@ namespace FS.Cache
         /// </summary>
         /// <param name="get"> 数据源获取 </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public async Task<TEntity> GetAsync<TEntity>(CacheKey<TEntity> cacheKey, Func<TEntity> get = null)
+        public async Task<TEntity> GetAsync<TEntity>(CacheKey<TEntity> cacheKey, Func<TEntity> get)
         {
             SetCache(cacheKey: cacheKey);
 
@@ -422,10 +471,11 @@ namespace FS.Cache
             if (entity != null) return entity;
 
             // 缓存没有，则通过get委托获取（一般是数据库的数据源）
-            if (get == null) return default;
-            entity = get();
-            if (entity != null) await _getCache.SaveAsync(cacheKey, entity: entity);
-
+            if (get != null)
+            {
+                entity = get();
+                if (entity != null) await _getCache.SaveAsync(cacheKey, entity: entity);
+            }
             return entity;
         }
 
@@ -434,7 +484,7 @@ namespace FS.Cache
         /// </summary>
         /// <param name="get"> 数据源获取 </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public async Task<TEntity> GetAsync<TEntity>(CacheKey<TEntity> cacheKey, Func<Task<TEntity>> get = null)
+        public async Task<TEntity> GetAsync<TEntity>(CacheKey<TEntity> cacheKey, Func<Task<TEntity>> get)
         {
             SetCache(cacheKey: cacheKey);
 
@@ -443,10 +493,11 @@ namespace FS.Cache
             if (entity != null) return entity;
 
             // 缓存没有，则通过get委托获取（一般是数据库的数据源）
-            if (get == null) return default;
-            entity = await get();
-            if (entity != null) await _getCache.SaveAsync(cacheKey, entity: entity);
-
+            if (get != null)
+            {
+                entity = await get();
+                if (entity != null) await _getCache.SaveAsync(cacheKey, entity: entity);
+            }
             return entity;
         }
 
