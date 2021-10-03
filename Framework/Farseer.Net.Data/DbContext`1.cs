@@ -36,6 +36,14 @@ namespace FS.Data
         ///     创建来自其它上下文的共享
         /// </summary>
         /// <param name="otherContext"> 其它上下文（主上下文） </param>
-        public static TPo TransactionInstance(DbContext otherContext) => TransactionInstance<TPo>(masterContext: otherContext);
+        public static TPo TransactionInstance(DbContext otherContext)
+        {
+            return otherContext switch
+            {
+                null        => Data,
+                TPo context => context,
+                _           => TransactionInstance<TPo>(masterContext: otherContext)
+            };
+        }
     }
 }
