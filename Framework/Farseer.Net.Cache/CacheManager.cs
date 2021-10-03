@@ -28,19 +28,17 @@ namespace FS.Cache
         ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
         /// <param name="get"> 数据源获取 </param>
-        /// <param name="getEntityId"> 实体的ID（必须是具有唯一性） </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public List<TEntity> GetList<TEntity, TEntityId>(CacheKey cacheKey, Func<List<TEntity>> get, Func<TEntity, TEntityId> getEntityId)
+        public List<TEntity> GetList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, Func<List<TEntity>> get)
         {
-            cacheKey ??= new CacheKey();
-            SetCache(cacheKey: cacheKey);
+            SetCache(cacheKey);
 
-            var lst = _getCache.GetList(cacheKey, getEntityId: getEntityId);
+            var lst = _getCache.GetList(cacheKey);
             if (lst != null && lst.Count != 0) return lst;
 
             // 缓存没有，则通过get委托获取（一般是数据库的数据源）
             lst = get();
-            if (lst?.Count > 0) _getCache.SaveList(cacheKey, lst: lst, getEntityId: getEntityId);
+            if (lst?.Count > 0) _getCache.SaveList(cacheKey, lst: lst);
 
             return lst;
         }
@@ -49,19 +47,17 @@ namespace FS.Cache
         ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
         /// <param name="get"> 数据源获取 </param>
-        /// <param name="getEntityId"> 实体的ID（必须是具有唯一性） </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public async Task<List<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey cacheKey, Func<List<TEntity>> get, Func<TEntity, TEntityId> getEntityId)
+        public async Task<List<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, Func<List<TEntity>> get)
         {
-            cacheKey ??= new CacheKey();
             SetCache(cacheKey: cacheKey);
 
-            var lst = await _getCache.GetListAsync(cacheKey, getEntityId: getEntityId);
+            var lst = await _getCache.GetListAsync(cacheKey);
             if (lst != null && lst.Count != 0) return lst;
 
             // 缓存没有，则通过get委托获取（一般是数据库的数据源）
             lst = get();
-            if (lst?.Count > 0) await _getCache.SaveListAsync(cacheKey, lst: lst, getEntityId: getEntityId);
+            if (lst?.Count > 0) await _getCache.SaveListAsync(cacheKey, lst: lst);
 
             return lst;
         }
@@ -70,19 +66,17 @@ namespace FS.Cache
         ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
         /// <param name="get"> 数据源获取 </param>
-        /// <param name="getEntityId"> 实体的ID（必须是具有唯一性） </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public async Task<List<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey cacheKey, Func<Task<List<TEntity>>> get, Func<TEntity, TEntityId> getEntityId)
+        public async Task<List<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, Func<Task<List<TEntity>>> get)
         {
-            cacheKey ??= new CacheKey();
             SetCache(cacheKey: cacheKey);
 
-            var lst = await _getCache.GetListAsync(cacheKey, getEntityId: getEntityId);
+            var lst = await _getCache.GetListAsync(cacheKey);
             if (lst != null && lst.Count != 0) return lst;
 
             // 缓存没有，则通过get委托获取（一般是数据库的数据源）
             lst = await get();
-            if (lst?.Count > 0) await _getCache.SaveListAsync(cacheKey, lst: lst, getEntityId: getEntityId);
+            if (lst?.Count > 0) await _getCache.SaveListAsync(cacheKey, lst: lst);
 
             return lst;
         }
@@ -92,14 +86,12 @@ namespace FS.Cache
         /// </summary>
         /// <param name="fieldKey"> hash里的field值 </param>
         /// <param name="get"> 数据源获取 </param>
-        /// <param name="getEntityId"> 实体的ID（必须是具有唯一性） </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public TEntity GetItem<TEntity, TEntityId>(CacheKey cacheKey, TEntityId fieldKey, Func<List<TEntity>> get, Func<TEntity, TEntityId> getEntityId)
+        public TEntity GetItem<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<List<TEntity>> get)
         {
-            cacheKey ??= new CacheKey();
             SetCache(cacheKey: cacheKey);
 
-            var entity = _getCache.GetItem(cacheKey, fieldKey: fieldKey, getEntityId: getEntityId);
+            var entity = _getCache.GetItem(cacheKey, fieldKey: fieldKey);
 
             if (entity != null) return entity;
 
@@ -110,11 +102,25 @@ namespace FS.Cache
                 Count: > 0
             })
             {
-                _getCache.SaveList(cacheKey, lst: lst, getEntityId: getEntityId);
-                return lst.Find(match: o => getEntityId(o).ToString() == fieldKey.ToString());
+                _getCache.SaveList(cacheKey, lst: lst);
+                return lst.Find(match: o => cacheKey.GetField(o).ToString() == fieldKey.ToString());
             }
 
             return default;
+        }
+
+        /// <summary>
+        ///     从缓存集合中获取数据，如果不存在则通过get委托获取，并保存到缓存中
+        /// </summary>
+        /// <param name="fieldKey"> hash里的field值 </param>
+        /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        public TEntity GetItem<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey)
+        {
+            SetCache(cacheKey: cacheKey);
+
+            return _getCache.GetItem(cacheKey, fieldKey: fieldKey) ?? default;
+
         }
 
         /// <summary>
@@ -122,14 +128,13 @@ namespace FS.Cache
         /// </summary>
         /// <param name="fieldKey"> hash里的field值 </param>
         /// <param name="get"> 数据源获取 </param>
-        /// <param name="getEntityId"> 实体的ID（必须是具有唯一性） </param>
+        /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public async Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey cacheKey, TEntityId fieldKey, Func<Task<List<TEntity>>> get, Func<TEntity, TEntityId> getEntityId)
+        public async Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<Task<List<TEntity>>> get)
         {
-            cacheKey ??= new CacheKey();
             SetCache(cacheKey: cacheKey);
 
-            var entity = await _getCache.GetItemAsync(cacheKey, fieldKey: fieldKey, getEntityId: getEntityId);
+            var entity = await _getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
 
             if (entity != null) return entity;
 
@@ -140,8 +145,8 @@ namespace FS.Cache
                 Count: > 0
             })
             {
-                await _getCache.SaveListAsync(cacheKey, lst: lst, getEntityId: getEntityId);
-                return lst.Find(match: o => getEntityId(arg: o).ToString() == fieldKey.ToString());
+                await _getCache.SaveListAsync(cacheKey, lst: lst);
+                return lst.Find(match: o => cacheKey.GetField(arg: o).ToString() == fieldKey.ToString());
             }
 
             return default;
@@ -152,14 +157,13 @@ namespace FS.Cache
         /// </summary>
         /// <param name="fieldKey"> hash里的field值 </param>
         /// <param name="get"> 数据源获取 </param>
-        /// <param name="getEntityId"> 实体的ID（必须是具有唯一性） </param>
+        /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public async Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey cacheKey, TEntityId fieldKey, Func<List<TEntity>> get, Func<TEntity, TEntityId> getEntityId)
+        public async Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<List<TEntity>> get)
         {
-            cacheKey ??= new CacheKey();
             SetCache(cacheKey: cacheKey);
 
-            var entity = await _getCache.GetItemAsync(cacheKey, fieldKey: fieldKey, getEntityId: getEntityId);
+            var entity = await _getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
 
             if (entity != null) return entity;
 
@@ -170,8 +174,8 @@ namespace FS.Cache
                 Count: > 0
             })
             {
-                await _getCache.SaveListAsync(cacheKey, lst: lst, getEntityId: getEntityId);
-                return lst.Find(match: o => getEntityId(arg: o).ToString() == fieldKey.ToString());
+                await _getCache.SaveListAsync(cacheKey, lst: lst);
+                return lst.Find(match: o => cacheKey.GetField(arg: o).ToString() == fieldKey.ToString());
             }
 
             return default;
@@ -182,14 +186,13 @@ namespace FS.Cache
         /// </summary>
         /// <param name="fieldKey"> hash里的field值 </param>
         /// <param name="get"> 数据源获取 </param>
-        /// <param name="getEntityId"> 实体的ID（必须是具有唯一性） </param>
+        /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public async Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey cacheKey, TEntityId fieldKey, Func<TEntity> get, Func<TEntity, TEntityId> getEntityId)
+        public async Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<TEntity> get)
         {
-            cacheKey ??= new CacheKey();
             SetCache(cacheKey: cacheKey);
 
-            var entity = await _getCache.GetItemAsync(cacheKey, fieldKey: fieldKey, getEntityId: getEntityId);
+            var entity = await _getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
 
             if (entity != null) return entity;
 
@@ -197,7 +200,7 @@ namespace FS.Cache
             entity = get();
             if (entity != null)
             {
-                await _getCache.SaveItemAsync(cacheKey, entity: entity, getEntityId: getEntityId);
+                await _getCache.SaveItemAsync(cacheKey, entity: entity);
                 return entity;
             }
 
@@ -209,14 +212,13 @@ namespace FS.Cache
         /// </summary>
         /// <param name="fieldKey"> hash里的field值 </param>
         /// <param name="get"> 数据源获取 </param>
-        /// <param name="getEntityId"> 实体的ID（必须是具有唯一性） </param>
+        /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public async Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey cacheKey, TEntityId fieldKey, Func<Task<TEntity>> get, Func<TEntity, TEntityId> getEntityId)
+        public async Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<Task<TEntity>> get)
         {
-            cacheKey ??= new CacheKey();
             SetCache(cacheKey: cacheKey);
 
-            var entity = await _getCache.GetItemAsync(cacheKey, fieldKey: fieldKey, getEntityId: getEntityId);
+            var entity = await _getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
 
             if (entity != null) return entity;
 
@@ -224,7 +226,7 @@ namespace FS.Cache
             entity = await get();
             if (entity != null)
             {
-                await _getCache.SaveItemAsync(cacheKey, entity: entity, getEntityId: getEntityId);
+                await _getCache.SaveItemAsync(cacheKey, entity: entity);
                 return entity;
             }
 
@@ -237,7 +239,6 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public bool Exists(CacheKey cacheKey)
         {
-            cacheKey ??= new CacheKey();
             SetCache(cacheKey: cacheKey);
             return _getCache.Exists(cacheKey);
         }
@@ -248,7 +249,6 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public Task<bool> ExistsAsync(CacheKey cacheKey)
         {
-            cacheKey ??= new CacheKey();
             SetCache(cacheKey: cacheKey);
             return _getCache.ExistsAsync(cacheKey);
         }
@@ -258,9 +258,8 @@ namespace FS.Cache
         /// </summary>
         /// <param name="cacheKey"> 缓存策略 </param>
         /// <param name="fieldKey"> 实体的ID（必须是具有唯一性） </param>
-        public bool ExistsItem<TEntityId>(CacheKey cacheKey, TEntityId fieldKey)
+        public bool ExistsItem<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey)
         {
-            cacheKey ??= new CacheKey();
             SetCache(cacheKey: cacheKey);
             return _getCache.ExistsItem(cacheKey, fieldKey);
         }
@@ -270,9 +269,8 @@ namespace FS.Cache
         /// </summary>
         /// <param name="cacheKey"> 缓存策略 </param>
         /// <param name="fieldKey"> 实体的ID（必须是具有唯一性） </param>
-        public Task<bool> ExistsItemAsync<TEntityId>(CacheKey cacheKey, TEntityId fieldKey)
+        public Task<bool> ExistsItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey)
         {
-            cacheKey ??= new CacheKey();
             SetCache(cacheKey: cacheKey);
             return _getCache.ExistsItemAsync(cacheKey, fieldKey);
         }
@@ -283,7 +281,6 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public long GetCount(CacheKey cacheKey)
         {
-            cacheKey ??= new CacheKey();
             SetCache(cacheKey: cacheKey);
             return _getCache.GetCount(cacheKey);
         }
@@ -294,7 +291,6 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public Task<long> GetCountAsync(CacheKey cacheKey)
         {
-            cacheKey ??= new CacheKey();
             SetCache(cacheKey: cacheKey);
             return _getCache.GetCountAsync(cacheKey);
         }
@@ -303,56 +299,48 @@ namespace FS.Cache
         ///     保存列表到缓存中
         /// </summary>
         /// <param name="lst"> 数据源获取 </param>
-        /// <param name="getEntityId"> 实体的ID（必须是具有唯一性） </param>
+        /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public void SaveList<TEntity, TEntityId>(CacheKey cacheKey, List<TEntity> lst, Func<TEntity, TEntityId> getEntityId)
+        public void SaveList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, List<TEntity> lst)
         {
-            cacheKey ??= new CacheKey();
             SetCache(cacheKey: cacheKey);
-
-            _getCache.SaveList(cacheKey, lst: lst, getEntityId: getEntityId);
+            _getCache.SaveList(cacheKey, lst: lst);
         }
 
         /// <summary>
         ///     保存列表到缓存中
         /// </summary>
         /// <param name="lst"> 数据源获取 </param>
-        /// <param name="getEntityId"> 实体的ID（必须是具有唯一性） </param>
+        /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public Task SaveListAsync<TEntity, TEntityId>(CacheKey cacheKey, List<TEntity> lst, Func<TEntity, TEntityId> getEntityId)
+        public Task SaveListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, List<TEntity> lst)
         {
-            cacheKey ??= new CacheKey();
             SetCache(cacheKey: cacheKey);
-
-            return _getCache.SaveListAsync(cacheKey, lst: lst, getEntityId: getEntityId);
+            return _getCache.SaveListAsync(cacheKey, lst: lst);
         }
 
         /// <summary>
         ///     保存列表到缓存中
         /// </summary>
         /// <param name="entity"> 数据源获取 </param>
-        /// <param name="getEntityId"> 实体的ID（必须是具有唯一性） </param>
+        /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public void SaveItem<TEntity, TEntityId>(CacheKey cacheKey, TEntity entity, TEntityId getEntityId)
+        public void SaveItem<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntity entity)
         {
-            cacheKey ??= new CacheKey();
-            SetCache(cacheKey: cacheKey);
-
-            _getCache.SaveItem(cacheKey, entity: entity, getEntityId: o => getEntityId);
+            SetCache(cacheKey);
+            _getCache.SaveItem(cacheKey, entity: entity);
         }
 
         /// <summary>
         ///     保存列表到缓存中
         /// </summary>
         /// <param name="entity"> 数据源获取 </param>
-        /// <param name="getEntityId"> 实体的ID（必须是具有唯一性） </param>
+        /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public Task SaveItemAsync<TEntity, TEntityId>(CacheKey cacheKey, TEntity entity, TEntityId getEntityId)
+        public Task SaveItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntity entity)
         {
-            cacheKey ??= new CacheKey();
             SetCache(cacheKey: cacheKey);
-
-            return _getCache.SaveItemAsync(cacheKey, entity: entity, getEntityId: o => getEntityId);
+            return _getCache.SaveItemAsync(cacheKey, entity: entity);
         }
 
         /// <summary>
@@ -360,7 +348,7 @@ namespace FS.Cache
         /// </summary>
         /// <param name="fieldKey"> 缓存Field </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public void Remove<TEntityId>(CacheKey cacheKey, TEntityId fieldKey)
+        public void Remove<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey)
         {
             SetCache(cacheKey);
             _getCache.Remove(cacheKey, fieldKey: fieldKey);
@@ -372,7 +360,7 @@ namespace FS.Cache
         /// </summary>
         /// <param name="fieldKey"> 缓存Field </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public Task RemoveAsync<TEntityId>(CacheKey cacheKey, TEntityId fieldKey)
+        public Task RemoveAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey)
         {
             SetCache(cacheKey);
             return _getCache.RemoveAsync(cacheKey, fieldKey: fieldKey);
@@ -404,12 +392,11 @@ namespace FS.Cache
         /// </summary>
         /// <param name="get"> 数据源获取 </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public TEntity Get<TEntity>(CacheKey cacheKey, Func<TEntity> get = null)
+        public TEntity Get<TEntity>(CacheKey<TEntity> cacheKey, Func<TEntity> get = null)
         {
-            cacheKey ??= new CacheKey();
             SetCache(cacheKey: cacheKey);
 
-            var entity = _getCache.Get<TEntity>(cacheKey);
+            var entity = _getCache.Get(cacheKey);
 
             if (entity != null) return entity;
 
@@ -426,12 +413,11 @@ namespace FS.Cache
         /// </summary>
         /// <param name="get"> 数据源获取 </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public async Task<TEntity> GetAsync<TEntity>(CacheKey cacheKey, Func<TEntity> get = null)
+        public async Task<TEntity> GetAsync<TEntity>(CacheKey<TEntity> cacheKey, Func<TEntity> get = null)
         {
-            cacheKey ??= new CacheKey();
             SetCache(cacheKey: cacheKey);
 
-            var entity = await _getCache.GetAsync<TEntity>(cacheKey);
+            var entity = await _getCache.GetAsync(cacheKey);
 
             if (entity != null) return entity;
 
@@ -448,9 +434,8 @@ namespace FS.Cache
         /// </summary>
         /// <param name="get"> 数据源获取 </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public async Task<TEntity> GetAsync<TEntity>(CacheKey cacheKey, Func<Task<TEntity>> get = null)
+        public async Task<TEntity> GetAsync<TEntity>(CacheKey<TEntity> cacheKey, Func<Task<TEntity>> get = null)
         {
-            cacheKey ??= new CacheKey();
             SetCache(cacheKey: cacheKey);
 
             var entity = await _getCache.GetAsync<TEntity>(cacheKey);
@@ -470,7 +455,7 @@ namespace FS.Cache
         /// </summary>
         /// <param name="entity"> 保存对象 </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public void Save<TEntity>(CacheKey cacheKey, TEntity entity)
+        public void Save<TEntity>(CacheKey<TEntity> cacheKey, TEntity entity)
         {
             SetCache(cacheKey: cacheKey);
             _getCache.Save(cacheKey, entity: entity);
@@ -481,7 +466,7 @@ namespace FS.Cache
         /// </summary>
         /// <param name="entity"> 保存对象 </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public Task SaveAsync<TEntity>(CacheKey cacheKey, TEntity entity)
+        public Task SaveAsync<TEntity>(CacheKey<TEntity> cacheKey, TEntity entity)
         {
             SetCache(cacheKey: cacheKey);
             return _getCache.SaveAsync(cacheKey, entity: entity);

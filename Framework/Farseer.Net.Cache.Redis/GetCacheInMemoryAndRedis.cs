@@ -19,10 +19,10 @@ namespace FS.Cache.Redis
         /// <summary>
         ///     从缓存中读取LIST
         /// </summary>
-        public List<TEntity> GetList<TEntity, TEntityId>(CacheKey cacheKey, Func<TEntity, TEntityId> getEntityId)
+        public List<TEntity> GetList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey)
         {
             // 读取memory
-            var lst = _memoryCache.GetList(cacheKey, getEntityId: getEntityId);
+            var lst = _memoryCache.GetList(cacheKey);
             if (lst is
             {
                 Count: > 0
@@ -30,12 +30,12 @@ namespace FS.Cache.Redis
                 return lst;
 
             // 没读到memory，则读redis
-            lst = _redisCache.GetList(cacheKey, getEntityId: getEntityId);
+            lst = _redisCache.GetList(cacheKey);
             if (lst is
             {
                 Count: > 0
             })
-                _memoryCache.SaveList(cacheKey, lst: lst, getEntityId: getEntityId);
+                _memoryCache.SaveList(cacheKey, lst: lst);
 
             return lst;
         }
@@ -43,10 +43,10 @@ namespace FS.Cache.Redis
         /// <summary>
         ///     从缓存中读取LIST
         /// </summary>
-        public async Task<List<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey cacheKey, Func<TEntity, TEntityId> getEntityId)
+        public async Task<List<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey)
         {
             // 读取memory
-            var lst = _memoryCache.GetList(cacheKey, getEntityId: getEntityId);
+            var lst = _memoryCache.GetList(cacheKey);
             if (lst is
             {
                 Count: > 0
@@ -54,14 +54,14 @@ namespace FS.Cache.Redis
                 return lst;
 
             // 没读到memory，则读redis
-            lst = await _redisCache.GetListAsync(cacheKey, getEntityId: getEntityId);
+            lst = await _redisCache.GetListAsync(cacheKey);
             if (lst is
             {
                 Count: > 0
             })
             {
                 // ReSharper disable once MethodHasAsyncOverload
-                _memoryCache.SaveList(cacheKey, lst: lst, getEntityId: getEntityId);
+                _memoryCache.SaveList(cacheKey, lst: lst);
             }
 
             return lst;
@@ -70,22 +70,22 @@ namespace FS.Cache.Redis
         /// <summary>
         ///     从缓存中读取实体
         /// </summary>
-        public TEntity GetItem<TEntity, TEntityId>(CacheKey cacheKey, TEntityId fieldKey, Func<TEntity, TEntityId> getEntityId)
+        public TEntity GetItem<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey)
         {
             // 读取memory
-            var entity = _memoryCache.GetItem(cacheKey, fieldKey: fieldKey, getEntityId: getEntityId);
+            var entity = _memoryCache.GetItem(cacheKey, fieldKey: fieldKey);
             if (entity != null) return entity;
 
             // 没读到memory，则读redis list
-            var lst = _redisCache.GetList(cacheKey, getEntityId: getEntityId);
+            var lst = _redisCache.GetList(cacheKey);
             if (lst is
             {
                 Count: > 0
             })
             {
                 // 保存到memory
-                _memoryCache.SaveList(cacheKey, lst: lst, getEntityId: getEntityId);
-                return lst.Find(match: o => getEntityId(arg: o).ToString() == fieldKey.ToString());
+                _memoryCache.SaveList(cacheKey, lst: lst);
+                return lst.Find(match: o => cacheKey.GetField(arg: o).ToString() == fieldKey.ToString());
             }
 
             return default;
@@ -94,14 +94,14 @@ namespace FS.Cache.Redis
         /// <summary>
         ///     从缓存中读取实体
         /// </summary>
-        public async Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey cacheKey, TEntityId fieldKey, Func<TEntity, TEntityId> getEntityId)
+        public async Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey)
         {
             // 读取memory
-            var entity = _memoryCache.GetItem(cacheKey, fieldKey: fieldKey, getEntityId: getEntityId);
+            var entity = _memoryCache.GetItem(cacheKey, fieldKey: fieldKey);
             if (entity != null) return entity;
 
             // 没读到memory，则读redis list
-            var lst = await _redisCache.GetListAsync(cacheKey, getEntityId: getEntityId);
+            var lst = await _redisCache.GetListAsync(cacheKey);
             if (lst is
             {
                 Count: > 0
@@ -109,8 +109,8 @@ namespace FS.Cache.Redis
             {
                 // 保存到memory
                 // ReSharper disable once MethodHasAsyncOverload
-                _memoryCache.SaveList(cacheKey, lst: lst, getEntityId: getEntityId);
-                return lst.Find(match: o => getEntityId(arg: o).ToString() == fieldKey.ToString());
+                _memoryCache.SaveList(cacheKey, lst: lst);
+                return lst.Find(match: o => cacheKey.GetField(arg: o).ToString() == fieldKey.ToString());
             }
 
             return default;
@@ -145,7 +145,7 @@ namespace FS.Cache.Redis
         /// </summary>
         /// <param name="cacheKey"> 缓存策略 </param>
         /// <param name="fieldKey"> 实体的ID（必须是具有唯一性） </param>
-        public bool ExistsItem<TEntityId>(CacheKey cacheKey, TEntityId fieldKey)
+        public bool ExistsItem<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey)
         {
             // 先从本地缓存获取，如果为false，则从redis再次获取（双重验证）
             var isExists            = _memoryCache.ExistsItem(cacheKey, fieldKey);
@@ -158,7 +158,7 @@ namespace FS.Cache.Redis
         /// </summary>
         /// <param name="cacheKey"> 缓存策略 </param>
         /// <param name="fieldKey"> 实体的ID（必须是具有唯一性） </param>
-        public async Task<bool> ExistsItemAsync<TEntityId>(CacheKey cacheKey, TEntityId fieldKey)
+        public async Task<bool> ExistsItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey)
         {
             // 先从本地缓存获取，如果为false，则从redis再次获取（双重验证）
             var isExists            = await _memoryCache.ExistsItemAsync(cacheKey, fieldKey);
@@ -181,59 +181,40 @@ namespace FS.Cache.Redis
         /// <summary>
         ///     将实体保存到缓存中
         /// </summary>
-        public void SaveItem<TEntity, TEntityId>(CacheKey cacheKey, TEntity entity, Func<TEntity, TEntityId> getEntityId)
+        public void SaveItem<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntity entity)
         {
-            _redisCache.SaveItem(cacheKey, entity: entity, getEntityId: getEntityId);
-            _memoryCache.SaveItem(cacheKey, entity: entity, getEntityId: getEntityId);
+            _redisCache.SaveItem(cacheKey, entity: entity);
+            _memoryCache.SaveItem(cacheKey, entity: entity);
         }
 
         /// <summary>
         ///     将实体保存到缓存中
         /// </summary>
-        public async Task SaveItemAsync<TEntity, TEntityId>(CacheKey cacheKey, TEntity entity, Func<TEntity, TEntityId> getEntityId)
+        public async Task SaveItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntity entity)
         {
-            await _redisCache.SaveItemAsync(cacheKey, entity: entity, getEntityId: getEntityId);
+            await _redisCache.SaveItemAsync(cacheKey, entity: entity);
             // ReSharper disable once MethodHasAsyncOverload
-            _memoryCache.SaveItem(cacheKey, entity: entity, getEntityId: getEntityId);
+            _memoryCache.SaveItem(cacheKey, entity: entity);
         }
 
         /// <summary>
         ///     将LIST保存到缓存中
         /// </summary>
-        public void SaveList<TEntity, TEntityId>(CacheKey cacheKey, List<TEntity> lst, Func<TEntity, TEntityId> getEntityId)
+        public void SaveList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, List<TEntity> lst)
         {
-            _redisCache.SaveList(cacheKey, lst: lst, getEntityId: getEntityId);
+            _redisCache.SaveList(cacheKey, lst: lst);
             // ReSharper disable once MethodHasAsyncOverload
-            _memoryCache.SaveList(cacheKey, lst: lst, getEntityId: getEntityId);
+            _memoryCache.SaveList(cacheKey, lst: lst);
         }
 
         /// <summary>
         ///     将LIST保存到缓存中
         /// </summary>
-        public async Task SaveListAsync<TEntity, TEntityId>(CacheKey cacheKey, List<TEntity> lst, Func<TEntity, TEntityId> getEntityId)
+        public async Task SaveListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, List<TEntity> lst)
         {
-            await _redisCache.SaveListAsync(cacheKey, lst: lst, getEntityId: getEntityId);
+            await _redisCache.SaveListAsync(cacheKey, lst: lst);
             // ReSharper disable once MethodHasAsyncOverload
-            _memoryCache.SaveList(cacheKey, lst: lst, getEntityId: getEntityId);
-        }
-
-        /// <summary>
-        ///     删除缓存item
-        /// </summary>
-        public void Remove<TEntityId>(CacheKey cacheKey, TEntityId fieldKey)
-        {
-            _redisCache.Remove(cacheKey, fieldKey: fieldKey);
-            _memoryCache.Remove(cacheKey, fieldKey: fieldKey);
-        }
-
-        /// <summary>
-        ///     删除缓存item
-        /// </summary>
-        public async Task RemoveAsync<TEntityId>(CacheKey cacheKey, TEntityId fieldKey)
-        {
-            await _redisCache.RemoveAsync(cacheKey, fieldKey: fieldKey);
-            // ReSharper disable once MethodHasAsyncOverload
-            _memoryCache.Remove(cacheKey, fieldKey: fieldKey);
+            _memoryCache.SaveList(cacheKey, lst: lst);
         }
 
         /// <summary>
@@ -255,19 +236,38 @@ namespace FS.Cache.Redis
             _memoryCache.Remove(cacheKey);
         }
 
+        /// <summary>
+        ///     删除缓存item
+        /// </summary>
+        public void Remove<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey)
+        {
+            _redisCache.Remove(cacheKey, fieldKey: fieldKey);
+            _memoryCache.Remove(cacheKey, fieldKey: fieldKey);
+        }
+
+        /// <summary>
+        ///     删除缓存item
+        /// </summary>
+        public async Task RemoveAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey)
+        {
+            await _redisCache.RemoveAsync(cacheKey, fieldKey: fieldKey);
+            // ReSharper disable once MethodHasAsyncOverload
+            _memoryCache.Remove(cacheKey, fieldKey: fieldKey);
+        }
+
 
         /// <summary>
         ///     从缓存集合中读取实体
         /// </summary>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public TEntity Get<TEntity>(CacheKey cacheKey)
+        public TEntity Get<TEntity>(CacheKey<TEntity> cacheKey)
         {
             // 先读memory
-            var entity = _memoryCache.Get<TEntity>(cacheKey);
+            var entity = _memoryCache.Get(cacheKey);
             if (entity != null) return entity;
 
             // 读redis
-            entity = _redisCache.Get<TEntity>(cacheKey);
+            entity = _redisCache.Get(cacheKey);
             if (entity != null) _memoryCache.Save(cacheKey, entity: entity);
 
             return entity;
@@ -277,14 +277,14 @@ namespace FS.Cache.Redis
         ///     从缓存集合中读取实体
         /// </summary>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public async Task<TEntity> GetAsync<TEntity>(CacheKey cacheKey)
+        public async Task<TEntity> GetAsync<TEntity>(CacheKey<TEntity> cacheKey)
         {
             // 先读memory
-            var entity = _memoryCache.Get<TEntity>(cacheKey);
+            var entity = _memoryCache.Get(cacheKey);
             if (entity != null) return entity;
 
             // 读redis
-            entity = await _redisCache.GetAsync<TEntity>(cacheKey);
+            entity = await _redisCache.GetAsync(cacheKey);
             if (entity != null)
             {
                 // ReSharper disable once MethodHasAsyncOverload
@@ -299,7 +299,7 @@ namespace FS.Cache.Redis
         /// </summary>
         /// <param name="entity"> 保存对象 </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public void Save<TEntity>(CacheKey cacheKey, TEntity entity)
+        public void Save<TEntity>(CacheKey<TEntity> cacheKey, TEntity entity)
         {
             _redisCache.Save(cacheKey, entity: entity);
             // ReSharper disable once MethodHasAsyncOverload
@@ -311,7 +311,7 @@ namespace FS.Cache.Redis
         /// </summary>
         /// <param name="entity"> 保存对象 </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public async Task SaveAsync<TEntity>(CacheKey cacheKey, TEntity entity)
+        public async Task SaveAsync<TEntity>(CacheKey<TEntity> cacheKey, TEntity entity)
         {
             await _redisCache.SaveAsync(cacheKey, entity: entity);
             // ReSharper disable once MethodHasAsyncOverload
