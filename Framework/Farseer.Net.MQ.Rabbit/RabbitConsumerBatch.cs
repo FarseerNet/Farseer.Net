@@ -69,7 +69,7 @@ namespace FS.MQ.Rabbit
         /// </summary>
         /// <param name="waitSleep"> 拉到消息处理完后，休息多长时间，继续下一轮拉取 </param>
         /// <param name="autoAck"> 是否自动确认消息 </param>
-        public async Task<int> StartWhile(int waitSleep, bool autoAck = false)
+        public async Task StartWhile(int waitSleep, bool autoAck = false)
         {
             // 采用轮询的方式持续拉取
             while (true)
@@ -160,7 +160,7 @@ namespace FS.MQ.Rabbit
             }
             finally
             {
-                if (!autoAck)
+                if (!autoAck && lstResult.Count > 0)
                 {
                     if (result)
                         _channel.BasicAck(deliveryTag: deliveryTag, multiple: true);

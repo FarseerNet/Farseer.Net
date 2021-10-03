@@ -41,7 +41,7 @@ namespace FS.MQ.Rabbit.Attr
         public string RoutingKey { get; set; }
 
         /// <summary>
-        ///     预拉取数据或批量拉取的数量
+        ///     预拉取数据（每个线程）或批量拉取的数量
         /// </summary>
         public uint PrefetchCountOrPullNums { get; set; } = 128;
 

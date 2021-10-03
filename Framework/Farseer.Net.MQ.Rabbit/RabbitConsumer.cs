@@ -86,7 +86,7 @@ namespace FS.MQ.Rabbit
             _consumerTypeName      = consumerType.FullName;
             _rabbitConnect         = new RabbitConnect(config: rabbitItemConfig);
             _lastAckTimeoutRestart = lastAckTimeoutRestart > 0 ? lastAckTimeoutRestart : 5 * 60;
-            _prefetchCount         = prefetchCount         == 0 ? (uint)Environment.ProcessorCount : prefetchCount;
+            _prefetchCount         = prefetchCount         == 0 ? (uint)Environment.ProcessorCount * 10 : prefetchCount;
             _queueName             = queueName;
             _lastAckAt             = DateTime.Now;
 
