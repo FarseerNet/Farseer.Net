@@ -173,7 +173,7 @@ namespace FS.Cache.Redis
         /// <summary>
         ///     从缓存集合中读取实体
         /// </summary>
-        /// <param name="cacheKeyion"> 缓存策略 </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         public TEntity Get<TEntity>(CacheKey cacheKey)
         {
             var redisValue = _redisCacheManager.Db.StringGet(cacheKey.Key);
@@ -184,7 +184,7 @@ namespace FS.Cache.Redis
         /// <summary>
         ///     从缓存集合中读取实体
         /// </summary>
-        /// <param name="cacheKeyion"> 缓存策略 </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         public async Task<TEntity> GetAsync<TEntity>(CacheKey cacheKey)
         {
             var redisValue = await _redisCacheManager.Db.StringGetAsync(cacheKey.Key);
@@ -196,7 +196,7 @@ namespace FS.Cache.Redis
         ///     保存对象
         /// </summary>
         /// <param name="entity"> 保存对象 </param>
-        /// <param name="cacheKeyion"> 缓存策略 </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         public void Save<TEntity>(CacheKey cacheKey, TEntity entity)
         {
             if (cacheKey.RedisExpiry != null)
@@ -209,7 +209,7 @@ namespace FS.Cache.Redis
         ///     保存对象
         /// </summary>
         /// <param name="entity"> 保存对象 </param>
-        /// <param name="cacheKeyion"> 缓存策略 </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
         public Task SaveAsync<TEntity>(CacheKey cacheKey, TEntity entity)
         {
             if (cacheKey.RedisExpiry != null) return _redisCacheManager.Db.StringSetAsync(cacheKey.Key, value: JsonConvert.SerializeObject(value: entity), expiry: cacheKey.RedisExpiry.GetValueOrDefault());
