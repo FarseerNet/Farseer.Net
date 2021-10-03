@@ -41,9 +41,14 @@ namespace FS.MQ.Rabbit.Attr
         public string RoutingKey { get; set; }
 
         /// <summary>
-        ///     线程数或拉取数量（默认为Environment.ProcessorCount）
+        ///     预拉取数据或批量拉取的数量
         /// </summary>
-        public uint ThreadNumsOrPullNums { get; set; } = 0;
+        public uint PrefetchCountOrPullNums { get; set; } = 128;
+
+        /// <summary>
+        ///     线程数，只针对推送模式（默认为Environment.ProcessorCount）
+        /// </summary>
+        public uint ThreadNums { get; set; } = 0;
 
         /// <summary>
         ///     最后ACK多少秒超时则重连（默认5分钟）

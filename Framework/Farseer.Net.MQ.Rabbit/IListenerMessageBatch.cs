@@ -57,7 +57,7 @@ namespace FS.MQ.Rabbit
             iocManager.Logger<IListenerMessageBatch>().LogInformation(message: $"正在启动：{consumerType.Name} Rabbit批量消费");
             await Task.Factory.StartNew(function: async () =>
             {
-                var consumerInstance = new RabbitConsumerBatch(iocManager: iocManager, consumerType: consumerType, rabbitItemConfig: rabbitItemConfig, queueName: consumerAtt.QueueName, batchPullMessageCount: consumerAtt.ThreadNumsOrPullNums);
+                var consumerInstance = new RabbitConsumerBatch(iocManager: iocManager, consumerType: consumerType, rabbitItemConfig: rabbitItemConfig, queueName: consumerAtt.QueueName, batchPullMessageCount: consumerAtt.PrefetchCountOrPullNums);
                 await consumerInstance.StartWhile(waitSleep: consumerAtt.BatchPullSleepTime);
             }, creationOptions: TaskCreationOptions.LongRunning);
         }

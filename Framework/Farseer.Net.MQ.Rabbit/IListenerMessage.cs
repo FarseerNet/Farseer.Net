@@ -55,7 +55,7 @@ namespace FS.MQ.Rabbit
 
             // 注册消费端            
             iocManager.Logger<RabbitInstaller>().LogInformation(message: $"正在启动：{consumerType.Name} Rabbit消费");
-            var consumerInstance = new RabbitConsumer(iocManager: iocManager, consumerType: consumerType, rabbitItemConfig: rabbitItemConfig, queueName: consumerAtt.QueueName, lastAckTimeoutRestart: consumerAtt.LastAckTimeoutRestart, consumeThreadNums: consumerAtt.ThreadNumsOrPullNums);
+            var consumerInstance = new RabbitConsumer(iocManager: iocManager, consumerType: consumerType, rabbitItemConfig: rabbitItemConfig, queueName: consumerAtt.QueueName, lastAckTimeoutRestart: consumerAtt.LastAckTimeoutRestart, prefetchCount: consumerAtt.PrefetchCountOrPullNums);
             consumerInstance.Start();
 
             return Task.FromResult(result: 0);

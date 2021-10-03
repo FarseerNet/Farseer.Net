@@ -88,6 +88,7 @@ namespace FS.MQ.Rabbit
                                      arguments: arguments
                                     );
             }
+            _connect.Close();
         }
 
         /// <summary>
@@ -113,6 +114,7 @@ namespace FS.MQ.Rabbit
                 // 声明fanout交换器
                 channel.ExchangeDeclare(exchange: exchangeName, type: exchangeType.ToString(), durable: durable, autoDelete: autoDelete, arguments: arguments);
             }
+            _connect.Close();
         }
 
         /// <summary>
@@ -129,6 +131,7 @@ namespace FS.MQ.Rabbit
                 // 声明fanout交换器
                 channel.ExchangeDeclare(exchange: _productConfig.ExchangeName, type: _productConfig.ExchangeType.ToString(), durable: durable, autoDelete: autoDelete, arguments: arguments);
             }
+            _connect.Close();
         }
 
         /// <summary>
@@ -160,6 +163,7 @@ namespace FS.MQ.Rabbit
             {
                 channel.QueueBind(queue: queueName, exchange: exchangeName, routingKey: routingKey ?? "");
             }
+            _connect.Close();
         }
     }
 }

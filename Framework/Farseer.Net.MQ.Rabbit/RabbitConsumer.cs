@@ -26,7 +26,7 @@ namespace FS.MQ.Rabbit
         /// <summary>
         ///     线程数（默认8）
         /// </summary>
-        private readonly uint _consumeThreadNums;
+        private readonly uint _prefetchCount;
 
         /// <summary>
         ///     ioc
@@ -78,15 +78,15 @@ namespace FS.MQ.Rabbit
         /// <param name="rabbitItemConfig"> </param>
         /// <param name="queueName"> 队列名称 </param>
         /// <param name="lastAckTimeoutRestart"> 最后ACK多少秒超时则重连（默认5分钟） </param>
-        /// <param name="consumeThreadNums"> 线程数（默认8） </param>
-        public RabbitConsumer(IIocManager iocManager, Type consumerType, RabbitItemConfig rabbitItemConfig, string queueName, int lastAckTimeoutRestart, uint consumeThreadNums)
+        /// <param name="prefetchCount"> 线程数（默认8） </param>
+        public RabbitConsumer(IIocManager iocManager, Type consumerType, RabbitItemConfig rabbitItemConfig, string queueName, int lastAckTimeoutRestart, uint prefetchCount)
         {
             _iocManager            = iocManager;
             _consumerType          = consumerType;
             _consumerTypeName      = consumerType.FullName;
             _rabbitConnect         = new RabbitConnect(config: rabbitItemConfig);
             _lastAckTimeoutRestart = lastAckTimeoutRestart > 0 ? lastAckTimeoutRestart : 5 * 60;
-            _consumeThreadNums     = consumeThreadNums     == 0 ? (uint)Environment.ProcessorCount : consumeThreadNums;
+            _prefetchCount         = prefetchCount         == 0 ? (uint)Environment.ProcessorCount : prefetchCount;
             _queueName             = queueName;
             _lastAckAt             = DateTime.Now;
 
@@ -167,7 +167,7 @@ namespace FS.MQ.Rabbit
         {
             Connect();
 
-            _channel.BasicQos(prefetchSize: 0, prefetchCount: (ushort)_consumeThreadNums, global: false);
+            _channel.BasicQos(prefetchSize: 0, prefetchCount: (ushort)_prefetchCount, global: false);
             var consumer = new EventingBasicConsumer(model: _channel);
             consumer.Received += async (model, ea) =>
             {
