@@ -16,7 +16,7 @@ namespace FS.Data.Cache
 
         private readonly Type _entityType;
 
-        private readonly eumSortDeleteType _field;
+        private readonly EumSortDeleteType _field;
         private readonly string            _name;
         private readonly object            _value;
 
@@ -27,7 +27,7 @@ namespace FS.Data.Cache
         /// <param name="field"> 数据库字段类型 </param>
         /// <param name="value"> 标记值 </param>
         /// <param name="entityType"> 实体类型 </param>
-        private SortDeleteCacheManger(string name, eumSortDeleteType field, object value, Type entityType)
+        private SortDeleteCacheManger(string name, EumSortDeleteType field, object value, Type entityType)
         {
             _field      = field;
             _value      = value;
@@ -60,6 +60,6 @@ namespace FS.Data.Cache
         /// <param name="field"> 数据库字段类型 </param>
         /// <param name="value"> 标记值 </param>
         /// <param name="entityType"> 实体类型 </param>
-        public static SortDelete Cache(string name, eumSortDeleteType field, object value, Type entityType) => new SortDeleteCacheManger(name: name, field: field, value: value, entityType: entityType).GetValue();
+        public static SortDelete Cache(string name, EumSortDeleteType field, object value, Type entityType) => new SortDeleteCacheManger(name: name, field: field, value: value, entityType: entityType).GetValue();
     }
 }

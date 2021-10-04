@@ -1,5 +1,6 @@
 ﻿using FS.Data.Infrastructure;
 using FS.Data.Internal;
+using FS.Data.Map;
 
 namespace FS.Data.Client.MySql
 {
@@ -13,9 +14,8 @@ namespace FS.Data.Client.MySql
         /// </summary>
         /// <param name="dbProvider"> 数据库提供者（不同数据库的特性） </param>
         /// <param name="expBuilder"> 表达式持久化 </param>
-        /// <param name="tableName"> 表名/视图名/存储过程名 </param>
-        /// <param name="dbName"> 数据库名称 </param>
-        internal MySqlBuilder(AbsDbProvider dbProvider, ExpressionBuilder expBuilder, string dbName, string tableName) : base(dbProvider: dbProvider, expBuilder: expBuilder, dbName: dbName, tableName: tableName)
+        /// <param name="setMap">实体类结构映射 </param>
+        internal MySqlBuilder(AbsDbProvider dbProvider, ExpressionBuilder expBuilder, SetDataMap setMap) : base(dbProvider: dbProvider, expBuilder: expBuilder, setMap)
         {
         }
 

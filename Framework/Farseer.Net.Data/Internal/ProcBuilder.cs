@@ -17,11 +17,6 @@ namespace FS.Data.Internal
         private readonly AbsDbProvider _dbProvider;
 
         /// <summary>
-        ///     数据库提供者（不同数据库的特性）
-        /// </summary>
-        private readonly SetDataMap _setMap;
-
-        /// <summary>
         ///     存储过程生成器
         /// </summary>
         /// <param name="dbProvider"> 数据库驱动 </param>
@@ -29,16 +24,15 @@ namespace FS.Data.Internal
         internal ProcBuilder(AbsDbProvider dbProvider, SetDataMap setMap)
         {
             _dbProvider = dbProvider;
-            _setMap     = setMap;
+            SetMap      = setMap;
             ProcName    = setMap.TableName;
-            DbName      = setMap.DbName;
         }
 
         /// <summary>
-        ///     数据库名称
+        /// 实体类结构映射
         /// </summary>
-        public string DbName { get; }
-
+        public SetDataMap SetMap { get; }
+        
         /// <summary>
         ///     存储过程名称
         /// </summary>
@@ -56,7 +50,7 @@ namespace FS.Data.Internal
         /// <param name="entity"> 实体类 </param>
         internal IProcParam InitParam<TEntity>(TEntity entity) where TEntity : class, new()
         {
-            Param = _dbProvider.InitParam(map: _setMap.PhysicsMap, entity: entity);
+            Param = _dbProvider.InitParam(map: SetMap.PhysicsMap, entity: entity);
             return this;
         }
 
@@ -67,7 +61,7 @@ namespace FS.Data.Internal
         /// <param name="entity"> 实体类 </param>
         internal void SetParamToEntity<TEntity>(TEntity entity) where TEntity : class, new()
         {
-            _dbProvider.SetParamToEntity(map: _setMap.PhysicsMap, lstParam: Param, entity: entity);
+            _dbProvider.SetParamToEntity(map: SetMap.PhysicsMap, lstParam: Param, entity: entity);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using FS.Data.Infrastructure;
+using FS.Data.Map;
 
 namespace FS.Data.Internal
 {
@@ -20,15 +21,13 @@ namespace FS.Data.Internal
 
         public SqlParam(IProcParam procParam)
         {
-            DbName    = procParam.DbName;
-            TableName = procParam.ProcName;
-            Param     = procParam.Param;
+            Param  = procParam.Param;
+            SetMap = procParam.SetMap;
         }
-
-        public string            DbName    { get; }
-        public string            TableName { get; }
+        
         public StringBuilder     Sql       { get; private set; }
         public List<DbParameter> Param     { get; }
+        public SetDataMap        SetMap    { get; }
 
         #region 释放
 

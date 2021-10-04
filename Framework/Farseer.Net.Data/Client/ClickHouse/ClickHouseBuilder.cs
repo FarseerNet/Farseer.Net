@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using FS.Data.Features;
 using FS.Data.Infrastructure;
 using FS.Data.Internal;
 using FS.Data.Map;
@@ -13,14 +14,34 @@ namespace FS.Data.Client.ClickHouse
     public class ClickHouseBuilder : AbsSqlBuilder
     {
         /// <summary>
+        /// 判断是否允许使用final关键字
+        /// </summary>
+        private readonly string _useFinal;
+        
+        /// <summary>
         ///     查询支持的SQL方法
         /// </summary>
         /// <param name="dbProvider"> 数据库提供者（不同数据库的特性） </param>
         /// <param name="expBuilder"> 表达式持久化 </param>
-        /// <param name="tableName"> 表名/视图名/存储过程名 </param>
-        /// <param name="dbName"> 数据库名称 </param>
-        internal ClickHouseBuilder(AbsDbProvider dbProvider, ExpressionBuilder expBuilder, string dbName, string tableName) : base(dbProvider: dbProvider, expBuilder: expBuilder, dbName: dbName, tableName: tableName)
+        /// <param name="setMap">实体类结构映射 </param>
+        internal ClickHouseBuilder(AbsDbProvider dbProvider, ExpressionBuilder expBuilder, SetDataMap setMap) : base(dbProvider: dbProvider, expBuilder: expBuilder, setMap)
         {
+            // 根据表引擎，判断是否允许使用final关键字
+            if (setMap.TableProperty.TryGetValue("TableEnginesType", out var tableEnginesType))
+            {
+                var eumTableEnginesType = (EumTableEnginesType)tableEnginesType;
+                switch (eumTableEnginesType)
+                {
+                    case EumTableEnginesType.VersionedCollapsingMergeTree:
+                    case EumTableEnginesType.GraphiteMergeTree:
+                    case EumTableEnginesType.AggregatingMergeTree:
+                    case EumTableEnginesType.CollapsingMergeTree:
+                    case EumTableEnginesType.ReplacingMergeTree:
+                    case EumTableEnginesType.SummingMergeTree:
+                        _useFinal = "final";
+                        break;
+                }
+            }
         }
 
         public override ISqlParam ToEntity()
@@ -33,7 +54,7 @@ namespace FS.Data.Client.ClickHouse
 
             if (!string.IsNullOrWhiteSpace(value: strOrderBySql)) strOrderBySql = "ORDER BY " + strOrderBySql;
 
-            Sql.Append(value: $"SELECT {strSelectSql} FROM {DbTableName} final {strWhereSql} {strOrderBySql} LIMIT 1");
+            Sql.Append(value: $"SELECT {strSelectSql} FROM {DbTableName} {_useFinal} {strWhereSql} {strOrderBySql} LIMIT 1");
             return this;
         }
 
@@ -52,11 +73,11 @@ namespace FS.Data.Client.ClickHouse
             if (!string.IsNullOrWhiteSpace(value: strOrderBySql)) strOrderBySql = "ORDER BY " + strOrderBySql;
 
             if (!isRand)
-                Sql.Append(value: $"SELECT {strDistinctSql}{strSelectSql} FROM {DbTableName} final {strWhereSql} {strOrderBySql} {strTopSql}");
+                Sql.Append(value: $"SELECT {strDistinctSql}{strSelectSql} FROM {DbTableName} {_useFinal} {strWhereSql} {strOrderBySql} {strTopSql}");
             else if (!isDistinct && string.IsNullOrWhiteSpace(value: strOrderBySql))
-                Sql.Append(value: $"SELECT {strSelectSql}{randField} FROM {DbTableName} final {strWhereSql} ORDER BY Rand() {strTopSql}");
+                Sql.Append(value: $"SELECT {strSelectSql}{randField} FROM {DbTableName} {_useFinal} {strWhereSql} ORDER BY Rand() {strTopSql}");
             else
-                Sql.Append(value: $"SELECT * {randField} FROM (SELECT {strDistinctSql} {strSelectSql} FROM {DbTableName} final {strWhereSql} {strOrderBySql}) s ORDER BY Rand() {strTopSql}");
+                Sql.Append(value: $"SELECT * {randField} FROM (SELECT {strDistinctSql} {strSelectSql} FROM {DbTableName} {_useFinal} {strWhereSql} {strOrderBySql}) s ORDER BY Rand() {strTopSql}");
 
             return this;
         }
@@ -80,7 +101,7 @@ namespace FS.Data.Client.ClickHouse
 
             if (!string.IsNullOrWhiteSpace(value: strOrderBySql)) strOrderBySql = "ORDER BY " + strOrderBySql;
 
-            Sql.Append(value: $"SELECT {strDistinctSql}{strSelectSql} FROM {DbTableName} final {strWhereSql} {strOrderBySql} LIMIT {pageSize * (pageIndex - 1)},{pageSize}");
+            Sql.Append(value: $"SELECT {strDistinctSql}{strSelectSql} FROM {DbTableName} {_useFinal} {strWhereSql} {strOrderBySql} LIMIT {pageSize * (pageIndex - 1)},{pageSize}");
             return this;
         }
 
@@ -94,7 +115,7 @@ namespace FS.Data.Client.ClickHouse
 
             if (!string.IsNullOrWhiteSpace(value: strOrderBySql)) strOrderBySql = "ORDER BY " + strOrderBySql;
 
-            Sql.Append(value: $"SELECT {strSelectSql} FROM {DbTableName} final {strWhereSql} {strOrderBySql} LIMIT 1");
+            Sql.Append(value: $"SELECT {strSelectSql} FROM {DbTableName} {_useFinal} {strWhereSql} {strOrderBySql} LIMIT 1");
             return this;
         }
 
@@ -133,7 +154,7 @@ namespace FS.Data.Client.ClickHouse
 
             if (!string.IsNullOrWhiteSpace(value: strWhereSql)) strWhereSql = "WHERE " + strWhereSql;
 
-            Sql.Append(value: $"SELECT {strDistinctSql}Count(0) FROM {DbTableName} final {strWhereSql}");
+            Sql.Append(value: $"SELECT {strDistinctSql}Count(0) FROM {DbTableName} {_useFinal} {strWhereSql}");
             return this;
         }
 
@@ -149,7 +170,7 @@ namespace FS.Data.Client.ClickHouse
 
             if (!string.IsNullOrWhiteSpace(value: strWhereSql)) strWhereSql = "WHERE " + strWhereSql;
 
-            Sql.Append(value: $"SELECT SUM({strSelectSql}) FROM {DbTableName} final {strWhereSql}");
+            Sql.Append(value: $"SELECT SUM({strSelectSql}) FROM {DbTableName} {_useFinal} {strWhereSql}");
             return this;
         }
 
@@ -165,7 +186,7 @@ namespace FS.Data.Client.ClickHouse
 
             if (!string.IsNullOrWhiteSpace(value: strWhereSql)) strWhereSql = "WHERE " + strWhereSql;
 
-            Sql.Append(value: $"SELECT MAX({strSelectSql}) FROM {DbTableName} final {strWhereSql}");
+            Sql.Append(value: $"SELECT MAX({strSelectSql}) FROM {DbTableName} {_useFinal} {strWhereSql}");
             return this;
         }
 
@@ -181,7 +202,7 @@ namespace FS.Data.Client.ClickHouse
 
             if (!string.IsNullOrWhiteSpace(value: strWhereSql)) strWhereSql = "WHERE " + strWhereSql;
 
-            Sql.Append(value: $"SELECT MIN({strSelectSql}) FROM {DbTableName} final {strWhereSql}");
+            Sql.Append(value: $"SELECT MIN({strSelectSql}) FROM {DbTableName} {_useFinal} {strWhereSql}");
             return this;
         }
     }

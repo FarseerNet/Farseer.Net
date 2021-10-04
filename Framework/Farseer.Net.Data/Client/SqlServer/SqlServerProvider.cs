@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Text;
 using FS.Data.Data;
 using FS.Data.Internal;
+using FS.Data.Map;
 
 namespace FS.Data.Client.SqlServer
 {
@@ -12,10 +13,10 @@ namespace FS.Data.Client.SqlServer
     /// </summary>
     public class SqlServerProvider : AbsDbProvider
     {
-        public override   DbProviderFactory   DbProviderFactory                                                               => SqlClientFactory.Instance;
-        public override   AbsFunctionProvider FunctionProvider                                                                => new SqlServerFunctionProvider();
-        public override   bool                IsSupportTransaction                                                            => true;
-        internal override AbsSqlBuilder       CreateSqlBuilder(ExpressionBuilder expBuilder, string dbName, string tableName) => new SqlServerBuilder(dbProvider: this, expBuilder: expBuilder, dbName: dbName, tableName: tableName);
+        public override   DbProviderFactory   DbProviderFactory                                                 => SqlClientFactory.Instance;
+        public override   AbsFunctionProvider FunctionProvider                                                  => new SqlServerFunctionProvider();
+        public override   bool                IsSupportTransaction                                              => true;
+        internal override AbsSqlBuilder       CreateSqlBuilder(ExpressionBuilder expBuilder, SetDataMap setMap) => new SqlServerBuilder(dbProvider: this, expBuilder: expBuilder, setMap);
 
         public override string CreateDbConnstring(string server, string port, string userId, string passWord = null, string catalog = null, string dataVer = null, string additional = null, int connectTimeout = 60, int poolMinSize = 16, int poolMaxSize = 100)
         {

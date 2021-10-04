@@ -18,7 +18,7 @@ namespace FS.Data.Features
         /// <summary>
         ///     数据库字段类型
         /// </summary>
-        public eumSortDeleteType FieldType { private get; set; }
+        public EumSortDeleteType FieldType { private get; set; }
 
         /// <summary>
         ///     标记值
@@ -44,10 +44,10 @@ namespace FS.Data.Features
             Type fieldType;
             switch (FieldType)
             {
-                case eumSortDeleteType.Number:
+                case EumSortDeleteType.Number:
                     fieldType = Value.GetType();
                     break;
-                case eumSortDeleteType.DateTime:
+                case EumSortDeleteType.DateTime:
                     fieldType = typeof(DateTime);
                     Value     = DateTime.Now;
                     break;
@@ -64,7 +64,7 @@ namespace FS.Data.Features
             var member              = Expression.MakeMemberAccess(expression: param, member: sortDeleteClassType.GetMember(name: Name)[0]);
 
             // 时间类型字段，则以参数形式（解析时动态转为当前时间）
-            if (FieldType == eumSortDeleteType.DateTime)
+            if (FieldType == EumSortDeleteType.DateTime)
             {
                 AssignExpression     = Expression.Assign(left: member, right: Expression.Parameter(type: fieldType)); //DateTime.Now 
                 CondictionExpression = Expression.Equal(left: member, right: Expression.Convert(expression: Expression.Constant(value: null), type: fieldType));

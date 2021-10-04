@@ -3,7 +3,7 @@
     /// <summary>
     ///     逻辑删除的字段类型
     /// </summary>
-    public enum eumSortDeleteType
+    public enum EumSortDeleteType
     {
         /// <summary>
         ///     布尔值区分

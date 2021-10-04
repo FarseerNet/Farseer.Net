@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data.Common;
+using FS.Data.Map;
 
 namespace FS.Data.Infrastructure
 {
@@ -9,9 +10,9 @@ namespace FS.Data.Infrastructure
     public interface IProcParam
     {
         /// <summary>
-        ///     数据库名称
+        /// 实体类结构映射
         /// </summary>
-        string DbName { get; }
+        public SetDataMap SetMap { get; }
 
         /// <summary>
         ///     存储过程名

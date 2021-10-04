@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using FS.Cache;
 using FS.Data.Internal;
+using FS.Data.Map;
 using FS.Extends;
 
 namespace FS.Data.Client.ClickHouse
@@ -25,7 +26,7 @@ namespace FS.Data.Client.ClickHouse
 
         public override string KeywordAegis(string fieldName) => $"`{fieldName.ToLower()}`";
 
-        internal override AbsSqlBuilder CreateSqlBuilder(ExpressionBuilder expBuilder, string dbName, string tableName) => new ClickHouseBuilder(dbProvider: this, expBuilder: expBuilder, dbName: dbName, tableName: tableName);
+        internal override AbsSqlBuilder CreateSqlBuilder(ExpressionBuilder expBuilder, SetDataMap setMap) => new ClickHouseBuilder(dbProvider: this, expBuilder: expBuilder, setMap);
 
         /// <summary>
         ///     创建一个数据库参数对象

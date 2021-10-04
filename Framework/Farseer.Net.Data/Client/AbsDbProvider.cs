@@ -95,9 +95,8 @@ namespace FS.Data.Client
         ///     创建SQL查询
         /// </summary>
         /// <param name="expBuilder"> 表达式持久化 </param>
-        /// <param name="dbName"> 数据库名称 </param>
-        /// <param name="tableName"> 表名/视图名/存储过程名 </param>
-        internal abstract AbsSqlBuilder CreateSqlBuilder(ExpressionBuilder expBuilder, string dbName, string tableName);
+        /// <param name="setMap">实体类结构映射 </param>
+        internal abstract AbsSqlBuilder CreateSqlBuilder(ExpressionBuilder expBuilder, SetDataMap setMap);
 
         /// <summary>
         ///     存储过程创建SQL 输入、输出参数化

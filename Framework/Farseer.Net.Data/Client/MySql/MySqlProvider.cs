@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Text;
 using FS.Cache;
 using FS.Data.Internal;
+using FS.Data.Map;
 
 namespace FS.Data.Client.MySql
 {
@@ -19,7 +20,7 @@ namespace FS.Data.Client.MySql
 
         public override string KeywordAegis(string fieldName) => $"`{fieldName}`";
 
-        internal override AbsSqlBuilder CreateSqlBuilder(ExpressionBuilder expBuilder, string dbName, string tableName) => new MySqlBuilder(dbProvider: this, expBuilder: expBuilder, dbName: dbName, tableName: tableName);
+        internal override AbsSqlBuilder CreateSqlBuilder(ExpressionBuilder expBuilder, SetDataMap setMap) => new MySqlBuilder(dbProvider: this, expBuilder: expBuilder, setMap);
 
         public override string CreateDbConnstring(string server, string port, string userId, string passWord = null, string catalog = null, string dataVer = null, string additional = null, int connectTimeout = 60, int poolMinSize = 16, int poolMaxSize = 100)
         {

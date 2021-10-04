@@ -6,6 +6,7 @@ using System.Text;
 using FS.Data.ExpressionVisitor;
 using FS.Data.Infrastructure;
 using FS.Data.Internal;
+using FS.Data.Map;
 using FS.Utils.Common;
 
 namespace FS.Data.Client
@@ -20,14 +21,12 @@ namespace FS.Data.Client
         /// </summary>
         /// <param name="dbProvider"> 数据库提供者（不同数据库的特性） </param>
         /// <param name="expBuilder"> 表达式持久化 </param>
-        /// <param name="tableName"> 表名/视图名/存储过程名 </param>
-        /// <param name="dbName"> 数据库名称 </param>
-        internal AbsSqlBuilder(AbsDbProvider dbProvider, ExpressionBuilder expBuilder, string dbName, string tableName)
+        /// <param name="setMap">实体类结构映射 </param>
+        internal AbsSqlBuilder(AbsDbProvider dbProvider, ExpressionBuilder expBuilder, SetDataMap setMap)
         {
             DbProvider = dbProvider;
             ExpBuilder = expBuilder;
-            DbName     = dbName;
-            TableName  = tableName;
+            SetMap     = setMap;
             Param      = new List<DbParameter>();
             Sql        = new StringBuilder();
         }
@@ -41,11 +40,16 @@ namespace FS.Data.Client
         ///     表达式持久化
         /// </summary>
         internal ExpressionBuilder ExpBuilder { get; }
+        
+        /// <summary>
+        /// 实体类结构映射
+        /// </summary>
+        public SetDataMap SetMap { get; }
 
         /// <summary>
         ///     数据库名称+表名的组合
         /// </summary>
-        protected string DbTableName => string.IsNullOrEmpty(value: DbName) ? DbProvider.KeywordAegis(fieldName: TableName) : $"{DbProvider.KeywordAegis(fieldName: DbName)}.{DbProvider.KeywordAegis(fieldName: TableName)}";
+        protected string DbTableName => string.IsNullOrEmpty(value: SetMap.DbName) ? DbProvider.KeywordAegis(fieldName: SetMap.TableName) : $"{DbProvider.KeywordAegis(fieldName: SetMap.DbName)}.{DbProvider.KeywordAegis(fieldName: SetMap.TableName)}";
 
         /// <summary>
         ///     Where条件表达式树的解析
@@ -81,16 +85,6 @@ namespace FS.Data.Client
         ///     当前生成的参数
         /// </summary>
         public List<DbParameter> Param { get; }
-
-        /// <summary>
-        ///     数据库名称
-        /// </summary>
-        public string DbName { get; }
-
-        /// <summary>
-        ///     表名/视图名/存储过程名
-        /// </summary>
-        public string TableName { get; }
 
         /// <summary>
         ///     查询单条记录

@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Text;
 using FS.Cache;
 using FS.Data.Internal;
+using FS.Data.Map;
 
 namespace FS.Data.Client.SqLite
 {
@@ -11,10 +12,10 @@ namespace FS.Data.Client.SqLite
     /// </summary>
     public class SqLiteProvider : AbsDbProvider
     {
-        public override   DbProviderFactory   DbProviderFactory                                                               => (DbProviderFactory)InstanceCacheManger.Cache(type: Assembly.Load(assemblyString: "System.Data.SQLite").GetType(name: "System.Data.SQLite.SQLiteFactory"));
-        public override   AbsFunctionProvider FunctionProvider                                                                => new SqLiteFunctionProvider();
-        public override   bool                IsSupportTransaction                                                            => true;
-        internal override AbsSqlBuilder       CreateSqlBuilder(ExpressionBuilder expBuilder, string dbName, string tableName) => new SqLiteBuilder(dbProvider: this, expBuilder: expBuilder, dbName: dbName, tableName: tableName);
+        public override   DbProviderFactory   DbProviderFactory                                                 => (DbProviderFactory)InstanceCacheManger.Cache(type: Assembly.Load(assemblyString: "System.Data.SQLite").GetType(name: "System.Data.SQLite.SQLiteFactory"));
+        public override   AbsFunctionProvider FunctionProvider                                                  => new SqLiteFunctionProvider();
+        public override   bool                IsSupportTransaction                                              => true;
+        internal override AbsSqlBuilder       CreateSqlBuilder(ExpressionBuilder expBuilder, SetDataMap setMap) => new SqLiteBuilder(dbProvider: this, expBuilder: expBuilder, setMap);
 
         public override string CreateDbConnstring(string server, string port, string userId, string passWord = null, string catalog = null, string dataVer = null, string additional = null, int connectTimeout = 60, int poolMinSize = 16, int poolMaxSize = 100)
         {

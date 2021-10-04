@@ -23,7 +23,7 @@ namespace FS.Data.Infrastructure
 
         public TSet SetName(string dbName, string tableName)
         {
-            SetMap.SetName(dbName: dbName, tableName: tableName);
+            SetMap.SetName(dbName, tableName);
             return (TSet)this;
         }
 

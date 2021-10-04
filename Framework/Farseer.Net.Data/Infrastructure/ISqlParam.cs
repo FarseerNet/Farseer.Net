@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Text;
+using FS.Data.Map;
 
 namespace FS.Data.Infrastructure
 {
@@ -11,16 +12,6 @@ namespace FS.Data.Infrastructure
     public interface ISqlParam : IDisposable
     {
         /// <summary>
-        ///     数据库名称
-        /// </summary>
-        string DbName { get; }
-
-        /// <summary>
-        ///     表名/视图名
-        /// </summary>
-        string TableName { get; }
-
-        /// <summary>
         ///     当前生成的SQL语句
         /// </summary>
         StringBuilder Sql { get; }
@@ -29,5 +20,9 @@ namespace FS.Data.Infrastructure
         ///     当前生成的参数
         /// </summary>
         List<DbParameter> Param { get; }
+        /// <summary>
+        /// 实体类结构映射
+        /// </summary>
+        SetDataMap SetMap { get; }
     }
 }

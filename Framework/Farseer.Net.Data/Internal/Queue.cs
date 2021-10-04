@@ -47,7 +47,7 @@ namespace FS.Data.Internal
         private InternalContext Context { get; set; }
 
         internal ExpressionBuilder ExpBuilder  => _expBuilder ??= new ExpressionBuilder(map: Map);
-        internal AbsSqlBuilder     SqlBuilder  => _sqlBuilder ??= Context.DbProvider.CreateSqlBuilder(expBuilder: ExpBuilder, dbName: Map.DbName, tableName: Map.TableName);
+        internal AbsSqlBuilder     SqlBuilder  => _sqlBuilder ??= Context.DbProvider.CreateSqlBuilder(expBuilder: ExpBuilder, Map);
         internal ProcBuilder       ProcBuilder => _procBuilder ??= new ProcBuilder(dbProvider: Context.DbProvider, setMap: Map);
 
         /// <summary>
