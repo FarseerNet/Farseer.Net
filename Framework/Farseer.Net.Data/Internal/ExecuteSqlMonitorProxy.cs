@@ -28,134 +28,109 @@ namespace FS.Data.Internal
             _dbProvider = dbProvider;
         }
 
-        /// <summary>
-        ///     本次执行的SQL
-        /// </summary>
-        public ISqlParam SqlParam { get; set; }
-
         public DbExecutor DataBase => _dbExecutor.DataBase;
 
         public int Execute(string callMethod, ISqlParam sqlParam)
         {
-            SqlParam = sqlParam;
-            return SpeedTest(callMethod: callMethod, dbName: sqlParam.SetMap.DbName, tableName: sqlParam.SetMap.TableName, cmdType: CommandType.Text, sql: sqlParam.Sql.ToString(), param: sqlParam.Param, func: () => _dbExecutor.Execute(callMethod: callMethod, sqlParam: sqlParam));
+            return SpeedTest(callMethod: callMethod, dbName: sqlParam.SetMap?.DbName, tableName: sqlParam.SetMap?.TableName, cmdType: CommandType.Text, sql: sqlParam.Sql.ToString(), param: sqlParam.Param, func: () => _dbExecutor.Execute(callMethod: callMethod, sqlParam: sqlParam));
         }
 
         public Task<int> ExecuteAsync(string callMethod, ISqlParam sqlParam)
         {
-            SqlParam = sqlParam;
-            return SpeedTestAsync(callMethod: callMethod, dbName: sqlParam.SetMap.DbName, tableName: sqlParam.SetMap.TableName, cmdType: CommandType.Text, sql: sqlParam.Sql.ToString(), param: sqlParam.Param, func: () => _dbExecutor.ExecuteAsync(callMethod: callMethod, sqlParam: sqlParam));
+            return SpeedTestAsync(callMethod: callMethod, dbName: sqlParam.SetMap?.DbName, tableName: sqlParam.SetMap?.TableName, cmdType: CommandType.Text, sql: sqlParam.Sql.ToString(), param: sqlParam.Param, func: () => _dbExecutor.ExecuteAsync(callMethod: callMethod, sqlParam: sqlParam));
         }
 
         public int Execute<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new()
         {
-            SqlParam = new SqlParam(procParam: procBuilder);
             return SpeedTest(callMethod: callMethod, dbName: procBuilder.SetMap.DbName, tableName: procBuilder.ProcName, cmdType: CommandType.StoredProcedure, sql: null, param: procBuilder.Param, func: () => _dbExecutor.Execute(callMethod: callMethod, procBuilder: procBuilder, entity: entity));
         }
 
         public Task<int> ExecuteAsync<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new()
         {
-            SqlParam = new SqlParam(procParam: procBuilder);
             return SpeedTestAsync(callMethod: callMethod, dbName: procBuilder.SetMap.DbName, tableName: procBuilder.ProcName, cmdType: CommandType.StoredProcedure, sql: null, param: procBuilder.Param, func: () => _dbExecutor.ExecuteAsync(callMethod: callMethod, procBuilder: procBuilder, entity: entity));
         }
 
         public DataTable ToTable(string callMethod, ISqlParam sqlParam)
         {
-            SqlParam = sqlParam;
-            return SpeedTest(callMethod: callMethod, dbName: sqlParam.SetMap.DbName, tableName: sqlParam.SetMap.TableName, cmdType: CommandType.Text, sql: sqlParam.Sql.ToString(), param: sqlParam.Param, func: () => _dbExecutor.ToTable(callMethod: callMethod, sqlParam: sqlParam));
+            return SpeedTest(callMethod: callMethod, dbName: sqlParam.SetMap?.DbName, tableName: sqlParam.SetMap?.TableName, cmdType: CommandType.Text, sql: sqlParam.Sql.ToString(), param: sqlParam.Param, func: () => _dbExecutor.ToTable(callMethod: callMethod, sqlParam: sqlParam));
         }
 
         public Task<DataTable> ToTableAsync(string callMethod, ISqlParam sqlParam)
         {
-            SqlParam = sqlParam;
-            return SpeedTestAsync(callMethod: callMethod, dbName: sqlParam.SetMap.DbName, tableName: sqlParam.SetMap.TableName, cmdType: CommandType.Text, sql: sqlParam.Sql.ToString(), param: sqlParam.Param, func: () => _dbExecutor.ToTableAsync(callMethod: callMethod, sqlParam: sqlParam));
+            return SpeedTestAsync(callMethod: callMethod, dbName: sqlParam.SetMap?.DbName, tableName: sqlParam.SetMap?.TableName, cmdType: CommandType.Text, sql: sqlParam.Sql.ToString(), param: sqlParam.Param, func: () => _dbExecutor.ToTableAsync(callMethod: callMethod, sqlParam: sqlParam));
         }
 
         public DataTable ToTable<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new()
         {
-            SqlParam = new SqlParam(procParam: procBuilder);
             return SpeedTest(callMethod: callMethod, dbName: procBuilder.SetMap.DbName, tableName: procBuilder.ProcName, cmdType: CommandType.StoredProcedure, sql: null, param: procBuilder.Param, func: () => _dbExecutor.ToTable(callMethod: callMethod, procBuilder: procBuilder, entity: entity));
         }
 
         public Task<DataTable> ToTableAsync<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity)
             where TEntity : class, new()
         {
-            SqlParam = new SqlParam(procParam: procBuilder);
             return SpeedTestAsync(callMethod: callMethod, dbName: procBuilder.SetMap.DbName, tableName: procBuilder.ProcName, cmdType: CommandType.StoredProcedure, sql: null, param: procBuilder.Param, func: () => _dbExecutor.ToTableAsync(callMethod: callMethod, procBuilder: procBuilder, entity: entity));
         }
 
         public List<TEntity> ToList<TEntity>(string callMethod, ISqlParam sqlParam) where TEntity : class, new()
         {
-            SqlParam = sqlParam;
-            return SpeedTest(callMethod: callMethod, dbName: sqlParam.SetMap.DbName, tableName: sqlParam.SetMap.TableName, cmdType: CommandType.Text, sql: sqlParam.Sql.ToString(), param: sqlParam.Param, func: () => _dbExecutor.ToList<TEntity>(callMethod: callMethod, sqlParam: sqlParam));
+            return SpeedTest(callMethod: callMethod, dbName: sqlParam.SetMap?.DbName, tableName: sqlParam.SetMap?.TableName, cmdType: CommandType.Text, sql: sqlParam.Sql.ToString(), param: sqlParam.Param, func: () => _dbExecutor.ToList<TEntity>(callMethod: callMethod, sqlParam: sqlParam));
         }
 
         public Task<List<TEntity>> ToListAsync<TEntity>(string callMethod, ISqlParam sqlParam) where TEntity : class, new()
         {
-            SqlParam = sqlParam;
-            return SpeedTestAsync(callMethod: callMethod, dbName: sqlParam.SetMap.DbName, tableName: sqlParam.SetMap.TableName, cmdType: CommandType.Text, sql: sqlParam.Sql.ToString(), param: sqlParam.Param, func: () => _dbExecutor.ToListAsync<TEntity>(callMethod: callMethod, sqlParam: sqlParam));
+            return SpeedTestAsync(callMethod: callMethod, dbName: sqlParam.SetMap?.DbName, tableName: sqlParam.SetMap?.TableName, cmdType: CommandType.Text, sql: sqlParam.Sql.ToString(), param: sqlParam.Param, func: () => _dbExecutor.ToListAsync<TEntity>(callMethod: callMethod, sqlParam: sqlParam));
         }
 
         public List<TEntity> ToList<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new()
         {
-            SqlParam = new SqlParam(procParam: procBuilder);
             return SpeedTest(callMethod: callMethod, dbName: procBuilder.SetMap.DbName, tableName: procBuilder.ProcName, cmdType: CommandType.StoredProcedure, sql: null, param: procBuilder.Param, func: () => _dbExecutor.ToList(callMethod: callMethod, procBuilder: procBuilder, entity: entity));
         }
 
         public Task<List<TEntity>> ToListAsync<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity)
             where TEntity : class, new()
         {
-            SqlParam = new SqlParam(procParam: procBuilder);
             return SpeedTestAsync(callMethod: callMethod, dbName: procBuilder.SetMap.DbName, tableName: procBuilder.ProcName, cmdType: CommandType.StoredProcedure, sql: null, param: procBuilder.Param, func: () => _dbExecutor.ToListAsync(callMethod: callMethod, procBuilder: procBuilder, entity: entity));
         }
 
         TEntity IExecuteSql.ToEntity<TEntity>(string callMethod, ISqlParam sqlParam)
         {
-            SqlParam = sqlParam;
-            return SpeedTest(callMethod: callMethod, dbName: sqlParam.SetMap.DbName, tableName: sqlParam.SetMap.TableName, cmdType: CommandType.Text, sql: sqlParam.Sql.ToString(), param: sqlParam.Param, func: () => _dbExecutor.ToEntity<TEntity>(callMethod: callMethod, sqlParam: sqlParam));
+            return SpeedTest(callMethod: callMethod, dbName: sqlParam.SetMap?.DbName, tableName: sqlParam.SetMap?.TableName, cmdType: CommandType.Text, sql: sqlParam.Sql.ToString(), param: sqlParam.Param, func: () => _dbExecutor.ToEntity<TEntity>(callMethod: callMethod, sqlParam: sqlParam));
         }
 
         public Task<TEntity> ToEntityAsync<TEntity>(string callMethod, ISqlParam sqlParam) where TEntity : class, new()
         {
-            SqlParam = sqlParam;
-            return SpeedTestAsync(callMethod: callMethod, dbName: sqlParam.SetMap.DbName, tableName: sqlParam.SetMap.TableName, cmdType: CommandType.Text, sql: sqlParam.Sql.ToString(), param: sqlParam.Param, func: () => _dbExecutor.ToEntityAsync<TEntity>(callMethod: callMethod, sqlParam: sqlParam));
+            return SpeedTestAsync(callMethod: callMethod, dbName: sqlParam.SetMap?.DbName, tableName: sqlParam.SetMap?.TableName, cmdType: CommandType.Text, sql: sqlParam.Sql.ToString(), param: sqlParam.Param, func: () => _dbExecutor.ToEntityAsync<TEntity>(callMethod: callMethod, sqlParam: sqlParam));
         }
 
         public TEntity ToEntity<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new()
         {
-            SqlParam = new SqlParam(procParam: procBuilder);
             return SpeedTest(callMethod: callMethod, dbName: procBuilder.SetMap.DbName, tableName: procBuilder.ProcName, cmdType: CommandType.StoredProcedure, sql: null, param: procBuilder.Param, func: () => _dbExecutor.ToEntity(callMethod: callMethod, procBuilder: procBuilder, entity: entity));
         }
 
         public Task<TEntity> ToEntityAsync<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity)
             where TEntity : class, new()
         {
-            SqlParam = new SqlParam(procParam: procBuilder);
             return SpeedTestAsync(callMethod: callMethod, dbName: procBuilder.SetMap.DbName, tableName: procBuilder.ProcName, cmdType: CommandType.StoredProcedure, sql: null, param: procBuilder.Param, func: () => _dbExecutor.ToEntityAsync(callMethod: callMethod, procBuilder: procBuilder, entity: entity));
         }
 
         public T GetValue<T>(string callMethod, ISqlParam sqlParam, T defValue = default)
         {
-            SqlParam = sqlParam;
-            return SpeedTest(callMethod: callMethod, dbName: sqlParam.SetMap.DbName, tableName: sqlParam.SetMap.TableName, cmdType: CommandType.Text, sql: sqlParam.Sql.ToString(), param: sqlParam.Param, func: () => _dbExecutor.GetValue(callMethod: callMethod, sqlParam: sqlParam, defValue: defValue));
+            return SpeedTest(callMethod: callMethod, dbName: sqlParam.SetMap?.DbName, tableName: sqlParam.SetMap?.TableName, cmdType: CommandType.Text, sql: sqlParam.Sql.ToString(), param: sqlParam.Param, func: () => _dbExecutor.GetValue(callMethod: callMethod, sqlParam: sqlParam, defValue: defValue));
         }
 
         public Task<T> GetValueAsync<T>(string callMethod, ISqlParam sqlParam, T defValue = default)
         {
-            SqlParam = sqlParam;
-            return SpeedTestAsync(callMethod: callMethod, dbName: sqlParam.SetMap.DbName, tableName: sqlParam.SetMap.TableName, cmdType: CommandType.Text, sql: sqlParam.Sql.ToString(), param: sqlParam.Param, func: () => _dbExecutor.GetValueAsync(callMethod: callMethod, sqlParam: sqlParam, defValue: defValue));
+            return SpeedTestAsync(callMethod: callMethod, dbName: sqlParam.SetMap?.DbName, tableName: sqlParam.SetMap?.TableName, cmdType: CommandType.Text, sql: sqlParam.Sql.ToString(), param: sqlParam.Param, func: () => _dbExecutor.GetValueAsync(callMethod: callMethod, sqlParam: sqlParam, defValue: defValue));
         }
 
         public T GetValue<TEntity, T>(string callMethod, ProcBuilder procBuilder, TEntity entity, T defValue = default)
             where TEntity : class, new()
         {
-            SqlParam = new SqlParam(procParam: procBuilder);
             return SpeedTest(callMethod: callMethod, dbName: procBuilder.SetMap.DbName, tableName: procBuilder.ProcName, cmdType: CommandType.StoredProcedure, sql: null, param: procBuilder.Param, func: () => _dbExecutor.GetValue(callMethod: callMethod, procBuilder: procBuilder, entity: entity, defValue: defValue));
         }
 
         public Task<T> GetValueAsync<TEntity, T>(string callMethod, ProcBuilder procBuilder, TEntity entity, T defValue = default) where TEntity : class, new()
         {
-            SqlParam = new SqlParam(procParam: procBuilder);
             return SpeedTestAsync(callMethod: callMethod, dbName: procBuilder.SetMap.DbName, tableName: procBuilder.ProcName, cmdType: CommandType.StoredProcedure, sql: null, param: procBuilder.Param, func: () => _dbExecutor.GetValueAsync(callMethod: callMethod, procBuilder: procBuilder, entity: entity, defValue: defValue));
         }
 

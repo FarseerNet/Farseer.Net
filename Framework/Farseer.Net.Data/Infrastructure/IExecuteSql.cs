@@ -15,11 +15,6 @@ namespace FS.Data.Infrastructure
         DbExecutor DataBase { get; }
 
         /// <summary>
-        ///     本次执行的SQL
-        /// </summary>
-        ISqlParam SqlParam { get; }
-
-        /// <summary>
         ///     返回影响行数
         /// </summary>
         /// <param name="callMethod"> 上游调用的方法名称 </param>

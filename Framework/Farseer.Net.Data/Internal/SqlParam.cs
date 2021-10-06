@@ -24,10 +24,10 @@ namespace FS.Data.Internal
             Param  = procParam.Param;
             SetMap = procParam.SetMap;
         }
-        
-        public StringBuilder     Sql       { get; private set; }
-        public List<DbParameter> Param     { get; }
-        public SetDataMap        SetMap    { get; }
+
+        public StringBuilder     Sql    { get; private set; }
+        public List<DbParameter> Param  { get; }
+        public SetDataMap        SetMap { get; }
 
         #region 释放
 
