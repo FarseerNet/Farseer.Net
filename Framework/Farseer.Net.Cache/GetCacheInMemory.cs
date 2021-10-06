@@ -14,12 +14,13 @@ namespace FS.Cache
     public class GetCacheInMemory : IGetCache
     {
         private static readonly MemoryCache MyCache = new(optionsAccessor: new MemoryCacheOptions());
+
         /// <summary>
         ///     从缓存中读取LIST
         /// </summary>
         public List<TEntity> GetList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey)
         {
-            if (MyCache.TryGetValue(cacheKey, result: out var result))
+            if (MyCache.TryGetValue(cacheKey.Key, result: out var result))
             {
                 var dic = (ConcurrentDictionary<TEntityId, TEntity>)result;
                 return dic.Select(selector: o => o.Value).ToList();
@@ -38,7 +39,7 @@ namespace FS.Cache
         /// </summary>
         public TEntity GetItem<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey)
         {
-            if (MyCache.TryGetValue(cacheKey, result: out var result))
+            if (MyCache.TryGetValue(cacheKey.Key, result: out var result))
             {
                 var dic = (ConcurrentDictionary<TEntityId, TEntity>)result;
                 dic.TryGetValue(key: fieldKey, value: out var entity);
@@ -94,7 +95,7 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public long GetCount(CacheKey cacheKey)
         {
-            if (MyCache.TryGetValue(cacheKey, result: out var result))
+            if (MyCache.TryGetValue(cacheKey.Key, result: out var result))
             {
                 var dic = (IDictionary)result;
                 return dic.Count;
@@ -114,20 +115,14 @@ namespace FS.Cache
         public void SaveItem<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntity entity)
         {
             var fieldKey = cacheKey.GetField(arg: entity);
-            if (MyCache.TryGetValue(cacheKey, result: out var result))
+            if (MyCache.TryGetValue(cacheKey.Key, result: out var result))
             {
                 var dic = (ConcurrentDictionary<TEntityId, TEntity>)result;
                 dic.TryAdd(fieldKey, entity);
                 return;
             }
 
-            var cacheEntry = MyCache.CreateEntry(cacheKey);
-
-            // 设置过期时间
-            if (cacheKey.MemoryExpiry != null) cacheEntry.AbsoluteExpirationRelativeToNow = cacheKey.MemoryExpiry.GetValueOrDefault();
-            var newDic                                                                    = new ConcurrentDictionary<TEntityId, TEntity>();
-            newDic.TryAdd(fieldKey, entity);
-            cacheEntry.Value = newDic;
+            SaveList(cacheKey, new List<TEntity>() { entity });
         }
 
         /// <summary>
@@ -144,19 +139,19 @@ namespace FS.Cache
         /// </summary>
         public void SaveList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, List<TEntity> lst)
         {
-            var dic        = new ConcurrentDictionary<TEntityId, TEntity>();
-            var cacheEntry = MyCache.CreateEntry(cacheKey);
-
-            // 设置过期时间
-            if (cacheKey.MemoryExpiry != null) cacheEntry.AbsoluteExpirationRelativeToNow = cacheKey.MemoryExpiry.GetValueOrDefault();
-
+            var dic = new ConcurrentDictionary<TEntityId, TEntity>();
             foreach (var entity in lst)
             {
                 var fieldKey = cacheKey.GetField(arg: entity);
                 dic.TryAdd(key: fieldKey, value: entity);
             }
 
-            cacheEntry.Value = dic;
+            using (var cacheEntry = MyCache.CreateEntry(cacheKey.Key))
+            {
+                // 设置过期时间
+                if (cacheKey.MemoryExpiry != null) cacheEntry.AbsoluteExpirationRelativeToNow = cacheKey.MemoryExpiry.GetValueOrDefault();
+                cacheEntry.Value = dic;
+            }
         }
 
         /// <summary>
@@ -191,7 +186,7 @@ namespace FS.Cache
         /// </summary>
         public void Remove<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey)
         {
-            if (MyCache.TryGetValue(cacheKey, result: out var result))
+            if (MyCache.TryGetValue(cacheKey.Key, result: out var result))
             {
                 var dic = (IDictionary)result;
                 dic.Remove(key: fieldKey);
@@ -213,7 +208,7 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public TEntity Get<TEntity>(CacheKey<TEntity> cacheKey)
         {
-            if (MyCache.TryGetValue(cacheKey, result: out var result))
+            if (MyCache.TryGetValue(cacheKey.Key, result: out var result))
             {
                 if (result != null) return (TEntity)result;
             }
@@ -225,7 +220,7 @@ namespace FS.Cache
         ///     从缓存集合中读取实体
         /// </summary>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public Task<TEntity> GetAsync<TEntity>(CacheKey<TEntity> cacheKey) => Task.FromResult(result: Get<TEntity>(cacheKey));
+        public Task<TEntity> GetAsync<TEntity>(CacheKey<TEntity> cacheKey) => Task.FromResult(result: Get(cacheKey));
 
         /// <summary>
         ///     保存对象
@@ -234,12 +229,12 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public void Save<TEntity>(CacheKey<TEntity> cacheKey, TEntity entity)
         {
-            var cacheEntry = MyCache.CreateEntry(cacheKey);
-
-            // 设置过期时间
-            if (cacheKey.MemoryExpiry != null) cacheEntry.AbsoluteExpirationRelativeToNow = cacheKey.MemoryExpiry.GetValueOrDefault();
-
-            cacheEntry.Value = entity;
+            using (var cacheEntry = MyCache.CreateEntry(cacheKey.Key))
+            {
+                // 设置过期时间
+                if (cacheKey.MemoryExpiry != null) cacheEntry.AbsoluteExpirationRelativeToNow = cacheKey.MemoryExpiry.GetValueOrDefault();
+                cacheEntry.Value = entity;
+            }
         }
 
         /// <summary>
