@@ -48,7 +48,7 @@ namespace FS.MQ.Rabbit.Attr
         /// <summary>
         ///     线程数，只针对推送模式（默认为Environment.ProcessorCount）
         /// </summary>
-        public uint ThreadNums { get; set; } = 0;
+        public uint ThreadNums { get; set; } = 1;
 
         /// <summary>
         ///     最后ACK多少秒超时则重连（默认5分钟）
