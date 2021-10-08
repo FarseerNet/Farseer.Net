@@ -6,21 +6,21 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Google.Protobuf" Version="3.17.3"/>
-        <PackageReference Include="MySqlConnector" Version="1.3.11"/>
-        <PackageReference Include="NETStandard.Library" Version="2.0.3"/>
+        <PackageReference Include="Google.Protobuf" Version="3.18.1" />
+        <PackageReference Include="MySqlConnector" Version="1.3.13" />
+        <PackageReference Include="NETStandard.Library" Version="2.0.3" />
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="App_Data\"/>
-        <Folder Include="Properties\"/>
+        <Folder Include="App_Data\" />
+        <Folder Include="Properties\" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Framework\Farseer.Net.Core\Farseer.Net.Core.csproj"/>
-        <ProjectReference Include="..\..\Framework\Farseer.Net.Data\Farseer.Net.Data.csproj"/>
-        <ProjectReference Include="..\..\Framework\Farseer.Net.Utils\Farseer.Net.Utils.csproj"/>
-        <ProjectReference Include="..\..\Framework\Farseer.Net\Farseer.Net.csproj"/>
+        <ProjectReference Include="..\..\Framework\Farseer.Net.Core\Farseer.Net.Core.csproj" />
+        <ProjectReference Include="..\..\Framework\Farseer.Net.Data\Farseer.Net.Data.csproj" />
+        <ProjectReference Include="..\..\Framework\Farseer.Net.Utils\Farseer.Net.Utils.csproj" />
+        <ProjectReference Include="..\..\Framework\Farseer.Net\Farseer.Net.csproj" />
     </ItemGroup>
 
     <ItemGroup>

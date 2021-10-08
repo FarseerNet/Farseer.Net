@@ -23,13 +23,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="MongoDB.Bson" Version="2.13.1"/>
-        <PackageReference Include="MongoDB.Driver" Version="2.13.1"/>
-        <PackageReference Include="MongoDB.Driver.Core" Version="2.13.1"/>
+        <PackageReference Include="MongoDB.Bson" Version="2.13.2" />
+        <PackageReference Include="MongoDB.Driver" Version="2.13.2" />
+        <PackageReference Include="MongoDB.Driver.Core" Version="2.13.2" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj"/>
+        <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />
     </ItemGroup>
 
 </Project>
