@@ -211,7 +211,7 @@ namespace FS.Cache
         {
             if (MyCache.TryGetValue(cacheKey.Key, result: out var result))
             {
-                if (result != null) return (TEntity)result.Clone();
+                if (result != null) return ((TEntity)result).Clone();
             }
 
             return default;
