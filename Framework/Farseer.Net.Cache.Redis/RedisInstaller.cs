@@ -39,16 +39,16 @@ namespace FS.Cache.Redis
                 container.Register(Component.For<IRedisConnectionWrapper>().Named(name: $"{redisItemConfig.Name}_connection").ImplementedBy<RedisConnectionWrapper>().DependsOn(dependency: Dependency.OnValue<RedisItemConfig>(value: redisItemConfig)).LifestyleSingleton());
                 var redisConnectionWrapper = _iocResolver.Resolve<IRedisConnectionWrapper>(name: $"{redisItemConfig.Name}_connection");
 
+                // 注册 GetCacheInRedis缓存到IGetCache
+                container.Register(Component.For<ICacheManager>().ImplementedBy<CacheManager>().DependsOn(dependency: Dependency.OnValue<string>(value: redisItemConfig.Name)).Named(name: $"GetCacheInMemory_{redisItemConfig.Name}").LifestyleSingleton());
+                container.Register(Component.For<IGetCache>().ImplementedBy<GetCacheInRedis>().DependsOn(dependency: Dependency.OnValue<string>(value: redisItemConfig.Name)).Named(name: $"GetCacheInRedis_{redisItemConfig.Name}").LifestyleSingleton());
+                container.Register(Component.For<IGetCache>().ImplementedBy<GetCacheInMemoryAndRedis>().DependsOn(dependency: Dependency.OnValue<string>(value: redisItemConfig.Name)).Named(name: $"GetCacheInMemoryAndRedis_{redisItemConfig.Name}").LifestyleSingleton());
+
                 // Redis缓存管理
                 var redisCacheManager = new RedisCacheManager(config: redisItemConfig, connectionWrapper: redisConnectionWrapper);
 
                 // 注册Redis管理
                 container.Register(Component.For<IRedisCacheManager>().Named(name: redisItemConfig.Name).Instance(instance: redisCacheManager).LifestyleSingleton());
-
-                // 注册 GetCacheInRedis缓存到IGetCache
-                container.Register(Component.For<ICacheManager>().ImplementedBy<CacheManager>().DependsOn(dependency: Dependency.OnValue<string>(value: redisItemConfig.Name)).Named(name: $"GetCacheInMemory_{redisItemConfig.Name}").LifestyleSingleton());
-                container.Register(Component.For<IGetCache>().ImplementedBy<GetCacheInRedis>().DependsOn(dependency: Dependency.OnValue<string>(value: redisItemConfig.Name)).Named(name: $"GetCacheInRedis_{redisItemConfig.Name}").LifestyleSingleton());
-                container.Register(Component.For<IGetCache>().ImplementedBy<GetCacheInMemoryAndRedis>().DependsOn(dependency: Dependency.OnValue<string>(value: redisItemConfig.Name)).Named(name: $"GetCacheInMemoryAndRedis_{redisItemConfig.Name}").LifestyleSingleton());
 
                 // 注册ICacheManager
                 //container.Register(Component.For<ICacheManager>().Named($"cache_{redisItemConfig.Name}").Instance(cacheManager).LifestyleSingleton());
