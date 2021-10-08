@@ -40,9 +40,9 @@ namespace FS.Cache
         /// </summary>
         protected override Func<object[], object> SetCacheLock()
         {
+            if (CacheList.ContainsKey(key: Key)) return CacheList[key: Key];
             lock (LockObject)
             {
-                if (CacheList.ContainsKey(key: Key)) return CacheList[key: Key];
                 //缓存中没有找到，新建一个构造函数的委托
                 return CacheList[key: Key] = ExpressionHelper.CreateInstance(type: _type, parameterTypes: _parameterTypes);
             }

@@ -27,9 +27,11 @@ namespace FS.Data.Cache
         protected override IList SetCacheLock()
         {
             if (_initCache == null) return null;
+
+            if (CacheList.ContainsKey(key: Key)) return CacheList[key: Key];
             lock (LockObject)
             {
-                if (!CacheList.ContainsKey(key: Key)) CacheList.Add(key: Key, value: _initCache());
+                CacheList.Add(key: Key, value: _initCache());
             }
 
             return CacheList[key: Key];

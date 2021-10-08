@@ -31,14 +31,17 @@ namespace FS.Data.Internal
         ///     生成的派生类dll缓存起来
         /// </summary>
         private static readonly ConcurrentDictionary<Type, Type> Cache = new();
-
+        private static readonly object objLock = new();
         internal Type BuildType(Type entityType)
         {
             if (Cache.ContainsKey(key: entityType)) return Cache[key: entityType];
 
-            var newType = BuildEntity(entityType: entityType);
-            Cache.TryAdd(key: entityType, value: newType);
-            return newType;
+            lock (objLock)
+            {
+                var newType = BuildEntity(entityType: entityType);
+                Cache.TryAdd(key: entityType, value: newType);
+                return newType;
+            }
         }
 
         /// <summary>

@@ -20,9 +20,10 @@ namespace FS.Data.Cache
 
         protected override SetPhysicsMap SetCacheLock()
         {
+            if (CacheList.ContainsKey(key: Key)) return CacheList[key: Key];
             lock (LockObject)
             {
-                if (!CacheList.ContainsKey(key: Key)) CacheList.Add(key: Key, value: new SetPhysicsMap(type: Key));
+                CacheList.Add(key: Key, value: new SetPhysicsMap(type: Key));
             }
 
             return CacheList[key: Key];

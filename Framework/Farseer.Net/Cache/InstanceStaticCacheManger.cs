@@ -41,9 +41,9 @@ namespace FS.Cache
         /// </summary>
         protected override Func<object[], object> SetCacheLock()
         {
+            if (CacheList.ContainsKey(key: Key)) return CacheList[key: Key];
             lock (LockObject)
             {
-                if (CacheList.ContainsKey(key: Key)) return CacheList[key: Key];
                 var method = _type.GetMethod(name: _methodName, bindingAttr: BindingFlags.Static | BindingFlags.Public);
                 //缓存中没有找到，新建一个构造函数的委托
                 return CacheList[key: Key] = param => method.Invoke(obj: null, parameters: param);

@@ -16,7 +16,7 @@ namespace FS.Core.Mapping
         ///     缓存类型
         /// </summary>
         private static readonly ConcurrentDictionary<Type, EntityPhysicsMap> Cache = new();
-
+        private static readonly object objLock = new();
         /// <summary>
         ///     获取所有Set属性
         /// </summary>
@@ -104,7 +104,12 @@ namespace FS.Core.Mapping
         public static EntityPhysicsMap Map(Type type)
         {
             // 不存在缓存，则加入
-            if (!Cache.ContainsKey(key: type)) Cache.TryAdd(key: type, value: new EntityPhysicsMap(type: type));
+            if (Cache.ContainsKey(key: type)) return Cache[key: type];
+            
+            lock (objLock)
+            {
+                Cache.TryAdd(key: type, value: new EntityPhysicsMap(type: type));
+            }
             return Cache[key: type];
         }
     }
