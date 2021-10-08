@@ -3,6 +3,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using FS.Utils.Common;
+using Newtonsoft.Json;
 
 // ReSharper disable once CheckNamespace
 namespace FS.Extends
@@ -31,15 +32,16 @@ namespace FS.Extends
         public static TEntity Clone<TEntity>(this TEntity source)
         {
             if (source == null) return default;
-            
-            IFormatter formatter = new BinaryFormatter();
-            Stream     stream    = new MemoryStream();
-            using (stream)
-            {
-                formatter.Serialize(stream, source);
-                stream.Seek(0, SeekOrigin.Begin);
-                return (TEntity)formatter.Deserialize(stream);
-            }
+            return JsonConvert.DeserializeObject<TEntity>(JsonConvert.SerializeObject(source), new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
+
+            // IFormatter formatter = new BinaryFormatter();
+            // Stream     stream    = new MemoryStream();
+            // using (stream)
+            // {
+            //     formatter.Serialize(stream, source);
+            //     stream.Seek(0, SeekOrigin.Begin);
+            //     return (TEntity)formatter.Deserialize(stream);
+            // }
         }
     }
 }

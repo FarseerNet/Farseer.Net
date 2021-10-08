@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using FS.Utils.Common;
+using Newtonsoft.Json;
 
 // ReSharper disable once CheckNamespace
 namespace FS.Extends
@@ -59,14 +60,15 @@ namespace FS.Extends
             if (source == null) return null;
             if (!source.Any()) return new List<TEntity>();
 
-            IFormatter formatter = new BinaryFormatter();
-            Stream     stream    = new MemoryStream();
-            using (stream)
-            {
-                formatter.Serialize(stream, source);
-                stream.Seek(0, SeekOrigin.Begin);
-                return (List<TEntity>)formatter.Deserialize(stream);
-            }
+            return JsonConvert.DeserializeObject<List<TEntity>>(JsonConvert.SerializeObject(source), new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
+            // IFormatter formatter = new BinaryFormatter();
+            // Stream     stream    = new MemoryStream();
+            // using (stream)
+            // {
+            //     formatter.Serialize(stream, source);
+            //     stream.Seek(0, SeekOrigin.Begin);
+            //     return (List<TEntity>)formatter.Deserialize(stream);
+            // }
         }
 
         /// <summary>
