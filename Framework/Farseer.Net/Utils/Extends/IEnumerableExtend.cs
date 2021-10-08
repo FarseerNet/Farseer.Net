@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using FS.Utils.Common;
 
 // ReSharper disable once CheckNamespace
@@ -46,6 +49,24 @@ namespace FS.Extends
             var groupLength = (int)Math.Ceiling(d: (decimal)lst.Count()                                                 / splitCount);
             for (var pageIndex = 0; pageIndex < groupLength; pageIndex++) lstGroup.Add(item: lst.Skip(count: splitCount * pageIndex).Take(count: splitCount));
             return lstGroup;
+        }
+
+        /// <summary>
+        /// 克隆对象
+        /// </summary>
+        public static List<TEntity> Clone<TEntity>(this IEnumerable<TEntity> source)
+        {
+            if (source == null) return null;
+            if (!source.Any()) return new List<TEntity>();
+
+            IFormatter formatter = new BinaryFormatter();
+            Stream     stream    = new MemoryStream();
+            using (stream)
+            {
+                formatter.Serialize(stream, source);
+                stream.Seek(0, SeekOrigin.Begin);
+                return (List<TEntity>)formatter.Deserialize(stream);
+            }
         }
 
         /// <summary>

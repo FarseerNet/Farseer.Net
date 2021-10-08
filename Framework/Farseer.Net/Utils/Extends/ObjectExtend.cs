@@ -1,4 +1,7 @@
 ﻿using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using FS.Utils.Common;
 
 // ReSharper disable once CheckNamespace
@@ -21,5 +24,22 @@ namespace FS.Extends
         /// <param name="defValue"> 转换失败时，代替的默认值 </param>
         /// <typeparam name="T"> 基本类型 </typeparam>
         public static T ConvertType<T>(this object sourceValue, T defValue = default) => ConvertHelper.ConvertType(sourceValue: sourceValue, defValue: defValue);
+
+        /// <summary>
+        /// 克隆对象
+        /// </summary>
+        public static TEntity Clone<TEntity>(this TEntity source)
+        {
+            if (source == null) return default;
+            
+            IFormatter formatter = new BinaryFormatter();
+            Stream     stream    = new MemoryStream();
+            using (stream)
+            {
+                formatter.Serialize(stream, source);
+                stream.Seek(0, SeekOrigin.Begin);
+                return (TEntity)formatter.Deserialize(stream);
+            }
+        }
     }
 }
