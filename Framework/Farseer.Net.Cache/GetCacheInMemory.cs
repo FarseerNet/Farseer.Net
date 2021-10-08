@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FS.Extends;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace FS.Cache
@@ -23,7 +24,7 @@ namespace FS.Cache
             if (MyCache.TryGetValue(cacheKey.Key, result: out var result))
             {
                 var dic = (ConcurrentDictionary<TEntityId, TEntity>)result;
-                return dic.Select(selector: o => o.Value).ToList();
+                return dic.Select(selector: o => o.Value).ToList().Clone();
             }
 
             return null;
@@ -43,7 +44,7 @@ namespace FS.Cache
             {
                 var dic = (ConcurrentDictionary<TEntityId, TEntity>)result;
                 dic.TryGetValue(key: fieldKey, value: out var entity);
-                return entity;
+                return entity.Clone();
             }
 
             return default;
@@ -210,7 +211,7 @@ namespace FS.Cache
         {
             if (MyCache.TryGetValue(cacheKey.Key, result: out var result))
             {
-                if (result != null) return (TEntity)result;
+                if (result != null) return (TEntity)result.Clone();
             }
 
             return default;
