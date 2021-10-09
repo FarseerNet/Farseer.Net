@@ -10,6 +10,18 @@ namespace FS.LinkTrack.Dal
     public class SlowQueryPO
     {
         /// <summary>
+        ///     上下文ID
+        /// </summary>
+        [Keyword]
+        public string ContextId { get; set; }
+
+        /// <summary>
+        ///     应用
+        /// </summary>
+        [Keyword]
+        public string AppId { get; set; }
+        
+        /// <summary>
         ///     调用类型
         /// </summary>
         [Number(type: NumberType.Byte)]
@@ -26,7 +38,7 @@ namespace FS.LinkTrack.Dal
         /// </summary>
         [Number(type: NumberType.Long)]
         public long StartTs { get; set; }
-        
+
         /// <summary>
         ///     数据库名称
         /// </summary>
@@ -47,7 +59,7 @@ namespace FS.LinkTrack.Dal
         /// </summary>
         [Object]
         public Dictionary<string, string> DbSqlParam { get; set; }
-        
+
         /// <summary>
         ///     Redis key
         /// </summary>
@@ -58,25 +70,25 @@ namespace FS.LinkTrack.Dal
         /// </summary>
         [Keyword]
         public string RedisHashFields { get; set; }
-        
+
         /// <summary>
         ///     Elasticsearch调用方法
         /// </summary>
         [Keyword]
         public string EsMethod { get; set; }
-        
+
         /// <summary>
         ///     Mq Topic
         /// </summary>
         [Keyword]
         public string MqTopic { get; set; }
-        
+
         /// <summary>
         ///     Grpc
         /// </summary>
         [Keyword]
         public string GrpcUrl { get; set; }
-        
+
         /// <summary>
         ///     http url
         /// </summary>

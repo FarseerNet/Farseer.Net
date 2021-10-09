@@ -51,7 +51,7 @@ namespace FS.LinkTrack
             // 依赖外部系统的，单独存储，用于统计慢查询
             AddSlowQuery(lst: lst);
         }
-        
+
         /// <summary>
         /// 依赖外部系统的，单独存储，用于统计慢查询
         /// </summary>
@@ -68,6 +68,8 @@ namespace FS.LinkTrack
                         case EumCallType.HttpClient:
                             lstSlowQuery.Add(new SlowQueryPO
                             {
+                                AppId           = linkTrackContext.AppId,
+                                ContextId       = linkTrackContext.ContextId,
                                 CallType        = linkTrackDetail.CallType,
                                 UseTs           = linkTrackDetail.UseTs,
                                 StartTs         = linkTrackDetail.StartTs,
@@ -79,15 +81,21 @@ namespace FS.LinkTrack
                         case EumCallType.GrpcClient:
                             lstSlowQuery.Add(new SlowQueryPO
                             {
-                                CallType = linkTrackDetail.CallType,
-                                UseTs    = linkTrackDetail.UseTs,
-                                StartTs  = linkTrackDetail.StartTs,
-                                GrpcUrl  = linkTrackDetail.Data["Server"] + linkTrackDetail.Data["Action"],
+                                AppId     = linkTrackContext.AppId,
+                                ContextId = linkTrackContext.ContextId,
+                                CallType  = linkTrackDetail.CallType,
+                                UseTs     = linkTrackDetail.UseTs,
+                                StartTs   = linkTrackDetail.StartTs,
+                                GrpcUrl   = linkTrackDetail.Data["Server"] + "/" + linkTrackDetail.Data["Action"],
                             });
                             break;
                         case EumCallType.Database:
+                            // Sql为空，则不记录
+                            if (string.IsNullOrWhiteSpace(linkTrackDetail.DbLinkTrackDetail.Sql)) break;
                             lstSlowQuery.Add(new SlowQueryPO
                             {
+                                AppId       = linkTrackContext.AppId,
+                                ContextId   = linkTrackContext.ContextId,
                                 CallType    = linkTrackDetail.CallType,
                                 UseTs       = linkTrackDetail.UseTs,
                                 StartTs     = linkTrackDetail.StartTs,
@@ -100,6 +108,8 @@ namespace FS.LinkTrack
                         case EumCallType.Redis:
                             lstSlowQuery.Add(new SlowQueryPO
                             {
+                                AppId           = linkTrackContext.AppId,
+                                ContextId       = linkTrackContext.ContextId,
                                 CallType        = linkTrackDetail.CallType,
                                 UseTs           = linkTrackDetail.UseTs,
                                 StartTs         = linkTrackDetail.StartTs,
@@ -110,19 +120,23 @@ namespace FS.LinkTrack
                         case EumCallType.Mq:
                             lstSlowQuery.Add(new SlowQueryPO
                             {
-                                CallType = linkTrackDetail.CallType,
-                                UseTs    = linkTrackDetail.UseTs,
-                                StartTs  = linkTrackDetail.StartTs,
-                                MqTopic  = linkTrackDetail.CallMethod,
+                                AppId     = linkTrackContext.AppId,
+                                ContextId = linkTrackContext.ContextId,
+                                CallType  = linkTrackDetail.CallType,
+                                UseTs     = linkTrackDetail.UseTs,
+                                StartTs   = linkTrackDetail.StartTs,
+                                MqTopic   = linkTrackDetail.CallMethod,
                             });
                             break;
                         case EumCallType.Elasticsearch:
                             lstSlowQuery.Add(new SlowQueryPO
                             {
-                                CallType = linkTrackDetail.CallType,
-                                UseTs    = linkTrackDetail.UseTs,
-                                StartTs  = linkTrackDetail.StartTs,
-                                EsMethod = linkTrackDetail.CallMethod,
+                                AppId     = linkTrackContext.AppId,
+                                ContextId = linkTrackContext.ContextId,
+                                CallType  = linkTrackDetail.CallType,
+                                UseTs     = linkTrackDetail.UseTs,
+                                StartTs   = linkTrackDetail.StartTs,
+                                EsMethod  = linkTrackDetail.CallMethod,
                             });
                             break;
                     }
