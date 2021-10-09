@@ -21,7 +21,7 @@ namespace Farseer.Net.ElasticSearchDemo
 
         protected override void CreateModelInit(Dictionary<string, SetDataMap> map)
         {
-            map[key: "User"].SetName(indexName: $"User_{DateTime.Now:yyyy_MM_dd}", shardsCount: 2, replicasCount: 0, "User");
+            map[key: "User"].SetName(indexName: $"User_{DateTime.Now:yyyy_MM_dd}", shardsCount: 2, replicasCount: 0, 1, "User");
         }
     }
 }

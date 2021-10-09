@@ -33,6 +33,11 @@ namespace FS.ElasticSearch.Map
         /// </summary>
         public int ShardsCount { get; private set; }
 
+        /// <summary>
+        ///     刷新间隔（默认1秒）
+        /// </summary>
+        public int RefreshInterval { get; private set; }
+
         public string[] AliasNames { get; private set; }
 
         /// <summary>
@@ -51,12 +56,15 @@ namespace FS.ElasticSearch.Map
         /// <param name="indexName"> 库名称 </param>
         /// <param name="shardsCount"> </param>
         /// <param name="replicasCount"> </param>
+        /// <param name="refreshInterval">刷新间隔 </param>
         /// <param name="aliasNames"> 别名，多个使用数组 </param>
-        public SetDataMap SetName(string indexName, int shardsCount = 3, int replicasCount = 1, params string[] aliasNames)
+        public SetDataMap SetName(string indexName, int shardsCount = 3, int replicasCount = 1, int refreshInterval = 1, params string[] aliasNames)
         {
-            IndexName     = indexName.ToLower();
-            ShardsCount   = shardsCount;
-            ReplicasCount = replicasCount;
+            IndexName       = indexName.ToLower();
+            ShardsCount     = shardsCount;
+            ReplicasCount   = replicasCount;
+            RefreshInterval = refreshInterval;
+            
             if (aliasNames is
             {
                 Length: > 0

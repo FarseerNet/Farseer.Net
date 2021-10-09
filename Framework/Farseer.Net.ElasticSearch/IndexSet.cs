@@ -804,7 +804,7 @@ namespace FS.ElasticSearch
 
                                                                                             return des;
                                                                                         })
-                                                                                        .Settings(selector: s => s.NumberOfReplicas(numberOfReplicas: SetMap.ReplicasCount).NumberOfShards(numberOfShards: SetMap.ShardsCount))
+                                                                                        .Settings(selector: s => s.NumberOfReplicas(numberOfReplicas: SetMap.ReplicasCount).NumberOfShards(numberOfShards: SetMap.ShardsCount).RefreshInterval(SetMap.RefreshInterval))
                                                );
                 if (!rsp.IsValid) throw new Exception(message: rsp.OriginalException.Message);
 
