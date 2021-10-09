@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using FS.Core.Async;
 using FS.Core.LinkTrack;
+using FS.LinkTrack.Dal;
 
 namespace FS.LinkTrack
 {
@@ -45,6 +47,88 @@ namespace FS.LinkTrack
                                                                         RequestIp    = o.RequestIp
                                                                     })
                                                                     .ToList());
+
+            // 依赖外部系统的，单独存储，用于统计慢查询
+            AddSlowQuery(lst: lst);
+        }
+        
+        /// <summary>
+        /// 依赖外部系统的，单独存储，用于统计慢查询
+        /// </summary>
+        private void AddSlowQuery(List<LinkTrackContext> lst)
+        {
+
+            var lstSlowQuery = new List<SlowQueryPO>();
+            foreach (var linkTrackContext in lst)
+            {
+                foreach (var linkTrackDetail in linkTrackContext.List)
+                {
+                    switch (linkTrackDetail.CallType)
+                    {
+                        case EumCallType.HttpClient:
+                            lstSlowQuery.Add(new SlowQueryPO
+                            {
+                                CallType        = linkTrackDetail.CallType,
+                                UseTs           = linkTrackDetail.UseTs,
+                                StartTs         = linkTrackDetail.StartTs,
+                                HttpUrl         = linkTrackDetail.Data["Url"],
+                                HttpMethod      = linkTrackDetail.Data["Method"],
+                                HttpRequestBody = linkTrackDetail.Data["RequestBody"]
+                            });
+                            break;
+                        case EumCallType.GrpcClient:
+                            lstSlowQuery.Add(new SlowQueryPO
+                            {
+                                CallType = linkTrackDetail.CallType,
+                                UseTs    = linkTrackDetail.UseTs,
+                                StartTs  = linkTrackDetail.StartTs,
+                                GrpcUrl  = linkTrackDetail.Data["Server"] + linkTrackDetail.Data["Action"],
+                            });
+                            break;
+                        case EumCallType.Database:
+                            lstSlowQuery.Add(new SlowQueryPO
+                            {
+                                CallType    = linkTrackDetail.CallType,
+                                UseTs       = linkTrackDetail.UseTs,
+                                StartTs     = linkTrackDetail.StartTs,
+                                DbName      = linkTrackDetail.DbLinkTrackDetail.DataBaseName,
+                                DbTableName = linkTrackDetail.DbLinkTrackDetail.TableName,
+                                DbSql       = linkTrackDetail.DbLinkTrackDetail.Sql,
+                                DbSqlParam  = linkTrackDetail.DbLinkTrackDetail.SqlParam,
+                            });
+                            break;
+                        case EumCallType.Redis:
+                            lstSlowQuery.Add(new SlowQueryPO
+                            {
+                                CallType        = linkTrackDetail.CallType,
+                                UseTs           = linkTrackDetail.UseTs,
+                                StartTs         = linkTrackDetail.StartTs,
+                                RedisKey        = linkTrackDetail.Data["RedisKey"],
+                                RedisHashFields = linkTrackDetail.Data["RedisHashFields"],
+                            });
+                            break;
+                        case EumCallType.Mq:
+                            lstSlowQuery.Add(new SlowQueryPO
+                            {
+                                CallType = linkTrackDetail.CallType,
+                                UseTs    = linkTrackDetail.UseTs,
+                                StartTs  = linkTrackDetail.StartTs,
+                                MqTopic  = linkTrackDetail.CallMethod,
+                            });
+                            break;
+                        case EumCallType.Elasticsearch:
+                            lstSlowQuery.Add(new SlowQueryPO
+                            {
+                                CallType = linkTrackDetail.CallType,
+                                UseTs    = linkTrackDetail.UseTs,
+                                StartTs  = linkTrackDetail.StartTs,
+                                EsMethod = linkTrackDetail.CallMethod,
+                            });
+                            break;
+                    }
+                }
+            }
+            LinkTrackEsContext.Data.SlowQuery.Insert(lstSlowQuery);
         }
     }
 }

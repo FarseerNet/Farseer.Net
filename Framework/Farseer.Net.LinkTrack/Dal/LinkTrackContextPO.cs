@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using FS.Core.LinkTrack;
 using Nest;
 
-namespace FS.LinkTrack
+namespace FS.LinkTrack.Dal
 {
     [ElasticsearchType(IdProperty = "Id")]
     public class LinkTrackContextPO : LinkTrackContext
