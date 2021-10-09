@@ -51,7 +51,7 @@ namespace FS.Job
                 var url = server.StartsWith(value: "http") ? $"{server}/task/pull" : $"http://{server}/task/pull";
                 try
                 {
-                    var json = await Net.PostAsync(url: url, postData: new Dictionary<string, string> { { "TaskCount", Environment.ProcessorCount.ToString() } }, headerData: _header, contentType: "application/json");
+                    var json = await Net.PostAsync(url: url, postData: new Dictionary<string, string> { { "TaskCount", jobItemConfig.PullCount == 0 ? Environment.ProcessorCount.ToString() : jobItemConfig.PullCount.ToString() } }, headerData: _header, contentType: "application/json");
                     var api  = Jsons.ToObject<ApiResponseJson<List<TaskVO>>>(obj: json);
                     if (!api.Status) continue;
                     if (api.Data.Count == 0) return;
