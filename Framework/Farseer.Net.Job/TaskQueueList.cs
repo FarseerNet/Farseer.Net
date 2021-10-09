@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FS.Core.LinkTrack;
 using FS.DI;
+using FS.Job.Configuration;
 using FS.Job.Entity;
 using Microsoft.Extensions.Logging;
 
@@ -25,8 +27,43 @@ namespace FS.Job
         /// </summary>
         public static void Enqueue(List<TaskVO> lstTask)
         {
-            IocManager.Instance.Logger<TaskQueueList>().LogInformation(message: $"本次拉取{lstTask.Count}条任务");
-            foreach (var task in lstTask) _queue.Enqueue(item: task);
+            foreach (var task in lstTask.OrderBy(o => o.StartAt)) _queue.Enqueue(item: task);
+        }
+
+        /// <summary>
+        /// 自动拉取任务
+        /// </summary>
+        public static void PullJob()
+        {
+            // 开启任务，自动拉取任务
+            Task.Factory.StartNew(function: async () =>
+            {
+                // 当前客户端支持的job
+                var jobItemConfig = JobConfigRoot.Get();
+                // 最大拉取数量（队列现存的数量）
+                var maxPullCount = jobItemConfig.PullCount == 0 ? Environment.ProcessorCount : jobItemConfig.PullCount;
+                while (true)
+                {
+                    // 本次要拉取的数量
+                    var pullCount = maxPullCount - _queue.Count;
+
+                    // 没有任务的时候，要主动拉取
+                    if (pullCount > 0)
+                    {
+                        // 拉取任务
+                        var lst = await TaskManager.PullAsync(pullCount);
+                        // 从队列中，将已拉取的任务先取出来，目的是重新排序后入队
+                        while (_queue.Count > 0)
+                        {
+                            lst.Add(_queue.Dequeue());
+                        }
+                        
+                        // 将任务添加到队列中
+                        Enqueue(lst);
+                    }
+                    Thread.Sleep(millisecondsTimeout: 500);
+                }
+            }, creationOptions: TaskCreationOptions.LongRunning);
         }
 
         /// <summary>
@@ -39,16 +76,11 @@ namespace FS.Job
             {
                 while (true)
                 {
-                    // 没有任务的时候，要主动拉取
+                    // 没有任务的时候，休眠
                     if (_queue.Count == 0)
                     {
-                        // 拉取任务
-                        await TaskManager.PullAsync();
-                        if (_queue.Count == 0)
-                        {
-                            Thread.Sleep(millisecondsTimeout: 500);
-                            continue;
-                        }
+                        await Task.Delay(100);
+                        continue;
                     }
 
                     // 计划时间还没到

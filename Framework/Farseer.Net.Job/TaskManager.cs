@@ -21,25 +21,9 @@ namespace FS.Job
         private static readonly Dictionary<string, string> _header = new() { { "ClientIp", JobModule.Client.ClientIp }, { "ClientId", JobModule.Client.Id.ToString() }, { "ClientName", JobModule.Client.ClientName }, { "ClientJobs", string.Join(separator: ",", value: JobModule.Client.Jobs) } };
 
         /// <summary>
-        ///     自动拉取任务
-        /// </summary>
-        public void AutoPull()
-        {
-            // 开启任务，自动拉取任务
-            Task.Factory.StartNew(function: async () =>
-            {
-                while (true)
-                {
-                    await PullAsync();
-                    Thread.Sleep(millisecondsTimeout: 500);
-                }
-            }, creationOptions: TaskCreationOptions.LongRunning);
-        }
-
-        /// <summary>
         ///     到FSS平台拉取任务
         /// </summary>
-        public static async Task PullAsync()
+        public static async Task<List<TaskVO>> PullAsync(int pullCount)
         {
             // 当前客户端支持的job
             var jobItemConfig = JobConfigRoot.Get();
@@ -51,20 +35,19 @@ namespace FS.Job
                 var url = server.StartsWith(value: "http") ? $"{server}/task/pull" : $"http://{server}/task/pull";
                 try
                 {
-                    var json = await Net.PostAsync(url: url, postData: new Dictionary<string, string> { { "TaskCount", jobItemConfig.PullCount == 0 ? Environment.ProcessorCount.ToString() : jobItemConfig.PullCount.ToString() } }, headerData: _header, contentType: "application/json");
+                    var json = await Net.PostAsync(url: url, postData: new Dictionary<string, string> { { "TaskCount", pullCount.ToString() } }, headerData: _header, contentType: "application/json");
                     var api  = Jsons.ToObject<ApiResponseJson<List<TaskVO>>>(obj: json);
                     if (!api.Status) continue;
-                    if (api.Data.Count == 0) return;
-
-                    // 将任务添加到队列中
-                    TaskQueueList.Enqueue(lstTask: api.Data);
-                    return;
+                    
+                    IocManager.Instance.Logger<TaskQueueList>().LogInformation(message: $"本次拉取{api.Data.Count}条任务");
+                    return api.Data;
                 }
                 catch (Exception e)
                 {
                     IocManager.Instance.Logger<TaskManager>().LogError(exception: e, message: e.Message);
                 }
             }
+            return new List<TaskVO>();
         }
 
         /// <summary>

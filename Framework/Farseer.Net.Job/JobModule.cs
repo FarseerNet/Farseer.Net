@@ -75,7 +75,10 @@ namespace FS.Job
                     });
                 }
                 else
+                {
+                    TaskQueueList.PullJob();
                     TaskQueueList.RunJob();
+                }
             }
         }
 
