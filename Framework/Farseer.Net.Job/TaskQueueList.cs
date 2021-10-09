@@ -61,8 +61,7 @@ namespace FS.Job
                         await RunTask(task: _queue.Dequeue());
                     });
 
-
-                    Thread.Sleep(millisecondsTimeout: 500);
+                    Thread.Sleep(millisecondsTimeout: 10);
                 }
             }, creationOptions: TaskCreationOptions.LongRunning);
         }
