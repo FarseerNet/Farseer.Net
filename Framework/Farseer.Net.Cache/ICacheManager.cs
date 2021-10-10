@@ -210,5 +210,12 @@ namespace FS.Cache
         /// </summary>
         /// <param name="cacheKey"> 缓存策略 </param>
         TEntity Get<TEntity>(CacheKey<TEntity> cacheKey);
+        /// <summary>
+        ///     从缓存集合中获取数据，如果不存在则通过get委托获取，并保存到缓存中
+        /// </summary>
+        /// <param name="fieldKey"> hash里的field值 </param>
+        /// <param name="get"> 数据源获取 </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        TEntity GetItem<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<TEntity> get);
     }
 }

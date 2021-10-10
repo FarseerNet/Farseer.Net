@@ -139,6 +139,27 @@ namespace FS.Cache
         ///     从缓存集合中获取数据，如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
         /// <param name="fieldKey"> hash里的field值 </param>
+        /// <param name="get"> 数据源获取 </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        public TEntity GetItem<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<TEntity> get)
+        {
+            SetCache(cacheKey: cacheKey);
+
+            var entity = _getCache.GetItem(cacheKey, fieldKey: fieldKey);
+
+            if (entity != null) return entity;
+
+            // 缓存没有，则通过get委托获取（一般是数据库的数据源）
+            entity = get();
+            _getCache.SaveItem(cacheKey,entity);
+
+            return entity;
+        }
+
+        /// <summary>
+        ///     从缓存集合中获取数据，如果不存在则通过get委托获取，并保存到缓存中
+        /// </summary>
+        /// <param name="fieldKey"> hash里的field值 </param>
         /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
         /// <param name="cacheKey"> 缓存策略 </param>
         public TEntity GetItem<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey)
