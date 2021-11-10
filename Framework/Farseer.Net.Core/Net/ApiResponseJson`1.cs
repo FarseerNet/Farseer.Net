@@ -64,7 +64,13 @@ namespace FS.Core.Net
         /// </summary>
         /// <param name="statusMessage"> 成功提示内容 </param>
         /// <param name="data"> 返回的数据列表 </param>
-        public static Task<ApiResponseJson<TData>> SuccessAsync(string statusMessage, TData data = default) => Task.FromResult(result: Success(statusMessage: statusMessage, data: data));
+        public static Task<ApiResponseJson<TData>> SuccessAsync(string statusMessage = "执行成功", TData data = default) => Task.FromResult(result: Success(statusMessage: statusMessage, data: data));
+        
+        /// <summary>
+        ///     接口调用成功后返回的Json
+        /// </summary>
+        /// <param name="data"> 返回的数据列表 </param>
+        public static Task<ApiResponseJson<TData>> SuccessAsync(TData data) => Task.FromResult(result: Success(statusMessage: "执行成功", data: data));
 
         /// <summary>
         ///     接口调用失时返回的Json
@@ -92,16 +98,5 @@ namespace FS.Core.Net
             StatusMessage = api.StatusMessage,
             Data          = api.Data != null ? Jsons.ToObject<TData>(api.Data) : null
         };
-
-        //public static implicit operator ApiResponseJson(ApiResponseJson<TData> api)
-        //{
-        //    return new ApiResponseJson
-        //    {
-        //        Status        = api.Status,
-        //        StatusCode    = api.StatusCode,
-        //        StatusMessage = api.StatusMessage,
-        //        Data          = api.Data
-        //    };
-        //}
     }
 }
