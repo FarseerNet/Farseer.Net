@@ -379,7 +379,7 @@ namespace FS.ElasticSearch
 
                 if (!searchResponse.IsValid)
                 {
-                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return new List<TDocument>();
+                    if (searchResponse.ApiCall.HttpStatusCode == 404) return new List<TDocument>();
                     throw searchResponse.OriginalException;
                 }
 
@@ -405,7 +405,7 @@ namespace FS.ElasticSearch
 
                 if (!searchResponse.IsValid)
                 {
-                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return default;
+                    if (searchResponse.ApiCall.HttpStatusCode == 404)  return default;
                     throw searchResponse.OriginalException;
                 }
 
@@ -431,7 +431,7 @@ namespace FS.ElasticSearch
 
                 if (!searchResponse.IsValid)
                 {
-                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return default;
+                    if (searchResponse.ServerError?.Error.Type == "index_not_found_exception") return default;
                     throw searchResponse.OriginalException;
                 }
 

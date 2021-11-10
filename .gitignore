@@ -6,3 +6,4 @@ packages
 /.vs
 *.idea
 /.idea/
+.DS_Store
