@@ -35,7 +35,7 @@ namespace FS.Job
                 var url = server.StartsWith(value: "http") ? $"{server}/task/pull" : $"http://{server}/task/pull";
                 try
                 {
-                    var json = await Net.PostAsync(url: url, postData: new Dictionary<string, string> { { "TaskCount", pullCount.ToString() } }, headerData: _header, contentType: "application/json");
+                    var json = await HttpPost.PostAsync(url: url, postData: new Dictionary<string, string> { { "TaskCount", pullCount.ToString() } }, headerData: _header, contentType: "application/json");
                     var api  = Jsons.ToObject<ApiResponseJson<List<TaskVO>>>(obj: json);
                     if (!api.Status) continue;
                     
@@ -66,7 +66,7 @@ namespace FS.Job
                 var url = server.StartsWith(value: "http") ? $"{server}/task/JobInvoke" : $"http://{server}/task/JobInvoke";
                 try
                 {
-                    var json = await Net.PostAsync(url: url, postData: JsonConvert.SerializeObject(value: request), headerData: _header, contentType: "application/json");
+                    var json = await HttpPost.PostAsync(url: url, postData: JsonConvert.SerializeObject(value: request), headerData: _header, contentType: "application/json");
                     var api  = Jsons.ToObject<ApiResponseJson>(obj: json);
                     if (!api.Status) IocManager.Instance.Logger<TaskManager>().LogWarning(message: api.StatusMessage);
 
