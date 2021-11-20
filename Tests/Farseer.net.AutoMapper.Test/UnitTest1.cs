@@ -18,7 +18,7 @@ namespace Farseer.net.AutoMapper.Test
         [Test]
         public void Test1()
         {
-            IocManager.Instance.Resolve<Test>().Console();
+            IocManager.GetService<Test>().Console();
 
             var lst = new List<UserPO>();
             lst.Add(item: new UserPO { Id = 1, UserName = "张三" });

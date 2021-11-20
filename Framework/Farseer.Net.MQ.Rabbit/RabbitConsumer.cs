@@ -71,6 +71,11 @@ namespace FS.MQ.Rabbit
         private DateTime _lastAckAt;
 
         /// <summary>
+        /// 是否使用链路追踪
+        /// </summary>
+        private bool _useLinkTrack;
+        
+        /// <summary>
         ///     消费客户端
         /// </summary>
         /// <param name="iocManager"> IOC </param>
@@ -91,6 +96,7 @@ namespace FS.MQ.Rabbit
             _lastAckAt             = DateTime.Now;
 
             if (!iocManager.IsRegistered(name: consumerType.FullName)) iocManager.Register(type: consumerType, name: consumerType.FullName, lifeStyle: DependencyLifeStyle.Transient);
+            _useLinkTrack = _iocManager.IsRegistered<ILinkTrackQueue>();
         }
 
         /// <summary>
@@ -185,7 +191,7 @@ namespace FS.MQ.Rabbit
                     }
 
                     // 写入链路追踪
-                    if (_iocManager.IsRegistered<ILinkTrackQueue>()) _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
+                    if (_useLinkTrack) _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
 
                     _lastAckAt = DateTime.Now;
                 }
@@ -206,7 +212,7 @@ namespace FS.MQ.Rabbit
                         }
 
                         // 写入链路追踪
-                        if (_iocManager.IsRegistered<ILinkTrackQueue>()) _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
+                        if (_useLinkTrack) _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
                     }
                     catch (Exception exception)
                     {

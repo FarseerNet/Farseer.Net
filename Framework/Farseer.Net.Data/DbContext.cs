@@ -37,7 +37,7 @@ namespace FS.Data
         {
             var dbConnectionName = $"dbConnection_{name}";
             if (!IocManager.Instance.IsRegistered(name: dbConnectionName)) throw new FarseerException(message: $"未找到数据库的配置：{name}");
-            _internalContext.ContextConnection = IocManager.Instance.Resolve<IContextConnection>(name: dbConnectionName);
+            _internalContext.ContextConnection = IocManager.GetService<IContextConnection>(name: dbConnectionName);
         }
 
         /// <summary>

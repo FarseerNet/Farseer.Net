@@ -45,7 +45,7 @@ namespace Farseer.Net.Grpc
             }
 
             // 写入链路追踪
-            IocManager.Instance.Resolve<ILinkTrackQueue>().Enqueue();
+            IocManager.GetService<ILinkTrackQueue>().Enqueue();
             return result;
         }
 

@@ -136,7 +136,7 @@ namespace FS.Job
             try
             {
                 // 执行业务JOB
-                var  fssJob = IocManager.Instance.Resolve<IFssJob>(name: jobInsName);
+                var  fssJob = IocManager.GetService<IFssJob>(name: jobInsName);
                 bool result;
                 using (FsLinkTrack.TrackFss(clientHost: task.ClientHost, jobName: task.JobName, taskGroupId: task.TaskGroupId, taskId: task.Id))
                 {
@@ -146,7 +146,7 @@ namespace FS.Job
                 }
 
                 // 写入链路追踪
-                if (IocManager.Instance.IsRegistered<ILinkTrackQueue>()) IocManager.Instance.Resolve<ILinkTrackQueue>().Enqueue();
+                if (IocManager.Instance.IsRegistered<ILinkTrackQueue>()) IocManager.GetService<ILinkTrackQueue>().Enqueue();
 
                 // 通知服务端，当前客户端执行结果
                 if (result)

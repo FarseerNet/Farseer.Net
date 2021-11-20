@@ -21,7 +21,7 @@ namespace FS
             {
                 o.Filters.Add(item: new BadRequestException());
             };
-            services.Configure<KestrelServerOptions>(config: IocManager.Instance.Resolve<IConfigurationRoot>().GetSection(key: "Kestrel"));
+            services.Configure<KestrelServerOptions>(config: IocManager.GetService<IConfigurationRoot>().GetSection(key: "Kestrel"));
             services.AddFarseerIoc();
             return services.AddControllers(configure: configure)
                            .AddControllersAsServices()

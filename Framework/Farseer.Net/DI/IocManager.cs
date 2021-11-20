@@ -254,5 +254,50 @@ namespace FS.DI
                 default:                            return registration;
             }
         }
+        
+        /// <summary>
+        ///     获取实例
+        /// </summary>
+        /// <typeparam name="T"> </typeparam>
+        /// <param name="name"> </param>
+        /// <returns> </returns>
+        public static T GetService<T>(string name = "") => string.IsNullOrEmpty(value: name) ? Instance.Container.Resolve<T>() : Instance.Container.Resolve<T>(key: name);
+
+        /// <summary>
+        ///     获取实例
+        /// </summary>
+        /// <typeparam name="T"> </typeparam>
+        /// <param name="type"> </param>
+        /// <param name="name"> </param>
+        /// <returns> </returns>
+        public static T GetService<T>(Type type, string name = "") => string.IsNullOrEmpty(value: name) ? (T)Instance.Container.Resolve(service: type) : (T)Instance.Container.Resolve(key: name, service: type);
+
+        /// <summary>
+        ///     获取实例
+        /// </summary>
+        /// <param name="type"> </param>
+        /// <param name="name"> </param>
+        /// <returns> </returns>
+        public static object GetService(Type type, string name = "") => string.IsNullOrEmpty(value: name) ? Instance.Container.Resolve(service: type) : Instance.Container.Resolve(key: name, service: type);
+
+        /// <summary>
+        ///     获取所有实例
+        /// </summary>
+        /// <typeparam name="T"> </typeparam>
+        /// <returns> </returns>
+        public static T[] GetServiceAll<T>() => Instance.Container.ResolveAll<T>();
+
+        /// <summary>
+        ///     获取所有实例
+        /// </summary>
+        /// <param name="type"> </param>
+        /// <returns> </returns>
+        public static object[] GetServiceAll(Type type) => Instance.Container.ResolveAll(service: type).Cast<object>().ToArray();
+
+        /// <summary>
+        ///     释放
+        /// </summary>
+        /// <param name="obj"> </param>
+        public static void ReleaseService(object obj) => Instance.Container.Release(instance: obj);
     }
 }

@@ -141,7 +141,11 @@ namespace FS.ElasticSearch
             {
                 WhenNotExistsAddIndex();
                 var result = Client.Index(request: new IndexRequest<TDocument>(documentWithId: model, index: SetMap.IndexName));
-                if (!result.IsValid) IocManager.Instance.Logger<IndexSet<TDocument>>().LogError(message: $"索引失败：{JsonConvert.SerializeObject(value: model)} \r\n" + result.OriginalException.Message);
+                if (!result.IsValid)
+                {
+                    var error = result.OriginalException != null ? result.OriginalException.Message : result.DebugInformation;
+                    IocManager.Instance.Logger<IndexSet<TDocument>>().LogError(message: $"索引失败：{JsonConvert.SerializeObject(value: model)} \r\n" + error);
+                }
 
                 return result.IsValid;
             }
@@ -156,7 +160,11 @@ namespace FS.ElasticSearch
             {
                 WhenNotExistsAddIndex();
                 var result = await Client.IndexAsync(request: new IndexRequest<TDocument>(documentWithId: model, index: SetMap.IndexName));
-                if (!result.IsValid) IocManager.Instance.Logger<IndexSet<TDocument>>().LogError(message: $"索引失败：{JsonConvert.SerializeObject(value: model)} \r\n" + result.OriginalException?.Message);
+                if (!result.IsValid)
+                {
+                    var error = result.OriginalException != null ? result.OriginalException.Message : result.DebugInformation;
+                    IocManager.Instance.Logger<IndexSet<TDocument>>().LogError(message: $"索引失败：{JsonConvert.SerializeObject(value: model)} \r\n" + error);
+                }
 
                 return result.IsValid;
             }
@@ -171,7 +179,11 @@ namespace FS.ElasticSearch
             {
                 WhenNotExistsAddIndex();
                 var result = Client.IndexMany(objects: lst, index: SetMap.IndexName);
-                if (!result.IsValid) IocManager.Instance.Logger<IndexSet<TDocument>>().LogError(message: $"索引失败：数据量：{lst.Count}条 \r\n" + result.OriginalException?.Message);
+                if (!result.IsValid)
+                {
+                    var error = result.OriginalException != null ? result.OriginalException.Message : result.DebugInformation;
+                    IocManager.Instance.Logger<IndexSet<TDocument>>().LogError(message: $"索引失败：数据量：{lst.Count}条 \r\n" + error);
+                }
 
                 return result.IsValid;
             }
@@ -186,7 +198,11 @@ namespace FS.ElasticSearch
             {
                 WhenNotExistsAddIndex();
                 var result = await Client.IndexManyAsync(objects: lst, index: SetMap.IndexName);
-                if (!result.IsValid) IocManager.Instance.Logger<IndexSet<TDocument>>().LogError(message: $"索引失败：{JsonConvert.SerializeObject(value: lst)} \r\n" + result.OriginalException.Message);
+                if (!result.IsValid)
+                {
+                    var error = result.OriginalException != null ? result.OriginalException.Message : result.DebugInformation;
+                    IocManager.Instance.Logger<IndexSet<TDocument>>().LogError(message: $"索引失败：{JsonConvert.SerializeObject(value: lst)} \r\n" + error);
+                }
 
                 return result.IsValid;
             }

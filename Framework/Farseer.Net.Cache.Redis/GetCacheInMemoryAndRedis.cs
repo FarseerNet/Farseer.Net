@@ -12,8 +12,8 @@ namespace FS.Cache.Redis
 
         public GetCacheInMemoryAndRedis(string redisItemConfigName)
         {
-            _redisCache  = IocManager.Instance.Resolve<IGetCache>(name: $"GetCacheInRedis_{redisItemConfigName}");
-            _memoryCache = IocManager.Instance.Resolve<IGetCache>(name: "GetCacheInMemory");
+            _redisCache  = IocManager.GetService<IGetCache>(name: $"GetCacheInRedis_{redisItemConfigName}");
+            _memoryCache = IocManager.GetService<IGetCache>(name: "GetCacheInMemory");
         }
 
         /// <summary>

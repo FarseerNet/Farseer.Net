@@ -30,7 +30,7 @@ namespace FS.Core.Async
         /// </summary>
         /// <param name="maxQueueSize"> 队列最大长度,溢出则丢失 </param>
         /// <param name="callBackListCapacity"> 每次回调出队最大数量 </param>
-        protected BaseAsyncQueue(int maxQueueSize = 5000, int callBackListCapacity = 10, int sleepMs = 5)
+        protected BaseAsyncQueue(int maxQueueSize = 5000, int callBackListCapacity = 10, int sleepMs = 500)
         {
             _maxQueueSize = maxQueueSize;
             _callBackList = new List<T>(capacity: callBackListCapacity);

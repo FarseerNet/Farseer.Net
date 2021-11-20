@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FS;
+using FS.Core.Http;
 using FS.Extends;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -15,15 +16,8 @@ namespace Farseer.Net.Demo
         private static async Task Main(string[] args)
         {
             FarseerApplication.Run<StartupModule>().Initialize();
-            var message = "{\"ErrorCount\":1,\"aaa\":{\"bbbb\":1,\"cccc\":{}}}";
-            var json    = JsonConvert.DeserializeObject<Dictionary<string, object>>(message);
-            if (json.ContainsKey("ErrorCount"))
-            {
-                json["ErrorCount"] = json["ErrorCount"].ConvertType(0) + 1;
-            }
-
-            Console.WriteLine(JsonConvert.SerializeObject(json));
-            Thread.Sleep(millisecondsTimeout: -1);
+            var result = await HttpGet.GetAsync("http://cdn.es3.com/?www.baidu.com");
+            Console.WriteLine(result);
         }
 
         public static async Task<int> ThrowAsync(int index)

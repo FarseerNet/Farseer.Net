@@ -18,7 +18,7 @@ namespace FS.DI
         /// </summary>
         static SingletonDependency()
         {
-            LazyInstance = new Lazy<T>(valueFactory: () => IocManager.Instance.Resolve<T>());
+            LazyInstance = new Lazy<T>(valueFactory: () => IocManager.GetService<T>());
         }
 
         /// <summary>

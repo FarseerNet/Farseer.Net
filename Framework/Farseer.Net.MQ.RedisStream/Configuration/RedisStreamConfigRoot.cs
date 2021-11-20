@@ -15,7 +15,7 @@ namespace FS.MQ.RedisStream.Configuration
         /// </summary>
         public static List<RedisStreamConfig> Get()
         {
-            var configurationSection = IocManager.Instance.Resolve<IConfigurationRoot>().GetSection(key: "RedisStream");
+            var configurationSection = IocManager.GetService<IConfigurationRoot>().GetSection(key: "RedisStream");
             return configurationSection.GetChildren().Select(selector: o => o.Get<RedisStreamConfig>()).ToList();
         }
     }

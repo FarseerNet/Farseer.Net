@@ -17,7 +17,7 @@ namespace Farseer.Net.MQ.RedisStreamDemo
             FarseerApplication.Run<StartupModule>().Initialize();
 
             // ******************** 以下演示消息发送 *********************
-            var redisStreamProduct = IocManager.Instance.Resolve<IRedisStreamProduct>(name: "test2");
+            var redisStreamProduct = IocManager.GetService<IRedisStreamProduct>(name: "test2");
             redisStreamProduct.Send(entity: DateTime.Now).ToString();
 
             // ******************** 以下为了准备测试1S内，能发多少条消息 *********************

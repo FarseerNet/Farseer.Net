@@ -15,7 +15,7 @@ namespace FS.Cache.Redis.Configuration
         /// </summary>
         public static List<RedisItemConfig> Get()
         {
-            var configurationSection = IocManager.Instance.Resolve<IConfigurationRoot>().GetSection(key: "Redis");
+            var configurationSection = IocManager.GetService<IConfigurationRoot>().GetSection(key: "Redis");
             return configurationSection.GetChildren().Select(selector: o => o.Get<RedisItemConfig>()).ToList();
         }
     }

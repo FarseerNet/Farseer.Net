@@ -32,7 +32,7 @@ namespace FS.Data
             {
                 if (_map != null) return _map;
                 var name                 = Context.ContextType.FullName + "." + SetMap.TableName;
-                var configurationSection = IocManager.Instance.Resolve<IConfigurationRoot>().GetSection(key: "SqlMap");
+                var configurationSection = IocManager.GetService<IConfigurationRoot>().GetSection(key: "SqlMap");
                 var sqlMapItemConfigs    = configurationSection.GetChildren().Select(selector: o => o.Get<SqlMapItemConfig>()).ToList();
                 return _map = sqlMapItemConfigs.Find(match: o => o.Name == name);
             }

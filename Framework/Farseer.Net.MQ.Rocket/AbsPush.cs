@@ -31,7 +31,7 @@ namespace FS.MQ.Rocket
             TagName            = tagName;
             TryCount           = tryCount;
             TryWaitMillisecond = tryWaitMillisecond;
-            _mqManager         = IocManager.Instance.Resolve<IRocketManager>(name: ConfigName);
+            _mqManager         = IocManager.GetService<IRocketManager>(name: ConfigName);
         }
 
         /// <summary>

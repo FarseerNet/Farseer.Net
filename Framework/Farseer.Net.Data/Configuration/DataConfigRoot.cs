@@ -13,7 +13,7 @@ namespace FS.Data.Configuration
         /// </summary>
         public static DbConfig Get()
         {
-            var configurationSection = IocManager.Instance.Resolve<IConfigurationRoot>().GetSection(key: "Database");
+            var configurationSection = IocManager.GetService<IConfigurationRoot>().GetSection(key: "Database");
             return configurationSection.Get<DbConfig>();
         }
     }

@@ -14,7 +14,7 @@ namespace Farseer.Net.Cache.RedisDemo
         {
             FarseerApplication.Run<StartupModule>().Initialize();
             var lst               = new List<Task>();
-            var redisCacheManager = IocManager.Instance.Resolve<IRedisCacheManager>();
+            var redisCacheManager = IocManager.GetService<IRedisCacheManager>();
 
             // 初始化
             await redisCacheManager.Db.HashSetAsync(key: "test_async", hashField: "init", value: "");
@@ -64,7 +64,7 @@ namespace Farseer.Net.Cache.RedisDemo
         private static Task<bool> HashSetAsync(int index)
         {
             var a = 100;
-            return IocManager.Instance.Resolve<IRedisCacheManager>().Db.HashSetAsync(key: "test_task", hashField: index, value: "");
+            return IocManager.GetService<IRedisCacheManager>().Db.HashSetAsync(key: "test_task", hashField: index, value: "");
         }
     }
 }

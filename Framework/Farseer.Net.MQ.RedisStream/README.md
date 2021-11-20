@@ -25,7 +25,7 @@ https://github.com/FarseerNet/FarseerSchedulerService/tree/main/04_Component%EF%
             FarseerApplication.Run<StartupModule>().Initialize();
 
             // ******************** 以下演示消息发送 *********************
-            var redisStreamProduct = IocManager.Instance.Resolve<IRedisStreamProduct>("test");
+            var redisStreamProduct = IocManager.GetService<IRedisStreamProduct>("test");
             redisStreamProduct.Send(DateTime.Now).ToString();
 
             // ******************** 以下为了准备测试1S内，能发多少条消息 *********************

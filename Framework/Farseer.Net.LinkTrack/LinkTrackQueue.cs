@@ -9,7 +9,7 @@ namespace FS.LinkTrack
 {
     public class LinkTrackQueue : BaseAsyncQueue<LinkTrackContext>, ILinkTrackQueue
     {
-        internal LinkTrackQueue() : base(maxQueueSize: 500000, callBackListCapacity: 100, sleepMs: 500)
+        internal LinkTrackQueue() : base(maxQueueSize: 500000, callBackListCapacity: 100, sleepMs: 2000)
         {
         }
 
@@ -57,7 +57,6 @@ namespace FS.LinkTrack
         /// </summary>
         private void AddSlowQuery(List<LinkTrackContext> lst)
         {
-
             var lstSlowQuery = new List<SlowQueryPO>();
             foreach (var linkTrackContext in lst)
             {

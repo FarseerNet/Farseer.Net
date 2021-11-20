@@ -14,7 +14,7 @@ namespace FS.Cache.Redis
 
         public GetCacheInRedis(string redisItemConfigName)
         {
-            _redisCacheManager = IocManager.Instance.Resolve<IRedisCacheManager>(name: redisItemConfigName);
+            _redisCacheManager = IocManager.GetService<IRedisCacheManager>(name: redisItemConfigName);
         }
 
         /// <summary>

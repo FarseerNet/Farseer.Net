@@ -35,7 +35,7 @@ namespace FS.Cache.Redis
             Check.NotNull(value: config.Server, parameterName: "Redis连接字符串为空");
             _config            = config;
             _connectionWrapper = connectionWrapper;
-            CacheManager       = IocManager.Instance.Resolve<ICacheManager>(name: $"GetCacheInMemory_{_config.Name}");
+            CacheManager       = IocManager.GetService<ICacheManager>(name: $"GetCacheInMemory_{_config.Name}");
         }
 
         /// <summary>

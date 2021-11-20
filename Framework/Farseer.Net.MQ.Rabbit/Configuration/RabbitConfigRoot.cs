@@ -15,7 +15,7 @@ namespace FS.MQ.Rabbit.Configuration
         /// </summary>
         public static List<RabbitItemConfig> Get()
         {
-            var configurationSection = IocManager.Instance.Resolve<IConfigurationRoot>().GetSection(key: "Rabbit");
+            var configurationSection = IocManager.GetService<IConfigurationRoot>().GetSection(key: "Rabbit");
             return configurationSection.GetChildren().Select(selector: o => o.Get<RabbitItemConfig>()).ToList();
         }
     }

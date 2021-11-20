@@ -561,13 +561,13 @@ namespace FS.Cache
             switch (cacheKey.CacheStoreType)
             {
                 case EumCacheStoreType.Memory:
-                    _getCache = IocManager.Instance.Resolve<IGetCache>(name: "GetCacheInMemory");
+                    _getCache = IocManager.GetService<IGetCache>(name: "GetCacheInMemory");
                     break;
                 case EumCacheStoreType.Redis:
-                    _getCache = IocManager.Instance.Resolve<IGetCache>(name: $"GetCacheInRedis_{_redisItemConfigName}");
+                    _getCache = IocManager.GetService<IGetCache>(name: $"GetCacheInRedis_{_redisItemConfigName}");
                     break;
                 case EumCacheStoreType.MemoryAndRedis:
-                    _getCache = IocManager.Instance.Resolve<IGetCache>(name: $"GetCacheInMemoryAndRedis_{_redisItemConfigName}");
+                    _getCache = IocManager.GetService<IGetCache>(name: $"GetCacheInMemoryAndRedis_{_redisItemConfigName}");
                     break;
             }
         }

@@ -15,7 +15,7 @@ namespace Farseer.Net.Grpc.Configuration
         /// </summary>
         public static List<GrpcItemConfig> Get()
         {
-            var configurationSection = IocManager.Instance.Resolve<IConfigurationRoot>().GetSection(key: "Grpc");
+            var configurationSection = IocManager.GetService<IConfigurationRoot>().GetSection(key: "Grpc");
             return configurationSection.GetChildren().Select(selector: o => o.Get<GrpcItemConfig>()).ToList();
         }
     }

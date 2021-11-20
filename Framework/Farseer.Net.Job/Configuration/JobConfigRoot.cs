@@ -13,7 +13,7 @@ namespace FS.Job.Configuration
         /// </summary>
         public static JobItemConfig Get()
         {
-            var configurationSection = IocManager.Instance.Resolve<IConfigurationRoot>().GetSection(key: "FSS");
+            var configurationSection = IocManager.GetService<IConfigurationRoot>().GetSection(key: "FSS");
             return configurationSection.Get<JobItemConfig>();
         }
     }
