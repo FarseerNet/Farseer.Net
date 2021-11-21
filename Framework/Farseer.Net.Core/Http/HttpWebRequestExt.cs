@@ -8,14 +8,20 @@ namespace FS.Core.Http
     {
         public static void AddTraceInfoToHeader(this HttpWebRequest httpWebRequest)
         {
-            httpWebRequest.Headers.Add(name: "FsContextId", value: FsLinkTrack.Current.Get().ContextId);
-            httpWebRequest.Headers.Add(name: "FsAppId", value: FsLinkTrack.Current.Get().AppId);
+            var linkTrackContext = FsLinkTrack.Current.Get();
+            if (linkTrackContext == null) return;
+            
+            httpWebRequest.Headers.Add(name: "FsContextId", value: linkTrackContext.ContextId);
+            httpWebRequest.Headers.Add(name: "FsAppId", value: linkTrackContext.AppId);
         }
 
         public static void AddTraceInfoToHeader(this HttpContentHeaders httpWebRequest)
         {
-            httpWebRequest.Add(name: "FsContextId", value: FsLinkTrack.Current.Get().ContextId);
-            httpWebRequest.Add(name: "FsAppId", value: FsLinkTrack.Current.Get().AppId);
+            var linkTrackContext = FsLinkTrack.Current.Get();
+            if (linkTrackContext == null) return;
+            
+            httpWebRequest.Add(name: "FsContextId", value: linkTrackContext.ContextId);
+            httpWebRequest.Add(name: "FsAppId", value: linkTrackContext.AppId);
         }
     }
 }

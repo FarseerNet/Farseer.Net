@@ -43,6 +43,7 @@ namespace FS.Core.Async
         /// <summary> 入队,满了就丢掉新数据 </summary>
         public bool Enqueue(T obj)
         {
+            if (obj        == null) return false;
             if (QueueCount >= _maxQueueSize) return false;
             _concurrentQueue.Enqueue(item: obj);
             return true;

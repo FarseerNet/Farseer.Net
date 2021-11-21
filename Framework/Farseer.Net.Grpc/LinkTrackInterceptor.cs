@@ -19,18 +19,18 @@ namespace Farseer.Net.Grpc
         /// </summary>
         public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(TRequest request, ServerCallContext context, UnaryServerMethod<TRequest, TResponse> continuation)
         {
-            var contextId = context.RequestHeaders.FirstOrDefault(predicate: o => o.Key == "fscontextid")?.Value;
+            var contextId   = context.RequestHeaders.FirstOrDefault(predicate: o => o.Key == "fscontextid")?.Value;
+            var parentAppId = "";
             if (!string.IsNullOrWhiteSpace(value: contextId))
             {
-                var parentAppId = context.RequestHeaders.FirstOrDefault(predicate: o => o.Key == "fsappid")?.Value;
-                FsLinkTrack.Current.Set(contextId: contextId, parentAppId: parentAppId);
+                parentAppId = context.RequestHeaders.FirstOrDefault(predicate: o => o.Key == "fsappid")?.Value;
             }
 
-            TResponse result    = null;
+            TResponse result;
             var       dicHeader = context.RequestHeaders.ToDictionary(keySelector: o => o.Key, elementSelector: o => o.Value);
             var       path      = $"http://{context.Host}{context.Method.ToLower()}";
 
-            using (var trackEnd = FsLinkTrack.TrackApiServer(domain: context.Host, path: path, method: "GRPC", contentType: "application/grpc", headerDictionary: dicHeader, requestBody: JsonConvert.SerializeObject(value: request), ip: context.Peer))
+            using (var trackEnd = FsLinkTrack.TrackApiServer(contextId, parentAppId, domain: context.Host, path: path, method: "GRPC", contentType: "application/grpc", headerDictionary: dicHeader, requestBody: JsonConvert.SerializeObject(value: request), ip: context.Peer))
             {
                 try
                 {
@@ -43,9 +43,6 @@ namespace Farseer.Net.Grpc
                     throw;
                 }
             }
-
-            // 写入链路追踪
-            IocManager.GetService<ILinkTrackQueue>().Enqueue();
             return result;
         }
 
@@ -82,16 +79,18 @@ namespace Farseer.Net.Grpc
         ///     添加通用头部信息
         /// </summary>
         private ClientInterceptorContext<TRequest, TResponse> Continuation<TRequest, TResponse>(ClientInterceptorContext<TRequest, TResponse> context)
-            where TRequest : class
-            where TResponse : class
+        where TRequest : class
+        where TResponse : class
         {
-            var callOptions = context.Options.WithHeaders(headers: new Metadata
-            {
-                { "FsContextId", FsLinkTrack.Current.Get().ContextId },
-                { "FsAppId", FsLinkTrack.Current.Get().AppId }
-            });
+            var linkTrackContext = FsLinkTrack.Current.Get();
+            if (linkTrackContext == null) return new ClientInterceptorContext<TRequest, TResponse>(method: context.Method, host: context.Host, SetCallOptions(context.Options));
 
-            callOptions = SetCallOptions(callOptions: callOptions);
+            var callOptions = SetCallOptions(context.Options.WithHeaders(headers: new Metadata
+            {
+                { "FsContextId", linkTrackContext.ContextId },
+                { "FsAppId", linkTrackContext.AppId }
+            }));
+            
             // 添加头部信息
             return new ClientInterceptorContext<TRequest, TResponse>(method: context.Method, host: context.Host, options: callOptions);
         }

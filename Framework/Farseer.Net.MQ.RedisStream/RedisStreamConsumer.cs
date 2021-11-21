@@ -132,9 +132,6 @@ namespace FS.MQ.RedisStream
                     {
                         result = await listener.Consumer(messages: streamEntries, content: consumeContext);
                     }
-
-                    // 写入链路追踪
-                    if (_iocManager.IsRegistered<ILinkTrackQueue>()) _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
                 }
                 catch (Exception e)
                 {
@@ -146,9 +143,6 @@ namespace FS.MQ.RedisStream
                         {
                             result = await listener.FailureHandling(messages: streamEntries, content: consumeContext);
                         }
-
-                        // 写入链路追踪
-                        if (_iocManager.IsRegistered<ILinkTrackQueue>()) _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
                     }
                     catch (Exception exception)
                     {
@@ -199,9 +193,6 @@ namespace FS.MQ.RedisStream
                         result = await listener.Consumer(messages: streamEntries, content: consumeContext);
                     }
 
-                    // 写入链路追踪
-                    if (_iocManager.IsRegistered<ILinkTrackQueue>()) _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
-
                     if (result)
                     {
                         await _redisCacheManager.Db.StreamDeleteAsync(key: _queueName, messageIds: consumeContext.MessageIds.Select(selector: o => (RedisValue)o).ToArray());
@@ -218,9 +209,6 @@ namespace FS.MQ.RedisStream
                         {
                             result = await listener.FailureHandling(messages: streamEntries, content: consumeContext);
                         }
-
-                        // 写入链路追踪
-                        if (_iocManager.IsRegistered<ILinkTrackQueue>()) _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
                         if (result)
                         {
                             await _redisCacheManager.Db.StreamDeleteAsync(key: _queueName, messageIds: consumeContext.MessageIds.Select(selector: o => (RedisValue)o).ToArray());

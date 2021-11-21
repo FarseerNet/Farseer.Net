@@ -35,8 +35,7 @@ namespace FS.Job
                 var url = server.StartsWith(value: "http") ? $"{server}/task/pull" : $"http://{server}/task/pull";
                 try
                 {
-                    var json = await HttpPost.PostAsync(url: url, postData: new Dictionary<string, string> { { "TaskCount", pullCount.ToString() } }, headerData: _header, contentType: "application/json");
-                    var api  = Jsons.ToObject<ApiResponseJson<List<TaskVO>>>(obj: json);
+                    var api = await HttpPostJson.PostAsync<ApiResponseJson<List<TaskVO>>>(url: url, postData: new Dictionary<string, string> { { "TaskCount", pullCount.ToString() } }, headerData: _header);
                     if (!api.Status) continue;
                     
                     IocManager.Instance.Logger<TaskQueueList>().LogInformation(message: $"本次拉取{api.Data.Count}条任务");

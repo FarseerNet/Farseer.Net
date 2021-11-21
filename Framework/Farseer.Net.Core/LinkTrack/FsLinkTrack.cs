@@ -33,35 +33,112 @@ namespace FS.Core.LinkTrack
         /// <summary>
         ///     获取数据
         /// </summary>
-        public LinkTrackContext Get() => AsyncLocal.Value ??= new LinkTrackContext
-        {
-            AppId       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
-            ParentAppId = "",
-            ContextId   = SnowflakeId.GenerateId.ToString(),
-            StartTs     = DateTime.Now.ToTimestamps(),
-            List        = new List<LinkTrackDetail>()
-        };
-
-        /// <summary>
-        ///     写入上下文ID
-        /// </summary>
-        public LinkTrackContext Set(string contextId, string parentAppId) => AsyncLocal.Value = new LinkTrackContext
-        {
-            AppId       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
-            ParentAppId = parentAppId,
-            ContextId   = contextId,
-            StartTs     = DateTime.Now.ToTimestamps(),
-            List        = new List<LinkTrackDetail>()
-        };
+        public LinkTrackContext Get() => AsyncLocal.Value;
 
         /// <summary>
         ///     写入数据
         /// </summary>
         public void Set(LinkTrackDetail linkTrackDetail)
         {
-            var sw = Stopwatch.StartNew();
+            if (AsyncLocal.Value == null) return;
             linkTrackDetail._stackTrace = new StackTrace(fNeedFileInfo: true);
-            Get().List.Add(item: linkTrackDetail);
+            AsyncLocal.Value.List.Add(item: linkTrackDetail);
+        }
+
+        /// <summary>
+        ///     追踪Mq消费
+        /// </summary>
+        public static TrackEnd TrackMqConsumer(string endPort, string queueName, string method)
+        {
+            AsyncLocal.Value = new LinkTrackContext
+            {
+                AppId       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
+                ParentAppId = "",
+                ContextId   = SnowflakeId.GenerateId.ToString(),
+                StartTs     = DateTime.Now.ToTimestamps(),
+                List        = new List<LinkTrackDetail>(),
+                Method      = method,
+                Path        = queueName,
+                Domain      = endPort,
+                RequestIp   = IpHelper.GetIp,
+                ContentType = "MessageQueue"
+            };
+            return new TrackEnd(linkTrackContext: AsyncLocal.Value);
+        }
+
+        /// <summary>
+        ///     追踪Fss
+        /// </summary>
+        public static TrackEnd TrackFss(string clientHost, string jobName, int taskGroupId, int taskId)
+        {
+            AsyncLocal.Value = new LinkTrackContext
+            {
+                AppId       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
+                ParentAppId = "",
+                ContextId   = SnowflakeId.GenerateId.ToString(),
+                StartTs     = DateTime.Now.ToTimestamps(),
+                List        = new List<LinkTrackDetail>(),
+                Method      = jobName,
+                Path        = $"{taskGroupId}/{taskId}",
+                Domain      = clientHost,
+                RequestIp   = IpHelper.GetIp,
+                ContentType = "Fss"
+            };
+            return new TrackEnd(linkTrackContext: AsyncLocal.Value);
+        }
+
+        /// <summary>
+        ///     追踪BackgroundService
+        /// </summary>
+        public static TrackEnd TrackBackgroundService(string jobName)
+        {
+            AsyncLocal.Value = new LinkTrackContext
+            {
+                AppId       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
+                ParentAppId = "",
+                ContextId   = SnowflakeId.GenerateId.ToString(),
+                StartTs     = DateTime.Now.ToTimestamps(),
+                List        = new List<LinkTrackDetail>(),
+                Method      = "BackgroundService",
+                Path        = jobName,
+                ContentType = "BackgroundService"
+            };
+            return new TrackEnd(linkTrackContext: AsyncLocal.Value);
+        }
+
+        /// <summary>
+        ///     追踪ApiServer
+        /// </summary>
+        public static TrackEnd TrackApiServer(string contextId, string parentAppId, string domain, string path, string method, string contentType, Dictionary<string, string> headerDictionary, string requestBody, string ip)
+        {
+            // 移除charset的类型
+            if (contentType.Contains(value: "charset"))
+            {
+                var contentTypes = contentType.Split(';').ToList();
+                contentTypes.RemoveAll(match: o => o.Contains(value: "charset"));
+
+                // 如果有application，则直接获取
+                var application = contentTypes.Find(match: o => o.Contains(value: "application"));
+                contentType = !string.IsNullOrWhiteSpace(value: application) ? application : string.Join(separator: ";", values: contentTypes);
+            }
+
+            AsyncLocal.Value = new LinkTrackContext()
+            {
+                AppId       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
+                ParentAppId = parentAppId ?? "",
+                ContextId   = contextId,
+                StartTs     = DateTime.Now.ToTimestamps(),
+                List        = new List<LinkTrackDetail>(),
+                Domain      = domain,
+                Path        = path,
+                Method      = method,
+                ContentType = contentType,
+                Headers     = headerDictionary,
+                RequestBody = requestBody,
+                RequestIp   = ip
+            };
+
+            return new TrackEnd(linkTrackContext: AsyncLocal.Value);
         }
 
         /// <summary>
@@ -133,34 +210,6 @@ namespace FS.Core.LinkTrack
         }
 
         /// <summary>
-        ///     追踪ApiServer
-        /// </summary>
-        public static TrackEnd TrackApiServer(string domain, string path, string method, string contentType, Dictionary<string, string> headerDictionary, string requestBody, string ip)
-        {
-            // 移除charset的类型
-            if (contentType.Contains(value: "charset"))
-            {
-                var contentTypes = contentType.Split(';').ToList();
-                contentTypes.RemoveAll(match: o => o.Contains(value: "charset"));
-
-                // 如果有application，则直接获取
-                var application = contentTypes.Find(match: o => o.Contains(value: "application"));
-                contentType = !string.IsNullOrWhiteSpace(value: application) ? application : string.Join(separator: ";", values: contentTypes);
-            }
-
-            var linkTrackContext = Current.Get();
-            linkTrackContext.Domain      = domain;
-            linkTrackContext.Path        = path;
-            linkTrackContext.Method      = method;
-            linkTrackContext.ContentType = contentType;
-            linkTrackContext.Headers     = headerDictionary;
-            linkTrackContext.RequestBody = requestBody;
-            linkTrackContext.RequestIp   = ip;
-
-            return new TrackEnd(linkTrackContext: linkTrackContext);
-        }
-
-        /// <summary>
         ///     追踪Redis
         /// </summary>
         public static TrackEnd TrackRedis(string method, string key = "", string member = "")
@@ -191,34 +240,6 @@ namespace FS.Core.LinkTrack
             };
             Current.Set(linkTrackDetail: linkTrackDetail);
             return new TrackEnd(linkTrackDetail: linkTrackDetail);
-        }
-
-        /// <summary>
-        ///     追踪Mq消费
-        /// </summary>
-        public static TrackEnd TrackMqConsumer(string endPort, string queueName, string method)
-        {
-            var linkTrackContext = Current.Set(contextId: SnowflakeId.GenerateId.ToString(), parentAppId: "");
-            linkTrackContext.Method      = method;
-            linkTrackContext.Path        = queueName;
-            linkTrackContext.Domain      = endPort;
-            linkTrackContext.RequestIp   = IpHelper.GetIp;
-            linkTrackContext.ContentType = "MessageQueue";
-            return new TrackEnd(linkTrackContext: linkTrackContext);
-        }
-
-        /// <summary>
-        ///     追踪Fss
-        /// </summary>
-        public static TrackEnd TrackFss(string clientHost, string jobName, int taskGroupId, int taskId)
-        {
-            var linkTrackContext = Current.Set(contextId: SnowflakeId.GenerateId.ToString(), parentAppId: "");
-            linkTrackContext.Method      = jobName;
-            linkTrackContext.Path        = $"{taskGroupId}/{taskId}";
-            linkTrackContext.Domain      = clientHost;
-            linkTrackContext.RequestIp   = IpHelper.GetIp;
-            linkTrackContext.ContentType = "Fss";
-            return new TrackEnd(linkTrackContext: linkTrackContext);
         }
 
         /// <summary>

@@ -29,10 +29,11 @@ namespace FS
             }
 
             httpContext.Request.Headers.TryGetValue(key: "FsContextId", value: out var contextId);
+            var parentAppId = "";
             if (!string.IsNullOrWhiteSpace(value: contextId))
             {
-                httpContext.Request.Headers.TryGetValue(key: "FsAppId", value: out var parentAppId);
-                FsLinkTrack.Current.Set(contextId: contextId, parentAppId: parentAppId);
+                httpContext.Request.Headers.TryGetValue(key: "FsAppId", out var parentAppId2);
+                parentAppId = parentAppId2.ToString();
             }
 
             // 读取请求入参
@@ -61,7 +62,7 @@ namespace FS
             var path = $"{httpContext.Request.Scheme}://{httpContext.Request.Host.Value}{httpContext.Request.Path.Value?.ToLower()}";
 
             var dicHeader = httpContext.Request.Headers.ToDictionary(keySelector: o => o.Key, elementSelector: o => o.Value.ToString());
-            using (var trackEnd = FsLinkTrack.TrackApiServer(domain: httpContext.Request.Host.Host, path: path, method: httpContext.Request.Method, contentType: httpContext.Request.ContentType, headerDictionary: dicHeader, requestBody: requestContent, ip: httpContext.GetIP()))
+            using (var trackEnd = FsLinkTrack.TrackApiServer(contextId, parentAppId, domain: httpContext.Request.Host.Host, path: path, method: httpContext.Request.Method, contentType: httpContext.Request.ContentType, headerDictionary: dicHeader, requestBody: requestContent, ip: httpContext.GetIP()))
             {
                 var originalBodyStream = httpContext.Response.Body;
                 await using (var responseBody = new MemoryStream())
@@ -87,16 +88,10 @@ namespace FS
                     catch (Exception e)
                     {
                         trackEnd.Exception(exception: e);
-
-                        // 写入链路追踪
-                        _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
                         throw;
                     }
                 }
             }
-
-            // 写入链路追踪
-            _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
         }
     }
 }

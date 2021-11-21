@@ -145,9 +145,6 @@ namespace FS.Job
                     result = await fssJob.Execute(context: receiveContext);
                 }
 
-                // 写入链路追踪
-                if (IocManager.Instance.IsRegistered<ILinkTrackQueue>()) IocManager.GetService<ILinkTrackQueue>().Enqueue();
-
                 // 通知服务端，当前客户端执行结果
                 if (result)
                     await receiveContext.SuccessAsync();
