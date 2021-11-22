@@ -14,5 +14,11 @@ namespace Farseer.Net.ElasticSearchDemo
         /// 年龄
         /// </summary>
         public int Age { get; set; }
+        
+        /// <summary>
+        /// 自我介绍
+        /// </summary>
+        [Text]
+        public string Desc { get; set; }
     }
 }
