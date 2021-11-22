@@ -173,10 +173,6 @@ namespace FS.Utils.Common.ExpressionVisitor
             var exp = Visit(exp: m.Expression);
             if (exp != m.Expression) return Expression.MakeMemberAccess(expression: exp, member: m.Member);
             return m;
-
-            //if (m == null) return null;
-            //if (m.NodeType == ExpressionType.Constant) { return this.Visit(VisitConvertExp(m)); }
-            //return m;
         }
 
         /// <summary>

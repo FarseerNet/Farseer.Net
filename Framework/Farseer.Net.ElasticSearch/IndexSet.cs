@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Castle.Core.Internal;
 using FS.Core.LinkTrack;
 using FS.DI;
+using FS.ElasticSearch.ExpressionVisitor;
 using FS.ElasticSearch.Internal;
 using FS.ElasticSearch.Map;
 using FS.Extends;
@@ -31,7 +32,7 @@ namespace FS.ElasticSearch
         /// <summary>
         ///     条件语句
         /// </summary>
-        private readonly List<Func<QueryContainerDescriptor<TDocument>, QueryContainer>> _query = new();
+        private QueryContainer _query = new();
 
         /// <summary>
         ///     数据库上下文
@@ -97,7 +98,16 @@ namespace FS.ElasticSearch
         /// </summary>
         public IndexSet<TDocument> Where(Func<QueryContainerDescriptor<TDocument>, QueryContainer> query)
         {
-            _query.Add(item: query);
+            _query = _query && query.Invoke(new QueryContainerDescriptor<TDocument>());
+            return this;
+        }
+
+        /// <summary>
+        ///     条件
+        /// </summary>
+        public IndexSet<TDocument> Where(Expression<Func<TDocument, bool>> query)
+        {
+            _query = _query && new WhereVisitor<TDocument>().Visit(query);
             return this;
         }
 
@@ -220,7 +230,7 @@ namespace FS.ElasticSearch
                 var searchResponse = Client.Search<TDocument>(selector: s =>
                 {
                     var searchDescriptor                        = s.Index(index: SetMap.AliasNames).Size(size: size).Scroll(scroll: scrollTime);
-                    if (_query.Count  > 0) searchDescriptor     = searchDescriptor.Query(query: q => q.Bool(selector: b => b.Must(queries: _query)));
+                    if (_query        != null) searchDescriptor = searchDescriptor.Query(query: q => _query);
                     if (_sort         != null) searchDescriptor = searchDescriptor.Sort(selector: _sort);
                     if (_selectFields != null) searchDescriptor = searchDescriptor.Source(selector: s => s.Includes(fields: i => i.Fields(fields: _selectFields)));
                     return searchDescriptor;
@@ -271,8 +281,9 @@ namespace FS.ElasticSearch
                 var scrollTime = new Time(timeSpan: TimeSpan.FromSeconds(value: 30));
                 var searchResponse = await Client.SearchAsync<TDocument>(selector: s =>
                 {
-                    var searchDescriptor                        = s.Index(index: SetMap.AliasNames).Size(size: size).Scroll(scroll: scrollTime);
-                    if (_query.Count  > 0) searchDescriptor     = searchDescriptor.Query(query: q => q.Bool(selector: b => b.Must(queries: _query)));
+                    var searchDescriptor = s.Index(index: SetMap.AliasNames).Size(size: size).Scroll(scroll: scrollTime);
+                    //if (_query.Count  > 0) searchDescriptor     = searchDescriptor.Query(query: q => q.Bool(selector: b => b.Must(queries: _query)));
+                    if (_query        != null) searchDescriptor = searchDescriptor.Query(query: q => _query);
                     if (_sort         != null) searchDescriptor = searchDescriptor.Sort(selector: _sort);
                     if (_selectFields != null) searchDescriptor = searchDescriptor.Source(selector: s => s.Includes(fields: i => i.Fields(fields: _selectFields)));
                     return searchDescriptor;
@@ -325,7 +336,7 @@ namespace FS.ElasticSearch
                 var searchResponse = Client.Search<TDocument>(selector: s =>
                 {
                     var searchDescriptor                        = s.Index(index: SetMap.AliasNames);
-                    if (_query.Count  > 0) searchDescriptor     = searchDescriptor.Query(query: q => q.Bool(selector: b => b.Must(queries: _query)));
+                    if (_query        != null) searchDescriptor = searchDescriptor.Query(query: q => _query);
                     if (top           > 0) searchDescriptor     = searchDescriptor.Size(size: top);
                     if (_sort         != null) searchDescriptor = searchDescriptor.Sort(selector: _sort);
                     if (_selectFields != null) searchDescriptor = searchDescriptor.Source(selector: s => s.Includes(fields: i => i.Fields(fields: _selectFields)));
@@ -353,7 +364,7 @@ namespace FS.ElasticSearch
                 var searchResponse = await Client.SearchAsync<TDocument>(selector: s =>
                 {
                     var searchDescriptor                        = s.Index(index: SetMap.AliasNames);
-                    if (_query.Count  > 0) searchDescriptor     = searchDescriptor.Query(query: q => q.Bool(selector: b => b.Must(queries: _query)));
+                    if (_query        != null) searchDescriptor = searchDescriptor.Query(query: q => _query);
                     if (top           > 0) searchDescriptor     = searchDescriptor.Size(size: top);
                     if (_sort         != null) searchDescriptor = searchDescriptor.Sort(selector: _sort);
                     if (_selectFields != null) searchDescriptor = searchDescriptor.Source(selector: s => s.Includes(fields: i => i.Fields(fields: _selectFields)));
@@ -387,7 +398,7 @@ namespace FS.ElasticSearch
                 var searchResponse = Client.Search<TDocument>(selector: s =>
                 {
                     var searchDescriptor                        = s.Index(index: SetMap.AliasNames).Size(size: pageSize).From(from: from);
-                    if (_query.Count  > 0) searchDescriptor     = searchDescriptor.Query(query: q => q.Bool(selector: b => b.Must(queries: _query)));
+                    if (_query        != null) searchDescriptor = searchDescriptor.Query(query: q => _query);
                     if (_sort         != null) searchDescriptor = searchDescriptor.Sort(selector: _sort);
                     if (_selectFields != null) searchDescriptor = searchDescriptor.Source(selector: s => s.Includes(fields: i => i.Fields(fields: _selectFields)));
                     return searchDescriptor;
@@ -413,15 +424,15 @@ namespace FS.ElasticSearch
             {
                 var searchResponse = Client.Search<TDocument>(selector: s =>
                 {
-                    var searchDescriptor                       = s.Index(index: SetMap.AliasNames).Size(size: 1).Source(selector: s => s.Includes(fields: i => i.Fields(select)));
-                    if (_query.Count > 0) searchDescriptor     = searchDescriptor.Query(query: q => q.Bool(selector: b => b.Must(queries: _query)));
-                    if (_sort        != null) searchDescriptor = searchDescriptor.Sort(selector: _sort);
+                    var searchDescriptor                 = s.Index(index: SetMap.AliasNames).Size(size: 1).Source(selector: s => s.Includes(fields: i => i.Fields(select)));
+                    if (_query != null) searchDescriptor = searchDescriptor.Query(query: q => _query);
+                    if (_sort  != null) searchDescriptor = searchDescriptor.Sort(selector: _sort);
                     return searchDescriptor;
                 });
 
                 if (!searchResponse.IsValid)
                 {
-                    if (searchResponse.ApiCall.HttpStatusCode == 404)  return default;
+                    if (searchResponse.ApiCall.HttpStatusCode == 404) return default;
                     throw searchResponse.OriginalException;
                 }
 
@@ -439,9 +450,9 @@ namespace FS.ElasticSearch
             {
                 var searchResponse = await Client.SearchAsync<TDocument>(selector: s =>
                 {
-                    var searchDescriptor                       = s.Index(index: SetMap.AliasNames).Size(size: 1).Source(selector: s => s.Includes(fields: i => i.Fields(select)));
-                    if (_query.Count > 0) searchDescriptor     = searchDescriptor.Query(query: q => q.Bool(selector: b => b.Must(queries: _query)));
-                    if (_sort        != null) searchDescriptor = searchDescriptor.Sort(selector: _sort);
+                    var searchDescriptor                 = s.Index(index: SetMap.AliasNames).Size(size: 1).Source(selector: s => s.Includes(fields: i => i.Fields(select)));
+                    if (_query != null) searchDescriptor = searchDescriptor.Query(query: q => _query);
+                    if (_sort  != null) searchDescriptor = searchDescriptor.Sort(selector: _sort);
                     return searchDescriptor;
                 });
 
@@ -466,7 +477,7 @@ namespace FS.ElasticSearch
                 var searchResponse = Client.Search<TDocument>(selector: s =>
                 {
                     var searchDescriptor                        = s.Index(index: SetMap.AliasNames).Size(size: 1);
-                    if (_query.Count  > 0) searchDescriptor     = searchDescriptor.Query(query: q => q.Bool(selector: b => b.Must(queries: _query)));
+                    if (_query        != null) searchDescriptor = searchDescriptor.Query(query: q => _query);
                     if (_sort         != null) searchDescriptor = searchDescriptor.Sort(selector: _sort);
                     if (_selectFields != null) searchDescriptor = searchDescriptor.Source(selector: s => s.Includes(fields: i => i.Fields(fields: _selectFields)));
                     return searchDescriptor;
@@ -492,7 +503,7 @@ namespace FS.ElasticSearch
                 var searchResponse = await Client.SearchAsync<TDocument>(selector: s =>
                 {
                     var searchDescriptor                        = s.Index(index: SetMap.AliasNames).Size(size: 1);
-                    if (_query.Count  > 0) searchDescriptor     = searchDescriptor.Query(query: q => q.Bool(selector: b => b.Must(queries: _query)));
+                    if (_query        != null) searchDescriptor = searchDescriptor.Query(query: q => _query);
                     if (_sort         != null) searchDescriptor = searchDescriptor.Sort(selector: _sort);
                     if (_selectFields != null) searchDescriptor = searchDescriptor.Source(selector: s => s.Includes(fields: i => i.Fields(fields: _selectFields)));
                     return searchDescriptor;
@@ -517,8 +528,8 @@ namespace FS.ElasticSearch
             {
                 var searchResponse = Client.Count<TDocument>(selector: s =>
                 {
-                    var searchDescriptor                   = s.Index(index: SetMap.AliasNames);
-                    if (_query.Count > 0) searchDescriptor = searchDescriptor.Query(querySelector: q => q.Bool(selector: b => b.Must(queries: _query)));
+                    var searchDescriptor                 = s.Index(index: SetMap.AliasNames);
+                    if (_query != null) searchDescriptor = searchDescriptor.Query(q => _query);
                     return searchDescriptor;
                 });
 
@@ -542,8 +553,8 @@ namespace FS.ElasticSearch
             {
                 var searchResponse = await Client.CountAsync<TDocument>(selector: s =>
                 {
-                    var searchDescriptor                   = s.Index(index: SetMap.AliasNames);
-                    if (_query.Count > 0) searchDescriptor = searchDescriptor.Query(querySelector: q => q.Bool(selector: b => b.Must(queries: _query)));
+                    var searchDescriptor                 = s.Index(index: SetMap.AliasNames);
+                    if (_query != null) searchDescriptor = searchDescriptor.Query(q => _query);
                     return searchDescriptor;
                 });
 
@@ -567,8 +578,8 @@ namespace FS.ElasticSearch
             {
                 var searchResponse = Client.Count<TDocument>(selector: s =>
                 {
-                    var searchDescriptor                   = s.Index(index: SetMap.AliasNames);
-                    if (_query.Count > 0) searchDescriptor = searchDescriptor.Query(querySelector: q => q.Bool(selector: b => b.Must(queries: _query)));
+                    var searchDescriptor                 = s.Index(index: SetMap.AliasNames);
+                    if (_query != null) searchDescriptor = searchDescriptor.Query(q => _query);
                     return searchDescriptor;
                 });
 
@@ -592,8 +603,8 @@ namespace FS.ElasticSearch
             {
                 var searchResponse = await Client.CountAsync<TDocument>(selector: s =>
                 {
-                    var searchDescriptor                   = s.Index(index: SetMap.AliasNames);
-                    if (_query.Count > 0) searchDescriptor = searchDescriptor.Query(querySelector: q => q.Bool(selector: b => b.Must(queries: _query)));
+                    var searchDescriptor                 = s.Index(index: SetMap.AliasNames);
+                    if (_query != null) searchDescriptor = searchDescriptor.Query(q => _query);
                     return searchDescriptor;
                 });
 
@@ -641,8 +652,8 @@ namespace FS.ElasticSearch
             {
                 var result = Client.UpdateByQuery<TDocument>(selector: o =>
                 {
-                    var searchDescriptor                   = o.Index(index: SetMap.AliasNames);
-                    if (_query.Count > 0) searchDescriptor = searchDescriptor.Query(querySelector: q => q.Bool(selector: b => b.Must(queries: _query)));
+                    var searchDescriptor                 = o.Index(index: SetMap.AliasNames);
+                    if (_query != null) searchDescriptor = searchDescriptor.Query(q => _query);
                     return Script(desc: searchDescriptor, entity: entity, firstCharToLower: firstCharToLower);
                 });
 
@@ -659,8 +670,8 @@ namespace FS.ElasticSearch
             {
                 var result = await Client.UpdateByQueryAsync<TDocument>(selector: s =>
                 {
-                    var searchDescriptor                   = s.Index(index: SetMap.AliasNames);
-                    if (_query.Count > 0) searchDescriptor = searchDescriptor.Query(querySelector: q => q.Bool(selector: b => b.Must(queries: _query)));
+                    var searchDescriptor                 = s.Index(index: SetMap.AliasNames);
+                    if (_query != null) searchDescriptor = searchDescriptor.Query(q => _query);
                     return Script(desc: searchDescriptor, entity: entity, firstCharToLower: firstCharToLower);
                 });
 
@@ -733,8 +744,8 @@ namespace FS.ElasticSearch
             {
                 var searchResponse = Client.DeleteByQuery<TDocument>(selector: s =>
                 {
-                    var searchDescriptor                   = s.Index(index: SetMap.AliasNames);
-                    if (_query.Count > 0) searchDescriptor = searchDescriptor.Query(querySelector: q => q.Bool(selector: b => b.Must(queries: _query)));
+                    var searchDescriptor                 = s.Index(index: SetMap.AliasNames);
+                    if (_query != null) searchDescriptor = searchDescriptor.Query(q => _query);
                     return searchDescriptor;
                 });
                 return searchResponse.IsValid;
@@ -750,8 +761,8 @@ namespace FS.ElasticSearch
             {
                 var searchResponse = await Client.DeleteByQueryAsync<TDocument>(selector: s =>
                 {
-                    var searchDescriptor                   = s.Index(index: SetMap.AliasNames);
-                    if (_query.Count > 0) searchDescriptor = searchDescriptor.Query(querySelector: q => q.Bool(selector: b => b.Must(queries: _query)));
+                    var searchDescriptor                 = s.Index(index: SetMap.AliasNames);
+                    if (_query != null) searchDescriptor = searchDescriptor.Query(q => _query);
                     return searchDescriptor;
                 });
                 return searchResponse.IsValid;

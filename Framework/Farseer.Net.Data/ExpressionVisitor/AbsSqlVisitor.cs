@@ -206,7 +206,6 @@ namespace FS.Data.ExpressionVisitor
         protected override Expression VisitMemberAccess(MemberExpression m)
         {
             if (m == null) return null;
-            //if (m.NodeType == ExpressionType.Constant) { return base.VisitMemberAccess(m); }
 
             CurrentField = SetMap.PhysicsMap.GetState(propertyName: m.Member.Name);
             // 解析带SQL函数的字段
