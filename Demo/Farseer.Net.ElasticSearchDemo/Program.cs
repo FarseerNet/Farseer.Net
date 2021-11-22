@@ -19,8 +19,8 @@ namespace Farseer.Net.ElasticSearchDemo
             });
 
             TestContext.Data.User.Where(q => q.Term(t => t.Age, 33)).Where(o => o.UserName.Contains("ste")).ToList();
-            TestContext.Data.User.Where(o => o.Desc.Contains("我今年")).ToList();
-            TestContext.Data.User.Where(o => o.Desc.StartsWith("大家好")).ToList();
+            TestContext.Data.User.Where(o => o.Desc.Contains("我今年")).Asc(o => o.Age).ToList();
+            TestContext.Data.User.Where(o => o.Desc.StartsWith("大家好")).Desc(o => o.Age).ToList();
             TestContext.Data.User.Where(o => o.UserName.EndsWith("en")).ToList();
             TestContext.Data.User.Where(o => o.UserName != "aaa").ToList();
             TestContext.Data.User.Where(o => o.Age      == 30).Where(o => o.UserName == "steden").ToList();

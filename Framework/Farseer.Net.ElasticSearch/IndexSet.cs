@@ -114,9 +114,18 @@ namespace FS.ElasticSearch
         /// <summary>
         ///     排序
         /// </summary>
-        public IndexSet<TDocument> Sort(Func<SortDescriptor<TDocument>, IPromise<IList<ISort>>> sort)
+        public IndexSet<TDocument> Asc<TKey>(Expression<Func<TDocument, TKey>> asc)
         {
-            _sort = sort;
+            _sort = s=>s.Ascending(asc);
+            return this;
+        }
+
+        /// <summary>
+        ///     排序
+        /// </summary>
+        public IndexSet<TDocument> Desc<TKey>(Expression<Func<TDocument, TKey>> desc)
+        {
+            _sort = s=>s.Descending(desc);
             return this;
         }
 
