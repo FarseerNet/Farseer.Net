@@ -23,7 +23,7 @@ namespace Farseer.Net.ElasticSearchDemo
             TestContext.Data.User.Where(o => o.Desc.StartsWith("大家好")).ToList();
             TestContext.Data.User.Where(o => o.UserName.EndsWith("en")).ToList();
             TestContext.Data.User.Where(o => o.UserName != "aaa").ToList();
-            TestContext.Data.User.Where(o => o.Age      == 30).Where(o => o.UserName == "aaaa").ToList();
+            TestContext.Data.User.Where(o => o.Age      == 30).Where(o => o.UserName == "steden").ToList();
             TestContext.Data.User.Where(o => o.UserName == "steden" && o.Age == 18).ToList();
             TestContext.Data.User.Where(o => o.UserName == "steden" || o.Age >= 10).ToList();
         }
