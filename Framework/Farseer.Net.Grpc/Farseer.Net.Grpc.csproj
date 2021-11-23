@@ -2,6 +2,20 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
+        <Company>steden</Company>
+        <Copyright>http://www.fsgit.com</Copyright>
+        <Product>Grpc组件</Product>
+        <Description>Grpc组件</Description>
+        <Authors>steden</Authors>
+        <AssemblyVersion>2.6.0</AssemblyVersion>
+        <FileVersion>2.6.0</FileVersion>
+        <Version>2.6.0</Version>
+        <PackageTags>grpc</PackageTags>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <AssemblyName>Farseer.Net.Grpc</AssemblyName>
+        <RootNamespace>FS.Grpc</RootNamespace>
+        <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>

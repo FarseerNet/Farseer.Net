@@ -8,9 +8,9 @@
         <Description>包括：公共对象类型、对象映射、微服务客户端</Description>
         <Authors>steden</Authors>
         <PackageTags>公共对象类型、对象映射、微服务客户端</PackageTags>
-        <AssemblyVersion>2.5.1</AssemblyVersion>
-        <FileVersion>2.5.1</FileVersion>
-        <Version>2.5.1</Version>
+        <AssemblyVersion>2.6.0</AssemblyVersion>
+        <FileVersion>2.6.0</FileVersion>
+        <Version>2.6.0</Version>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <RootNamespace>FS.Core</RootNamespace>
         <LangVersion>latest</LangVersion>

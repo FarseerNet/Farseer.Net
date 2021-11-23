@@ -7,9 +7,9 @@
         <Product>日志组件</Product>
         <Description>包括：NLog日志组件</Description>
         <Authors>steden</Authors>
-        <AssemblyVersion>2.5.0</AssemblyVersion>
-        <FileVersion>2.5.0</FileVersion>
-        <Version>2.5.0</Version>
+        <AssemblyVersion>2.6.0</AssemblyVersion>
+        <FileVersion>2.6.0</FileVersion>
+        <Version>2.6.0</Version>
         <PackageTags>Log</PackageTags>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageReleaseNotes/>

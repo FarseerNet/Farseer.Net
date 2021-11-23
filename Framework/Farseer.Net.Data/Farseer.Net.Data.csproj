@@ -7,9 +7,9 @@
         <Product>ORM组件</Product>
         <Description>包括：Farseer.NetORM组件</Description>
         <Authors>steden</Authors>
-        <AssemblyVersion>2.5.0</AssemblyVersion>
-        <FileVersion>2.5.0</FileVersion>
-        <Version>2.5.0</Version>
+        <AssemblyVersion>2.6.0</AssemblyVersion>
+        <FileVersion>2.6.0</FileVersion>
+        <Version>2.6.0</Version>
         <PackageTags>ORM、mysql、clickhouse、sqlserver、sqlite、oracle、oledb、access、excel</PackageTags>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
