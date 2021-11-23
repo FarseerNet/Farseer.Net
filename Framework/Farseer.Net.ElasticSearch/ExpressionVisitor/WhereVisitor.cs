@@ -204,6 +204,44 @@ namespace FS.ElasticSearch.ExpressionVisitor
         }
 
         /// <summary>
+        ///     判断是字段，还是值类型
+        /// </summary>
+        protected override bool IsFieldValue(Expression exp)
+        {
+            // 尝试通过获取Parameter来判断
+            if (exp == null) return false;
+            switch (exp.NodeType)
+            {
+                case ExpressionType.Lambda: return ((LambdaExpression)exp).Parameters.Count == 0 && IsFieldValue(exp: ((LambdaExpression)exp).Body);
+                case ExpressionType.Call:
+                {
+                    var callExp = (MethodCallExpression)exp;
+                    return IsFieldValue(callExp.Object ?? callExp.Arguments[0]);
+                }
+                case ExpressionType.MemberAccess:
+                {
+                    var memExp = (MemberExpression)exp;
+                    return memExp.Expression == null || IsFieldValue(exp: memExp.Expression);
+                }
+                case ExpressionType.Parameter: return !exp.Type.IsClass && !exp.Type.GetTypeInfo().IsAbstract && !exp.Type.GetTypeInfo().IsInterface;
+                case ExpressionType.Convert:   return IsFieldValue(exp: ((UnaryExpression)exp).Operand);
+                case ExpressionType.Add:
+                case ExpressionType.Subtract:
+                case ExpressionType.Multiply:
+                case ExpressionType.Divide: return IsFieldValue(exp: ((BinaryExpression)exp).Left) && IsFieldValue(exp: ((BinaryExpression)exp).Right);
+                case ExpressionType.ArrayIndex:
+                case ExpressionType.ListInit:
+                case ExpressionType.Constant:
+                case ExpressionType.NewArrayInit:
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
         ///     忽略字段的方法
         /// </summary>
         protected virtual bool IsIgnoreMethod(MethodCallExpression m)
@@ -224,12 +262,5 @@ namespace FS.ElasticSearch.ExpressionVisitor
                 default:           return false;
             }
         }
-
-        /// <summary>
-        ///     是否为数组或泛型类型
-        /// </summary>
-        /// <param name="type"> Type </param>
-        public static bool IsGenericOrArray(Type type) => type.IsArray || type.IsGenericType && type.GetGenericTypeDefinition() != typeof(Nullable<>);
-
     }
 }
