@@ -20,5 +20,11 @@ namespace Farseer.Net.ElasticSearchDemo
         /// </summary>
         [Text]
         public string Desc { get; set; }
+        
+        /// <summary>
+        /// 自我介绍
+        /// </summary>
+        [Date]
+        public long CreateAt { get; set; }
     }
 }

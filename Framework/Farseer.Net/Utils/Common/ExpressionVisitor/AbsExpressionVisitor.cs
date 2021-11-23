@@ -266,8 +266,16 @@ namespace FS.Utils.Common.ExpressionVisitor
                 case ExpressionType.Call:
                 {
                     var callExp = (MethodCallExpression)exp;
-                    if (callExp.Object != null && !IsFieldValue(exp: callExp.Object)) return false;
-                    return callExp.Arguments.All(predicate: IsFieldValue);
+                    if (callExp.Object != null)
+                    {
+                        return IsFieldValue(exp: callExp.Object);
+                    }
+                    else
+                    {
+                        return IsFieldValue(exp: callExp.Arguments[0]);
+                    }
+                    
+                    //return callExp.Arguments.All(predicate: IsFieldValue);
                 }
                 case ExpressionType.MemberAccess:
                 {

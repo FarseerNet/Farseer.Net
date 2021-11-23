@@ -21,6 +21,8 @@ namespace FS.ElasticSearch.ExpressionVisitor
         public new QueryContainer Visit(Expression exp)
         {
             base.Visit(exp: exp);
+            if (_queryList.Count == 0) return null;
+            
             var query = _queryList.Pop();
 
             while (_queryList.Count > 0)
@@ -132,6 +134,12 @@ namespace FS.ElasticSearch.ExpressionVisitor
 
             // 解析字段、值
             base.Visit(exp: methodObject);
+
+            if (_curField.Count == 1 && _curValue.Count == 1)
+            {
+                return m;
+            }
+            
             foreach (var t in arguments) base.Visit(exp: t);
 
             var field = _curField.Pop();
@@ -196,53 +204,12 @@ namespace FS.ElasticSearch.ExpressionVisitor
         }
 
         /// <summary>
-        ///     Contains方法解析
-        /// </summary>
-        protected virtual void VisitMethodContains(MethodCallExpression m)
-        {
-
-        }
-
-        /// <summary>
-        ///     StartSwith方法解析
-        /// </summary>
-        protected virtual void VisitMethodStartsWith()
-        {
-        }
-
-        /// <summary>
-        ///     EndSwith方法解析
-        /// </summary>
-        protected virtual void VisitMethodEndsWith()
-        {
-        }
-
-        /// <summary>
-        ///     IsEquals方法解析
-        /// </summary>
-        protected virtual void VisitMethodIsEquals()
-        {
-        }
-
-        /// <summary>
-        ///     IsEquals方法解析
-        /// </summary>
-        protected virtual void VisitMethodEquals()
-        {
-        }
-
-        /// <summary>
-        ///     ToShortDate方法解析
-        /// </summary>
-        protected virtual void VisitMethodToShortDate()
-        {
-        }
-
-        /// <summary>
         ///     忽略字段的方法
         /// </summary>
         protected virtual bool IsIgnoreMethod(MethodCallExpression m)
         {
+            if (m.Method.DeclaringType.FullName == "FS.Extends.Extend") return true;
+            
             switch (m.Method.Name)
             {
                 case "ConvertType":
