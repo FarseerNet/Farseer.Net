@@ -111,6 +111,7 @@ namespace FS.Core.LinkTrack
         /// </summary>
         public static TrackEnd TrackApiServer(string contextId, string parentAppId, string domain, string path, string method, string contentType, Dictionary<string, string> headerDictionary, string requestBody, string ip)
         {
+            if (string.IsNullOrWhiteSpace(contextId)) contextId = SnowflakeId.GenerateId.ToString();
             // 移除charset的类型
             if (contentType.Contains(value: "charset"))
             {
