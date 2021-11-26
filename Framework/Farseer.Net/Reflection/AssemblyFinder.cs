@@ -28,7 +28,22 @@ namespace FS.Reflection
         /// <summary>
         ///     找继承TType接口的实现类
         /// </summary>
-        public Type[] GetType<TType>() => GetAllAssemblies().SelectMany(selector: a => a.GetTypes().Where(predicate: t => t.GetInterfaces().Contains(value: typeof(TType)))).ToArray();
+        public Type[] GetType<TType>()
+        {
+            var lst = new List<Type>();
+            foreach (var assembly in GetAllAssemblies())
+            {
+                try
+                {
+                    var types = assembly.GetTypes().Where(predicate: t => t.GetInterfaces().Contains(value: typeof(TType)));
+                    if (types.Any()) lst.AddRange(types);
+                }
+                catch
+                {
+                }
+            }
+            return lst.ToArray();
+        }
 
         /// <summary>
         ///     获取所有的程序集
