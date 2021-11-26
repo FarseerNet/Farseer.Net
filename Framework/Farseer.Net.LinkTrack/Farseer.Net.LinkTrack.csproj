@@ -8,9 +8,9 @@
         <Description>包括：追踪http、db、redis、mq、es的调用耗时</Description>
         <Authors>steden</Authors>
         <PackageTags>追踪http、db、redis、mq、es的调用耗时</PackageTags>
-        <AssemblyVersion>2.6.0</AssemblyVersion>
-        <FileVersion>2.6.0</FileVersion>
-        <Version>2.6.0</Version>
+        <AssemblyVersion>2.6.1</AssemblyVersion>
+        <FileVersion>2.6.1</FileVersion>
+        <Version>2.6.1</Version>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <RootNamespace>FS.LinkTrack</RootNamespace>
         <LangVersion>latest</LangVersion>
