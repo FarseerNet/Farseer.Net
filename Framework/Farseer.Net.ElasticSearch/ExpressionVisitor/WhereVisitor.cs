@@ -22,7 +22,7 @@ namespace FS.ElasticSearch.ExpressionVisitor
         {
             base.Visit(exp: exp);
             if (_queryList.Count == 0) return null;
-            
+
             var query = _queryList.Pop();
 
             while (_queryList.Count > 0)
@@ -38,8 +38,8 @@ namespace FS.ElasticSearch.ExpressionVisitor
         protected override Expression VisitBinary(BinaryExpression bexp)
         {
             var exp = base.VisitBinary(b: bexp);
-            if (exp       == null) return null;
-            if (_curValue == null) return exp;
+            if (exp == null) return null;
+            if (_curValue == null || _curValue.Count == 0) return exp;
 
             // 如果是比较值的操作，则先取出字段、值
             Expression field = null;
@@ -139,7 +139,7 @@ namespace FS.ElasticSearch.ExpressionVisitor
             {
                 return m;
             }
-            
+
             foreach (var t in arguments) base.Visit(exp: t);
 
             var field = _curField.Pop();
@@ -247,7 +247,7 @@ namespace FS.ElasticSearch.ExpressionVisitor
         protected virtual bool IsIgnoreMethod(MethodCallExpression m)
         {
             if (m.Method.DeclaringType.FullName == "FS.Extends.Extend") return true;
-            
+
             switch (m.Method.Name)
             {
                 case "ConvertType":
