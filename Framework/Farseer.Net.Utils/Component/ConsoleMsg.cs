@@ -33,7 +33,7 @@ namespace FS.Utils.Component
         /// </summary>
         public void Dispose()
         {
-            _timer.Dispose();
+            _timer?.Dispose();
             if (IsSuccess)
                 Console.WriteLine(value: "成功！");
             else
