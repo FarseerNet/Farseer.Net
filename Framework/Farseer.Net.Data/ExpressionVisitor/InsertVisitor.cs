@@ -26,21 +26,9 @@ namespace FS.Data.ExpressionVisitor
         public new string Visit(Expression exp)
         {
             base.Visit(exp: exp);
-            //  字段
-            var strFields = new StringBuilder();
-            //  值
-            var strValues = new StringBuilder();
 
             var lst = SqlList.Reverse().ToList();
             return "(" + string.Join(separator: ",", values: lst) + ") VALUES (" + string.Join(separator: ",", values: ParamList.Select(selector: o => o.ParameterName)) + ")";
-            for (var i = 0; i < lst.Count; i++)
-            {
-                //  添加参数到列表
-                strFields.Append(value: $"{lst[index: i]},");
-                strValues.Append(value: $"{ParamList[index: i].ParameterName},");
-            }
-
-            return "(" + strFields.Remove(startIndex: strFields.Length - 1, length: 1) + ") VALUES (" + strValues.Remove(startIndex: strValues.Length - 1, length: 1) + ")";
         }
 
         /// <summary>
