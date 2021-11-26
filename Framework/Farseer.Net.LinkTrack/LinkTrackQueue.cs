@@ -50,6 +50,8 @@ namespace FS.LinkTrack
 
             // 依赖外部系统的，单独存储，用于统计慢查询
             AddSlowQuery(lst: lst);
+            
+            foreach (var linkTrackContext in lst) linkTrackContext.List.Clear();
         }
 
         /// <summary>

@@ -54,10 +54,11 @@ namespace FS.LinkTrack.Dal
         /// </summary>
         [Keyword]
         public string DbSql { get; set; }
+        
         /// <summary>
         ///     SQL参数化
         /// </summary>
-        [Object]
+        [Flattened]
         public Dictionary<string, string> DbSqlParam { get; set; }
 
         /// <summary>

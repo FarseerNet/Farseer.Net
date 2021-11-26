@@ -76,7 +76,11 @@ namespace FS.Core.Async
                 {
                     DeQueue(callbackList: _callBackList); //队列数据出队保存到回调数据列表
 
-                    if (_callBackList.Count > 0) OnDequeue(callbackList: _callBackList, remainCount: QueueCount); //交由用户处理
+                    if (_callBackList.Count > 0)
+                    {
+                        OnDequeue(callbackList: _callBackList, remainCount: QueueCount); //交由用户处理
+                        _callBackList.Clear();
+                    }
                 }
                 catch (System.Exception e)
                 {

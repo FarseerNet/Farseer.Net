@@ -9,9 +9,12 @@ namespace FS.Core.LinkTrack
 {
     public sealed class LinkTrackDetail
     {
+        const    string       farseerNet = "Farseer.Net";
+        const    string       callback   = "Callback";
+        const    string       moveNext   = "MoveNext";
+        
         internal StackFrame[] _lstFrames;
-
-        internal StackTrace _stackTrace;
+        internal StackTrace   _stackTrace;
 
         /// <summary>
         ///     调用栈
@@ -72,11 +75,13 @@ namespace FS.Core.LinkTrack
             CallStackTraceList = new List<CallStackTrace>();
             foreach (var stackFrame in _stackTrace.GetFrames())
             {
+                if (CallStackTraceList.Count > 3) break; // 最多存3条
                 var fileLineNumber = stackFrame.GetFileLineNumber();
                 var methodBase     = stackFrame.GetMethod();
 
-                if (fileLineNumber           == 0 || methodBase.IsAssembly || methodBase.Module.Name.Contains(value: "Farseer.Net") || methodBase.Name.Contains(value: "Callback")) continue;
-                if (methodBase.DeclaringType != null && methodBase.DeclaringType.Name.Contains(value: ">d") && methodBase.Name == "MoveNext") continue;
+                if (fileLineNumber           == 0 || methodBase.IsAssembly || methodBase.Module.Name.Contains(value: farseerNet) || methodBase.Name.Contains(value: callback)) continue;
+                
+                if (methodBase.DeclaringType != null && methodBase.DeclaringType.Name.Contains(value: ">d") && methodBase.Name == moveNext) continue;
 
                 // 方法返回类型
                 var returnType = "";

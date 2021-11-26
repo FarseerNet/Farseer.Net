@@ -41,7 +41,7 @@ namespace FS.Core.LinkTrack
         public void Set(LinkTrackDetail linkTrackDetail)
         {
             if (AsyncLocal.Value == null) return;
-            linkTrackDetail._stackTrace = new StackTrace(fNeedFileInfo: true);
+            linkTrackDetail._stackTrace = new StackTrace(true);
             AsyncLocal.Value.List.Add(item: linkTrackDetail);
         }
 
@@ -69,7 +69,7 @@ namespace FS.Core.LinkTrack
         /// <summary>
         ///     追踪Fss
         /// </summary>
-        public static TrackEnd TrackFss(string clientHost, string jobName, int taskGroupId, int taskId)
+        public static TrackEnd TrackFss(string clientHost, string jobName, int taskGroupId)
         {
             AsyncLocal.Value = new LinkTrackContext
             {
@@ -79,7 +79,7 @@ namespace FS.Core.LinkTrack
                 StartTs     = DateTime.Now.ToTimestamps(),
                 List        = new List<LinkTrackDetail>(),
                 Method      = jobName,
-                Path        = $"{taskGroupId}/{taskId}",
+                Path        = $"{taskGroupId}",
                 Domain      = clientHost,
                 RequestIp   = IpHelper.GetIp,
                 ContentType = "Fss"

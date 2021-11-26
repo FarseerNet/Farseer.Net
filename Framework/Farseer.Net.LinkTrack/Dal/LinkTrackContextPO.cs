@@ -33,8 +33,8 @@ namespace FS.LinkTrack.Dal
 
         [Keyword]
         public override string Method { get; set; }
-
-        [Object]
+        
+        [Flattened]
         public override Dictionary<string, string> Headers { get; set; }
 
         [Keyword]
@@ -49,7 +49,7 @@ namespace FS.LinkTrack.Dal
         [Keyword]
         public override string RequestIp { get; set; }
 
-        [Object]
+        [Flattened]
         public override List<LinkTrackDetail> List { get; set; }
     }
 }
