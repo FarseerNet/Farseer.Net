@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using FS.Core.LinkTrack;
@@ -38,6 +39,10 @@ namespace FS.Job
             // 开启任务，自动拉取任务
             Task.Factory.StartNew(function: async () =>
             {
+                // 如果是来自FSS.Service，则等待5秒后，再连接FSS服务
+                var entryName = Assembly.GetEntryAssembly().EntryPoint.Module.Name;
+                if (entryName == "FSS.Service.dll") await Task.Delay(5000);
+                
                 // 当前客户端支持的job
                 var jobItemConfig = JobConfigRoot.Get();
                 // 最大拉取数量（队列现存的数量）
@@ -74,18 +79,18 @@ namespace FS.Job
             // 开启任务，自动拉取任务
             Task.Factory.StartNew(function: async () =>
             {
+                // 如果是来自FSS.Service，则等待5秒后，再连接FSS服务
+                var entryName = Assembly.GetEntryAssembly().EntryPoint.Module.Name;
+                if (entryName == "FSS.Service.dll") await Task.Delay(5000);
+                
                 while (true)
                 {
                     // 没有任务的时候，休眠
                     if (_queue.Count == 0)
                     {
-                        await Task.Delay(100);
+                        await Task.Delay(1000);
                         continue;
                     }
-
-                    // 计划时间还没到
-                    var waitTimeSpan = _queue.Peek().StartAt - DateTime.Now;
-                    if (waitTimeSpan.TotalMilliseconds > 0) await Task.Delay(delay: waitTimeSpan);
 
                     // 执行任务，这里不做等待,相当于开启一条线程执行
                     Task.Run(function: async () =>
@@ -93,14 +98,18 @@ namespace FS.Job
                         await RunTask(task: _queue.Dequeue());
                     });
 
-                    Thread.Sleep(millisecondsTimeout: 10);
+                    Thread.Sleep(millisecondsTimeout: 200);
                 }
             }, creationOptions: TaskCreationOptions.LongRunning);
         }
 
         private static async Task RunTask(TaskVO task)
         {
-            var message = $"任务组：TaskGroupId={task.TaskGroupId}，Caption={task.Caption}，JobName={task.JobName}，TaskId={task.Id}";
+            // 计划时间还没到
+            var waitTimeSpan = task.StartAt - DateTime.Now;
+            if (waitTimeSpan.TotalMilliseconds > 0) await Task.Delay(delay: waitTimeSpan);
+
+            var message = $"任务组：TaskGroupId={task.TaskGroupId}，Caption={task.Caption}，JobName={task.JobName}";
 
             // JOB执行耗时计数器
             var sw = new Stopwatch();
@@ -138,7 +147,7 @@ namespace FS.Job
                 // 执行业务JOB
                 var  fssJob = IocManager.GetService<IFssJob>(name: jobInsName);
                 bool result;
-                using (FsLinkTrack.TrackFss(clientHost: task.ClientHost, jobName: task.JobName, taskGroupId: task.TaskGroupId, taskId: task.Id))
+                using (FsLinkTrack.TrackFss(clientHost: task.ClientHost, jobName: task.JobName, taskGroupId: task.TaskGroupId))
                 {
                     // 执行具体任务（业务执行）
                     sw.Start();

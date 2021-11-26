@@ -22,14 +22,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Grpc" Version="2.41.0" />
-        <PackageReference Include="Grpc.Core" Version="2.41.0" />
-        <PackageReference Include="Grpc.Tools" Version="2.41.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Google.Protobuf" Version="3.18.1" />
-        <PackageReference Include="Grpc.Net.Client" Version="2.40.0" />
         <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
         <PackageReference Include="Snowflake.Core" Version="2.0.0" />
         <PackageReference Include="System.ServiceProcess.ServiceController" Version="5.0.0" />

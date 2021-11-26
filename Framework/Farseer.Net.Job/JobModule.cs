@@ -76,8 +76,11 @@ namespace FS.Job
                 }
                 else
                 {
-                    TaskQueueList.PullJob();
-                    TaskQueueList.RunJob();
+                    FarseerApplication.AddInitCallback(() =>
+                    {
+                        TaskQueueList.PullJob();
+                        TaskQueueList.RunJob();
+                    });
                 }
             }
         }

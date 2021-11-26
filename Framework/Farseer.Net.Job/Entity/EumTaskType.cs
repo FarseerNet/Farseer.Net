@@ -28,11 +28,6 @@ namespace FS.Job.Entity
         /// <summary>
         ///     完成
         /// </summary>
-        Success = 4,
-
-        /// <summary>
-        ///     重新调度
-        /// </summary>
-        ReScheduler = 5
+        Success = 4
     }
 }

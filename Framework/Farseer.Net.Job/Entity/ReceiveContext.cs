@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using FS.DI;
+using FS.Extends;
 using Microsoft.Extensions.Logging;
 
 namespace FS.Job.Entity
@@ -19,15 +20,14 @@ namespace FS.Job.Entity
 
         private readonly Stopwatch   _sw;
         private          long        _nextTimespan;
-        private          TimeSpan?   _ts;
-        private          EumTaskType TaskStatus;
+        private          EumTaskType _taskStatus;
 
         public ReceiveContext(TaskVO task, Stopwatch sw)
         {
             Meta       =   task;
             _sw        =   sw;
             Meta.Data  ??= new Dictionary<string, string>();
-            TaskStatus =   EumTaskType.Working;
+            _taskStatus =   EumTaskType.Working;
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace FS.Job.Entity
 
             _isDebug   = true;
             _sw        = sw;
-            TaskStatus = EumTaskType.Working;
+            _taskStatus = EumTaskType.Working;
         }
 
         internal int Progress { get; set; }
@@ -69,7 +69,15 @@ namespace FS.Job.Entity
         /// </summary>
         public void SetNextAt(TimeSpan ts)
         {
-            _ts = ts;
+            _nextTimespan = DateTime.Now.Add(ts).ToTimestamps();
+        }
+
+        /// <summary>
+        ///     本次执行完后，下一次执行的间隔时间
+        /// </summary>
+        public void SetNextAt(DateTime dt)
+        {
+            _nextTimespan = dt.ToTimestamps();
         }
 
         /// <summary>
@@ -83,10 +91,9 @@ namespace FS.Job.Entity
                 await TaskManager.JobInvokeAsync(request: new JobInvokeRequest
                 {
                     TaskGroupId  = Meta.TaskGroupId,
-                    Id           = Meta.Id,
                     NextTimespan = _nextTimespan,
                     Progress     = Progress,
-                    Status       = TaskStatus,
+                    Status       = _taskStatus,
                     RunSpeed     = (int)_sw.ElapsedMilliseconds,
                     Log = new LogRequest
                     {
@@ -104,18 +111,15 @@ namespace FS.Job.Entity
         /// </summary>
         internal async Task SuccessAsync(LogRequest log = null)
         {
-            // 如果本次有动态设计时间
-            if (_ts.HasValue) _nextTimespan = (int)_ts.GetValueOrDefault().TotalMilliseconds;
-            TaskStatus = EumTaskType.Success;
+            _taskStatus = EumTaskType.Success;
             if (!_isDebug)
             {
                 await TaskManager.JobInvokeAsync(request: new JobInvokeRequest
                 {
                     TaskGroupId  = Meta.TaskGroupId,
-                    Id           = Meta.Id,
                     NextTimespan = _nextTimespan,
                     Progress     = 100,
-                    Status       = TaskStatus,
+                    Status       = _taskStatus,
                     RunSpeed     = (int)_sw.ElapsedMilliseconds,
                     Log          = log,
                     Data         = Meta.Data
@@ -128,18 +132,15 @@ namespace FS.Job.Entity
         /// </summary>
         public async Task FailAsync(LogRequest log = null)
         {
-            // 如果本次有动态设计时间
-            if (_ts.HasValue) _nextTimespan = (int)_ts.GetValueOrDefault().TotalMilliseconds;
-            TaskStatus = EumTaskType.Fail;
+            _taskStatus = EumTaskType.Fail;
             if (!_isDebug)
             {
                 await TaskManager.JobInvokeAsync(request: new JobInvokeRequest
                 {
                     TaskGroupId  = Meta.TaskGroupId,
-                    Id           = Meta.Id,
                     NextTimespan = _nextTimespan,
                     Progress     = Progress,
-                    Status       = TaskStatus,
+                    Status       = _taskStatus,
                     RunSpeed     = (int)_sw.ElapsedMilliseconds,
                     Log          = log,
                     Data         = Meta.Data
@@ -157,10 +158,9 @@ namespace FS.Job.Entity
                 await TaskManager.JobInvokeAsync(request: new JobInvokeRequest
                 {
                     TaskGroupId  = Meta.TaskGroupId,
-                    Id           = Meta.Id,
                     NextTimespan = _nextTimespan,
                     Progress     = Progress,
-                    Status       = TaskStatus,
+                    Status       = _taskStatus,
                     RunSpeed     = (int)_sw.ElapsedMilliseconds,
                     Log          = null,
                     Data         = Meta.Data

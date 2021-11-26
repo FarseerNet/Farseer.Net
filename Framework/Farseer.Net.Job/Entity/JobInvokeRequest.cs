@@ -8,11 +8,6 @@ namespace FS.Job.Entity
     public class JobInvokeRequest
     {
         /// <summary>
-        ///     主键
-        /// </summary>
-        public int Id { get; set; }
-
-        /// <summary>
         ///     任务组ID
         /// </summary>
         public int TaskGroupId { get; set; }
