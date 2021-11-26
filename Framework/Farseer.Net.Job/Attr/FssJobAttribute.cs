@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 // ReSharper disable once CheckNamespace
 namespace FS.Job
@@ -18,5 +19,15 @@ namespace FS.Job
         ///     在FSS平台配置的JobTypeName
         /// </summary>
         public string Name { get; set; }
+        
+        /// <summary>
+        ///     是否启用调试（默认为false）
+        /// </summary>
+        public bool Debug { get; set; } = false;
+
+        /// <summary>
+        ///     开启调试状态后要启动的job
+        /// </summary>
+        public string DebugMetaData { get; set; }
     }
 }

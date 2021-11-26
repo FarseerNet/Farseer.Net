@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
+using FS.Core;
 using FS.DI;
 using FS.Job.Configuration;
 using FS.Job.Entity;
@@ -46,42 +49,32 @@ namespace FS.Job
                     Jobs       = JobInstaller.JobImpList.Keys.Select(selector: o => o).ToArray()
                 };
 
-                // 开启本地调试状态
-                if (jobItemConfig.Debug)
+                FarseerApplication.AddInitCallback(() =>
                 {
-                    // 待系统初始化完后执行
-                    FarseerApplication.AddInitCallback(act: () =>
+                    // 查找启用了Debug状态的job，立即执行
+                    foreach (var jobType in JobInstaller.JobImpList)
                     {
-                        IocManager.Logger<JobModule>().LogInformation(message: "开启Debug模式");
-                        var debugJobs = jobItemConfig.DebugJobs.ToLower() == "all" ? Client.Jobs : jobItemConfig.DebugJobs.Split(',');
-                        foreach (var debugJob in debugJobs)
+                        var fssJobAttribute = jobType.Value.GetCustomAttribute<FssJobAttribute>();
+                        if (fssJobAttribute == null || !fssJobAttribute.Debug) continue;
+                        IocManager.Logger<JobModule>().LogDebug(message: $"Debug：启动{jobType.Key}。");
+                        var sw = Stopwatch.StartNew();
+                        try
                         {
-                            IocManager.Logger<JobModule>().LogInformation(message: $"Debug：启动{debugJob}。");
-
-                            var sw = Stopwatch.StartNew();
-                            try
-                            {
-                                IocManager.Resolve<IFssJob>(name: $"fss_job_{debugJob}").Execute(context: new ReceiveContext(ioc: IocManager, sw: sw, debugMetaData: jobItemConfig.DebugMetaData));
-                            }
-                            catch (Exception e)
-                            {
-                                IocManager.Logger<JobModule>().LogError(exception: e, message: e.Message);
-                            }
-                            finally
-                            {
-                                IocManager.Logger<JobModule>().LogInformation(message: $"Debug：{debugJob} 耗时 {sw.ElapsedMilliseconds} ms");
-                            }
+                            Task.WaitAll(IocManager.Resolve<IFssJob>(name: $"fss_job_{jobType.Key}").Execute(context: new ReceiveContext(ioc: IocManager, jobType.Key, sw: sw, Jsons.ToObject<Dictionary<string, string>>(fssJobAttribute.DebugMetaData))));
                         }
-                    });
-                }
-                else
-                {
-                    FarseerApplication.AddInitCallback(() =>
-                    {
-                        TaskQueueList.PullJob();
-                        TaskQueueList.RunJob();
-                    });
-                }
+                        catch (Exception e)
+                        {
+                            IocManager.Logger<JobModule>().LogError(exception: e, message: e.Message);
+                        }
+                        finally
+                        {
+                            IocManager.Logger<JobModule>().LogDebug(message: $"Debug：{jobType.Key} 耗时 {sw.ElapsedMilliseconds} ms");
+                        }
+                    }
+                    
+                    TaskQueueList.PullJob();
+                    TaskQueueList.RunJob();
+                });
             }
         }
 

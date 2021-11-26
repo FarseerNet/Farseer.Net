@@ -39,7 +39,7 @@ namespace FS.Job
             foreach (var jobType in types)
             {
                 var fssJobAttribute = jobType.GetCustomAttribute<FssJobAttribute>();
-                if (fssJobAttribute == null || !fssJobAttribute.Enable) return;
+                if (fssJobAttribute == null || !fssJobAttribute.Enable) continue;
 
                 // 把找到的JOB实现，存到字典中，用于向服务端注册时，告知当前客户端能处理的JOB列表
                 JobImpList[key: fssJobAttribute.Name] = jobType;

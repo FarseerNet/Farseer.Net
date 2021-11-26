@@ -24,26 +24,26 @@ namespace FS.Job.Entity
 
         public ReceiveContext(TaskVO task, Stopwatch sw)
         {
-            Meta       =   task;
-            _sw        =   sw;
-            Meta.Data  ??= new Dictionary<string, string>();
+            Meta        =   task;
+            _sw         =   sw;
+            Meta.Data   ??= new Dictionary<string, string>();
             _taskStatus =   EumTaskType.Working;
         }
 
         /// <summary>
         ///     DEBUG模式
         /// </summary>
-        internal ReceiveContext(IIocManager ioc, Stopwatch sw, Dictionary<string, string> debugMetaData)
+        internal ReceiveContext(IIocManager ioc, string jobName, Stopwatch sw, Dictionary<string, string> debugMetaData)
         {
             Meta = new TaskVO
             {
                 Caption = "调试",
-                JobName = null,
-                Data    = debugMetaData
+                JobName = jobName,
+                Data    = debugMetaData ?? new Dictionary<string, string>()
             };
 
-            _isDebug   = true;
-            _sw        = sw;
+            _isDebug    = true;
+            _sw         = sw;
             _taskStatus = EumTaskType.Working;
         }
 

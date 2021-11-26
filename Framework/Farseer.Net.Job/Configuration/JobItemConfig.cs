@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 
 namespace FS.Job.Configuration
 {
@@ -10,23 +9,8 @@ namespace FS.Job.Configuration
         public string Server { get; set; }
 
         /// <summary>
-        ///     是否开启调试状态
-        /// </summary>
-        public bool Debug { get; set; }
-
-        /// <summary>
-        ///     开启调试状态后要启动的job
-        /// </summary>
-        public string DebugJobs { get; set; }
-
-        /// <summary>
         ///     一次拉取的任务数量
         /// </summary>
         public int PullCount { get; set; }
-
-        /// <summary>
-        ///     开启调试状态后要启动的job
-        /// </summary>
-        public Dictionary<string, string> DebugMetaData { get; set; }
     }
 }
