@@ -40,7 +40,7 @@ namespace FS.Data.Client
         ///     表达式持久化
         /// </summary>
         internal ExpressionBuilder ExpBuilder { get; }
-        
+
         /// <summary>
         /// 实体类结构映射
         /// </summary>
@@ -178,13 +178,14 @@ namespace FS.Data.Client
         /// </summary>
         public virtual ISqlParam InsertBatch<TEntity>(IEnumerable<TEntity> lst) where TEntity : class, new()
         {
-            foreach (var entity in lst)
-            {
-                ExpBuilder.AssignInsert(entity: entity);
-                var insertAssemble = InsertVisitor.Visit(exp: ExpBuilder.ExpAssign);
-                Sql.Append(value: $"INSERT INTO {DbTableName} {insertAssemble};");
-                InsertVisitor.Clear();
-            }
+            throw new Exception("未实现");
+            // foreach (var entity in lst)
+            // {
+            //     ExpBuilder.AssignInsert(entity: entity);
+            //     var insertAssemble = InsertVisitor.Visit(exp: ExpBuilder.ExpAssign);
+            //     Sql.Append(value: $"INSERT INTO {DbTableName} {insertAssemble};");
+            //     InsertVisitor.Clear();
+            // }
 
             return this;
         }

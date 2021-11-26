@@ -333,8 +333,13 @@ namespace FS.Data
                     return lst.Count();
                 }, joinSoftDeleteCondition: false);
             }
+            if (Context.Executeor.DataBase.DataType == eumDbType.ClickHouse) return await QueueManger.CommitAsync(map: SetMap, act: queue => Context.Executeor.ExecuteAsync(callMethod: $"{typeof(TEntity).Name}.InsertBatch", sqlParam: queue.SqlBuilder.InsertBatch(lst: lst)), joinSoftDeleteCondition: false);
 
-            return await QueueManger.CommitAsync(map: SetMap, act: queue => Context.Executeor.ExecuteAsync(callMethod: $"{typeof(TEntity).Name}.InsertBatch", sqlParam: queue.SqlBuilder.InsertBatch(lst: lst)), joinSoftDeleteCondition: false);
+            foreach (var entity in lst)
+            {
+                await InsertAsync(entity);
+            }
+            return lst.Count();
         }
 
         #endregion
