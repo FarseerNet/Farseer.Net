@@ -61,9 +61,9 @@ namespace FS.Core.Http
                 //httpContent.Headers.Add("Cookie", "bid=\"YObnALe98pw\"");
                 var cancellationTokenSource = new CancellationTokenSource();
                 if (requestTimeout > 0) cancellationTokenSource.CancelAfter(millisecondsDelay: requestTimeout);
-                var httpRspMessage = httpClient.PutAsync(requestUri: url, content: httpContent, cancellationToken: cancellationTokenSource.Token);
+                var httpRspMessage = await httpClient.PutAsync(requestUri: url, content: httpContent, cancellationToken: cancellationTokenSource.Token).ConfigureAwait(continueOnCapturedContext: false);
 
-                var bytes  = await (await httpRspMessage.ConfigureAwait(continueOnCapturedContext: false)).Content.ReadAsByteArrayAsync().ConfigureAwait(continueOnCapturedContext: false);
+                var bytes  = await httpRspMessage.Content.ReadAsByteArrayAsync().ConfigureAwait(continueOnCapturedContext: false);
                 var result = encoding.GetString(bytes: bytes);
                 trackEnd.SetHttpResponseBody(responseBody: result);
                 return result;
