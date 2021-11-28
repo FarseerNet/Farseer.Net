@@ -28,6 +28,7 @@ namespace FS.Job
         /// </summary>
         public static void Enqueue(List<TaskVO> lstTask)
         {
+            if (lstTask == null || lstTask.Count == 0) return;
             foreach (var task in lstTask.OrderBy(o => o.StartAt)) _queue.Enqueue(item: task);
         }
 
@@ -42,7 +43,7 @@ namespace FS.Job
                 // 如果是来自FSS.Service，则等待5秒后，再连接FSS服务
                 var entryName = Assembly.GetEntryAssembly().EntryPoint.Module.Name;
                 if (entryName == "FSS.Service.dll") await Task.Delay(5000);
-                
+
                 // 当前客户端支持的job
                 var jobItemConfig = JobConfigRoot.Get();
                 // 最大拉取数量（队列现存的数量）
@@ -57,16 +58,17 @@ namespace FS.Job
                     {
                         // 拉取任务
                         var lst = await TaskManager.PullAsync(pullCount);
-                        // 从队列中，将已拉取的任务先取出来，目的是重新排序后入队
-                        while (_queue.Count > 0)
+                        if (lst.Count == 0)
                         {
-                            lst.Add(_queue.Dequeue());
+                            await Task.Delay(2000);
                         }
-                        
                         // 将任务添加到队列中
                         Enqueue(lst);
+
                     }
-                    Thread.Sleep(millisecondsTimeout: 500);
+
+                    pullCount = maxPullCount - _queue.Count;
+                    await Task.Delay(pullCount == 0 ? 1000 : 500);
                 }
             }, creationOptions: TaskCreationOptions.LongRunning);
         }
@@ -82,7 +84,7 @@ namespace FS.Job
                 // 如果是来自FSS.Service，则等待5秒后，再连接FSS服务
                 var entryName = Assembly.GetEntryAssembly().EntryPoint.Module.Name;
                 if (entryName == "FSS.Service.dll") await Task.Delay(5000);
-                
+
                 while (true)
                 {
                     // 没有任务的时候，休眠
@@ -105,33 +107,17 @@ namespace FS.Job
 
         private static async Task RunTask(TaskVO task)
         {
-            // 计划时间还没到
-            var waitTimeSpan = task.StartAt - DateTime.Now;
-            if (waitTimeSpan.TotalMilliseconds > 0) await Task.Delay(delay: waitTimeSpan);
-
-            var message = $"任务组：TaskGroupId={task.TaskGroupId}，Caption={task.Caption}，JobName={task.JobName}";
-
             // JOB执行耗时计数器
             var sw = new Stopwatch();
             // 上下文
             var receiveContext = new ReceiveContext(task: task, sw: sw);
-            var cts            = new CancellationTokenSource();
-
-            // 开启激活任务，直到任务完成
-            Task.Run(function: async () =>
-            {
-                while (!cts.Token.IsCancellationRequested)
-                {
-                    await receiveContext.ActivateTask();
-                    await Task.Delay(millisecondsDelay: 10000, cancellationToken: cts.Token);
-                }
-            }, cancellationToken: cts.Token);
 
             // 业务是否有该调度任务的实现
             var jobInsName   = $"fss_job_{task.JobName}";
             var isRegistered = IocManager.Instance.IsRegistered(name: jobInsName);
             if (isRegistered is false)
             {
+                var message = $"任务组：TaskGroupId={task.TaskGroupId}，Caption={task.Caption}，JobName={task.JobName}";
                 IocManager.Instance.Logger<TaskQueueList>().LogWarning(message: $"未找到任务实现类：{message}");
                 await receiveContext.FailAsync(log: new LogRequest
                 {
@@ -141,6 +127,21 @@ namespace FS.Job
                 });
                 return;
             }
+
+            // 计划时间还没到
+            var waitTimeSpan = task.StartAt - DateTime.Now;
+            if (waitTimeSpan.TotalMilliseconds > 0) await Task.Delay(delay: waitTimeSpan);
+
+            var cts = new CancellationTokenSource();
+            // 开启激活任务，直到任务完成
+            Task.Run(function: async () =>
+            {
+                while (!cts.Token.IsCancellationRequested)
+                {
+                    await receiveContext.ActivateTask();
+                    await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken: cts.Token);
+                }
+            }, cancellationToken: cts.Token);
 
             try
             {
@@ -152,6 +153,7 @@ namespace FS.Job
                     // 执行具体任务（业务执行）
                     sw.Start();
                     result = await fssJob.Execute(context: receiveContext);
+                    cts.Cancel();
                 }
 
                 // 通知服务端，当前客户端执行结果
