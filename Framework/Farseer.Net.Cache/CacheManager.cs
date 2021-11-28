@@ -14,7 +14,7 @@ namespace FS.Cache
         private IGetCache _getCache;
         private string    _redisItemConfigName;
 
-        public CacheManager()
+        private CacheManager()
         {
         }
 
@@ -108,7 +108,7 @@ namespace FS.Cache
         }
 
         /// <summary>
-        ///     从缓存集合中获取数据，如果不存在则通过get委托获取，并保存到缓存中
+        ///     从集合中获取其中一项数据，如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
         /// <param name="fieldKey"> hash里的field值 </param>
         /// <param name="get"> 数据源获取 </param>
@@ -136,7 +136,7 @@ namespace FS.Cache
         }
 
         /// <summary>
-        ///     从缓存集合中获取数据，如果不存在则通过get委托获取，并保存到缓存中
+        ///     从集合中获取其中一项数据，如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
         /// <param name="fieldKey"> hash里的field值 </param>
         /// <param name="get"> 数据源获取 </param>
@@ -157,7 +157,7 @@ namespace FS.Cache
         }
 
         /// <summary>
-        ///     从缓存集合中获取数据，如果不存在则通过get委托获取，并保存到缓存中
+        ///     从集合中获取其中一项数据，如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
         /// <param name="fieldKey"> hash里的field值 </param>
         /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
@@ -171,7 +171,7 @@ namespace FS.Cache
         }
 
         /// <summary>
-        ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
+        ///     从集合中获取其中一项数据，如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
         /// <param name="fieldKey"> hash里的field值 </param>
         /// <param name="get"> 数据源获取 </param>
@@ -200,7 +200,7 @@ namespace FS.Cache
         }
 
         /// <summary>
-        ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
+        ///     从集合中获取其中一项数据，如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
         /// <param name="fieldKey"> hash里的field值 </param>
         /// <param name="get"> 数据源获取 </param>
@@ -229,7 +229,7 @@ namespace FS.Cache
         }
 
         /// <summary>
-        ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
+        ///     从集合中获取其中一项数据，如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
         /// <param name="fieldKey"> hash里的field值 </param>
         /// <param name="get"> 数据源获取 </param>
@@ -257,7 +257,7 @@ namespace FS.Cache
         }
 
         /// <summary>
-        ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
+        ///     从集合中获取其中一项数据，如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
         /// <param name="fieldKey"> hash里的field值 </param>
         /// <param name="get"> 数据源获取 </param>
@@ -268,7 +268,6 @@ namespace FS.Cache
             SetCache(cacheKey: cacheKey);
 
             var entity = await _getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
-
             if (entity != null) return entity;
 
             // 缓存没有，则通过get委托获取（一般是数据库的数据源）
@@ -357,7 +356,7 @@ namespace FS.Cache
         }
 
         /// <summary>
-        ///     保存列表到缓存中
+        ///     保存集合到集合列表中
         /// </summary>
         /// <param name="lst"> 数据源获取 </param>
         /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
@@ -369,7 +368,7 @@ namespace FS.Cache
         }
 
         /// <summary>
-        ///     保存列表到缓存中
+        ///     保存item到集合中
         /// </summary>
         /// <param name="entity"> 数据源获取 </param>
         /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
@@ -381,7 +380,7 @@ namespace FS.Cache
         }
 
         /// <summary>
-        ///     保存列表到缓存中
+        ///     保存item到集合中
         /// </summary>
         /// <param name="entity"> 数据源获取 </param>
         /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
@@ -397,7 +396,7 @@ namespace FS.Cache
         /// </summary>
         /// <param name="fieldKey"> 缓存Field </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public void Remove<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey)
+        public void RemoveItem<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey)
         {
             SetCache(cacheKey);
             _getCache.Remove(cacheKey, fieldKey: fieldKey);
@@ -409,7 +408,7 @@ namespace FS.Cache
         /// </summary>
         /// <param name="fieldKey"> 缓存Field </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public Task RemoveAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey)
+        public Task RemoveItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey)
         {
             SetCache(cacheKey);
             return _getCache.RemoveAsync(cacheKey, fieldKey: fieldKey);
@@ -437,7 +436,7 @@ namespace FS.Cache
 
 
         /// <summary>
-        ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
+        ///     获取缓存（内部不使用集合结构存储），如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
         /// <param name="get"> 数据源获取 </param>
         /// <param name="cacheKey"> 缓存策略 </param>
@@ -459,7 +458,7 @@ namespace FS.Cache
         }
 
         /// <summary>
-        ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
+        ///     获取缓存（内部不使用集合结构存储），如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
         /// <param name="cacheKey"> 缓存策略 </param>
         public TEntity Get<TEntity>(CacheKey<TEntity> cacheKey)
@@ -469,7 +468,7 @@ namespace FS.Cache
         }
 
         /// <summary>
-        ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
+        ///     获取缓存（内部不使用集合结构存储），如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
         /// <param name="cacheKey"> 缓存策略 </param>
         public Task<TEntity> GetAsync<TEntity>(CacheKey<TEntity> cacheKey)
@@ -479,7 +478,7 @@ namespace FS.Cache
         }
 
         /// <summary>
-        ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
+        ///     获取缓存（内部不使用集合结构存储），如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
         /// <param name="get"> 数据源获取 </param>
         /// <param name="cacheKey"> 缓存策略 </param>
@@ -501,7 +500,7 @@ namespace FS.Cache
         }
 
         /// <summary>
-        ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
+        ///     获取缓存（内部不使用集合结构存储），如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
         /// <param name="get"> 数据源获取 </param>
         /// <param name="cacheKey"> 缓存策略 </param>
@@ -523,7 +522,7 @@ namespace FS.Cache
         }
 
         /// <summary>
-        ///     保存对象
+        ///     保存对象（内部不使用集合结构存储）
         /// </summary>
         /// <param name="entity"> 保存对象 </param>
         /// <param name="cacheKey"> 缓存策略 </param>
@@ -534,7 +533,7 @@ namespace FS.Cache
         }
 
         /// <summary>
-        ///     保存对象
+        ///     保存对象（内部不使用集合结构存储）
         /// </summary>
         /// <param name="entity"> 保存对象 </param>
         /// <param name="cacheKey"> 缓存策略 </param>

@@ -50,14 +50,10 @@ namespace FS.Cache.Redis
                 // 注册Redis管理
                 container.Register(Component.For<IRedisCacheManager>().Named(name: redisItemConfig.Name).Instance(instance: redisCacheManager).LifestyleSingleton());
 
-                // 注册ICacheManager
-                //container.Register(Component.For<ICacheManager>().Named($"cache_{redisItemConfig.Name}").Instance(cacheManager).LifestyleSingleton());
-
                 // 当配置项为"default"，或者只有一项时，注册一个不带别名的实例
                 if (redisItemConfig.Name == "default" || redisItemConfigs.Count == 1)
                 {
                     container.Register(Component.For<IRedisCacheManager>().Instance(instance: redisCacheManager).LifestyleSingleton());
-                    //container.Register(Component.For<ICacheManager>().Instance(cacheManager).LifestyleSingleton());
                 }
             }
         }

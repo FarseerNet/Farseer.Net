@@ -139,13 +139,13 @@ namespace FS.Cache
         /// </summary>
         /// <param name="fieldKey"> 缓存Field </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        void Remove<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey);
+        void RemoveItem<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey);
         /// <summary>
         ///     删除缓存item
         /// </summary>
         /// <param name="fieldKey"> 缓存Field </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        Task RemoveAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey);
+        Task RemoveItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey);
         /// <summary>
         ///     删除整个缓存
         /// </summary>

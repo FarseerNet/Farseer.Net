@@ -130,6 +130,7 @@ namespace FS.Cache.Redis
                                 option.ConnectTimeout = val;
                                 break;
                             case "dbindex":
+                            case "db":
                                 _dbIndex = val;
                                 break;
                         }

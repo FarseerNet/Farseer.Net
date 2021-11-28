@@ -483,6 +483,13 @@ namespace FS.Cache.Redis
                 return _db.ListLeftPopAsync(key: key, flags: flags);
             }
         }
+        public Task<RedisValue[]> ListLeftPopAsync(RedisKey key, long count, CommandFlags flags = CommandFlags.None)
+        {
+            using (FsLinkTrack.TrackRedis(method: "ListLeftPopAsync", key: key))
+            {
+                return _db.ListLeftPopAsync(key: key, count, flags: flags);
+            }
+        }
 
         public Task<long> ListLeftPushAsync(RedisKey key, RedisValue value, When when = When.Always, CommandFlags flags = CommandFlags.None)
         {
@@ -537,6 +544,13 @@ namespace FS.Cache.Redis
             using (FsLinkTrack.TrackRedis(method: "ListRightPopAsync", key: key))
             {
                 return _db.ListRightPopAsync(key: key, flags: flags);
+            }
+        }
+        public Task<RedisValue[]> ListRightPopAsync(RedisKey key, long count, CommandFlags flags = CommandFlags.None)
+        {
+            using (FsLinkTrack.TrackRedis(method: "ListRightPopAsync", key: key))
+            {
+                return _db.ListRightPopAsync(key: key, count, flags: flags);
             }
         }
 
@@ -1347,6 +1361,13 @@ namespace FS.Cache.Redis
                 return _db.StringGetSetAsync(key: key, value: value, flags: flags);
             }
         }
+        public Task<RedisValue> StringGetDeleteAsync(RedisKey key, CommandFlags flags = CommandFlags.None)
+        {
+            using (FsLinkTrack.TrackRedis(method: "StringGetDeleteAsync", key: key))
+            {
+                return _db.StringGetDeleteAsync(key: key, flags: flags);
+            }
+        }
 
         public Task<RedisValueWithExpiry> StringGetWithExpiryAsync(RedisKey key, CommandFlags flags = CommandFlags.None)
         {
@@ -1895,6 +1916,13 @@ namespace FS.Cache.Redis
                 return _db.ListLeftPop(key: key, flags: flags);
             }
         }
+        public RedisValue[] ListLeftPop(RedisKey key, long count, CommandFlags flags = CommandFlags.None)
+        {
+            using (FsLinkTrack.TrackRedis(method: "ListLeftPop", key: key))
+            {
+                return _db.ListLeftPop(key: key, count, flags: flags);
+            }
+        }
 
         public long ListLeftPush(RedisKey key, RedisValue value, When when = When.Always, CommandFlags flags = CommandFlags.None)
         {
@@ -1949,6 +1977,13 @@ namespace FS.Cache.Redis
             using (FsLinkTrack.TrackRedis(method: "ListRightPop", key: key))
             {
                 return _db.ListRightPop(key: key, flags: flags);
+            }
+        }
+        public RedisValue[] ListRightPop(RedisKey key, long count, CommandFlags flags = CommandFlags.None)
+        {
+            using (FsLinkTrack.TrackRedis(method: "ListRightPop", key: key))
+            {
+                return _db.ListRightPop(key: key, count, flags: flags);
             }
         }
 
@@ -2773,6 +2808,13 @@ namespace FS.Cache.Redis
             using (FsLinkTrack.TrackRedis(method: "StringGetSet", key: key))
             {
                 return _db.StringGetSet(key: key, value: value, flags: flags);
+            }
+        }
+        public RedisValue StringGetDelete(RedisKey key, CommandFlags flags = CommandFlags.None)
+        {
+            using (FsLinkTrack.TrackRedis(method: "StringGetDelete", key: key))
+            {
+                return _db.StringGetDelete(key: key, flags: flags);
             }
         }
 
