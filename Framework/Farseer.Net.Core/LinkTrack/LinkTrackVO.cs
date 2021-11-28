@@ -27,8 +27,6 @@ namespace FS.Core.LinkTrack
         /// </summary>
         public string CsharpCallMethod { get; set; }
 
-        public List<string> CsharpCallMethods { get; set; }
-
         /// <summary>
         ///     描述
         /// </summary>

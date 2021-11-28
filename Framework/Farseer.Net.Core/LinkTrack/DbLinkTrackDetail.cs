@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
+using System.Linq;
 
 namespace FS.Core.LinkTrack
 {
@@ -31,8 +33,18 @@ namespace FS.Core.LinkTrack
         public string Sql { get; set; }
 
         /// <summary>
-        ///     SQL参数化
+        /// 设置SQL入参
         /// </summary>
-        public Dictionary<string, string> SqlParam { get; set; }
+        /// <param name="param"></param>
+        public void SetDbParam(IEnumerable<DbParameter> param)
+        {
+            if (param != null && param.Any())
+            {
+                foreach (var sqlParam in param)
+                {
+                    Sql = Sql.Replace(sqlParam.ParameterName, $"\"{sqlParam.Value}\"");
+                }
+            }
+        }
     }
 }

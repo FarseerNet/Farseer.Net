@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using FS.Extends;
@@ -9,17 +10,17 @@ namespace FS.Core.LinkTrack
 {
     public sealed class LinkTrackDetail
     {
-        const    string       farseerNet = "Farseer.Net";
-        const    string       callback   = "Callback";
-        const    string       moveNext   = "MoveNext";
-        
+        const string farseerNet = "Farseer.Net";
+        const string callback   = "Callback";
+        const string moveNext   = "MoveNext";
+
         internal StackFrame[] _lstFrames;
         internal StackTrace   _stackTrace;
 
         /// <summary>
         ///     调用栈
         /// </summary>
-        public List<CallStackTrace> CallStackTraceList { get; set; }
+        public CallStackTrace CallStackTrace { get; set; }
 
         /// <summary>
         ///     调用方法
@@ -72,15 +73,13 @@ namespace FS.Core.LinkTrack
         public void SetCallStackTrace()
         {
             if (_stackTrace == null) return;
-            CallStackTraceList = new List<CallStackTrace>();
             foreach (var stackFrame in _stackTrace.GetFrames())
             {
-                if (CallStackTraceList.Count > 3) break; // 最多存3条
                 var fileLineNumber = stackFrame.GetFileLineNumber();
                 var methodBase     = stackFrame.GetMethod();
 
-                if (fileLineNumber           == 0 || methodBase.IsAssembly || methodBase.Module.Name.Contains(value: farseerNet) || methodBase.Name.Contains(value: callback)) continue;
-                
+                if (fileLineNumber == 0 || methodBase.IsAssembly || methodBase.Module.Name.Contains(value: farseerNet) || methodBase.Name.Contains(value: callback)) continue;
+
                 if (methodBase.DeclaringType != null && methodBase.DeclaringType.Name.Contains(value: ">d") && methodBase.Name == moveNext) continue;
 
                 // 方法返回类型
@@ -117,14 +116,19 @@ namespace FS.Core.LinkTrack
                 var parameterInfos = methodBase.GetParameters();
                 var methodParams   = parameterInfos.Length > 0 ? parameterInfos.ToDictionary(keySelector: o => o.Name, elementSelector: o => o.ParameterType.Name) : new Dictionary<string, string>();
 
-                CallStackTraceList.Add(item: new CallStackTrace
+                CallStackTrace = new CallStackTrace
                 {
                     ReturnType     = returnType,
                     CallMethod     = $"{methodBase.DeclaringType?.Name}.{methodBase.Name.Replace(oldValue: ".", newValue: "")}",
                     MethodParams   = methodParams,
                     FileLineNumber = fileLineNumber,
                     FileName       = stackFrame.GetFileName()
-                });
+                };
+                if (!string.IsNullOrWhiteSpace(CallStackTrace.FileName))
+                {
+                    CallStackTrace.FileName = new FileInfo(CallStackTrace.FileName).Name;
+                }
+                break;
             }
         }
     }

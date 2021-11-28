@@ -202,10 +202,11 @@ namespace FS.Core.LinkTrack
                     ConnectionString = connectionString,
                     CommandType      = commandType,
                     Sql              = sql,
-                    SqlParam         = parameters.ToDictionary(keySelector: o => o.ParameterName, elementSelector: o => o.Value.ToString())
                 },
                 CallMethod = method
             };
+            linkTrackDetail.DbLinkTrackDetail.SetDbParam(parameters);
+            
             Current.Set(linkTrackDetail: linkTrackDetail);
             return new TrackEnd(linkTrackDetail: linkTrackDetail);
         }
