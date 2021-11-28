@@ -15,7 +15,8 @@ namespace Farseer.Net.Cache.RedisDemo
             FarseerApplication.Run<StartupModule>().Initialize();
             var lst               = new List<Task>();
             var redisCacheManager = IocManager.GetService<IRedisCacheManager>();
-
+            
+            
             // 初始化
             await redisCacheManager.Db.HashSetAsync(key: "test_async", hashField: "init", value: "");
             redisCacheManager.Db.HashSet(key: "test_sync", hashField: "init", value: "");
