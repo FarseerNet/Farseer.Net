@@ -66,7 +66,7 @@ namespace FS.Data.Internal
         }
 
         public Task<DataTable> ToTableAsync<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity)
-            where TEntity : class, new()
+        where TEntity : class, new()
         {
             return SpeedTestAsync(callMethod: callMethod, dbName: procBuilder.SetMap.DbName, tableName: procBuilder.ProcName, cmdType: CommandType.StoredProcedure, sql: null, param: procBuilder.Param, func: () => _dbExecutor.ToTableAsync(callMethod: callMethod, procBuilder: procBuilder, entity: entity));
         }
@@ -87,7 +87,7 @@ namespace FS.Data.Internal
         }
 
         public Task<List<TEntity>> ToListAsync<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity)
-            where TEntity : class, new()
+        where TEntity : class, new()
         {
             return SpeedTestAsync(callMethod: callMethod, dbName: procBuilder.SetMap.DbName, tableName: procBuilder.ProcName, cmdType: CommandType.StoredProcedure, sql: null, param: procBuilder.Param, func: () => _dbExecutor.ToListAsync(callMethod: callMethod, procBuilder: procBuilder, entity: entity));
         }
@@ -108,7 +108,7 @@ namespace FS.Data.Internal
         }
 
         public Task<TEntity> ToEntityAsync<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity)
-            where TEntity : class, new()
+        where TEntity : class, new()
         {
             return SpeedTestAsync(callMethod: callMethod, dbName: procBuilder.SetMap.DbName, tableName: procBuilder.ProcName, cmdType: CommandType.StoredProcedure, sql: null, param: procBuilder.Param, func: () => _dbExecutor.ToEntityAsync(callMethod: callMethod, procBuilder: procBuilder, entity: entity));
         }
@@ -124,7 +124,7 @@ namespace FS.Data.Internal
         }
 
         public T GetValue<TEntity, T>(string callMethod, ProcBuilder procBuilder, TEntity entity, T defValue = default)
-            where TEntity : class, new()
+        where TEntity : class, new()
         {
             return SpeedTest(callMethod: callMethod, dbName: procBuilder.SetMap.DbName, tableName: procBuilder.ProcName, cmdType: CommandType.StoredProcedure, sql: null, param: procBuilder.Param, func: () => _dbExecutor.GetValue(callMethod: callMethod, procBuilder: procBuilder, entity: entity, defValue: defValue));
         }
@@ -146,9 +146,8 @@ namespace FS.Data.Internal
                 TableName    = tableName,
                 CommandType  = cmdType,
                 Sql          = sql,
-                SqlParam     = _dbProvider.IsSupportParam ? param.ToDictionary(keySelector: o => o.ParameterName, elementSelector: o => o.Value.ToString()) : new Dictionary<string, string>()
             };
-
+            dbLinkTrackDetail.SetDbParam(param);
             using (FsLinkTrack.TrackDatabase(method: callMethod, dbLinkTrackDetail: dbLinkTrackDetail))
             {
                 return func();
@@ -167,8 +166,8 @@ namespace FS.Data.Internal
                 TableName    = tableName,
                 CommandType  = cmdType,
                 Sql          = sql,
-                SqlParam     = _dbProvider.IsSupportParam ? param.ToDictionary(keySelector: o => o.ParameterName, elementSelector: o => o.Value.ToString()) : new Dictionary<string, string>()
             };
+            dbLinkTrackDetail.SetDbParam(param);
 
             using (FsLinkTrack.TrackDatabase(method: callMethod, dbLinkTrackDetail: dbLinkTrackDetail))
             {

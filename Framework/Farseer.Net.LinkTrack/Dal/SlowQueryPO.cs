@@ -52,14 +52,8 @@ namespace FS.LinkTrack.Dal
         /// <summary>
         ///     SQL文本
         /// </summary>
-        [Keyword]
+        [Text]
         public string DbSql { get; set; }
-        
-        /// <summary>
-        ///     SQL参数化
-        /// </summary>
-        [Flattened]
-        public Dictionary<string, string> DbSqlParam { get; set; }
 
         /// <summary>
         ///     Redis key

@@ -102,7 +102,6 @@ namespace FS.LinkTrack
                                 DbName      = linkTrackDetail.DbLinkTrackDetail.DataBaseName,
                                 DbTableName = linkTrackDetail.DbLinkTrackDetail.TableName,
                                 DbSql       = linkTrackDetail.DbLinkTrackDetail.Sql,
-                                DbSqlParam  = linkTrackDetail.DbLinkTrackDetail.SqlParam,
                             });
                             break;
                         case EumCallType.Redis:
