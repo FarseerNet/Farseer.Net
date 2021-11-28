@@ -163,7 +163,7 @@ namespace FS.ElasticSearch
                 if (!result.IsValid)
                 {
                     var error = result.OriginalException != null ? result.OriginalException.Message : result.DebugInformation;
-                    IocManager.Instance.Logger<IndexSet<TDocument>>().LogError(message: $"索引失败：{JsonConvert.SerializeObject(value: model)} \r\n" + error);
+                    IocManager.Instance.Logger<IndexSet<TDocument>>().LogError(message: $"索引失败：{typeof(TDocument).FullName} \r\n" + error);
                 }
 
                 return result.IsValid;
@@ -182,7 +182,7 @@ namespace FS.ElasticSearch
                 if (!result.IsValid)
                 {
                     var error = result.OriginalException != null ? result.OriginalException.Message : result.DebugInformation;
-                    IocManager.Instance.Logger<IndexSet<TDocument>>().LogError(message: $"索引失败：{JsonConvert.SerializeObject(value: model)} \r\n" + error);
+                    IocManager.Instance.Logger<IndexSet<TDocument>>().LogError(message: $"索引失败：{typeof(TDocument).FullName} \r\n" + error);
                 }
 
                 return result.IsValid;
@@ -201,7 +201,7 @@ namespace FS.ElasticSearch
                 if (!result.IsValid)
                 {
                     var error = result.OriginalException != null ? result.OriginalException.Message : result.DebugInformation;
-                    IocManager.Instance.Logger<IndexSet<TDocument>>().LogError(message: $"索引失败：数据量：{lst.Count}条 \r\n" + error);
+                    IocManager.Instance.Logger<IndexSet<TDocument>>().LogError(message: $"索引失败：{typeof(TDocument).FullName}，数据量：{lst.Count}条 \r\n" + error);
                 }
 
                 return result.IsValid;
@@ -220,7 +220,7 @@ namespace FS.ElasticSearch
                 if (!result.IsValid)
                 {
                     var error = result.OriginalException != null ? result.OriginalException.Message : result.DebugInformation;
-                    IocManager.Instance.Logger<IndexSet<TDocument>>().LogError(message: $"索引失败：{JsonConvert.SerializeObject(value: lst)} \r\n" + error);
+                    IocManager.Instance.Logger<IndexSet<TDocument>>().LogError(message: $"索引失败：{typeof(TDocument).FullName}，数据量：{lst.Count}条 \r\n" + error);
                 }
 
                 return result.IsValid;
