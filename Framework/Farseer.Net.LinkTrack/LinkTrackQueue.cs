@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using FS.Core.Async;
 using FS.Core.LinkTrack;
 using FS.LinkTrack.Dal;
@@ -9,7 +10,7 @@ namespace FS.LinkTrack
 {
     public class LinkTrackQueue : BaseAsyncQueue<LinkTrackContext>, ILinkTrackQueue
     {
-        internal LinkTrackQueue() : base(maxQueueSize: 500000, callBackListCapacity: 100, sleepMs: 2000)
+        internal LinkTrackQueue() : base(maxQueueSize: 500000, callBackListCapacity: 1000, sleepMs: 500)
         {
         }
 
@@ -23,41 +24,39 @@ namespace FS.LinkTrack
         /// </summary>
         /// <param name="lst"> 回调的 数据列表 </param>
         /// <param name="remainCount"> 队列中当前剩余多少要处理 </param>
-        protected override void OnDequeue(List<LinkTrackContext> lst, int remainCount)
+        protected override Task OnDequeue(List<LinkTrackContext> lst, int remainCount)
         {
             // 设置C#的调用链
             foreach (var linkTrackContext in lst) linkTrackContext.List.ForEach(action: o => o.SetCallStackTrace());
 
-            LinkTrackEsContext.Data.LinkTrackContext.Insert(lst: lst.Select(selector: o => new LinkTrackContextPO
-                                                                    {
-                                                                        Id           = $"{o.AppId}_{o.ContextId}",
-                                                                        AppId        = o.AppId,
-                                                                        ParentAppId  = o.ParentAppId,
-                                                                        ContextId    = o.ContextId,
-                                                                        List         = o.List,
-                                                                        StartTs      = o.StartTs,
-                                                                        EndTs        = o.EndTs,
-                                                                        Domain       = o.Domain,
-                                                                        Path         = o.Path,
-                                                                        Method       = o.Method,
-                                                                        Headers      = o.Headers,
-                                                                        ContentType  = o.ContentType,
-                                                                        RequestBody  = o.RequestBody,
-                                                                        ResponseBody = o.ResponseBody,
-                                                                        RequestIp    = o.RequestIp
-                                                                    })
-                                                                    .ToList());
-
-            // 依赖外部系统的，单独存储，用于统计慢查询
-            AddSlowQuery(lst: lst);
-            
-            foreach (var linkTrackContext in lst) linkTrackContext.List.Clear();
+            return Task.WhenAll(
+                               LinkTrackEsContext.Data.LinkTrackContext.InsertAsync(lst: lst.Select(selector: o => new LinkTrackContextPO
+                                                                                            {
+                                                                                                Id           = $"{o.AppId}_{o.ContextId}",
+                                                                                                AppId        = o.AppId,
+                                                                                                ParentAppId  = o.ParentAppId,
+                                                                                                ContextId    = o.ContextId,
+                                                                                                List         = o.List,
+                                                                                                StartTs      = o.StartTs,
+                                                                                                EndTs        = o.EndTs,
+                                                                                                Domain       = o.Domain,
+                                                                                                Path         = o.Path,
+                                                                                                Method       = o.Method,
+                                                                                                Headers      = o.Headers,
+                                                                                                ContentType  = o.ContentType,
+                                                                                                RequestBody  = o.RequestBody,
+                                                                                                ResponseBody = o.ResponseBody,
+                                                                                                RequestIp    = o.RequestIp
+                                                                                            })
+                                                                                            .ToList()),
+                               // 依赖外部系统的，单独存储，用于统计慢查询
+                               AddSlowQuery(lst: lst));
         }
 
         /// <summary>
         /// 依赖外部系统的，单独存储，用于统计慢查询
         /// </summary>
-        private void AddSlowQuery(List<LinkTrackContext> lst)
+        private Task AddSlowQuery(List<LinkTrackContext> lst)
         {
             var lstSlowQuery = new List<SlowQueryPO>();
             foreach (var linkTrackContext in lst)
@@ -143,7 +142,7 @@ namespace FS.LinkTrack
                     }
                 }
             }
-            LinkTrackEsContext.Data.SlowQuery.Insert(lstSlowQuery);
+            return LinkTrackEsContext.Data.SlowQuery.InsertAsync(lstSlowQuery);
         }
     }
 }
