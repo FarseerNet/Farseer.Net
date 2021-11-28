@@ -46,11 +46,6 @@ namespace FS.MQ.Rabbit.Attr
         public uint PrefetchCountOrPullNums { get; set; } = 128;
 
         /// <summary>
-        ///     线程数，只针对推送模式（默认为Environment.ProcessorCount）
-        /// </summary>
-        public uint ThreadNums { get; set; } = 1;
-
-        /// <summary>
         ///     最后ACK多少秒超时则重连（默认5分钟）
         /// </summary>
         public int LastAckTimeoutRestart { get; set; } = 5 * 60;

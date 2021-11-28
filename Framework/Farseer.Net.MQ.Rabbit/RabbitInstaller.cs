@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using Castle.MicroKernel.Registration;
@@ -67,14 +66,7 @@ namespace FS.MQ.Rabbit
 
                         FarseerApplication.AddInitCallback(act: () =>
                         {
-                            // 设置线程数
-                            if (consumerAtt.ThreadNums == 0) consumerAtt.ThreadNums = (uint)Environment.ProcessorCount;
-                            var lst                                                 = new List<Task>();
-                            for (int i = 0; i < consumerAtt.ThreadNums; i++)
-                            {
-                                lst.Add(iocManager.Resolve<IListenerMessage>(name: consumerType.FullName).Init(iocManager: iocManager, consumerAtt: consumerAtt, consumerType: consumerType));
-                            }
-                            Task.WhenAll(lst);
+                            Task.WaitAll(iocManager.Resolve<IListenerMessage>(name: consumerType.FullName).Init(iocManager: iocManager, consumerAtt: consumerAtt, consumerType: consumerType));
                         });
                     }
 
