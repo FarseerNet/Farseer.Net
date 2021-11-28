@@ -52,7 +52,7 @@ namespace FS.Core.Async
         /// <summary> 开始异步出队 </summary>
         public void StartDequeue(CancellationToken cancellationToken)
         {
-            _dequeueTask = new Task(action: () => LoopDequeue(token: cancellationToken), creationOptions: TaskCreationOptions.LongRunning);
+            _dequeueTask = new Task(action: async () => await LoopDequeue(token: cancellationToken), creationOptions: TaskCreationOptions.LongRunning);
             _dequeueTask.Start();
         }
 
@@ -61,13 +61,13 @@ namespace FS.Core.Async
         /// </summary>
         /// <param name="callbackList"> 回调的 数据列表 </param>
         /// <param name="remainCount"> 队列中当前剩余多少要处理 </param>
-        protected abstract void OnDequeue(List<T> callbackList, int remainCount);
+        protected abstract Task OnDequeue(List<T> callbackList, int remainCount);
 
         /// <summary>
         ///     循环从队列中拉出数据,回调给用户处理
         /// </summary>
         /// <param name="token"> 取消令牌 </param>
-        private void LoopDequeue(CancellationToken token)
+        private async Task LoopDequeue(CancellationToken token)
         {
             while (true)
             {
@@ -78,7 +78,7 @@ namespace FS.Core.Async
 
                     if (_callBackList.Count > 0)
                     {
-                        OnDequeue(callbackList: _callBackList, remainCount: QueueCount); //交由用户处理
+                         await OnDequeue(callbackList: _callBackList, remainCount: QueueCount); //交由用户处理
                         _callBackList.Clear();
                     }
                 }
