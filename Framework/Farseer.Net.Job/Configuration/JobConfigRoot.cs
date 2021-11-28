@@ -1,3 +1,4 @@
+using System;
 using FS.DI;
 using Microsoft.Extensions.Configuration;
 
@@ -14,7 +15,11 @@ namespace FS.Job.Configuration
         public static JobItemConfig Get()
         {
             var configurationSection = IocManager.GetService<IConfigurationRoot>().GetSection(key: "FSS");
-            return configurationSection.Get<JobItemConfig>();
+            var jobItemConfig        = configurationSection.Get<JobItemConfig>();
+
+            if (jobItemConfig.PullCount == 0) jobItemConfig.PullCount = Environment.ProcessorCount;
+            if (jobItemConfig.WorkCount == 0) jobItemConfig.WorkCount = Environment.ProcessorCount;
+            return jobItemConfig;
         }
     }
 }

@@ -24,6 +24,11 @@ namespace FS.Job
         private static readonly Queue<TaskVO> _queue = new();
 
         /// <summary>
+        /// 当前正在执行任务的数量
+        /// </summary>
+        private static int Working;
+
+        /// <summary>
         ///     将任务添加到队列中
         /// </summary>
         public static void Enqueue(List<TaskVO> lstTask)
@@ -47,11 +52,10 @@ namespace FS.Job
                 // 当前客户端支持的job
                 var jobItemConfig = JobConfigRoot.Get();
                 // 最大拉取数量（队列现存的数量）
-                var maxPullCount = jobItemConfig.PullCount == 0 ? Environment.ProcessorCount : jobItemConfig.PullCount;
                 while (true)
                 {
                     // 本次要拉取的数量
-                    var pullCount = maxPullCount - _queue.Count;
+                    var pullCount = jobItemConfig.PullCount - _queue.Count;
 
                     // 没有任务的时候，要主动拉取
                     if (pullCount > 0)
@@ -64,15 +68,13 @@ namespace FS.Job
                         }
                         // 将任务添加到队列中
                         Enqueue(lst);
-
                     }
 
-                    pullCount = maxPullCount - _queue.Count;
+                    pullCount = jobItemConfig.PullCount - _queue.Count;
                     await Task.Delay(pullCount == 0 ? 1000 : 500);
                 }
             }, creationOptions: TaskCreationOptions.LongRunning);
         }
-
         /// <summary>
         ///     运行任务
         /// </summary>
@@ -84,11 +86,13 @@ namespace FS.Job
                 // 如果是来自FSS.Service，则等待5秒后，再连接FSS服务
                 var entryName = Assembly.GetEntryAssembly().EntryPoint.Module.Name;
                 if (entryName == "FSS.Service.dll") await Task.Delay(5000);
+                var jobItemConfig = JobConfigRoot.Get();
 
                 while (true)
                 {
                     // 没有任务的时候，休眠
-                    if (_queue.Count == 0)
+                    // 当前正在执行的数量大于允许的执行数量时，休眠
+                    if (_queue.Count == 0 || Working >= jobItemConfig.WorkCount)
                     {
                         await Task.Delay(1000);
                         continue;
@@ -152,6 +156,7 @@ namespace FS.Job
                 {
                     // 执行具体任务（业务执行）
                     sw.Start();
+                    Working++;
                     result = await fssJob.Execute(context: receiveContext);
                     cts.Cancel();
                 }
@@ -176,6 +181,7 @@ namespace FS.Job
             {
                 sw.Stop();
                 cts.Cancel();
+                Working--;
             }
         }
     }

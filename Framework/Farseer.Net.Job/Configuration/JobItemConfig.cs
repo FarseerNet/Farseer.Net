@@ -12,5 +12,10 @@ namespace FS.Job.Configuration
         ///     一次拉取的任务数量
         /// </summary>
         public int PullCount { get; set; }
+
+        /// <summary>
+        ///     允许当前正在执行的任务数量
+        /// </summary>
+        public int WorkCount { get; set; }
     }
 }
