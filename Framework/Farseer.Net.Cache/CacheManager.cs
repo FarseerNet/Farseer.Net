@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using FS.DI;
 
@@ -35,12 +36,22 @@ namespace FS.Cache
 
             var lst = _getCache.GetList(cacheKey);
             if (lst != null && lst.Count != 0) return lst;
+            if (get == null) return default;
 
             // 缓存没有，则通过get委托获取（一般是数据库的数据源）
-            if (get != null)
+            var slimLock = GetLock(cacheKey);
+            slimLock.Wait();
+            try
             {
+                lst = _getCache.GetList(cacheKey);
+                if (lst != null && lst.Count != 0) return lst;
+
                 lst = get();
                 if (lst?.Count > 0) _getCache.SaveList(cacheKey, lst: lst);
+            }
+            finally
+            {
+                slimLock.Release();
             }
             return lst;
         }
@@ -76,12 +87,22 @@ namespace FS.Cache
 
             var lst = await _getCache.GetListAsync(cacheKey);
             if (lst != null && lst.Count != 0) return lst;
+            if (get == null) return default;
 
             // 缓存没有，则通过get委托获取（一般是数据库的数据源）
-            if (get != null)
+            var slimLock = GetLock(cacheKey);
+            await slimLock.WaitAsync();
+            try
             {
+                lst = await _getCache.GetListAsync(cacheKey);
+                if (lst != null && lst.Count != 0) return lst;
+
                 lst = get();
                 if (lst?.Count > 0) await _getCache.SaveListAsync(cacheKey, lst: lst);
+            }
+            finally
+            {
+                slimLock.Release();
             }
             return lst;
         }
@@ -94,17 +115,26 @@ namespace FS.Cache
         public async Task<List<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, Func<Task<List<TEntity>>> get)
         {
             SetCache(cacheKey: cacheKey);
-
             var lst = await _getCache.GetListAsync(cacheKey);
             if (lst != null && lst.Count != 0) return lst;
+            if (get == null) return default;
 
             // 缓存没有，则通过get委托获取（一般是数据库的数据源）
-            if (get != null)
+            var slimLock = GetLock(cacheKey);
+            await slimLock.WaitAsync();
+            try
             {
+                lst = await _getCache.GetListAsync(cacheKey);
+                if (lst != null && lst.Count != 0) return lst;
+
                 lst = await get();
                 if (lst?.Count > 0) await _getCache.SaveListAsync(cacheKey, lst: lst);
+                return lst;
             }
-            return lst;
+            finally
+            {
+                slimLock.Release();
+            }
         }
 
         /// <summary>
@@ -118,21 +148,33 @@ namespace FS.Cache
             SetCache(cacheKey: cacheKey);
 
             var entity = _getCache.GetItem(cacheKey, fieldKey: fieldKey);
-
             if (entity != null) return entity;
+            if (get    == null) return default;
 
             // 缓存没有，则通过get委托获取（一般是数据库的数据源）
-            var lst = get();
-            if (lst is
+            var slimLock = GetLock(cacheKey);
+            slimLock.Wait();
+            try
             {
-                Count: > 0
-            })
-            {
-                _getCache.SaveList(cacheKey, lst: lst);
-                return lst.Find(match: o => cacheKey.GetField(o).ToString() == fieldKey.ToString());
-            }
+                entity = _getCache.GetItem(cacheKey, fieldKey: fieldKey);
+                if (entity != null) return entity;
 
-            return default;
+                var lst = get();
+                if (lst is
+                {
+                    Count: > 0
+                })
+                {
+                    _getCache.SaveList(cacheKey, lst: lst);
+                    return lst.Find(match: o => cacheKey.GetField(o).ToString() == fieldKey.ToString());
+                }
+
+                return default;
+            }
+            finally
+            {
+                slimLock.Release();
+            }
         }
 
         /// <summary>
@@ -144,16 +186,27 @@ namespace FS.Cache
         public TEntity GetItem<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<TEntity> get)
         {
             SetCache(cacheKey: cacheKey);
-
             var entity = _getCache.GetItem(cacheKey, fieldKey: fieldKey);
-
             if (entity != null) return entity;
+            if (get    == null) return default;
 
             // 缓存没有，则通过get委托获取（一般是数据库的数据源）
-            entity = get();
-            _getCache.SaveItem(cacheKey,entity);
+            var slimLock = GetLock(cacheKey);
+            slimLock.Wait();
+            try
+            {
+                entity = _getCache.GetItem(cacheKey, fieldKey: fieldKey);
+                if (entity != null) return entity;
 
-            return entity;
+                entity = get();
+                _getCache.SaveItem(cacheKey, entity);
+
+                return entity;
+            }
+            finally
+            {
+                slimLock.Release();
+            }
         }
 
         /// <summary>
@@ -165,9 +218,7 @@ namespace FS.Cache
         public TEntity GetItem<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey)
         {
             SetCache(cacheKey: cacheKey);
-
             return _getCache.GetItem(cacheKey, fieldKey: fieldKey) ?? default;
-
         }
 
         /// <summary>
@@ -180,23 +231,34 @@ namespace FS.Cache
         public async Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<Task<List<TEntity>>> get)
         {
             SetCache(cacheKey: cacheKey);
-
             var entity = await _getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
-
             if (entity != null) return entity;
+            if (get    == null) return default;
 
             // 缓存没有，则通过get委托获取（一般是数据库的数据源）
-            var lst = await get();
-            if (lst is
+            var slimLock = GetLock(cacheKey);
+            await slimLock.WaitAsync();
+            try
             {
-                Count: > 0
-            })
-            {
-                await _getCache.SaveListAsync(cacheKey, lst: lst);
-                return lst.Find(match: o => cacheKey.GetField(arg: o).ToString() == fieldKey.ToString());
-            }
+                entity = await _getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
+                if (entity != null) return entity;
 
-            return default;
+                var lst = await get();
+                if (lst is
+                {
+                    Count: > 0
+                })
+                {
+                    await _getCache.SaveListAsync(cacheKey, lst: lst);
+                    return lst.Find(match: o => cacheKey.GetField(arg: o).ToString() == fieldKey.ToString());
+                }
+
+                return default;
+            }
+            finally
+            {
+                slimLock.Release();
+            }
         }
 
         /// <summary>
@@ -209,23 +271,34 @@ namespace FS.Cache
         public async Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<List<TEntity>> get)
         {
             SetCache(cacheKey: cacheKey);
-
             var entity = await _getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
-
             if (entity != null) return entity;
+            if (get    == null) return default;
 
             // 缓存没有，则通过get委托获取（一般是数据库的数据源）
-            var lst = get();
-            if (lst is
+            var slimLock = GetLock(cacheKey);
+            await slimLock.WaitAsync();
+            try
             {
-                Count: > 0
-            })
-            {
-                await _getCache.SaveListAsync(cacheKey, lst: lst);
-                return lst.Find(match: o => cacheKey.GetField(arg: o).ToString() == fieldKey.ToString());
-            }
+                entity = await _getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
+                if (entity != null) return entity;
 
-            return default;
+                var lst = get();
+                if (lst is
+                {
+                    Count: > 0
+                })
+                {
+                    await _getCache.SaveListAsync(cacheKey, lst: lst);
+                    return lst.Find(match: o => cacheKey.GetField(arg: o).ToString() == fieldKey.ToString());
+                }
+
+                return default;
+            }
+            finally
+            {
+                slimLock.Release();
+            }
         }
 
         /// <summary>
@@ -238,22 +311,30 @@ namespace FS.Cache
         public async Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<TEntity> get = null)
         {
             SetCache(cacheKey: cacheKey);
-
             var entity = await _getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
-
             if (entity != null) return entity;
+            if (get    == null) return default;
 
             // 缓存没有，则通过get委托获取（一般是数据库的数据源）
-            if (get != null)
+            var slimLock = GetLock(cacheKey);
+            await slimLock.WaitAsync();
+            try
             {
+                entity = await _getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
+                if (entity != null) return entity;
+
                 entity = get();
                 if (entity != null)
                 {
                     await _getCache.SaveItemAsync(cacheKey, entity: entity);
                     return entity;
                 }
+                return default;
             }
-            return default;
+            finally
+            {
+                slimLock.Release();
+            }
         }
 
         /// <summary>
@@ -266,19 +347,30 @@ namespace FS.Cache
         public async Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<Task<TEntity>> get)
         {
             SetCache(cacheKey: cacheKey);
-
             var entity = await _getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
             if (entity != null) return entity;
+            if (get    == null) return default;
 
-            // 缓存没有，则通过get委托获取（一般是数据库的数据源）
-            entity = await get();
-            if (entity != null)
+            var slimLock = GetLock(cacheKey);
+            await slimLock.WaitAsync();
+            try
             {
-                await _getCache.SaveItemAsync(cacheKey, entity: entity);
-                return entity;
-            }
+                entity = await _getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
+                if (entity != null) return entity;
 
-            return default;
+                entity = await get();
+                if (entity != null)
+                {
+                    await _getCache.SaveItemAsync(cacheKey, entity: entity);
+                    return entity;
+                }
+
+                return default;
+            }
+            finally
+            {
+                slimLock.Release();
+            }
         }
 
         /// <summary>
@@ -443,18 +535,26 @@ namespace FS.Cache
         public TEntity Get<TEntity>(CacheKey<TEntity> cacheKey, Func<TEntity> get)
         {
             SetCache(cacheKey: cacheKey);
-
             var entity = _getCache.Get(cacheKey);
-
             if (entity != null) return entity;
+            if (get    == null) return default;
 
             // 缓存没有，则通过get委托获取（一般是数据库的数据源）
-            if (get != null)
+            var slimLock = GetLock(cacheKey);
+            slimLock.Wait();
+            try
             {
+                entity = _getCache.Get(cacheKey);
+                if (entity != null) return entity;
+
                 entity = get();
                 if (entity != null) _getCache.Save(cacheKey, entity: entity);
+                return entity;
             }
-            return entity;
+            finally
+            {
+                slimLock.Release();
+            }
         }
 
         /// <summary>
@@ -485,18 +585,26 @@ namespace FS.Cache
         public async Task<TEntity> GetAsync<TEntity>(CacheKey<TEntity> cacheKey, Func<TEntity> get)
         {
             SetCache(cacheKey: cacheKey);
-
             var entity = await _getCache.GetAsync(cacheKey);
-
             if (entity != null) return entity;
+            if (get    == null) return entity;
 
             // 缓存没有，则通过get委托获取（一般是数据库的数据源）
-            if (get != null)
+            var slimLock = GetLock(cacheKey);
+            await slimLock.WaitAsync();
+            try
             {
+                entity = await _getCache.GetAsync(cacheKey);
+                if (entity != null) return entity;
+
                 entity = get();
                 if (entity != null) await _getCache.SaveAsync(cacheKey, entity: entity);
+                return entity;
             }
-            return entity;
+            finally
+            {
+                slimLock.Release();
+            }
         }
 
         /// <summary>
@@ -507,18 +615,26 @@ namespace FS.Cache
         public async Task<TEntity> GetAsync<TEntity>(CacheKey<TEntity> cacheKey, Func<Task<TEntity>> get)
         {
             SetCache(cacheKey: cacheKey);
-
             var entity = await _getCache.GetAsync<TEntity>(cacheKey);
-
             if (entity != null) return entity;
+            if (get    == null) return entity;
 
             // 缓存没有，则通过get委托获取（一般是数据库的数据源）
-            if (get != null)
+            var slimLock = GetLock(cacheKey);
+            await slimLock.WaitAsync();
+            try
             {
+                entity = await _getCache.GetAsync<TEntity>(cacheKey);
+                if (entity != null) return entity;
+
                 entity = await get();
                 if (entity != null) await _getCache.SaveAsync(cacheKey, entity: entity);
+                return entity;
             }
-            return entity;
+            finally
+            {
+                slimLock.Release();
+            }
         }
 
         /// <summary>
@@ -569,6 +685,13 @@ namespace FS.Cache
                     _getCache = IocManager.GetService<IGetCache>(name: $"GetCacheInMemoryAndRedis_{_redisItemConfigName}");
                     break;
             }
+        }
+
+        private static readonly Dictionary<string, SemaphoreSlim> DicLock = new();
+        private SemaphoreSlim GetLock(CacheKey cacheKey)
+        {
+            if (DicLock.ContainsKey(cacheKey.Key)) return DicLock[cacheKey.Key];
+            return DicLock[cacheKey.Key] = new SemaphoreSlim(1, 1);
         }
     }
 }

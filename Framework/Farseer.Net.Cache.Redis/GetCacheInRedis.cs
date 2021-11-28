@@ -14,7 +14,7 @@ namespace FS.Cache.Redis
 
         public GetCacheInRedis(string redisItemConfigName)
         {
-            _redisCacheManager = IocManager.GetService<IRedisCacheManager>(name: redisItemConfigName);
+            _redisCacheManager   = IocManager.GetService<IRedisCacheManager>(name: redisItemConfigName);
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace FS.Cache.Redis
         /// </summary>
         public async Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey)
         {
-            var redisValue = await _redisCacheManager.Db.HashGetAsync(cacheKey.Key, hashField: fieldKey.ToString());
+            var redisValue  = await _redisCacheManager.Db.HashGetAsync(cacheKey.Key, hashField: fieldKey.ToString());
             return !redisValue.HasValue ? default : JsonConvert.DeserializeObject<TEntity>(value: redisValue.ToString());
         }
 

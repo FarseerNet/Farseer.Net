@@ -172,11 +172,11 @@ namespace FS.Cache.Redis
             }
         }
 
-        public Task<RedisValue> HashGetAsync(RedisKey key, RedisValue hashField, CommandFlags flags = CommandFlags.None)
+        public async Task<RedisValue> HashGetAsync(RedisKey key, RedisValue hashField, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "HashGetAsync", key: key, member: hashField))
             {
-                return _db.HashGetAsync(key: key, hashField: hashField, flags: flags);
+                return await _db.HashGetAsync(key: key, hashField: hashField, flags: flags);
             }
         }
 
