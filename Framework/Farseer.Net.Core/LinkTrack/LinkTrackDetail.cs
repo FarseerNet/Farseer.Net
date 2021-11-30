@@ -14,7 +14,6 @@ namespace FS.Core.LinkTrack
         const string callback   = "Callback";
         const string moveNext   = "MoveNext";
 
-        internal StackFrame[] _lstFrames;
         internal StackTrace   _stackTrace;
 
         /// <summary>
