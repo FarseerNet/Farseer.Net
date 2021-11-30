@@ -22,8 +22,6 @@
   *  基于`FSS`分布式调度平台的客户端，实现高可用的分布式的任务调度
 * `Farseer.Net.LinkTrack`
   *  全链路追踪监控
-* `Farseer.Net.Log`
-  *  基于NLog的模块化封装(废弃，建议直接使用IocManager.Instance.Logger)
 * `Farseer.Net.Mapper`
   *  对象类型转换组件（基于AutoMapper)
 * `Farseer.Net.MongoDB`
@@ -38,35 +36,66 @@
   * Redis5 消息队列组件
 * `Farseer.Net.Utils`
   *  常用工具扩展封装
-* `Farseer.Net.Web.Mvc`
 
-各组件使用说明：[地址](https://github.com/FarseerNet/Farseer.Net/tree/main/Demo)
-### 使用Rabbit组件的示例：
-`Program.cs`
-```c#
-[Rabbit]
-class Program
-{
-    static void Main(string[] args)
-    {
-        // 项目启动时初始化
-        FarseerApplication.Run<StartupModule>().Initialize();
-        Thread.Sleep(-1);
-    }
-}
-```
-`StartupModule.cs`
-```c#
-/// <summary> 启动模块 </summary>
-[DependsOn(typeof(RabbitModule))]
-public class StartupModule : FarseerModule
-{
-    public override void PreInitialize() { }
+传送门：
+1、[文档](https://github.com/FarseerNet/Farseer.Net/tree/main/Doc)
+2、[demo](https://github.com/FarseerNet/Farseer.Net/tree/main/Demo)
 
-    public override void PostInitialize() { }
-}
+### 数据库组件：
+`TaskAgent.cs`
+```c#
+  // 获取所有数据
+  MetaInfoContext.Data.Task.ToList();
+  // 写入实体对象
+  MetaInfoContext.Data.Task.InsertAsync(po);
+  // 获取单个对象
+  MetaInfoContext.Data.Task.Where(o => o.Id == id).ToEntity();
+  // 修改对象
+  MetaInfoContext.Data.Task.UpdateAsync(po);
 ```
-`TestConsumer.cs`
+
+### Redis组件：
+```c#
+  // 取出Redis实例
+  var redisCacheManager = IocManager.GetService<IRedisCacheManager>();
+  // hashSet
+  await redisCacheManager.Db.HashSetAsync("test_sync", "init", "value");
+  // keyDelete
+  redisCacheManager.Db.KeyDelete("test_async");
+```
+
+### Elasticsearch组件：
+```c#
+  var time = "30";
+  // 判断时间（并带有复杂的本地函数方法）
+  TestContext.Data.User.Where(o => o.CreateAt >= DateTime.Now.AddMinutes(-time.ConvertType(0)).ToTimestamps()).ToList();
+  // NETS原生的条件 + 自解析的条件
+  TestContext.Data.User
+             .Where(q => q.Term(t => t.Age, 33))
+             .Where(o => o.UserName.Contains("ste")).ToList();
+  // 模糊搜索 + 正序排序
+  TestContext.Data.User.Where(o => o.Desc.Contains("我今年")).Asc(o => o.Age).ToList();
+  // 前缀搜索 + 倒序排序
+  TestContext.Data.User.Where(o => o.Desc.StartsWith("大家好")).Desc(o => o.Age).ToList();
+  // 后缀搜索（只支持Keyword类型）
+  TestContext.Data.User.Where(o => o.UserName.EndsWith("en")).ToList();
+  // 不等于某个值
+  TestContext.Data.User.Where(o => o.UserName != "aaa").ToList();
+  // and 运算，如果两个Where方法调用，也相当于使用and
+  TestContext.Data.User.Where(o => o.UserName == "steden" && o.Age == 18).ToList();
+  // or 运行
+  TestContext.Data.User.Where(o => o.UserName == "steden" || o.Age >= 10).ToList();
+```
+
+### Rabbit组件：
+`发送`
+```c#
+// 取出实例
+var rabbitProduct = IocManager.GetService<IRabbitManager>("test").Product;
+// 发送
+rabbitProduct.Send(message: "测试发送消息内容");
+```
+`消费`
 ```c#
 /// <summary> 消费客户端 </summary>
 [Consumer(Enable = false, Name = "default", ExchangeName = "test", QueueName = "test", ExchangeType = eumExchangeType.fanout, DlxExchangeName = "DeadLetter")]
@@ -77,111 +106,79 @@ public class TestConsumer : IListenerMessage
         System.Console.WriteLine(ea.ConsumerTag + "接收到信息为:" + message);
         return true;
     }
-
-    public bool FailureHandling(string message, object sender, BasicDeliverEventArgs ea) => throw new NotImplementedException();
 }
 ```
-以上三个class，就实现了`rabbit`的消费。
-`Program.cs` 有个特性`[Rabbit]`,用来告诉`Rabbit模块`，是否启用消费端，开启后，会扫描所有消费端进行初始化并异步消费。
 
-`StartupModule.cs` 是启动模块。`[DependsOn]`特性会告诉`Farseer.Net`，在项目启动时需要依赖哪些组件（比如上面的：`RabbitModule模块`，它也是继承`FarseerModule`）。
-同时在模块中，会有初始化的方法。可以写入你希望初始化时执行的配置
-
-`TestConsumer.cs` 是实际的消费执行端，通过`[Consumer]`特性，会知道当前要连接哪一个`Rabbit`，属于哪个队列、交换器。
-
-并且在启动消费的时候，如果交换器、队列不存在时，会执行创建操作。
-
-### 我们再来看另外的例子：数据库ORM操作：
-`TaskPO.cs`
+### RedisStream组件：
+`发送`
 ```c#
-/// <summary> 数据库实体 </summary>
-public class TaskPO
-{
-    /// <summary> 主键 </summary>
-    [Field(Name = "id",IsPrimaryKey = true)]
-    public int? Id { get; set; }
-    
-    /// <summary> 任务的标题 </summary>
-    [Field(Name = "caption")]
-    public string Caption { get; set; }
-}
+  // 取出实例
+  var redisStreamProduct = IocManager.GetService<IRedisStreamProduct>("test2");
+  // 发送
+  redisStreamProduct.Send(message: "测试发送消息内容");
 ```
-`MetaInfoContext.cs`
+`消费`
 ```c#
-/// <summary> 数据库上下文 </summary>
-public class MetaInfoContext : DbContext<MetaInfoContext>
-{
-    public MetaInfoContext() : base("default")
-    {
-    }
-    
-    public TableSet<TaskPO>   Task   { get; set; }
-
-    protected override void CreateModelInit(Dictionary<string, SetDataMap> map)
-    {
-        // 设定数据库表名称
-        map["Task"].SetName("task");
-    }
-}
+  /// <summary>
+  ///     消费客户端
+  /// </summary>
+  [Consumer(Enable = true, RedisName = "default", GroupName = "", QueueName = "test2", PullCount = 2, ConsumeThreadNums = 1)]
+  public class TestConsumer : IListenerMessage
+  {
+      public Task<bool> Consumer(StreamEntry[] messages, ConsumeContext ea)
+      {
+          foreach (var message in messages)
+          {
+              Console.WriteLine(value: "接收到信息为:" + message.Values[0]);
+              ea.Ack(message: message);
+          }
+  
+          return Task.FromResult(result: true);
+      }
+  }
 ```
-`ITaskAgent.cs`
+
+### 任务调度组件：
 ```c#
-public interface ITaskAgent : ITransientDependency
-{
-    List<TaskPO> ToList();
-    TaskPO ToEntity(int id);
-}
+  [FssJob(Name = "testJob")] // Name与FSS平台配置的JobName保持一致
+  public class HelloWorldJob : IFssJob
+  {
+      /// <summary>
+      ///     执行任务
+      /// </summary>
+      public async Task<bool> Execute(IFssContext context)
+      {
+          // 告诉FSS平台，当前进度执行了 20%
+          await context.SetProgressAsync(rate: 20);
+  
+          // 让FSS平台，记录日志
+          await context.LoggerAsync(logLevel: LogLevel.Information, log: "你好，世界！");
+  
+          // 下一次执行时间为10秒后（如果不设置，则使用任务组设置的时间）
+          //context.SetNextAt(TimeSpan.FromSeconds(10));
+  
+          // 任务执行成功
+          return true;
+      }
+  }
 ```
-`TaskAgent.cs`
-```c#
-/// <summary> 任务数据库层 </summary>
-public class TaskAgent : ITaskAgent
-{
-    /// <summary> 获取所有任务列表 </summary>
-    public List<TaskPO> ToList() => MetaInfoContext.Data.Task.ToList();
 
-    /// <summary> 获取任务信息 </summary>
-    public TaskPO ToEntity(int id) => MetaInfoContext.Data.Task.Where(o => o.Id == id).ToEntity();
-}
+### Mapper组件：
+`实体类`
+```c#
+  /// <summary>
+  ///     会员账号实体
+  /// </summary>
+  [Map(typeof(UserVO),typeof(UserLoginVO))] // 告知Mapper组件，我可以Mapper的对象
+  public class UserPO
+  {
+      /// <summary> </summary>
+      [Field(Name = "ID", IsPrimaryKey = true, IsDbGenerated = true)]
+      public int? Id { get; set; }
+  }
 ```
-`ITaskList.cs`
+
+`转换`
 ```c#
-public interface ITaskList: ITransientDependency
-{
-    List<TaskVO> ToList();
-    TaskVO ToInfo(int id);
-}
-```
-`TaskServer.cs`
-```c#
-public class TaskServer : ITaskServer
-{
-    public ITaskAgent TaskAgent { get; set; }
-
-    /// <summary> 获取任务信息 </summary>
-    public TaskVO ToInfo(int id) => TaskAgent.ToEntity(id).Map<TaskVO>();
-    
-    /// <summary> 获取全部任务列表 </summary>
-    public List<TaskVO> ToList() => TaskAgent.ToList().Map<TaskVO>();
-}
-```
-可以看到，`TaskServer`使用了`Ioc`的`属性注入`，一切很自然。
-
-在Mvc层调用`TaskServer`，同样是用`ITaskServer`接口通过`Ioc`来调用。
-
-上面用到了数据库上下文的概念，并支持工作单元模式。在我们需要操作数据库方面是极为轻巧、简单的。
-
-关与数据库操作、模块化理念的实际使用，可以参考我另外一个开源项目：分布式调度平台，[地址](https://github.com/FarseerNet/FarseerSchedulerService)
-
-当然，这里需要依赖`DataModule`模块：
-`StartupModule.cs`
-```c#
-/// <summary> 启动模块 </summary>
-[DependsOn(typeof(DataModule),typeof(RabbitModule))]
-public class StartupModule : FarseerModule
-{
-    public override void PreInitialize() { }
-
-    public override void PostInitialize() { }
-}
+    UserVO vo = new UserPO().Map<UserVO>();
 ```
