@@ -18,7 +18,6 @@ namespace Farseer.Net.MQ.RabbitDemo
 
             // ******************** 以下演示消息发送 *********************
             var rabbitProduct = IocManager.GetService<IRabbitManager>(name: "test").Product;
-
             // 先执行jit
             rabbitProduct.Send(message: "测试发送消息内容");
             // 开启时间测试

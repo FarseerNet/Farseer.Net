@@ -1,17 +1,18 @@
 using System.Threading.Tasks;
+using FS.Core.Job;
 using FS.Job;
 using FS.Job.Entity;
 using Microsoft.Extensions.Logging;
 
 namespace Farseer.Net.JobDemo.Job
 {
-    [FssJob(Name = "testJob")] // Name与FSS平台配置的JobTypeName保持一致
+    [FssJob(Name = "testJob")] // Name与FSS平台配置的JobName保持一致
     public class HelloWorldJob : IFssJob
     {
         /// <summary>
         ///     执行任务
         /// </summary>
-        public async Task<bool> Execute(ReceiveContext context)
+        public async Task<bool> Execute(IFssContext context)
         {
             // 告诉FSS平台，当前进度执行了 20%
             await context.SetProgressAsync(rate: 20);
