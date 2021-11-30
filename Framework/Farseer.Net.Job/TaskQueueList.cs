@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using FS.Core.Job;
 using FS.Core.LinkTrack;
 using FS.DI;
 using FS.Job.Configuration;
@@ -55,7 +56,7 @@ namespace FS.Job
                 while (true)
                 {
                     // 本次要拉取的数量
-                    var pullCount = jobItemConfig.PullCount - _queue.Count;
+                    var pullCount = jobItemConfig.PullCount - _queue.Count - Working;
 
                     // 没有任务的时候，要主动拉取
                     if (pullCount > 0)
@@ -70,11 +71,12 @@ namespace FS.Job
                         Enqueue(lst);
                     }
 
-                    pullCount = jobItemConfig.PullCount - _queue.Count;
+                    pullCount = jobItemConfig.PullCount - _queue.Count - Working;
                     await Task.Delay(pullCount == 0 ? 1000 : 500);
                 }
             }, creationOptions: TaskCreationOptions.LongRunning);
         }
+        
         /// <summary>
         ///     运行任务
         /// </summary>
@@ -114,8 +116,7 @@ namespace FS.Job
             // JOB执行耗时计数器
             var sw = new Stopwatch();
             // 上下文
-            var receiveContext = new ReceiveContext(task: task, sw: sw);
-
+            var receiveContext = new FssContext(task: task, sw: sw);
             // 业务是否有该调度任务的实现
             var jobInsName   = $"fss_job_{task.JobName}";
             var isRegistered = IocManager.Instance.IsRegistered(name: jobInsName);

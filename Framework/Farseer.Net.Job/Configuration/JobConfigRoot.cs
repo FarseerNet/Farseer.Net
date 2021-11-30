@@ -17,7 +17,7 @@ namespace FS.Job.Configuration
             var configurationSection = IocManager.GetService<IConfigurationRoot>().GetSection(key: "FSS");
             var jobItemConfig        = configurationSection.Get<JobItemConfig>();
 
-            if (jobItemConfig.PullCount == 0) jobItemConfig.PullCount = Environment.ProcessorCount;
+            if (jobItemConfig.PullCount == 0) jobItemConfig.PullCount = Environment.ProcessorCount * 2;
             if (jobItemConfig.WorkCount == 0) jobItemConfig.WorkCount = Environment.ProcessorCount;
             return jobItemConfig;
         }

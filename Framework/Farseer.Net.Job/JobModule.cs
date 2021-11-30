@@ -29,53 +29,49 @@ namespace FS.Job
         public override void PostInitialize()
         {
             var fssAttribute = Assembly.GetEntryAssembly().EntryPoint.DeclaringType.GetCustomAttribute<FssAttribute>();
-            if (fssAttribute is
+            if (fssAttribute is not { Enable: true }) return;
+            
+            var jobItemConfig = IocManager.Resolve<IConfigurationRoot>().GetSection(key: "FSS").Get<JobItemConfig>();
+            if (jobItemConfig == null)
             {
-                Enable: true
-            })
-            {
-                var jobItemConfig = IocManager.Resolve<IConfigurationRoot>().GetSection(key: "FSS").Get<JobItemConfig>();
-                if (jobItemConfig == null)
-                {
-                    IocManager.Logger<JobModule>().LogWarning(message: "未找到FSS配置，无法启动任务");
-                    return;
-                }
-
-                Client = new ClientVO
-                {
-                    ClientIp   = IpHelper.GetIp,
-                    Id         = SnowflakeId.GenerateId(),
-                    ClientName = Environment.MachineName,
-                    Jobs       = JobInstaller.JobImpList.Keys.Select(selector: o => o).ToArray()
-                };
-
-                FarseerApplication.AddInitCallback(() =>
-                {
-                    // 查找启用了Debug状态的job，立即执行
-                    foreach (var jobType in JobInstaller.JobImpList)
-                    {
-                        var fssJobAttribute = jobType.Value.GetCustomAttribute<FssJobAttribute>();
-                        if (fssJobAttribute == null || !fssJobAttribute.Debug) continue;
-                        IocManager.Logger<JobModule>().LogDebug(message: $"Debug：启动{jobType.Key}。");
-                        var sw = Stopwatch.StartNew();
-                        try
-                        {
-                            Task.WaitAll(IocManager.Resolve<IFssJob>(name: $"fss_job_{jobType.Key}").Execute(context: new ReceiveContext(ioc: IocManager, jobType.Key, sw: sw, Jsons.ToObject<Dictionary<string, string>>(fssJobAttribute.DebugMetaData))));
-                        }
-                        catch (Exception e)
-                        {
-                            IocManager.Logger<JobModule>().LogError(exception: e, message: e.Message);
-                        }
-                        finally
-                        {
-                            IocManager.Logger<JobModule>().LogDebug(message: $"Debug：{jobType.Key} 耗时 {sw.ElapsedMilliseconds} ms");
-                        }
-                    }
-                    
-                    TaskQueueList.PullJob();
-                    TaskQueueList.RunJob();
-                });
+                IocManager.Logger<JobModule>().LogWarning(message: "未找到FSS配置，无法启动任务");
+                return;
             }
+
+            Client = new ClientVO
+            {
+                ClientIp   = IpHelper.GetIp,
+                Id         = SnowflakeId.GenerateId(),
+                ClientName = Environment.MachineName,
+                Jobs       = JobInstaller.JobImpList.Keys.Select(selector: o => o).ToArray()
+            };
+
+            FarseerApplication.AddInitCallback(() =>
+            {
+                // 查找启用了Debug状态的job，立即执行
+                foreach (var jobType in JobInstaller.JobImpList)
+                {
+                    var fssJobAttribute = jobType.Value.GetCustomAttribute<FssJobAttribute>();
+                    if (fssJobAttribute == null || !fssJobAttribute.Debug) continue;
+                    IocManager.Logger<JobModule>().LogDebug(message: $"Debug：启动{jobType.Key}。");
+                    var sw = Stopwatch.StartNew();
+                    try
+                    {
+                        Task.WaitAll(IocManager.Resolve<IFssJob>(name: $"fss_job_{jobType.Key}").Execute(context: new FssContext(ioc: IocManager, jobType.Key, sw: sw, Jsons.ToObject<Dictionary<string, string>>(fssJobAttribute.DebugMetaData))));
+                    }
+                    catch (Exception e)
+                    {
+                        IocManager.Logger<JobModule>().LogError(exception: e, message: e.Message);
+                    }
+                    finally
+                    {
+                        IocManager.Logger<JobModule>().LogDebug(message: $"Debug：{jobType.Key} 耗时 {sw.ElapsedMilliseconds} ms");
+                    }
+                }
+                    
+                TaskQueueList.PullJob();
+                TaskQueueList.RunJob();
+            });
         }
 
         /// <summary>
