@@ -17,10 +17,16 @@ namespace FS.DI.Installers
 
         public LoggerInstaller(Action<ILoggingBuilder> configure)
         {
-            _configure = configure ?? (builder =>
-                                          {
-                                              builder.AddFarseerJsonConsole();
-                                          });
+            _configure = configure ?? (Env.IsPro
+            ? builder =>
+            {
+                builder.AddFarseerJsonConsole();
+            }
+            : builder =>
+            {
+                builder.AddConsole();
+            });
+
         }
 
         /// <summary>
