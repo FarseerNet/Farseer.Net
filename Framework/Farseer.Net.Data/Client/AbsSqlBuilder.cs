@@ -186,8 +186,7 @@ namespace FS.Data.Client
             //     Sql.Append(value: $"INSERT INTO {DbTableName} {insertAssemble};");
             //     InsertVisitor.Clear();
             // }
-
-            return this;
+            // return this;
         }
 
         /// <summary>
