@@ -1,7 +1,7 @@
 using System;
 using Microsoft.Extensions.Logging;
 
-namespace FS.Job.Entity
+namespace FS.Core.Job
 {
     /// <summary>
     ///     客户端请求过来的日志内容

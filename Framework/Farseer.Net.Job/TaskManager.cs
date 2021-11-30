@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FS.Core;
 using FS.Core.Http;
+using FS.Core.Job;
 using FS.Core.Net;
 using FS.DI;
 using FS.Job.Configuration;
@@ -38,7 +39,7 @@ namespace FS.Job
                     var api = await HttpPostJson.PostAsync<ApiResponseJson<List<TaskVO>>>(url: url, postData: new Dictionary<string, string> { { "TaskCount", pullCount.ToString() } }, headerData: _header);
                     if (!api.Status) continue;
                     
-                    IocManager.Instance.Logger<TaskQueueList>().LogInformation(message: $"本次拉取{api.Data.Count}条任务");
+                    IocManager.Instance.Logger<TaskQueueList>().LogDebug(message: $"本次拉取{api.Data.Count}条任务");
                     return api.Data;
                 }
                 catch (Exception e)

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace FS.Job.Entity
+namespace FS.Core.Job
 {
     /// <summary>
     ///     任务记录

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using FS.Core.Job;
 using FS.DI;
 using FS.Extends;
 using Microsoft.Extensions.Logging;
@@ -11,7 +12,7 @@ namespace FS.Job.Entity
     /// <summary>
     ///     任务接收的上下文
     /// </summary>
-    public class ReceiveContext
+    public class FssContext : IFssContext
     {
         /// <summary>
         ///     是否为本地Debug模式
@@ -22,7 +23,7 @@ namespace FS.Job.Entity
         private          long        _nextTimespan;
         private          EumTaskType _taskStatus;
 
-        public ReceiveContext(TaskVO task, Stopwatch sw)
+        public FssContext(TaskVO task, Stopwatch sw)
         {
             Meta        =   task;
             _sw         =   sw;
@@ -33,7 +34,7 @@ namespace FS.Job.Entity
         /// <summary>
         ///     DEBUG模式
         /// </summary>
-        internal ReceiveContext(IIocManager ioc, string jobName, Stopwatch sw, Dictionary<string, string> debugMetaData)
+        internal FssContext(IIocManager ioc, string jobName, Stopwatch sw, Dictionary<string, string> debugMetaData)
         {
             Meta = new TaskVO
             {
@@ -85,7 +86,7 @@ namespace FS.Job.Entity
         /// </summary>
         public async Task LoggerAsync(LogLevel logLevel, string log)
         {
-            IocManager.Instance.Logger<ReceiveContext>().Log(logLevel: logLevel, message: log);
+            IocManager.Instance.Logger<FssContext>().Log(logLevel: logLevel, message: log);
             if (!_isDebug)
             {
                 await TaskManager.JobInvokeAsync(request: new JobInvokeRequest

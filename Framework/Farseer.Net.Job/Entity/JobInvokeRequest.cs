@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using FS.Core.Job;
 
 namespace FS.Job.Entity
 {

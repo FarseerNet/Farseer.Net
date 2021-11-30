@@ -1,4 +1,4 @@
-namespace FS.Job.Entity
+namespace FS.Core.Job
 {
     /// <summary>
     ///     任务状态
