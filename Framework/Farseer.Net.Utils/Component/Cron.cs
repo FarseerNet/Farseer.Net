@@ -26,31 +26,19 @@ namespace FS.Utils.Component
     /// </example>
     public class Cron
     {
-        #region 属性
-
         /// <summary> 秒数集合 </summary>
         public int[] Seconds;
-
         /// <summary> 分钟集合 </summary>
         public int[] Minutes;
-
         /// <summary> 小时集合 </summary>
         public int[] Hours;
-
         /// <summary> 日期集合 </summary>
         public int[] DaysOfMonth;
-
         /// <summary> 月份集合 </summary>
         public int[] Months;
-
         /// <summary> 星期集合 </summary>
         public int[] DaysOfWeek;
-
         private string _expression;
-
-        #endregion
-
-        #region 构造
 
         /// <summary> 实例化Cron表达式 </summary>
         public Cron()
@@ -61,16 +49,12 @@ namespace FS.Utils.Component
         /// <param name="expression"> </param>
         public Cron(string expression)
         {
-            Parse(expression: expression);
+            _expression = expression;
         }
 
         /// <summary> 已重载。 </summary>
         /// <returns> </returns>
         public override string ToString() => _expression;
-
-        #endregion
-
-        #region 方法
 
         /// <summary> 指定时间是否位于表达式之内 </summary>
         /// <param name="time"> </param>
@@ -83,11 +67,10 @@ namespace FS.Utils.Component
                                              DaysOfWeek.Contains(value: (int)time.DayOfWeek);
 
         /// <summary> 分析表达式 </summary>
-        /// <param name="expression"> </param>
         /// <returns> </returns>
-        public bool Parse(string expression)
+        public bool Parse()
         {
-            var ss = expression.Split(' ');
+            var ss = _expression.Split(' ');
             if (ss.Length == 0) return false;
 
             if (!TryParse(value: ss[0], start: 0, max: 60, vs: out var vs)) return false;
@@ -103,9 +86,16 @@ namespace FS.Utils.Component
             if (!TryParse(value: ss.Length > 5 ? ss[5] : "*", start: 0, max: 7, vs: out vs)) return false;
             DaysOfWeek = vs;
 
-            _expression = expression;
-
             return true;
+        }
+
+        /// <summary> 分析表达式 </summary>
+        /// <param name="expression"> </param>
+        /// <returns> </returns>
+        public bool Parse(string expression)
+        {
+            _expression = expression;
+            return Parse();
         }
 
         private bool TryParse(string value, int start, int max, out int[] vs)
@@ -171,13 +161,12 @@ namespace FS.Utils.Component
         {
             // 设置末尾，避免死循环越界
             var end = time.AddYears(value: 1);
+            
             for (var dt = time.AddSeconds(value: 1); dt < end; dt = dt.AddSeconds(value: 1))
                 if (IsTime(time: dt))
                     return dt;
 
             return DateTime.MinValue;
         }
-
-        #endregion
     }
 }
