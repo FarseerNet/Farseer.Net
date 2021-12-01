@@ -13,20 +13,8 @@ namespace FS.DI.Installers
     /// </summary>
     public class LoggerInstaller : IWindsorInstaller
     {
-        private readonly Action<ILoggingBuilder> _configure;
-
-        public LoggerInstaller(Action<ILoggingBuilder> configure)
+        public LoggerInstaller()
         {
-            _configure = configure ?? (Env.IsPro
-            ? builder =>
-            {
-                builder.AddFarseerJsonConsole();
-            }
-            : builder =>
-            {
-                builder.AddConsole();
-            });
-
         }
 
         /// <summary>
@@ -44,10 +32,21 @@ namespace FS.DI.Installers
                                 .Build();
             container.Register(Component.For<IConfigurationRoot>().Instance(instance: configuration).LifestyleSingleton());
 
+            var logFormat=configuration.GetSection("Logging:Format").Value;
+            Action<ILoggingBuilder> configure = (logFormat.ToLower() == "json"
+            ? builder =>
+            {
+                builder.AddFarseerJsonConsole();
+            }
+            : builder =>
+            {
+                builder.AddConsole();
+            });
+            
             // 注册默认日志组件
             var loggerFactory = LoggerFactory.Create(configure: o =>
             {
-                _configure(obj: o);
+                configure(obj: o);
                 o.AddConfiguration(configuration: configuration.GetSection(key: "Logging"));
             });
             container.Register(Component.For<ILoggerFactory>().Instance(instance: loggerFactory).LifestyleSingleton());

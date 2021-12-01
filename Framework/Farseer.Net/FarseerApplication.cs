@@ -112,13 +112,13 @@ namespace FS
         /// <summary>
         ///     初始化系统
         /// </summary>
-        public void Initialize(Action<ILoggingBuilder> configure = null)
+        public void Initialize()
         {
             try
             {
                 StartupAt = DateTime.Now;
                 RegisterBootstrapper();
-                IocManager.Container.Install(new LoggerInstaller(configure: configure));
+                IocManager.Container.Install(new LoggerInstaller());
                 IocManager.Container.Install(new FarseerInstaller());
 
                 IocManager.Logger<FarseerApplication>().LogInformation(message: "注册系统核心组件");
