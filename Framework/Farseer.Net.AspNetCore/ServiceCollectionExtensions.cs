@@ -1,5 +1,6 @@
 using System;
 using FS.DI;
+using FS.Log;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
@@ -23,6 +24,7 @@ namespace FS
             };
             services.Configure<KestrelServerOptions>(config: IocManager.GetService<IConfigurationRoot>().GetSection(key: "Kestrel"));
             services.AddFarseerIoc();
+            services.AddFarseerLogging();
             return services.AddControllers(configure: configure)
                            .AddControllersAsServices()
                            .AddNewtonsoftJson();

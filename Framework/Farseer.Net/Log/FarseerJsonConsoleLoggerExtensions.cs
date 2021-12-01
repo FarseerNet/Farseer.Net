@@ -1,4 +1,6 @@
 using System;
+using FS.DI;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
@@ -16,7 +18,7 @@ namespace FS.Log
             if (services == null) throw new ArgumentNullException(paramName: nameof(services));
             services.AddLogging(configure: logging =>
             {
-                logging.AddFarseerJsonConsole();
+                logging.AddFarseerLogging();
 
                 // 非生产环境下添加调试输出
                 if (Environment.GetEnvironmentVariable(variable: "ASPNETCORE_ENVIRONMENT") != "" && Environment.GetEnvironmentVariable(variable: "ASPNETCORE_ENVIRONMENT") != "Production") logging.AddDebug();
@@ -31,20 +33,31 @@ namespace FS.Log
         /// <param name="builder"> </param>
         /// <param name="options"> </param>
         /// <returns> </returns>
-        public static ILoggingBuilder AddFarseerJsonConsole(this ILoggingBuilder builder, Action<JsonConsoleFormatterOptions> options = null)
+        public static ILoggingBuilder AddFarseerLogging(this ILoggingBuilder builder, Action<JsonConsoleFormatterOptions> options = null)
         {
-            options ??= _ =>
+            var configurationRoot = IocManager.GetService<IConfigurationRoot>();
+            //builder.AddConfiguration(configurationRoot.GetSection("Logging"));
+            
+            var logFormat         = configurationRoot.GetSection("Logging:Format").Value;
+            if (logFormat?.ToLower() == "json")
             {
-                _.UseUtcTimestamp = false;
-                _.TimestampFormat = "yyyy-MM-dd HH:mm:ss";
-            };
-            //添加控制台输出
-            builder.AddConsoleFormatter<FarseerJsonConsole, JsonConsoleFormatterOptions>(configure: _ => options(obj: _));
+                options ??= _ =>
+                {
+                    _.UseUtcTimestamp = false;
+                    _.TimestampFormat = "yyyy-MM-dd HH:mm:ss";
+                };
+                //添加控制台输出
+                builder.AddConsoleFormatter<FarseerJsonConsole, JsonConsoleFormatterOptions>(configure: _ => options(obj: _));
 
-            builder.AddConsole(configure: o =>
+                builder.AddConsole(configure: o =>
+                {
+                    o.FormatterName = "json";
+                });
+            }
+            else
             {
-                o.FormatterName = "json";
-            });
+                builder.AddConsole();
+            }
             return builder;
         }
     }
