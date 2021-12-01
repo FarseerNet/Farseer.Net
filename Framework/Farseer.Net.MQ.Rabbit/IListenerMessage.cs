@@ -30,10 +30,10 @@ namespace FS.MQ.Rabbit
         public Task Init(IIocManager iocManager, ConsumerAttribute consumerAtt, Type consumerType)
         {
             // 读取配置
-            var rabbitItemConfig = RabbitConfigRoot.Get().Find(match: o => o.Name == consumerAtt.Name);
+            var rabbitItemConfig = RabbitConfigRoot.Get().Find(match: o => o.Server.Name == consumerAtt.Server);
             if (rabbitItemConfig == null)
             {
-                iocManager.Logger<IListenerMessageBatch>().LogWarning(message: $"未找到：{consumerType.FullName}的配置项：{consumerAtt.Name}");
+                iocManager.Logger<IListenerMessageBatch>().LogWarning(message: $"未找到：{consumerType.FullName}的配置项：{consumerAtt.Server}");
                 return Task.FromResult(result: 0);
             }
 

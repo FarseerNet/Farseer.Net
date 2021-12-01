@@ -20,9 +20,8 @@ namespace FS.Data
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             // 读取配置
-            var dbConfig = DataConfigRoot.Get();
-            if (dbConfig == null || dbConfig.Items.Count == 0) return;
-            dbConfig.Items.ForEach(action: m =>
+            var dbConfigs = DataConfigRoot.Get();
+            dbConfigs.ForEach(action: m =>
             {
                 // 注册Db连接
                 var dbConnectionString = AbsDbProvider.CreateInstance(dbType: m.DataType, dataVer: m.DataVer).CreateDbConnstring(server: m.Server, port: m.Port, userId: m.UserID, passWord: m.PassWord, catalog: m.Catalog, dataVer: m.DataVer, additional: m.Additional, connectTimeout: m.ConnectTimeout, poolMinSize: m.PoolMinSize, poolMaxSize: m.PoolMaxSize);

@@ -29,13 +29,11 @@ namespace FS.Cache.Redis
         ///     构造函数
         /// </summary>
         /// <param name="config"> 配置 </param>
-        /// <param name="connectionWrapper"> Redis连接 </param>
-        public RedisCacheManager(RedisItemConfig config, IRedisConnectionWrapper connectionWrapper)
+        public RedisCacheManager(RedisItemConfig config)
         {
             Check.NotNull(value: config.Server, parameterName: "Redis连接字符串为空");
             _config            = config;
-            _connectionWrapper = connectionWrapper;
-            CacheManager       = IocManager.GetService<ICacheManager>(name: $"GetCacheInMemory_{_config.Name}");
+            _connectionWrapper = new RedisConnectionWrapper(config);
         }
 
         /// <summary>
@@ -49,7 +47,7 @@ namespace FS.Cache.Redis
         /// <summary>
         ///     支持缓存不存在，则写入
         /// </summary>
-        public ICacheManager CacheManager { get; }
+        public ICacheManager CacheManager => IocManager.GetService<ICacheManager>(name: $"GetCacheInMemory_{_config.Name}");
 
         /// <summary>
         ///     Redis服务端
@@ -81,7 +79,7 @@ namespace FS.Cache.Redis
         /// <summary>
         ///     事务，批量写入HASH
         /// </summary>
-        public void HashSetTransaction<TEntity,TEntityId>(string key, List<TEntity> lst, Func<TEntity, TEntityId> funcDataKey, Func<TEntity, string> funcData = null, TimeSpan? expiry = null)
+        public void HashSetTransaction<TEntity, TEntityId>(string key, List<TEntity> lst, Func<TEntity, TEntityId> funcDataKey, Func<TEntity, string> funcData = null, TimeSpan? expiry = null)
         {
             if (lst == null || lst.Count == 0) return;
             if (funcData == null) funcData = po => JsonConvert.SerializeObject(value: po);
@@ -104,7 +102,7 @@ namespace FS.Cache.Redis
         /// <summary>
         ///     事务，批量写入HASH
         /// </summary>
-        public Task HashSetTransactionAsync<TEntity,TEntityId>(string key, List<TEntity> lst, Func<TEntity, TEntityId> funcDataKey, Func<TEntity, string> funcData = null, TimeSpan? expiry = null)
+        public Task HashSetTransactionAsync<TEntity, TEntityId>(string key, List<TEntity> lst, Func<TEntity, TEntityId> funcDataKey, Func<TEntity, string> funcData = null, TimeSpan? expiry = null)
         {
             if (lst == null || lst.Count == 0) return Task.FromResult(result: 0);
             funcData ??= po => JsonConvert.SerializeObject(value: po);

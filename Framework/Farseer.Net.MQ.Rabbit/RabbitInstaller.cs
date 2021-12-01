@@ -27,7 +27,7 @@ namespace FS.MQ.Rabbit
             foreach (var rabbitItemConfig in rabbitItemConfigs)
             {
                 // 每个Item，建立一个tcp连接
-                var rabbitConnect = new RabbitConnect(config: rabbitItemConfig);
+                var rabbitConnect = new RabbitConnect(config: rabbitItemConfig.Server);
 
                 if (rabbitItemConfig.Product != null)
                 {

@@ -19,6 +19,8 @@ namespace FS.MQ.RedisStream
     /// </summary>
     public class RedisStreamInstaller : IWindsorInstaller
     {
+        private readonly Dictionary<string, RedisCacheManager> dicRedisCacheManager = new();
+
         /// <inheritdoc />
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
@@ -27,19 +29,16 @@ namespace FS.MQ.RedisStream
 
             // 注册生产者
             foreach (var redisStreamConfig in redisStreamConfigs)
+            {
+                // 注册服务端
+                var redisCacheManager = dicRedisCacheManager[redisStreamConfig.Server.Name] = new RedisCacheManager(redisStreamConfig.Server);
+
                 if (redisStreamConfig.Product != null)
                 {
                     // 按生产者遍历
                     foreach (var productConfig in redisStreamConfig.Product)
                     {
-                        if (!container.Kernel.HasComponent(name: redisStreamConfig.RedisName))
-                        {
-                            IocManager.Instance.Logger<RedisStreamInstaller>().LogWarning(message: $"未找到：{redisStreamConfig.RedisName}的 Redis 生产配置项，当前组件依赖Farseer.Net.Cache.Redis组件。因此您 需要先设置Redis的配置");
-                            continue;
-                        }
-
-                        var redisCacheManager = container.Resolve<IRedisCacheManager>(key: redisStreamConfig.RedisName);
-
+                        if (container.Kernel.HasComponent(productConfig.QueueName)) throw new FarseerException($"队列名称重复，注册RedisStream失败：Server={redisStreamConfig.Server.Name}，QueueName={productConfig.QueueName}");
                         // 注册生产者
                         container.Register(Component.For<IRedisStreamProduct>()
                                                     .ImplementedBy<RedisStreamProduct>()
@@ -49,60 +48,42 @@ namespace FS.MQ.RedisStream
                                                     .LifestyleSingleton());
                     }
                 }
+            }
 
             // 查找入口方法是否启用了消费
             var rabbitAttribute = Assembly.GetEntryAssembly().EntryPoint.DeclaringType.GetCustomAttribute<RedisStreamAttribute>();
-            if (rabbitAttribute is
+            if (rabbitAttribute is { Enable: false }) return;
+            
+            // 查找消费实现
+            var types = container.Resolve<IAssemblyFinder>().GetType<IListenerMessage>();
+            try
             {
-                Enable: true
-            })
+                foreach (var consumerType in types)
+                // 启动消费程序
+                    RunConsumer(container: container, consumerType: consumerType, rabbitItemConfigs: redisStreamConfigs);
+            }
+            catch (Exception e)
             {
-                // 查找消费实现
-                var types = container.Resolve<IAssemblyFinder>().GetType<IListenerMessage>();
-
-                try
-                {
-                    foreach (var consumerType in types)
-                        // 启动消费程序
-                        RunConsumer(container: container, consumerType: consumerType, rabbitItemConfigs: redisStreamConfigs);
-                }
-                catch (Exception e)
-                {
-                    IocManager.Instance.Logger<RedisStreamInstaller>().LogError(exception: e, message: e.Message);
-                }
+                IocManager.Instance.Logger<RedisStreamInstaller>().LogError(exception: e, message: e.Message);
             }
         }
 
         /// <summary>
         ///     启动消费程序
         /// </summary>
-        /// <param name="consumerType"> </param>
-        /// <param name="rabbitItemConfigs"> </param>
-        private static void RunConsumer(IWindsorContainer container, Type consumerType, List<RedisStreamConfig> rabbitItemConfigs)
+        private void RunConsumer(IWindsorContainer container, Type consumerType, List<RedisStreamConfig> rabbitItemConfigs)
         {
             // 没有使用consumerAttribute特性的，不启用
             var consumerAttribute = consumerType.GetCustomAttribute<ConsumerAttribute>();
-            if (consumerAttribute is
-            {
-                Enable: false
-            })
-                return;
+            if (consumerAttribute is { Enable: false }) return;
 
             // 创建消费的实例
-            var redisStreamConfig = rabbitItemConfigs.Find(match: o => o.RedisName == consumerAttribute.RedisName);
-            if (redisStreamConfig == null)
+            if (!dicRedisCacheManager.ContainsKey(consumerAttribute.Server))
             {
-                IocManager.Instance.Logger<RedisStreamInstaller>().LogWarning(message: $"未找到：{consumerType.FullName}的 Redis 消费配置项：{consumerAttribute.RedisName}");
+                IocManager.Instance.Logger<RedisStreamInstaller>().LogWarning(message: $"未找到：{consumerType.FullName}的 Redis 消费配置项：{consumerAttribute.Server}");
                 return;
             }
-
-            if (!container.Kernel.HasComponent(name: redisStreamConfig.RedisName))
-            {
-                IocManager.Instance.Logger<RedisStreamInstaller>().LogWarning(message: $"未找到：{consumerType.FullName}的 Redis 消费配置项：{consumerAttribute.RedisName}，当前组件依赖Farseer.Net.Cache.Redis组件。因此您 需要先设置Redis的配置");
-                return;
-            }
-
-            var redisCacheManager = container.Resolve<IRedisCacheManager>(key: redisStreamConfig.RedisName);
+            var redisCacheManager = dicRedisCacheManager[consumerAttribute.Server];
 
             // 自动创建消费组
             if (consumerAttribute.AutoCreateGroup)

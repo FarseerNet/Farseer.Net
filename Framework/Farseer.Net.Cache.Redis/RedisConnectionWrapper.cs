@@ -67,23 +67,18 @@ namespace FS.Cache.Redis
         /// <returns> ConnectionMultiplexer </returns>
         private ConnectionMultiplexer GetConnection()
         {
-            if (_connection is
-            {
-                IsConnected: true
-            })
-                return _connection;
+            if (_connection is { IsConnected: true }) return _connection;
 
             lock (_lock)
             {
-                if (_connection is
-                {
-                    IsConnected: true
-                })
-                    return _connection;
-
+                if (_connection is { IsConnected: true }) return _connection;
                 _connection?.Dispose();
 
-                var option = new ConfigurationOptions();
+                var option = new ConfigurationOptions
+                {
+                    Password = _config.Password
+                };
+
                 // 模式选择
                 switch (_config.CommandType)
                 {
@@ -108,42 +103,17 @@ namespace FS.Cache.Redis
                     default: throw new ArgumentOutOfRangeException();
                 }
 
-                option.Password = _config.Password;
                 foreach (var endPoints in _config.Server.Split(','))
-                    if (endPoints.Contains(value: ":"))
-                        option.EndPoints.Add(host: endPoints.Split(':')[0], port: endPoints.Split(':')[1].ConvertType(defValue: 0));
-                    else
-                    {
-                        var settings = endPoints.ToLower().Split('=');
-                        if (settings.Length != 2) continue; // 配置错误
-
-                        var key = settings[0];
-                        var val = settings[1].ConvertType(defValue: 0);
-                        switch (key.ToLower())
-                        {
-                            //case "asynctimeout": option.AsyncTimeout = time; break;
-                            //case "responsetimeout": option.ResponseTimeout = time; break;
-                            case "synctimeout":
-                                option.SyncTimeout = val;
-                                break;
-                            case "connecttimeout":
-                                option.ConnectTimeout = val;
-                                break;
-                            case "dbindex":
-                            case "db":
-                                _dbIndex = val;
-                                break;
-                        }
-                    }
-
+                {
+                    if (!endPoints.Contains(":")) continue;
+                    option.EndPoints.Add(host: endPoints.Split(':')[0], port: endPoints.Split(':')[1].ConvertType(defValue: 0));
+                }
+                _dbIndex = _config.DB;
+                if (_config.SyncTimeout     > 0) option.SyncTimeout     = _config.SyncTimeout;
+                if (_config.ConnectTimeout  > 0) option.ConnectTimeout  = _config.ConnectTimeout;
+                if (_config.ResponseTimeout > 0) option.ResponseTimeout = _config.ResponseTimeout;
                 _connection = ConnectionMultiplexer.Connect(configuration: option);
             }
-
-            _connection.GetSubscriber()
-                       .Subscribe(channel: "+switch-master", handler: (channel, message) =>
-                       {
-                           Console.WriteLine(value: message);
-                       });
             return _connection;
         }
     }

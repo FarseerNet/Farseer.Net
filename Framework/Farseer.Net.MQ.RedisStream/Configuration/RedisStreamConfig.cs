@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using FS.Cache.Redis.Configuration;
 
 namespace FS.MQ.RedisStream.Configuration
 {
@@ -10,8 +11,8 @@ namespace FS.MQ.RedisStream.Configuration
         /// <summary>
         ///     Redis配置
         /// </summary>
-        public string RedisName { get; set; }
-
+        public RedisItemConfig Server { get; set; }
+        
         /// <summary>
         ///     生产者配置
         /// </summary>

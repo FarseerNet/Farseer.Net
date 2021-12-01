@@ -62,7 +62,7 @@ namespace FS.MQ.Rabbit
         public RabbitConsumerBatch(IIocManager iocManager, Type consumerType, RabbitItemConfig rabbitItemConfig, string queueName, uint batchPullMessageCount)
         {
             _iocManager            = iocManager;
-            _connect               = new RabbitConnect(config: rabbitItemConfig);
+            _connect               = new RabbitConnect(rabbitItemConfig.Server);
             _batchPullMessageCount = batchPullMessageCount < 1 ? 10 : batchPullMessageCount;
             _queueName             = queueName;
             _consumerTypeName      = consumerType.FullName;

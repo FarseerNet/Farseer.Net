@@ -36,8 +36,8 @@ namespace FS.Cache.Redis
             foreach (var redisItemConfig in redisItemConfigs)
             {
                 // 注册Redis连接
-                container.Register(Component.For<IRedisConnectionWrapper>().Named(name: $"{redisItemConfig.Name}_connection").ImplementedBy<RedisConnectionWrapper>().DependsOn(dependency: Dependency.OnValue<RedisItemConfig>(value: redisItemConfig)).LifestyleSingleton());
-                var redisConnectionWrapper = _iocResolver.Resolve<IRedisConnectionWrapper>(name: $"{redisItemConfig.Name}_connection");
+                // var redisConnectionWrapper = new RedisConnectionWrapper(redisItemConfig);
+                //container.Register(Component.For<IRedisConnectionWrapper>().Named(name: $"{redisItemConfig.Name}_connection").Instance(redisConnectionWrapper).LifestyleSingleton());
 
                 // 注册 GetCacheInRedis缓存到IGetCache
                 container.Register(Component.For<ICacheManager>().ImplementedBy<CacheManager>().DependsOn(dependency: Dependency.OnValue<string>(value: redisItemConfig.Name)).Named(name: $"GetCacheInMemory_{redisItemConfig.Name}").LifestyleSingleton());
@@ -45,7 +45,7 @@ namespace FS.Cache.Redis
                 container.Register(Component.For<IGetCache>().ImplementedBy<GetCacheInMemoryAndRedis>().DependsOn(dependency: Dependency.OnValue<string>(value: redisItemConfig.Name)).Named(name: $"GetCacheInMemoryAndRedis_{redisItemConfig.Name}").LifestyleSingleton());
 
                 // Redis缓存管理
-                var redisCacheManager = new RedisCacheManager(config: redisItemConfig, connectionWrapper: redisConnectionWrapper);
+                var redisCacheManager = new RedisCacheManager(config: redisItemConfig);
 
                 // 注册Redis管理
                 container.Register(Component.For<IRedisCacheManager>().Named(name: redisItemConfig.Name).Instance(instance: redisCacheManager).LifestyleSingleton());

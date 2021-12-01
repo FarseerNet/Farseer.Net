@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using FS.Core.Configuration;
 using FS.DI;
 using Microsoft.Extensions.Configuration;
 
@@ -15,8 +16,16 @@ namespace FS.Cache.Redis.Configuration
         /// </summary>
         public static List<RedisItemConfig> Get()
         {
-            var configurationSection = IocManager.GetService<IConfigurationRoot>().GetSection(key: "Redis");
-            return configurationSection.GetChildren().Select(selector: o => o.Get<RedisItemConfig>()).ToList();
+            var configs   = IocManager.GetService<IConfigurationRoot>().GetSection(key: "Redis").GetChildren();
+            var lstConfig = new List<RedisItemConfig>();
+            foreach (var configurationSection in configs)
+            {
+                var config = ConfigConvert.ToEntity<RedisItemConfig>(configurationSection.Value);
+                if (config == null) continue;
+                config.Name = configurationSection.Key;
+                lstConfig.Add(config);
+            }
+            return lstConfig;
         }
     }
 }

@@ -13,7 +13,7 @@ namespace FS.MQ.RedisStream.Attr
         /// <summary>
         ///     Redis配置名称
         /// </summary>
-        public string RedisName { get; set; }
+        public string Server { get; set; }
 
         /// <summary>
         ///     消费组（为空时，走非消费组）

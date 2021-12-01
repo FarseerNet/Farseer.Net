@@ -13,7 +13,7 @@ namespace FS.MQ.Rabbit.Attr
         /// <summary>
         ///     Connect配置名称
         /// </summary>
-        public string Name { get; set; }
+        public string Server { get; set; }
 
         /// <summary>
         ///     交换器类型

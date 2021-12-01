@@ -41,7 +41,7 @@ namespace FS.MQ.Rabbit
         /// <summary> Rabbit管理器 </summary>
         public RabbitManager(RabbitItemConfig rabbitItemConfig)
         {
-            _connect = new RabbitConnect(config: rabbitItemConfig);
+            _connect = new RabbitConnect(config: rabbitItemConfig.Server);
         }
 
         /// <summary>

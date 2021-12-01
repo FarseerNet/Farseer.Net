@@ -74,7 +74,7 @@ namespace FS.MQ.Rabbit
         /// 是否使用链路追踪
         /// </summary>
         private bool _useLinkTrack;
-        
+
         /// <summary>
         ///     消费客户端
         /// </summary>
@@ -89,8 +89,8 @@ namespace FS.MQ.Rabbit
             _iocManager            = iocManager;
             _consumerType          = consumerType;
             _consumerTypeName      = consumerType.FullName;
-            _rabbitConnect         = new RabbitConnect(config: rabbitItemConfig);
-            _lastAckTimeoutRestart = lastAckTimeoutRestart > 0 ? lastAckTimeoutRestart : 5 * 60;
+            _rabbitConnect         = new RabbitConnect(rabbitItemConfig.Server);
+            _lastAckTimeoutRestart = lastAckTimeoutRestart > 0 ? lastAckTimeoutRestart : 5         * 60;
             _prefetchCount         = prefetchCount         == 0 ? (uint)Environment.ProcessorCount * 10 : prefetchCount;
             _queueName             = queueName;
             _lastAckAt             = DateTime.Now;
