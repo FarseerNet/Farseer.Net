@@ -38,6 +38,8 @@ namespace FS.ElasticSearch
             if (elasticSearchItemConfigs == null || !elasticSearchItemConfigs.Any()) return;
             foreach (var elasticSearchItemConfig in elasticSearchItemConfigs)
             {
+                if (string.IsNullOrWhiteSpace(elasticSearchItemConfig.Server)) throw new FarseerException($"Elasticsearch配置:{elasticSearchItemConfig.Name}，缺少Server节点");
+                
                 var lstUrls  = elasticSearchItemConfig.Server.Split(',').Select(selector: o => new Uri(uriString: o)).ToList();
                 var settings = new ConnectionSettings(connectionPool: new StaticConnectionPool(uris: lstUrls));
                 // 如果设置了用户名，则附加鉴权设置
