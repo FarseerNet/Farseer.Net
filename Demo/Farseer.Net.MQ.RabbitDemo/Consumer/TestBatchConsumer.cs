@@ -10,7 +10,7 @@ namespace Farseer.Net.MQ.RabbitDemo.Consumer
     /// <summary>
     ///     批量消费客户端
     /// </summary>
-    [Consumer(Enable = true, Name = "default", ExchangeName = "test", QueueName = "test_batch", ExchangeType = eumExchangeType.fanout, PrefetchCountOrPullNums = 1000, BatchPullSleepTime = 200)]
+    [Consumer(Enable = true, Server = "default", ExchangeName = "test", QueueName = "test_batch", ExchangeType = eumExchangeType.fanout, PrefetchCountOrPullNums = 1000, BatchPullSleepTime = 200)]
     public class TestBatchConsumer : IListenerMessageBatch
     {
         public Task<bool> Consumer(List<string> messages, List<BasicGetResult> resp)
