@@ -10,7 +10,7 @@ namespace FS.Utils.Common
     public class EntityHelper
     {
         /// <summary>
-        ///     查找对象属性值
+        ///     根据属性名称，获取值
         /// </summary>
         /// <typeparam name="TEntity"> 实体类 </typeparam>
         /// <typeparam name="T"> 返回值类型 </typeparam>
