@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FS.Core.Configuration;
 using FS.DI;
+using FS.Extends;
 using Microsoft.Extensions.Configuration;
 
 namespace FS.MQ.Rabbit.Configuration
@@ -27,6 +28,13 @@ namespace FS.MQ.Rabbit.Configuration
                 };
                 if (config.Server == null) continue;
                 config.Server.Name = configurationSection.Key;
+                if (config.Server.Server.Contains(":"))
+                {
+                    var servers = config.Server.Server.Split(':');
+                    config.Server.Server = servers[0];
+                    config.Server.Port   = servers[1].ConvertType(-1);
+                }
+                
                 lstConfig.Add(config);
 
                 // 生产者配置
