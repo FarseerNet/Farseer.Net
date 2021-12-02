@@ -41,8 +41,7 @@
 1、[文档](https://github.com/FarseerNet/Farseer.Net/tree/main/Doc)
 2、[demo](https://github.com/FarseerNet/Farseer.Net/tree/main/Demo)
 
-### 数据库组件：
-`TaskAgent.cs`
+### Farseer.Net.Data 数据库ORM组件：
 ```c#
   // 获取所有数据
   MetaInfoContext.Data.Task.ToList();
@@ -54,7 +53,7 @@
   MetaInfoContext.Data.Task.UpdateAsync(po);
 ```
 
-### Redis组件：
+### Farseer.Net.Cache.Redis Redis组件：
 ```c#
   // 取出Redis实例
   var redisCacheManager = IocManager.GetService<IRedisCacheManager>();
@@ -64,7 +63,7 @@
   redisCacheManager.Db.KeyDelete("test_async");
 ```
 
-### Elasticsearch组件：
+### Farseer.Net.ElasticSearch es组件：
 ```c#
   var time = "30";
   // 判断时间（并带有复杂的本地函数方法）
@@ -87,15 +86,15 @@
   TestContext.Data.User.Where(o => o.UserName == "steden" || o.Age >= 10).ToList();
 ```
 
-### Rabbit组件：
-`发送`
+### Farseer.Net.MQ.Rabbit Rabbit组件：
+#### 发送
 ```c#
 // 取出实例
 var rabbitProduct = IocManager.GetService<IRabbitManager>("test").Product;
 // 发送
 rabbitProduct.Send(message: "测试发送消息内容");
 ```
-`消费`
+#### 消费
 ```c#
 /// <summary> 消费客户端 </summary>
 [Consumer(Enable = false, Name = "default", ExchangeName = "test", QueueName = "test", ExchangeType = eumExchangeType.fanout, DlxExchangeName = "DeadLetter")]
@@ -109,15 +108,15 @@ public class TestConsumer : IListenerMessage
 }
 ```
 
-### RedisStream组件：
-`发送`
+### Farseer.Net.MQ.RedisStream RedisStream组件：
+#### 发送
 ```c#
   // 取出实例
   var redisStreamProduct = IocManager.GetService<IRedisStreamProduct>("test2");
   // 发送
   redisStreamProduct.Send(message: "测试发送消息内容");
 ```
-`消费`
+#### 消费
 ```c#
   /// <summary>
   ///     消费客户端
@@ -138,7 +137,7 @@ public class TestConsumer : IListenerMessage
   }
 ```
 
-### 任务调度组件：
+### Farseer.Net.Job 任务调度组件：
 ```c#
   [FssJob(Name = "testJob")] // Name与FSS平台配置的JobName保持一致
   public class HelloWorldJob : IFssJob
@@ -163,7 +162,7 @@ public class TestConsumer : IListenerMessage
   }
 ```
 
-### Mapper组件：
+### Farseer.Net.Mapper Mapper组件：
 `实体类`
 ```c#
   /// <summary>
