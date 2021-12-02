@@ -63,6 +63,16 @@
   redisCacheManager.Db.KeyDelete("test_async");
 ```
 
+### Farseer.Net.Cache 二级缓存组件
+```c#
+// 定义key，并设置为redis与本地缓存双写
+public static CacheKey<TaskGroupVO, int> TaskGroupKey() => new($"FSS_TaskGroup", o => o.Id, EumCacheStoreType.MemoryAndRedis);
+
+// 读取数据规则：优先读取本地缓存，不存在则读取Redis缓存，还是不存在，则读取数据库，并同步到Redis、本地缓存中
+var key = CacheKeys.TaskGroupKey();
+return RedisContext.Instance.CacheManager.GetListAsync(key, () => TaskGroupAgent.ToListAsync().MapAsync<TaskGroupVO, TaskGroupPO>());
+```
+
 ### Farseer.Net.ElasticSearch es组件：
 ```c#
   var time = "30";
