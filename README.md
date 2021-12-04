@@ -7,36 +7,6 @@
 
 结合[FOPS](https://github.com/FarseerNet/FOPS) 项目（自动构建、链路追踪控制台）支持代码无侵入的全链路实时监控。
 
-### Farseer.net有哪些功能？
-* `Farseer.Net.Data`
-  *  ORM组件支持：MySql/ClickHouse/Sqlserver/Sqlite/Oracle/Oledb（Access/Execl） 数据库。
-* `Farseer.Net.AspNetCore`
-  *  基于asp.net core的一些封装，如异常中间件、CORS、链路追踪入口、ioc注入web api
-* `Farseer.Net.Cache`
-  *  基于本地缓存MemoryCache的模块化封装
-* `Farseer.Net.Cache.Redis`
-  *  基于StackExchange.Redis的模块化封装
-* `Farseer.Net.ElasticSearch`
-  *  基于ES的ORM封装，于`Farseer.Net.Data`组件使用相似
-* `Farseer.Net.Job`
-  *  基于`FSS`分布式调度平台的客户端，实现高可用的分布式的任务调度
-* `Farseer.Net.LinkTrack`
-  *  全链路追踪监控
-* `Farseer.Net.Mapper`
-  *  对象类型转换组件（基于AutoMapper)
-* `Farseer.Net.MongoDB`
-  *  MongoDB 组件
-* `Farseer.Net.MQ.Kafka`
-  *  基于Confluent.Kafka的模块化封装
-* `Farseer.Net.MQ.Rabbit`
-  *  RabbitMQ 消息队列组件
-* `Farseer.Net.MQ.RocketMQ`
-  *  RocketMQ 消息队列组件
-* `Farseer.Net.MQ.RedisStream`
-  * Redis5 消息队列组件
-* `Farseer.Net.Utils`
-  *  常用工具扩展封装
-
 传送门：
 1、[文档](https://github.com/FarseerNet/Farseer.Net/tree/main/Doc)
 2、[demo](https://github.com/FarseerNet/Farseer.Net/tree/main/Demo)
@@ -191,3 +161,33 @@ public class TestConsumer : IListenerMessage
 ```c#
     UserVO vo = new UserPO().Map<UserVO>();
 ```
+
+### Farseer.net有哪些功能？
+* `Farseer.Net.Data`
+  *  ORM组件支持：MySql/ClickHouse/Sqlserver/Sqlite/Oracle/Oledb（Access/Execl） 数据库。
+* `Farseer.Net.AspNetCore`
+  *  基于asp.net core的一些封装，如异常中间件、CORS、链路追踪入口、ioc注入web api
+* `Farseer.Net.Cache`
+  *  基于本地缓存MemoryCache的模块化封装
+* `Farseer.Net.Cache.Redis`
+  *  基于StackExchange.Redis的模块化封装
+* `Farseer.Net.ElasticSearch`
+  *  基于ES的ORM封装，于`Farseer.Net.Data`组件使用相似
+* `Farseer.Net.Job`
+  *  基于`FSS`分布式调度平台的客户端，实现高可用的分布式的任务调度
+* `Farseer.Net.LinkTrack`
+  *  全链路追踪监控
+* `Farseer.Net.Mapper`
+  *  对象类型转换组件（基于AutoMapper)
+* `Farseer.Net.MongoDB`
+  *  MongoDB 组件
+* `Farseer.Net.MQ.Kafka`
+  *  基于Confluent.Kafka的模块化封装
+* `Farseer.Net.MQ.Rabbit`
+  *  RabbitMQ 消息队列组件
+* `Farseer.Net.MQ.RocketMQ`
+  *  RocketMQ 消息队列组件
+* `Farseer.Net.MQ.RedisStream`
+  * Redis5 消息队列组件
+* `Farseer.Net.Utils`
+  *  常用工具扩展封装
