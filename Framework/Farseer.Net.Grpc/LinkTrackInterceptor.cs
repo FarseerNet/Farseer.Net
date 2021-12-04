@@ -35,7 +35,7 @@ namespace Farseer.Net.Grpc
                 try
                 {
                     result = await continuation(request: request, context: context);
-                    trackEnd.SetDownstreamResponseBody(responseBody: JsonConvert.SerializeObject(value: result));
+                    trackEnd.SetDownstreamResponseBody(responseBody: JsonConvert.SerializeObject(value: result), (int)context.Status.StatusCode);
                 }
                 catch (Exception e)
                 {
@@ -90,7 +90,7 @@ namespace Farseer.Net.Grpc
                 { "FsContextId", linkTrackContext.ContextId },
                 { "FsAppId", linkTrackContext.AppId }
             }));
-            
+
             // 添加头部信息
             return new ClientInterceptorContext<TRequest, TResponse>(method: context.Method, host: context.Host, options: callOptions);
         }

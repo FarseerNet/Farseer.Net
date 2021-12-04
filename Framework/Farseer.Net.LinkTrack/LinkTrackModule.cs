@@ -1,11 +1,12 @@
 ﻿using System.Reflection;
 using FS.DI;
 using FS.ElasticSearch;
+using FS.Mapper;
 using FS.Modules;
 
 namespace FS.LinkTrack
 {
-    [DependsOn(typeof(ElasticSearchModule))]
+    [DependsOn(typeof(ElasticSearchModule), typeof(MapperModule))]
     public class LinkTrackModule : FarseerModule
     {
         /// <summary>

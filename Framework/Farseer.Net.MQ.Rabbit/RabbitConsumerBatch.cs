@@ -7,6 +7,7 @@ using FS.Core.LinkTrack;
 using FS.DI;
 using FS.MQ.Rabbit.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using RabbitMQ.Client;
 
 namespace FS.MQ.Rabbit
@@ -134,7 +135,7 @@ namespace FS.MQ.Rabbit
                 deliveryTag = lstBasicGetResult.Max(selector: o => o.DeliveryTag);
 
                 // 消费
-                using (FsLinkTrack.TrackMqConsumer(endPort: _connect.Connection.Endpoint.ToString(), queueName: _queueName, method: "RabbitConsumerBatch"))
+                using (FsLinkTrack.TrackMqConsumer(endPort: _connect.Connection.Endpoint.ToString(), queueName: _queueName, method: "RabbitConsumerBatch", $"[{string.Join(",",lstResult)}]"))
                 {
                     result = await listener.Consumer(messages: lstResult, resp: lstBasicGetResult);
                 }
@@ -150,7 +151,7 @@ namespace FS.MQ.Rabbit
                 // 消费失败后处理
                 try
                 {
-                    using (FsLinkTrack.TrackMqConsumer(endPort: _connect.Connection.Endpoint.ToString(), queueName: _queueName, method: "RabbitConsumer"))
+                    using (FsLinkTrack.TrackMqConsumer(endPort: _connect.Connection.Endpoint.ToString(), queueName: _queueName, method: "RabbitConsumer", JsonConvert.SerializeObject(lstResult)))
                     {
                         result = await listener.FailureHandling(messages: lstResult, resp: lstBasicGetResult);
                     }

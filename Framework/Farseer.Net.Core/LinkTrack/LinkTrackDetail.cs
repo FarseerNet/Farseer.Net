@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -32,14 +33,9 @@ namespace FS.Core.LinkTrack
         public EumCallType CallType { get; set; }
 
         /// <summary>
-        ///     数据库上下文
-        /// </summary>
-        public DbLinkTrackDetail DbLinkTrackDetail { get; set; }
-
-        /// <summary>
         ///     埋点数据
         /// </summary>
-        public Dictionary<string, string> Data { get; set; }
+        public Dictionary<string, string> Data { get; set; } = new();
 
         /// <summary>
         ///     调用开始时间戳
@@ -128,6 +124,19 @@ namespace FS.Core.LinkTrack
                     CallStackTrace.FileName = new FileInfo(CallStackTrace.FileName).Name;
                 }
                 break;
+            }
+        }
+
+        /// <summary>
+        /// 设置SQL入参
+        /// </summary>
+        /// <param name="param"></param>
+        public void SetDbParam(IEnumerable<DbParameter> param)
+        {
+            if (param == null || !param.Any()) return;
+            foreach (var sqlParam in param)
+            {
+                Data["Sql"] = Data["Sql"].Replace(sqlParam.ParameterName, $"\"{sqlParam.Value}\"");
             }
         }
     }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FS.Core.Async;
 using FS.Core.LinkTrack;
+using FS.Extends;
 using FS.LinkTrack.Dal;
 
 namespace FS.LinkTrack
@@ -30,27 +31,9 @@ namespace FS.LinkTrack
             foreach (var linkTrackContext in lst) linkTrackContext.List.ForEach(action: o => o.SetCallStackTrace());
 
             return Task.WhenAll(
-                               LinkTrackEsContext.Data.LinkTrackContext.InsertAsync(lst: lst.Select(selector: o => new LinkTrackContextPO
-                                                                                            {
-                                                                                                Id           = $"{o.AppId}_{o.ContextId}",
-                                                                                                AppId        = o.AppId,
-                                                                                                ParentAppId  = o.ParentAppId,
-                                                                                                ContextId    = o.ContextId,
-                                                                                                List         = o.List,
-                                                                                                StartTs      = o.StartTs,
-                                                                                                EndTs        = o.EndTs,
-                                                                                                Domain       = o.Domain,
-                                                                                                Path         = o.Path,
-                                                                                                Method       = o.Method,
-                                                                                                Headers      = o.Headers,
-                                                                                                ContentType  = o.ContentType,
-                                                                                                RequestBody  = o.RequestBody,
-                                                                                                ResponseBody = o.ResponseBody,
-                                                                                                RequestIp    = o.RequestIp
-                                                                                            })
-                                                                                            .ToList()),
-                               // 依赖外部系统的，单独存储，用于统计慢查询
-                               AddSlowQuery(lst: lst));
+                                LinkTrackEsContext.Data.LinkTrackContext.InsertAsync(lst.Select(o => o.Map<LinkTrackContextPO>()).ToList()),
+                                // 依赖外部系统的，单独存储，用于统计慢查询
+                                AddSlowQuery(lst: lst));
         }
 
         /// <summary>
@@ -91,7 +74,7 @@ namespace FS.LinkTrack
                             break;
                         case EumCallType.Database:
                             // Sql为空，则不记录
-                            if (string.IsNullOrWhiteSpace(linkTrackDetail.DbLinkTrackDetail.Sql)) break;
+                            if (!linkTrackDetail.Data.ContainsKey("Sql")) break;
                             lstSlowQuery.Add(new SlowQueryPO
                             {
                                 AppId       = linkTrackContext.AppId,
@@ -99,9 +82,9 @@ namespace FS.LinkTrack
                                 CallType    = linkTrackDetail.CallType,
                                 UseTs       = linkTrackDetail.UseTs,
                                 StartTs     = linkTrackDetail.StartTs,
-                                DbName      = linkTrackDetail.DbLinkTrackDetail.DataBaseName,
-                                DbTableName = linkTrackDetail.DbLinkTrackDetail.TableName,
-                                DbSql       = linkTrackDetail.DbLinkTrackDetail.Sql,
+                                DbName      = linkTrackDetail.Data["DataBaseName"],
+                                DbTableName = linkTrackDetail.Data["TableName"],
+                                DbSql       = linkTrackDetail.Data["Sql"],
                             });
                             break;
                         case EumCallType.Redis:

@@ -83,11 +83,12 @@ namespace FS
                         if (!string.IsNullOrWhiteSpace(value: httpContext.Response.ContentType) && (httpContext.Response.ContentType.Contains(value: "json") ||
                                                                                                     httpContext.Response.ContentType.Contains(value: "xml")  ||
                                                                                                     httpContext.Response.ContentType.Contains(value: "text")))
-                            trackEnd.SetDownstreamResponseBody(responseBody: rspBody);
+                            trackEnd.SetDownstreamResponseBody(responseBody: rspBody,httpContext.Response.StatusCode);
                     }
                     catch (Exception e)
                     {
                         trackEnd.Exception(exception: e);
+                        trackEnd.SetDownstreamResponseBody(responseBody: e.ToString(),httpContext.Response.StatusCode);
                         throw;
                     }
                 }

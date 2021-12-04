@@ -33,6 +33,11 @@ namespace FS.Core.LinkTrack
         ///     总共使用时间毫秒
         /// </summary>
         public virtual long UseTs => EndTs > StartTs ? EndTs - StartTs : 0;
+        
+        /// <summary>
+        /// 状态码
+        /// </summary>
+        public virtual EumLinkType LinkType { get; set; }
 
         /// <summary>
         ///     请求域名
@@ -53,6 +58,11 @@ namespace FS.Core.LinkTrack
         ///     请求内容类型
         /// </summary>
         public virtual string ContentType { get; set; }
+        
+        /// <summary>
+        /// 状态码
+        /// </summary>
+        public virtual string StatusCode { get; set; }
 
         /// <summary>
         ///     请求头部

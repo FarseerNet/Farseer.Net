@@ -48,10 +48,11 @@ namespace FS.Core.LinkTrack
         /// <summary>
         ///     追踪Mq消费
         /// </summary>
-        public static TrackEnd TrackMqConsumer(string endPort, string queueName, string method)
+        public static TrackEnd TrackMqConsumer(string endPort, string queueName, string method, string message)
         {
             AsyncLocal.Value = new LinkTrackContext
             {
+                LinkType    = EumLinkType.Consumer,
                 AppId       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
                 ParentAppId = "",
                 ContextId   = SnowflakeId.GenerateId.ToString(),
@@ -61,7 +62,9 @@ namespace FS.Core.LinkTrack
                 Path        = queueName,
                 Domain      = endPort,
                 RequestIp   = IpHelper.GetIp,
-                ContentType = "MessageQueue"
+                RequestBody = message,
+                ContentType = "",
+                StatusCode  = "",
             };
             return new TrackEnd(linkTrackContext: AsyncLocal.Value);
         }
@@ -69,10 +72,11 @@ namespace FS.Core.LinkTrack
         /// <summary>
         ///     追踪Fss
         /// </summary>
-        public static TrackEnd TrackFss(string clientHost, string jobName, int taskGroupId)
+        public static TrackEnd TrackFss(string clientHost, string jobName, int taskGroupId, Dictionary<string, string> taskData)
         {
             AsyncLocal.Value = new LinkTrackContext
             {
+                LinkType    = EumLinkType.Fss,
                 AppId       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
                 ParentAppId = "",
                 ContextId   = SnowflakeId.GenerateId.ToString(),
@@ -82,7 +86,8 @@ namespace FS.Core.LinkTrack
                 Path        = $"{taskGroupId}",
                 Domain      = clientHost,
                 RequestIp   = IpHelper.GetIp,
-                ContentType = "Fss"
+                RequestBody = JsonConvert.SerializeObject(taskData ?? new()),
+                ContentType = ""
             };
             return new TrackEnd(linkTrackContext: AsyncLocal.Value);
         }
@@ -94,14 +99,16 @@ namespace FS.Core.LinkTrack
         {
             AsyncLocal.Value = new LinkTrackContext
             {
+                LinkType    = EumLinkType.BackgroundService,
                 AppId       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
                 ParentAppId = "",
                 ContextId   = SnowflakeId.GenerateId.ToString(),
                 StartTs     = DateTime.Now.ToTimestamps(),
                 List        = new List<LinkTrackDetail>(),
-                Method      = "BackgroundService",
+                RequestIp   = IpHelper.GetIp,
+                Method      = "",
                 Path        = jobName,
-                ContentType = "BackgroundService"
+                ContentType = ""
             };
             return new TrackEnd(linkTrackContext: AsyncLocal.Value);
         }
@@ -125,6 +132,7 @@ namespace FS.Core.LinkTrack
 
             AsyncLocal.Value = new LinkTrackContext()
             {
+                LinkType    = EumLinkType.ApiServer,
                 AppId       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
                 ParentAppId = parentAppId ?? "",
                 ContextId   = contextId,
@@ -136,7 +144,8 @@ namespace FS.Core.LinkTrack
                 ContentType = contentType,
                 Headers     = headerDictionary,
                 RequestBody = requestBody,
-                RequestIp   = ip
+                RequestIp   = ip,
+                StatusCode  = ""
             };
 
             return new TrackEnd(linkTrackContext: AsyncLocal.Value);
@@ -145,14 +154,21 @@ namespace FS.Core.LinkTrack
         /// <summary>
         ///     追踪数据库
         /// </summary>
-        public static TrackEnd TrackDatabase(string method, DbLinkTrackDetail dbLinkTrackDetail = null)
+        public static TrackEnd TrackDatabase(string method, string dbName, string tableName, CommandType cmdType, string sql, IEnumerable<DbParameter> param)
         {
             var linkTrackDetail = new LinkTrackDetail
             {
-                CallType          = EumCallType.Database,
-                DbLinkTrackDetail = dbLinkTrackDetail,
-                CallMethod        = method
+                CallType   = EumCallType.Database,
+                CallMethod = method,
+                Data =
+                {
+                    ["DataBaseName"] = dbName,
+                    ["TableName"]    = tableName,
+                    ["CommandType"]  = cmdType.ToString(),
+                    ["Sql"]          = sql
+                }
             };
+            linkTrackDetail.SetDbParam(param);
 
             Current.Set(linkTrackDetail: linkTrackDetail);
             return new TrackEnd(linkTrackDetail: linkTrackDetail);
@@ -165,9 +181,12 @@ namespace FS.Core.LinkTrack
         {
             var linkTrackDetail = new LinkTrackDetail
             {
-                CallType          = EumCallType.Database,
-                DbLinkTrackDetail = new DbLinkTrackDetail { ConnectionString = connectionString },
-                CallMethod        = method
+                CallType   = EumCallType.Database,
+                CallMethod = method,
+                Data =
+                {
+                    ["ConnectionString"] = connectionString
+                }
             };
 
             Current.Set(linkTrackDetail: linkTrackDetail);
@@ -181,9 +200,14 @@ namespace FS.Core.LinkTrack
         {
             var linkTrackDetail = new LinkTrackDetail
             {
-                CallType          = EumCallType.Database,
-                DbLinkTrackDetail = new DbLinkTrackDetail { ConnectionString = connectionString, TableName = tableName },
-                CallMethod        = method
+                CallType = EumCallType.Database,
+                //DbLinkTrackDetail = new DbLinkTrackDetail { ConnectionString = connectionString, TableName = tableName },
+                CallMethod = method,
+                Data =
+                {
+                    ["ConnectionString"] = connectionString,
+                    ["TableName"]        = tableName
+                }
             };
             Current.Set(linkTrackDetail: linkTrackDetail);
             return new TrackEnd(linkTrackDetail: linkTrackDetail);
@@ -197,16 +221,22 @@ namespace FS.Core.LinkTrack
             var linkTrackDetail = new LinkTrackDetail
             {
                 CallType = EumCallType.Database,
-                DbLinkTrackDetail = new DbLinkTrackDetail
+                // DbLinkTrackDetail = new DbLinkTrackDetail
+                // {
+                //     ConnectionString = connectionString,
+                //     CommandType      = commandType,
+                //     Sql              = sql,
+                // },
+                CallMethod = method,
+                Data =
                 {
-                    ConnectionString = connectionString,
-                    CommandType      = commandType,
-                    Sql              = sql,
-                },
-                CallMethod = method
+                    ["ConnectionString"] = connectionString,
+                    ["CommandType"]      = commandType.ToString(),
+                    ["Sql"]              = sql
+                }
             };
-            linkTrackDetail.DbLinkTrackDetail.SetDbParam(parameters);
-            
+            linkTrackDetail.SetDbParam(parameters);
+
             Current.Set(linkTrackDetail: linkTrackDetail);
             return new TrackEnd(linkTrackDetail: linkTrackDetail);
         }

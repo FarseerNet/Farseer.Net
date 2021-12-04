@@ -139,16 +139,7 @@ namespace FS.Data.Internal
         /// </summary>
         private TReturn SpeedTest<TReturn>(string callMethod, string dbName, string tableName, CommandType cmdType, string sql, IEnumerable<DbParameter> param, Func<TReturn> func)
         {
-            // 调用链上下文
-            var dbLinkTrackDetail = new DbLinkTrackDetail
-            {
-                DataBaseName = dbName,
-                TableName    = tableName,
-                CommandType  = cmdType,
-                Sql          = sql,
-            };
-            dbLinkTrackDetail.SetDbParam(param);
-            using (FsLinkTrack.TrackDatabase(method: callMethod, dbLinkTrackDetail: dbLinkTrackDetail))
+            using (FsLinkTrack.TrackDatabase(method: callMethod, dbName, tableName, cmdType, sql, param))
             {
                 return func();
             }
@@ -159,17 +150,7 @@ namespace FS.Data.Internal
         /// </summary>
         private async Task<TReturn> SpeedTestAsync<TReturn>(string callMethod, string dbName, string tableName, CommandType cmdType, string sql, IEnumerable<DbParameter> param, Func<Task<TReturn>> func)
         {
-            // 调用链上下文
-            var dbLinkTrackDetail = new DbLinkTrackDetail
-            {
-                DataBaseName = dbName,
-                TableName    = tableName,
-                CommandType  = cmdType,
-                Sql          = sql,
-            };
-            dbLinkTrackDetail.SetDbParam(param);
-
-            using (FsLinkTrack.TrackDatabase(method: callMethod, dbLinkTrackDetail: dbLinkTrackDetail))
+            using (FsLinkTrack.TrackDatabase(method: callMethod, dbName, tableName, cmdType, sql, param))
             {
                 return await func();
             }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -7,6 +8,7 @@ using FS.Cache.Redis;
 using FS.Core.LinkTrack;
 using FS.DI;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using StackExchange.Redis;
 
 namespace FS.MQ.RedisStream
@@ -84,7 +86,7 @@ namespace FS.MQ.RedisStream
         {
             // 开启多线程消费
             for (var i = 0; i < _consumeThreadNums; i++)
-                // 如果消费组没有填写，则以广播模式消费
+            // 如果消费组没有填写，则以广播模式消费
                 if (string.IsNullOrWhiteSpace(value: _groupName))
                 {
                     ThreadPool.QueueUserWorkItem(callBack: async _ =>
@@ -108,11 +110,12 @@ namespace FS.MQ.RedisStream
         {
             while (true)
             {
-                var            result         = false;
-                var            listener       = _iocManager.Resolve<IListenerMessage>(name: _consumerType);
-                StreamEntry[]  streamEntries  = null;
-                ConsumeContext consumeContext = null;
-                var            sw             = new Stopwatch();
+                var                 result         = false;
+                var                 listener       = _iocManager.Resolve<IListenerMessage>(name: _consumerType);
+                StreamEntry[]       streamEntries  = null;
+                ConsumeContext      consumeContext = null;
+                var                 sw             = new Stopwatch();
+                IEnumerable<string> messages       = null;
                 try
                 {
                     streamEntries = await _redisCacheManager.Db.StreamReadGroupAsync(key: _queueName, groupName: _groupName, consumerName: _hostName, count: _pullCount);
@@ -128,7 +131,9 @@ namespace FS.MQ.RedisStream
                         MessageIds = streamEntries.Select(selector: o => o.Id.ToString()).ToArray()
                     };
 
-                    using (FsLinkTrack.TrackMqConsumer(endPort: _redisCacheManager.Server, queueName: $"{_queueName}/{_groupName}", method: "RedisStreamConsumer"))
+                    // 将拉取到的消息转成集合
+                    messages = streamEntries.SelectMany(o => o.Values).Select(o => o.Value.ToString());
+                    using (FsLinkTrack.TrackMqConsumer(endPort: _redisCacheManager.Server, queueName: $"{_queueName}/{_groupName}", method: "RedisStreamConsumer", JsonConvert.SerializeObject(messages)))
                     {
                         result = await listener.Consumer(messages: streamEntries, content: consumeContext);
                     }
@@ -139,7 +144,7 @@ namespace FS.MQ.RedisStream
                     _iocManager.Logger<RedisStreamConsumer>().LogError(exception: e, message: listener.GetType().FullName);
                     try
                     {
-                        using (FsLinkTrack.TrackMqConsumer(endPort: _redisCacheManager.Server, queueName: $"{_queueName}/{_groupName}", method: "RedisStreamConsumer"))
+                        using (FsLinkTrack.TrackMqConsumer(endPort: _redisCacheManager.Server, queueName: $"{_queueName}/{_groupName}", method: "RedisStreamConsumer", JsonConvert.SerializeObject(messages)))
                         {
                             result = await listener.FailureHandling(messages: streamEntries, content: consumeContext);
                         }
@@ -156,7 +161,7 @@ namespace FS.MQ.RedisStream
                     if (result)
                         await _redisCacheManager.Db.StreamAcknowledgeAsync(key: _queueName, groupName: _groupName, messageIds: ids);
                     else if (ids.Length > 0)
-                        // 消费失败时，把pending队列的消息重新放回队列
+                    // 消费失败时，把pending队列的消息重新放回队列
                         _redisCacheManager.Db.StreamClaim(key: _queueName, consumerGroup: _groupName, claimingConsumer: _groupName, minIdleTimeInMs: sw.ElapsedMilliseconds, messageIds: ids);
                 }
             }
@@ -167,10 +172,10 @@ namespace FS.MQ.RedisStream
         /// </summary>
         private async Task ConnectAsync()
         {
-            var _lastMessageId = "0";
+            var lastMessageId = "0";
             while (true)
             {
-                var streamEntries = await _redisCacheManager.Db.StreamReadAsync(key: _queueName, position: _lastMessageId, count: _pullCount);
+                var streamEntries = await _redisCacheManager.Db.StreamReadAsync(key: _queueName, position: lastMessageId, count: _pullCount);
                 if (streamEntries.Length == 0)
                 {
                     await Task.Delay(millisecondsDelay: 100);
@@ -184,11 +189,14 @@ namespace FS.MQ.RedisStream
                     MessageIds = streamEntries.Select(selector: o => o.Id.ToString()).ToArray()
                 };
 
+                // 将拉取到的消息转成集合
+                var messages = streamEntries.SelectMany(o => o.Values).Select(o => o.Value.ToString());
+
                 var  listener = _iocManager.Resolve<IListenerMessage>(name: _consumerType);
                 bool result;
                 try
                 {
-                    using (FsLinkTrack.TrackMqConsumer(endPort: _redisCacheManager.Server, queueName: $"{_queueName}/{_groupName}", method: "RedisStreamConsumer"))
+                    using (FsLinkTrack.TrackMqConsumer(endPort: _redisCacheManager.Server, queueName: $"{_queueName}/{_groupName}", method: "RedisStreamConsumer", JsonConvert.SerializeObject(messages)))
                     {
                         result = await listener.Consumer(messages: streamEntries, content: consumeContext);
                     }
@@ -196,7 +204,7 @@ namespace FS.MQ.RedisStream
                     if (result)
                     {
                         await _redisCacheManager.Db.StreamDeleteAsync(key: _queueName, messageIds: consumeContext.MessageIds.Select(selector: o => (RedisValue)o).ToArray());
-                        _lastMessageId = consumeContext.MessageIds.Last();
+                        lastMessageId = consumeContext.MessageIds.Last();
                     }
                 }
                 catch (Exception e)
@@ -205,14 +213,14 @@ namespace FS.MQ.RedisStream
                     _iocManager.Logger<RedisStreamConsumer>().LogError(exception: e, message: listener.GetType().FullName);
                     try
                     {
-                        using (FsLinkTrack.TrackMqConsumer(endPort: _redisCacheManager.Server, queueName: $"{_queueName}/{_groupName}", method: "RedisStreamConsumer"))
+                        using (FsLinkTrack.TrackMqConsumer(endPort: _redisCacheManager.Server, queueName: $"{_queueName}/{_groupName}", method: "RedisStreamConsumer", JsonConvert.SerializeObject(messages)))
                         {
                             result = await listener.FailureHandling(messages: streamEntries, content: consumeContext);
                         }
                         if (result)
                         {
                             await _redisCacheManager.Db.StreamDeleteAsync(key: _queueName, messageIds: consumeContext.MessageIds.Select(selector: o => (RedisValue)o).ToArray());
-                            _lastMessageId = consumeContext.MessageIds.Last();
+                            lastMessageId = consumeContext.MessageIds.Last();
                         }
                     }
                     catch (Exception exception)

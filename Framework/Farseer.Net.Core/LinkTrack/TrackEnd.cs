@@ -37,17 +37,19 @@ namespace FS.Core.LinkTrack
         /// <summary>
         ///     设置下游系统API响应内容
         /// </summary>
-        public void SetDownstreamResponseBody(string responseBody)
+        public void SetDownstreamResponseBody(string responseBody, int responseStatusCode)
         {
             _linkTrackContext.ResponseBody = responseBody;
+            _linkTrackContext.StatusCode   = responseStatusCode.ToString();
         }
 
         /// <summary>
         ///     设置Http响应内容
         /// </summary>
-        public void SetHttpResponseBody(string responseBody)
+        public void SetHttpResponseBody(string responseBody, int responseStatusCode)
         {
             _linkTrackDetail.Data[key: "ResponseBody"] = responseBody;
+            _linkTrackDetail.Data["StatusCode"]        = responseStatusCode.ToString();
         }
 
         /// <summary>
@@ -76,7 +78,7 @@ namespace FS.Core.LinkTrack
         {
             if (_linkTrackDetail != null)
             {
-                SetHttpResponseBody(responseBody: exception.ToString());
+                SetHttpResponseBody(responseBody: exception.ToString(), 500);
                 _linkTrackDetail.IsException      = true;
                 _linkTrackDetail.ExceptionMessage = exception.ToString();
             }

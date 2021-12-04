@@ -65,7 +65,7 @@ namespace FS.Core.Http
 
                 var bytes  = await httpRspMessage.Content.ReadAsByteArrayAsync().ConfigureAwait(continueOnCapturedContext: false);
                 var result = encoding.GetString(bytes: bytes);
-                trackEnd.SetHttpResponseBody(responseBody: result);
+                trackEnd.SetHttpResponseBody(responseBody: result, (int)httpRspMessage.StatusCode);
                 return result;
             }
         }

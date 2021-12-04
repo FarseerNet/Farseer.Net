@@ -1,15 +1,13 @@
 using System.Collections.Generic;
 using FS.Core.LinkTrack;
+using FS.Mapper;
 using Nest;
 
 namespace FS.LinkTrack.Dal
 {
-    [ElasticsearchType(IdProperty = "Id")]
+    [Map(typeof(LinkTrackContext))]
     public class LinkTrackContextPO : LinkTrackContext
     {
-        [Keyword]
-        public string Id { get; set; }
-
         [Keyword]
         public override string ContextId { get; set; }
 
@@ -51,5 +49,8 @@ namespace FS.LinkTrack.Dal
 
         [Object()]
         public override List<LinkTrackDetail> List { get; set; }
+
+        [Keyword]
+        public override string StatusCode { get; set; }
     }
 }
