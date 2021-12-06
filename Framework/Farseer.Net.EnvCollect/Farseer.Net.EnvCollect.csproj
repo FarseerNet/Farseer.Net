@@ -18,6 +18,8 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Farseer.Net.Core\Farseer.Net.Core.csproj" />
+        <ProjectReference Include="..\Farseer.Net.ElasticSearch\Farseer.Net.ElasticSearch.csproj" />
+        <ProjectReference Include="..\Farseer.Net.Mapper\Farseer.Net.Mapper.csproj" />
         <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />
     </ItemGroup>
 
