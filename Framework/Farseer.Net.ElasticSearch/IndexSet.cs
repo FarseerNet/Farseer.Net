@@ -87,9 +87,10 @@ namespace FS.ElasticSearch
         /// <param name="shardsCount"> 新的分片数量 </param>
         /// <param name="replicasCount"> 新的副本数量 </param>
         /// <param name="aliasNames"> 别名 </param>
-        public IndexSet<TDocument> SetName(string indexName, int shardsCount = 3, int replicasCount = 1, params string[] aliasNames)
+        /// <param name="refreshInterval">刷新间隔 </param>
+        public IndexSet<TDocument> SetName(string indexName, int shardsCount = 3, int replicasCount = 1, int refreshInterval = 1, params string[] aliasNames)
         {
-            SetMap.SetName(indexName: indexName, shardsCount: shardsCount, replicasCount: replicasCount, aliasNames: aliasNames);
+            SetMap.SetName(indexName: indexName, shardsCount: shardsCount, replicasCount: replicasCount, refreshInterval, aliasNames: aliasNames);
             return this;
         }
 
@@ -116,7 +117,7 @@ namespace FS.ElasticSearch
         /// </summary>
         public IndexSet<TDocument> Asc<TKey>(Expression<Func<TDocument, TKey>> asc)
         {
-            _sort = s=>s.Ascending(asc);
+            _sort = s => s.Ascending(asc);
             return this;
         }
 
@@ -125,7 +126,7 @@ namespace FS.ElasticSearch
         /// </summary>
         public IndexSet<TDocument> Desc<TKey>(Expression<Func<TDocument, TKey>> desc)
         {
-            _sort = s=>s.Descending(desc);
+            _sort = s => s.Descending(desc);
             return this;
         }
 
