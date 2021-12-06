@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <Company>steden</Company>
+        <Copyright>http://www.fsgit.com</Copyright>
+        <Product>主机环境数据采集器</Product>
+        <Description>包括：收集服务器主机当前运行数据</Description>
+        <AssemblyVersion>2.6.1</AssemblyVersion>
+        <FileVersion>2.6.1</FileVersion>
+        <Version>2.6.1</Version>
+        <Authors>steden</Authors>
+        <PackageTags>主机环境数据采集器</PackageTags>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <RootNamespace>FS.EC</RootNamespace>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Farseer.Net.Core\Farseer.Net.Core.csproj" />
+        <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Properties\" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    </ItemGroup>
+
+</Project>
