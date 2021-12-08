@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Google.Protobuf" Version="3.18.1" />
+        <PackageReference Include="Google.Protobuf" Version="3.19.1" />
         <PackageReference Include="MySqlConnector" Version="2.1.0" />
         <PackageReference Include="NETStandard.Library" Version="2.0.3" />
     </ItemGroup>

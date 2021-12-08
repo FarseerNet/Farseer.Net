@@ -1,4 +1,5 @@
 using System;
+using Farseer.Net.Grpc;
 using Farseer.Net.Grpc.Configuration;
 using FS.DI;
 using Grpc.Core;
@@ -6,7 +7,7 @@ using Grpc.Core.Interceptors;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Logging;
 
-namespace Farseer.Net.Grpc
+namespace FS.Grpc
 {
     /// <summary>
     ///     CSL GRPC服务

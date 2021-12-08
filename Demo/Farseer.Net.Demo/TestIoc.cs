@@ -1,6 +1,6 @@
 namespace Farseer.Net.Demo
 {
-    public class TestIoc
+    public interface TestIoc
     {
     }
 }

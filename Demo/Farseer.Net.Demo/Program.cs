@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FS;
 using FS.Core.Http;
+using FS.DI;
 using FS.Extends;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -16,8 +17,7 @@ namespace Farseer.Net.Demo
         private static async Task Main(string[] args)
         {
             FarseerApplication.Run<StartupModule>().Initialize();
-            var result = await HttpGet.GetAsync("http://cdn.es3.com/?www.baidu.com");
-            Console.WriteLine(result);
+            var serviceAll = IocManager.GetService<TestIoc>();
         }
 
         public static async Task<int> ThrowAsync(int index)

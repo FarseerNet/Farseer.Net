@@ -2,6 +2,7 @@
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using Farseer.Net.Grpc.Configuration;
+using FS.Grpc;
 
 namespace Farseer.Net.Grpc
 {
