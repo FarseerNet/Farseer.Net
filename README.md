@@ -88,6 +88,28 @@ public class TestConsumer : IListenerMessage
 }
 ```
 
+
+### Farseer.Net.EventBus 事件总线组件：
+#### 发送
+```c#
+IocManager.GetService<IEventProduct>(name: "test").Send(null, message: "测试发送消息内容");
+```
+#### 消费
+```c#
+/// <summary>
+/// 测试事件
+/// </summary>
+[Consumer(EventName = "test")]
+public class TestEvent : IListenerMessage
+{
+    public async Task<bool> Consumer(string message, object sender, DomainEventArgs ea)
+    {
+        Console.WriteLine($"{ea.Id} 我订阅了test的消息：消息发送时间：{ea.CreateAt} 内容：{message}");
+        return true;
+    }
+}
+```
+
 ### Farseer.Net.MQ.RedisStream RedisStream组件：
 #### 发送
 ```c#
@@ -173,6 +195,8 @@ public class TestConsumer : IListenerMessage
   *  基于StackExchange.Redis的模块化封装
 * `Farseer.Net.ElasticSearch`
   *  基于ES的ORM封装，于`Farseer.Net.Data`组件使用相似
+* `Farseer.Net.EventBus`
+  *  事件总线，实现轻量级的进程内发布与订阅。
 * `Farseer.Net.Job`
   *  基于`FSS`分布式调度平台的客户端，实现高可用的分布式的任务调度
 * `Farseer.Net.LinkTrack`
