@@ -265,6 +265,25 @@ namespace FS.Data.Infrastructure
         /// <param name="pageSize"> 每页显示数量 </param>
         /// <param name="pageIndex"> 分页索引 </param>
         /// <param name="recordCount"> 总记录数量 </param>
+        public virtual List<TEntity> ToList(int pageSize, int pageIndex, out long recordCount)
+        {
+            // 计算总页数
+            Check.IsTure(isTrue: pageIndex < 1, parameterName: $"参数{nameof(pageIndex)}，不能小于1");
+            Check.IsTure(isTrue: pageSize  < 1, parameterName: $"参数{nameof(pageSize)}，不能小于1");
+
+            var queue = Queue;
+            recordCount = Count();
+            Queue.Copy(queue: queue);
+
+            return ToList(pageSize: pageSize, pageIndex: pageIndex);
+        }
+
+        /// <summary>
+        ///     查询多条记录（不支持延迟加载）
+        /// </summary>
+        /// <param name="pageSize"> 每页显示数量 </param>
+        /// <param name="pageIndex"> 分页索引 </param>
+        /// <param name="recordCount"> 总记录数量 </param>
         /// <param name="isDistinct"> 返回当前条件下非重复数据 </param>
         public virtual Task<List<TEntity>> ToListAsync(int pageSize, int pageIndex, out int recordCount, bool isDistinct = false)
         {
