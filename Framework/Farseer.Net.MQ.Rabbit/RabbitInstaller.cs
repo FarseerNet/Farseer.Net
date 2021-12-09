@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 namespace FS.MQ.Rabbit
 {
     /// <summary>
-    ///     RocketMQ的IOC注册
+    ///     Rabbit的IOC注册
     /// </summary>
     public class RabbitInstaller : IWindsorInstaller
     {
@@ -44,56 +44,55 @@ namespace FS.MQ.Rabbit
 
             // 查找入口方法是否启用了Rabbit消费
             var rabbitAttribute = Assembly.GetEntryAssembly().EntryPoint.DeclaringType.GetCustomAttribute<RabbitAttribute>();
-            if (rabbitAttribute is
+            if (rabbitAttribute is not
             {
                 Enable: true
-            })
+            }) return;
+            
+            var iocManager = container.Resolve<IIocManager>();
+            try
             {
-                var iocManager = container.Resolve<IIocManager>();
-                try
+                // 启动单次消费程序
+                foreach (var consumerType in container.Resolve<IAssemblyFinder>().GetType<IListenerMessage>())
                 {
-                    // 启动单次消费程序
-                    foreach (var consumerType in container.Resolve<IAssemblyFinder>().GetType<IListenerMessage>())
+                    var consumerAtt = consumerType.GetCustomAttribute<ConsumerAttribute>();
+                    if (consumerAtt is
                     {
-                        var consumerAtt = consumerType.GetCustomAttribute<ConsumerAttribute>();
-                        if (consumerAtt is
-                        {
-                            Enable: false
-                        })
-                            continue;
+                        Enable: false
+                    })
+                        continue;
 
-                        if (!iocManager.IsRegistered(name: consumerType.FullName)) iocManager.Register(type: consumerType, name: consumerType.FullName, lifeStyle: DependencyLifeStyle.Transient);
+                    if (!iocManager.IsRegistered(name: consumerType.FullName)) iocManager.Register(type: consumerType, name: consumerType.FullName, lifeStyle: DependencyLifeStyle.Transient);
 
-                        FarseerApplication.AddInitCallback(act: () =>
-                        {
-                            Task.WaitAll(iocManager.Resolve<IListenerMessage>(name: consumerType.FullName).Init(iocManager: iocManager, consumerAtt: consumerAtt, consumerType: consumerType));
-                        });
-                    }
-
-                    // 启动批量消费程序
-                    foreach (var consumerType in container.Resolve<IAssemblyFinder>().GetType<IListenerMessageBatch>())
+                    FarseerApplication.AddInitCallback(act: () =>
                     {
-                        var consumerAtt = consumerType.GetCustomAttribute<ConsumerAttribute>();
-                        if (consumerAtt is
-                        {
-                            Enable: false
-                        })
-                            continue;
-
-                        if (!iocManager.IsRegistered(name: consumerType.FullName)) iocManager.Register(type: consumerType, name: consumerType.FullName, lifeStyle: DependencyLifeStyle.Transient);
-
-                        FarseerApplication.AddInitCallback(act: () =>
-                        {
-                            Task.WhenAll(iocManager.Resolve<IListenerMessageBatch>(name: consumerType.FullName).Init(iocManager: iocManager, consumerAtt: consumerAtt, consumerType: consumerType));
-                        });
-                    }
-
-                    IocManager.Instance.Logger<RabbitInstaller>().LogInformation(message: "全部消费启动完成!");
+                        Task.WaitAll(iocManager.Resolve<IListenerMessage>(name: consumerType.FullName).Init(iocManager: iocManager, consumerAtt: consumerAtt, consumerType: consumerType));
+                    });
                 }
-                catch (Exception e)
+
+                // 启动批量消费程序
+                foreach (var consumerType in container.Resolve<IAssemblyFinder>().GetType<IListenerMessageBatch>())
                 {
-                    IocManager.Instance.Logger<RabbitInstaller>().LogError(exception: e, message: e.Message);
+                    var consumerAtt = consumerType.GetCustomAttribute<ConsumerAttribute>();
+                    if (consumerAtt is
+                    {
+                        Enable: false
+                    })
+                        continue;
+
+                    if (!iocManager.IsRegistered(name: consumerType.FullName)) iocManager.Register(type: consumerType, name: consumerType.FullName, lifeStyle: DependencyLifeStyle.Transient);
+
+                    FarseerApplication.AddInitCallback(act: () =>
+                    {
+                        Task.WhenAll(iocManager.Resolve<IListenerMessageBatch>(name: consumerType.FullName).Init(iocManager: iocManager, consumerAtt: consumerAtt, consumerType: consumerType));
+                    });
                 }
+
+                IocManager.Instance.Logger<RabbitInstaller>().LogInformation(message: "全部消费启动完成!");
+            }
+            catch (Exception e)
+            {
+                IocManager.Instance.Logger<RabbitInstaller>().LogError(exception: e, message: e.Message);
             }
         }
     }

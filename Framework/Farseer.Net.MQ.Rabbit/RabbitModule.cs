@@ -5,7 +5,7 @@ using FS.Modules;
 namespace FS.MQ.Rabbit
 {
     /// <summary>
-    ///     RocketMQ模块
+    ///     Rabbit模块
     /// </summary>
     public class RabbitModule : FarseerModule
     {

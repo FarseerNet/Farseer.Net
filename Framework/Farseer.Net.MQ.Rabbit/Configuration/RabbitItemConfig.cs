@@ -3,7 +3,7 @@
 namespace FS.MQ.Rabbit.Configuration
 {
     /// <summary>
-    ///     RocketMQ配置信息
+    ///     配置信息
     /// </summary>
     public class RabbitItemConfig
     {
