@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Framework\Farseer.Net.EventBus\Farseer.Net.EventBus.csproj" />
+      <ProjectReference Include="..\..\Framework\Farseer.Net.Utils\Farseer.Net.Utils.csproj" />
       <ProjectReference Include="..\..\Framework\Farseer.Net\Farseer.Net.csproj" />
     </ItemGroup>
 

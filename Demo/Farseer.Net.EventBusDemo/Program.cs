@@ -4,6 +4,7 @@ using System.Threading;
 using FS;
 using FS.DI;
 using FS.EventBus;
+using FS.Utils.Common;
 
 namespace Farseer.Net.EventBusDemo
 {
@@ -15,11 +16,12 @@ namespace Farseer.Net.EventBusDemo
             FarseerApplication.Run<StartupModule>().Initialize();
 
             // ******************** 以下演示消息发送 *********************
+            
             // 先执行jit
-            IocManager.GetService<IEventProduct>(name: "test").SendSync(null, message: "测试发送消息内容");
+            var eventProduct = IocManager.GetService<IEventProduct>(name: "test");
+            eventProduct.SendSync(null, message: "测试发送消息内容");
             // 开启时间测试
             var startNew = Stopwatch.StartNew();
-            // 以上也是JIT
 
             // ******************** 测试1秒内，能发送多少条消息 *********************
             var count = 0;
@@ -27,10 +29,12 @@ namespace Farseer.Net.EventBusDemo
             startNew.Restart();
             while (startNew.ElapsedMilliseconds < 1000)
             {
-                IocManager.GetService<IEventProduct>(name: "test").SendAsync(null, message: DateTime.Now.ToString());
+                eventProduct.SendSync(null, message: DateTime.Now);
                 count++;
             }
 
+            // 异步发送：每秒秒发送95W条事件消息
+            // 同步发送：每秒秒发送42W条事件消息
             Console.WriteLine(value: $"共发送了：{count} 消息");
         }
     }

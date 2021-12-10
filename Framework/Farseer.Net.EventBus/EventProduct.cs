@@ -38,7 +38,7 @@ namespace FS.EventBus
         /// <param name="sender">事件发布者 </param>
         /// <param name="message"> 消息主体 </param>
         /// <returns>返回false，订阅方处理失败</returns>
-        public bool SendSync(object sender, string message)
+        public bool SendSync(object sender, object message)
         {
             // 生成事件体
             var domainEventArgs = new DomainEventArgs(sender, message);
@@ -60,7 +60,7 @@ namespace FS.EventBus
         /// </summary>
         /// <param name="sender">事件发布者 </param>
         /// <param name="message"> 消息主体 </param>
-        public bool SendAsync(object sender, string message)
+        public bool SendAsync(object sender, object message)
         {
             // 将事件加入到所有订阅方的队列中
             foreach (var consumer in DicConsumer[_eventName])
