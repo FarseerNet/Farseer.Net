@@ -107,7 +107,7 @@ namespace FS.MQ.Rabbit
             var   lstBasicGetResult = new List<BasicGetResult>();
             ulong deliveryTag       = 0;
 
-            var listener = _iocManager.Resolve<IListenerMessageBatch>(name: _consumerTypeName);
+            var consumerService = _iocManager.Resolve<IListenerMessageBatch>(name: _consumerTypeName);
 
             var result = false;
             try
@@ -137,7 +137,7 @@ namespace FS.MQ.Rabbit
                 // 消费
                 using (FsLinkTrack.TrackMqConsumer(endPort: _connect.Connection.Endpoint.ToString(), queueName: _queueName, method: "RabbitConsumerBatch", $"[{string.Join(",",lstResult)}]"))
                 {
-                    result = await listener.Consumer(messages: lstResult, resp: lstBasicGetResult);
+                    result = await consumerService.Consumer(messages: lstResult, resp: lstBasicGetResult);
                 }
 
                 // 写入链路追踪
@@ -153,7 +153,7 @@ namespace FS.MQ.Rabbit
                 {
                     using (FsLinkTrack.TrackMqConsumer(endPort: _connect.Connection.Endpoint.ToString(), queueName: _queueName, method: "RabbitConsumer", JsonConvert.SerializeObject(lstResult)))
                     {
-                        result = await listener.FailureHandling(messages: lstResult, resp: lstBasicGetResult);
+                        result = await consumerService.FailureHandling(messages: lstResult, resp: lstBasicGetResult);
                     }
 
                     // 写入链路追踪
@@ -161,12 +161,13 @@ namespace FS.MQ.Rabbit
                 }
                 catch (Exception exception)
                 {
-                    IocManager.Instance.Logger<RabbitConsumer>().LogError(exception: exception, message: "失败处理出现异常：" + listener.GetType().FullName);
+                    IocManager.Instance.Logger<RabbitConsumer>().LogError(exception: exception, message: "失败处理出现异常：" + consumerService.GetType().FullName);
                     result = false;
                 }
             }
             finally
             {
+                IocManager.Instance.Release(consumerService);
                 if (!autoAck && lstResult.Count > 0)
                 {
                     if (result)

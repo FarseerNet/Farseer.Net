@@ -180,14 +180,14 @@ namespace FS.MQ.Rabbit
                 ea.BasicProperties.Headers ??= new Dictionary<string, object>();
                 ea.BasicProperties.Headers.Add(key: "QueueName", value: _queueName);
 
-                var listener = _iocManager.Resolve<IListenerMessage>(name: _consumerTypeName);
+                var consumerService = _iocManager.Resolve<IListenerMessage>(name: _consumerTypeName);
                 var result   = false;
                 var message  = Encoding.UTF8.GetString(bytes: ea.Body.ToArray());
                 try
                 {
                     using (FsLinkTrack.TrackMqConsumer(endPort: _rabbitConnect.Connection.Endpoint.ToString(), queueName: _queueName, method: "RabbitConsumer", message))
                     {
-                        result = await listener.Consumer(message: message, sender: model, ea: ea);
+                        result = await consumerService.Consumer(message: message, sender: model, ea: ea);
                     }
 
                     // 写入链路追踪
@@ -198,17 +198,17 @@ namespace FS.MQ.Rabbit
                 catch (AlreadyClosedException e) // rabbit被关闭了，重新打开链接
                 {
                     ReStart();
-                    IocManager.Instance.Logger<RabbitConsumer>().LogError(exception: e, message: listener.GetType().FullName);
+                    IocManager.Instance.Logger<RabbitConsumer>().LogError(exception: e, message: consumerService.GetType().FullName);
                 }
                 catch (Exception e)
                 {
                     // 消费失败后处理
-                    IocManager.Instance.Logger<RabbitConsumer>().LogError(exception: e, message: listener.GetType().FullName);
+                    IocManager.Instance.Logger<RabbitConsumer>().LogError(exception: e, message: consumerService.GetType().FullName);
                     try
                     {
                         using (FsLinkTrack.TrackMqConsumer(endPort: _rabbitConnect.Connection.Endpoint.ToString(), queueName: _queueName, method: "RabbitConsumer", message))
                         {
-                            result = await listener.FailureHandling(message: message, sender: model, ea: ea);
+                            result = await consumerService.FailureHandling(message: message, sender: model, ea: ea);
                         }
 
                         // 写入链路追踪
@@ -216,7 +216,7 @@ namespace FS.MQ.Rabbit
                     }
                     catch (Exception exception)
                     {
-                        IocManager.Instance.Logger<RabbitConsumer>().LogError(exception: exception, message: "失败处理出现异常：" + listener.GetType().FullName);
+                        IocManager.Instance.Logger<RabbitConsumer>().LogError(exception: exception, message: "失败处理出现异常：" + consumerService.GetType().FullName);
                         result = false;
                     }
                     finally
@@ -251,6 +251,7 @@ namespace FS.MQ.Rabbit
                         else
                             _channel.BasicReject(deliveryTag: ea.DeliveryTag, requeue: true);
                     }
+                    IocManager.Instance.Release(consumerService);
                 }
             };
             // 消费者开启监听

@@ -47,7 +47,7 @@ namespace FS.EventBus
         public void Work()
         {
             // 执行当前队列
-            Task.Run(async () =>
+            Task.Run(() =>
             {
                 while (true)
                 {
@@ -61,9 +61,9 @@ namespace FS.EventBus
                     EventHandle(domainEventArgs: domainEventArgs, true);
                 }
             });
-            
+
             // 执行失败队列
-            Task.Run(async () =>
+            Task.Run(() =>
             {
                 while (true)
                 {
@@ -93,7 +93,9 @@ namespace FS.EventBus
                 {
                     await Task.Delay((int)Math.Pow(10, domainEventArgs.ErrorCount));
                 }
-                result = await IocManager.GetService<IListenerMessage>(Consumer).Consumer(domainEventArgs.Message.ToString(), domainEventArgs.Sender, domainEventArgs);
+                var consumerService = IocManager.GetService<IListenerMessage>(Consumer);
+                result = await consumerService.Consumer(domainEventArgs.Message, domainEventArgs);
+                IocManager.Instance.Release(consumerService);
             }
             catch (Exception e)
             {

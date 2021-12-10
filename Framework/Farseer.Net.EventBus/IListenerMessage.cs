@@ -11,6 +11,6 @@ namespace FS.EventBus
         ///     消费
         /// </summary>
         /// <returns> 当开启手动确认时，返回true时，才会进行ACK确认 </returns>
-        Task<bool> Consumer(string message, object sender, DomainEventArgs ea);
+        Task<bool> Consumer(object message, DomainEventArgs ea);
     }
 }

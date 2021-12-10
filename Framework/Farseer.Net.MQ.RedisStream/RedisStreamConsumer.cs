@@ -110,12 +110,12 @@ namespace FS.MQ.RedisStream
         {
             while (true)
             {
-                var                 result         = false;
-                var                 listener       = _iocManager.Resolve<IListenerMessage>(name: _consumerType);
-                StreamEntry[]       streamEntries  = null;
-                ConsumeContext      consumeContext = null;
-                var                 sw             = new Stopwatch();
-                IEnumerable<string> messages       = null;
+                var                 result          = false;
+                var                 consumerService = _iocManager.Resolve<IListenerMessage>(name: _consumerType);
+                StreamEntry[]       streamEntries   = null;
+                ConsumeContext      consumeContext  = null;
+                var                 sw              = new Stopwatch();
+                IEnumerable<string> messages        = null;
                 try
                 {
                     streamEntries = await _redisCacheManager.Db.StreamReadGroupAsync(key: _queueName, groupName: _groupName, consumerName: _hostName, count: _pullCount);
@@ -135,28 +135,29 @@ namespace FS.MQ.RedisStream
                     messages = streamEntries.SelectMany(o => o.Values).Select(o => o.Value.ToString());
                     using (FsLinkTrack.TrackMqConsumer(endPort: _redisCacheManager.Server, queueName: $"{_queueName}/{_groupName}", method: "RedisStreamConsumer", JsonConvert.SerializeObject(messages)))
                     {
-                        result = await listener.Consumer(messages: streamEntries, content: consumeContext);
+                        result = await consumerService.Consumer(messages: streamEntries, content: consumeContext);
                     }
                 }
                 catch (Exception e)
                 {
                     // 消费失败后处理
-                    _iocManager.Logger<RedisStreamConsumer>().LogError(exception: e, message: listener.GetType().FullName);
+                    _iocManager.Logger<RedisStreamConsumer>().LogError(exception: e, message: consumerService.GetType().FullName);
                     try
                     {
                         using (FsLinkTrack.TrackMqConsumer(endPort: _redisCacheManager.Server, queueName: $"{_queueName}/{_groupName}", method: "RedisStreamConsumer", JsonConvert.SerializeObject(messages)))
                         {
-                            result = await listener.FailureHandling(messages: streamEntries, content: consumeContext);
+                            result = await consumerService.FailureHandling(messages: streamEntries, content: consumeContext);
                         }
                     }
                     catch (Exception exception)
                     {
-                        _iocManager.Logger<RedisStreamConsumer>().LogError(exception: exception, message: "失败处理出现异常：" + listener.GetType().FullName);
+                        _iocManager.Logger<RedisStreamConsumer>().LogError(exception: exception, message: "失败处理出现异常：" + consumerService.GetType().FullName);
                         result = false;
                     }
                 }
                 finally
                 {
+                    IocManager.Instance.Release(consumerService);
                     var ids = streamEntries.Select(selector: o => o.Id).ToArray();
                     if (result)
                         await _redisCacheManager.Db.StreamAcknowledgeAsync(key: _queueName, groupName: _groupName, messageIds: ids);
