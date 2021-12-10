@@ -1,8 +1,11 @@
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FS.DI;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace FS.EventBus
 {
@@ -13,62 +16,95 @@ namespace FS.EventBus
     {
         /// <summary>
         /// 事件消息
-        /// Key：EventName，Value：事件内容
+        /// Key：Type.FullName，Value：事件内容
         /// </summary>
-        internal static readonly Dictionary<string, Queue<DomainEventArgs>> DicEventMessage = new();
+        private static readonly Dictionary<string, ConcurrentQueue<DomainEventArgs>> DicEventMessage = new();
+        /// <summary>
+        /// 失败的队列
+        /// Key：Type.FullName，Value：事件内容
+        /// </summary>
+        private static readonly Dictionary<string, ConcurrentQueue<DomainEventArgs>> DicEventFailMessage = new();
+        /// <summary>
+        /// 订阅端
+        /// </summary>
+        private string Consumer { get; }
 
-        public void Check(string eventName)
+        public EventQueue(string consumer)
         {
-            if (!DicEventMessage.ContainsKey(eventName)) return;
+            this.Consumer = consumer;
+            DicEventMessage.Add(consumer, new ConcurrentQueue<DomainEventArgs>());
+            DicEventFailMessage.Add(consumer, new ConcurrentQueue<DomainEventArgs>());
+        }
 
-            Task.Run(() =>
+        /// <summary>
+        /// 将事件加入到订阅端的队列中
+        /// </summary>
+        public void Push(DomainEventArgs args)
+        {
+            DicEventMessage[Consumer].Enqueue(args);
+        }
+
+        public void Work()
+        {
+            // 执行当前队列
+            Task.Run(async () =>
             {
                 while (true)
                 {
-                    if (DicEventMessage[eventName].Count == 0)
+                    if (DicEventMessage[Consumer].Count == 0)
                     {
                         Thread.Sleep(100);
                         continue;
                     }
 
-                    var domainEventArgs = DicEventMessage[eventName].Dequeue();
-                    EventHandle(eventName: eventName, domainEventArgs: domainEventArgs);
+                    DicEventMessage[Consumer].TryDequeue(out var domainEventArgs);
+                    EventHandle(domainEventArgs: domainEventArgs, true);
+                }
+            });
+            
+            // 执行失败队列
+            Task.Run(async () =>
+            {
+                while (true)
+                {
+                    if (DicEventFailMessage[Consumer].Count == 0)
+                    {
+                        Thread.Sleep(100);
+                        continue;
+                    }
+
+                    DicEventFailMessage[Consumer].TryDequeue(out var domainEventArgs);
+                    EventHandle(domainEventArgs: domainEventArgs, true);
                 }
             });
         }
-        
+
         /// <summary>
-        /// 事件处理
+        /// 事件处理，处理失败后，会加入到失败的错误队列中
         /// </summary>
-        internal static void EventHandle(string eventName, DomainEventArgs domainEventArgs)
+        /// <param name="domainEventArgs">事件体</param>
+        /// <param name="useAsyncQueue">使用异步队列 </param>
+        internal async Task<bool> EventHandle(DomainEventArgs domainEventArgs, bool useAsyncQueue)
         {
-            // 找出当前事件的订阅者
-            EventProduct.DicConsumer.TryGetValue(eventName, out var consumers);
-
-            // 开始异步执行
-            var dicHandleResult = consumers.ToDictionary(o => o, o => IocManager.GetService<IListenerMessage>(o).Consumer(domainEventArgs.Message.ToString(), domainEventArgs.Sender, domainEventArgs));
-            Task.WaitAll(dicHandleResult.Select(o => (Task)o.Value).ToArray());
-
-            // 将执行为true的移除
-            while (dicHandleResult.Count > 0)
+            var result = false;
+            try
             {
-                foreach (var consumer in consumers)
+                if (useAsyncQueue && domainEventArgs.ErrorCount > 0)
                 {
-                    // 不在字典中，说明上次执行成功时，被移除了
-                    if (!dicHandleResult.ContainsKey(consumer)) continue;
-                    // 执行成功，则从字典中移除
-                    if (dicHandleResult[consumer].Result)
-                    {
-                        dicHandleResult.Remove(consumer);
-                        continue;
-                    }
-                    // 执行失败，重新执行
-                    dicHandleResult[consumer] = IocManager.GetService<IListenerMessage>(consumer).Consumer(domainEventArgs.Message.ToString(), domainEventArgs.Sender, domainEventArgs);
+                    await Task.Delay((int)Math.Pow(10, domainEventArgs.ErrorCount));
                 }
-
-                // 字典中存在执行失败的，休眠100ms。
-                if (dicHandleResult.Count > 0) Thread.Sleep(100);
+                result = await IocManager.GetService<IListenerMessage>(Consumer).Consumer(domainEventArgs.Message.ToString(), domainEventArgs.Sender, domainEventArgs);
             }
+            catch (Exception e)
+            {
+                IocManager.Instance.Logger<EventQueue>().LogError(e, $"订阅端：{Consumer}，执行异常，消息：{JsonConvert.SerializeObject(domainEventArgs)}，", e.Message);
+            }
+            if (!result)
+            {
+                domainEventArgs.ErrorCount++;
+                if (useAsyncQueue) DicEventFailMessage[Consumer].Enqueue(domainEventArgs);
+            }
+            return result;
         }
     }
 }

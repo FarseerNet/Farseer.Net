@@ -16,7 +16,7 @@ namespace Farseer.Net.EventBusDemo
 
             // ******************** 以下演示消息发送 *********************
             // 先执行jit
-            IocManager.GetService<IEventProduct>(name: "test").Send(null, message: "测试发送消息内容");
+            IocManager.GetService<IEventProduct>(name: "test").SendSync(null, message: "测试发送消息内容");
             // 开启时间测试
             var startNew = Stopwatch.StartNew();
             // 以上也是JIT

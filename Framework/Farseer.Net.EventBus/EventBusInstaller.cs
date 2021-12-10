@@ -41,17 +41,16 @@ namespace FS.EventBus
                     // 注册生产者
                     if (!container.Kernel.HasComponent(consumerAtt.EventName))
                     {
-                        EventProduct.DicConsumer[consumerAtt.EventName] = new();
                         container.Register(Component.For<IEventProduct>().Named(consumerAtt.EventName).ImplementedBy<EventProduct>().DependsOn(Dependency.OnValue<string>(consumerAtt.EventName)).LifestyleSingleton());
                     }
 
                     if (consumerAtt is { Enable: false }) continue;
 
-                    // 将同一个事件订阅者，加入到字典中
-                    EventProduct.DicConsumer[consumerAtt.EventName].Add(consumerType.FullName);
-
                     // 注册
                     if (!iocManager.IsRegistered(name: consumerType.FullName)) iocManager.Register(type: consumerType, name: consumerType.FullName, lifeStyle: DependencyLifeStyle.Transient);
+                    
+                    // 订阅事件
+                    container.Resolve<IEventProduct>(consumerAtt.EventName).Subscribe(consumerType.FullName);
                 }
 
                 IocManager.Instance.Logger<EventBusInstaller>().LogInformation(message: "全部事件总线订阅启动完成!");

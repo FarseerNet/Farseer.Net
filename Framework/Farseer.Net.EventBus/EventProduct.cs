@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FS.EventBus
 {
@@ -13,12 +14,22 @@ namespace FS.EventBus
         /// 事件订阅者
         /// Key：EventName，Value：订阅者Type.FullName
         /// </summary>
-        internal static readonly Dictionary<string, List<string>> DicConsumer = new();
+        private static readonly Dictionary<string, List<EventQueue>> DicConsumer = new();
 
         public EventProduct(string eventName)
         {
             _eventName = eventName;
-            EventQueue.DicEventMessage.Add(eventName, new Queue<DomainEventArgs>());
+            DicConsumer.Add(_eventName, new List<EventQueue>());
+        }
+
+        /// <summary>
+        /// 订阅事件
+        /// </summary>
+        public void Subscribe(string consumer)
+        {
+            var eventQueue = new EventQueue(consumer);
+            DicConsumer[_eventName].Add(eventQueue);
+            eventQueue.Work();
         }
 
         /// <summary>
@@ -26,33 +37,36 @@ namespace FS.EventBus
         /// </summary>
         /// <param name="sender">事件发布者 </param>
         /// <param name="message"> 消息主体 </param>
-        public bool Send(object sender, string message)
+        /// <returns>返回false，订阅方处理失败</returns>
+        public bool SendSync(object sender, string message)
         {
-            // 如果没有订阅者，则直接丢弃消息
-            if (!DicConsumer.ContainsKey(_eventName)) return true;
-
+            // 生成事件体
             var domainEventArgs = new DomainEventArgs(sender, message);
-            
-            // 订阅者同步处理
-            EventQueue.EventHandle(_eventName,domainEventArgs);
-            
-            return true;
+
+            var result = true;
+            // 找出事件的订阅方
+            foreach (var consumer in DicConsumer[_eventName])
+            {
+                // 订阅者同步处理
+                var eventHandle = consumer.EventHandle(domainEventArgs, false);
+                Task.WaitAll(eventHandle);
+                result = result && eventHandle.Result;
+            }
+            return result;
         }
 
         /// <summary>
-        /// 发送事件消息（订阅方以异步的方式执行，当前方法发送完后立即返回结果）
+        /// 发送事件消息（订阅方以异步的方式执行，订阅方执行失败时，会加入到失败队列，继续重试）
         /// </summary>
         /// <param name="sender">事件发布者 </param>
         /// <param name="message"> 消息主体 </param>
-        /// <returns></returns>
         public bool SendAsync(object sender, string message)
         {
-            // 如果没有订阅者，则直接丢弃消息
-            if (!DicConsumer.ContainsKey(_eventName)) return true;
-
-            // 将事件加入到本地队列中
-            EventQueue.DicEventMessage[_eventName].Enqueue(new DomainEventArgs(sender, message));
-
+            // 将事件加入到所有订阅方的队列中
+            foreach (var consumer in DicConsumer[_eventName])
+            {
+                consumer.Push(new DomainEventArgs(sender, message));
+            }
             return true;
         }
     }

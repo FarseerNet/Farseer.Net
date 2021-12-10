@@ -29,5 +29,10 @@ namespace FS.EventBus
         /// 发送者
         /// </summary>
         public object Sender { get; set; }
+        
+        /// <summary>
+        /// 执行失败次数
+        /// </summary>
+        public int ErrorCount { get; set; }
     }
 }
