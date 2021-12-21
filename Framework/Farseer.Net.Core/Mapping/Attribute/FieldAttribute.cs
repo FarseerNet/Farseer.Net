@@ -49,10 +49,15 @@ namespace FS.Core.Mapping.Attribute
         /// </summary>
         public int FieldIndex { get; set; }
 
+        // /// <summary>
+        // ///     是否映射到数据库字段中(默认为true)
+        // /// </summary>
+        // public bool IsMap { get; set; } = true;
+
         /// <summary>
-        ///     是否映射到数据库字段中(默认为true)
+        ///     数据库使用json格式存储
         /// </summary>
-        public bool IsMap { get; set; } = true;
+        public EumStorageType StorageType { get; set; } = EumStorageType.Direct;
 
         /// <summary>
         ///     是字段还是组合字段或数据库函数(默认为false)
@@ -70,5 +75,25 @@ namespace FS.Core.Mapping.Attribute
         ///     （默认为false)
         /// </summary>
         public bool IsInParam { get; set; }
+    }
+    
+    public enum EumStorageType
+    {
+        /// <summary>
+        /// 直接存储
+        /// </summary>
+        Direct,
+        /// <summary>
+        /// 不存储（不与数据库字段映射）
+        /// </summary>
+        Ignore,
+        /// <summary>
+        /// 使用json格式
+        /// </summary>
+        Json,
+        /// <summary>
+        /// 用,号分隔的数组
+        /// </summary>
+        Array
     }
 }
