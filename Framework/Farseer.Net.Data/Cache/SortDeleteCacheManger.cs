@@ -45,6 +45,7 @@ namespace FS.Data.Cache
 
             lock (LockObject)
             {
+                if (CacheList.ContainsKey(key: Key)) return CacheList[key: Key];
                 //缓存中没有找到，新建一个实例
                 var sortDelete = new SortDelete { Name = _name, FieldType = _field, Value = _value };
                 sortDelete.Init(entityType: _entityType);

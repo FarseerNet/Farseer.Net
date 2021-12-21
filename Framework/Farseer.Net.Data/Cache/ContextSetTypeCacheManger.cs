@@ -23,6 +23,7 @@ namespace FS.Data.Cache
 
         protected override SetTypesInitializersPair SetCacheLock()
         {
+            if (CacheList.ContainsKey(key: Key)) return CacheList[key: Key];
             lock (LockObject)
             {
                 if (CacheList.ContainsKey(key: Key)) return CacheList[key: Key];
@@ -81,8 +82,6 @@ namespace FS.Data.Cache
                         }
 
                         // 取得实例化
-                        //var dbContextInitializer = typeof(DbContext).GetField("_dbContextInitializer", BindingFlags.NonPublic | BindingFlags.Instance);
-                        //var newExpression = Expression.Call(Expression.MakeMemberAccess(dbContextParam, dbContextInitializer), setMethod, Expression.Constant(entityMap.Key));
                         var newExpression = Expression.Call(instance: dbContextParam, method: setMethod, Expression.Constant(value: entityMap.Key));
 
                         // 赋值

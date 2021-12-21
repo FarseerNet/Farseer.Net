@@ -23,6 +23,7 @@ namespace FS.ElasticSearch.Cache
             if (CacheList.ContainsKey(key: Key)) return CacheList[key: Key];
             lock (LockObject)
             {
+                if (CacheList.ContainsKey(key: Key)) return CacheList[key: Key];
                 CacheList.Add(key: Key, value: new ContextPhysicsMap(type: Key));
             }
 

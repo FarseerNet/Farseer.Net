@@ -23,6 +23,7 @@ namespace FS.ElasticSearch.Cache
 
         protected override SetTypesInitializersPair SetCacheLock()
         {
+            if (CacheList.ContainsKey(key: Key)) return CacheList[key: Key];
             lock (LockObject)
             {
                 if (CacheList.ContainsKey(key: Key)) return CacheList[key: Key];

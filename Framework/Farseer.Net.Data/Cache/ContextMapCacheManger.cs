@@ -24,6 +24,7 @@ namespace FS.Data.Cache
             
             lock (LockObject)
             {
+                if (CacheList.ContainsKey(key: Key)) return CacheList[key: Key];
                 CacheList.Add(key: Key, value: new ContextPhysicsMap(type: Key));
             }
 
