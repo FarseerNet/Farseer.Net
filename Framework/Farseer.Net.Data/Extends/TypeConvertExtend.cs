@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using FS.Cache;
+using FS.Core.Mapping.Attribute;
 using FS.Data.Cache;
 using FS.Data.Internal;
 using FS.Utils.Common;
@@ -170,7 +171,7 @@ namespace FS.Extends
             if (!lst.Any()) return dt;
 
             var map       = SetMapCacheManger.Cache(key: typeof(TEntity));
-            var lstFields = map.MapList.Where(predicate: o => o.Value.Field.IsMap).OrderBy(keySelector: o => o.Value.Field.FieldIndex).ToList();
+            var lstFields = map.MapList.Where(predicate: o => o.Value.Field.StorageType != EumStorageType.Ignore).OrderBy(keySelector: o => o.Value.Field.FieldIndex).ToList();
             // 添加DataTable列
             foreach (var field in lstFields)
             {

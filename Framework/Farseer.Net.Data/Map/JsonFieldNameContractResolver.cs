@@ -1,4 +1,5 @@
 using System.Reflection;
+using FS.Core.Mapping.Attribute;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -30,7 +31,7 @@ namespace FS.Data.Map
             if (propertyInfo.Key != null)
             {
                 jsonProperty.PropertyName = propertyInfo.Value.Field.Name;
-                jsonProperty.Ignored      = !propertyInfo.Value.Field.IsMap;
+                jsonProperty.Ignored      = propertyInfo.Value.Field.StorageType == EumStorageType.Ignore;
             }
 
             return jsonProperty;

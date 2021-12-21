@@ -129,7 +129,7 @@ namespace FS.Data.Internal
 
             //  迭代实体赋值情况
             //  这里没有限定标识字段，允许客户手动设置标识数据
-            foreach (var kic in SetMap.PhysicsMap.MapList.Where(predicate: o => o.Value.Field.IsMap && !o.Value.Field.IsFun && o.Value.Field.InsertStatusType == StatusType.CanWrite))
+            foreach (var kic in SetMap.PhysicsMap.MapList.Where(predicate: o => o.Value.Field.StorageType != EumStorageType.Ignore && !o.Value.Field.IsFun && o.Value.Field.InsertStatusType == StatusType.CanWrite))
             {
                 var obj = PropertyGetCacheManger.Cache(key: kic.Key, instance: entity);
                 if (obj == null) continue;
@@ -154,7 +154,7 @@ namespace FS.Data.Internal
             var lstAssign  = new List<Expression>();
 
             //  迭代实体赋值情况
-            foreach (var kic in SetMap.PhysicsMap.MapList.Where(predicate: o => o.Value.Field.IsMap && !o.Value.Field.IsFun && o.Value.Field.InsertStatusType == StatusType.CanWrite))
+            foreach (var kic in SetMap.PhysicsMap.MapList.Where(predicate: o => o.Value.Field.StorageType != EumStorageType.Ignore && !o.Value.Field.IsFun && o.Value.Field.InsertStatusType == StatusType.CanWrite))
             {
                 var obj = PropertyGetCacheManger.Cache(key: kic.Key, instance: entity);
                 if (obj == null) continue;

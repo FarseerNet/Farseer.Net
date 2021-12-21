@@ -85,7 +85,7 @@ namespace FS.Data.Map
 
                 if (string.IsNullOrEmpty(value: modelAtt.Field.Name)) modelAtt.Field.Name = propertyInfo.Name;
 
-                if (modelAtt.Field.IsMap)
+                if (modelAtt.Field.StorageType != EumStorageType.Ignore)
                 {
                     // 主键
                     if (modelAtt.Field.IsPrimaryKey) PrimaryFields[key: propertyInfo] = modelAtt.Field;
