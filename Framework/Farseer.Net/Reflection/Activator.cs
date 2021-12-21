@@ -27,7 +27,14 @@ namespace FS.Reflection
         /// </summary>
         /// <param name="type"> 类型 </param>
         /// <param name="args"> 构造函数的参数列表 </param>
-        public static T CreateInstance<T>(Type type, params object[] args) where T : class
+        public static T CreateInstance<T>(Type type, params object[] args) where T : class => (T)CreateInstance(type, args);
+        
+        /// <summary>
+        ///     创建实例
+        /// </summary>
+        /// <param name="type"> 类型 </param>
+        /// <param name="args"> 构造函数的参数列表 </param>
+        public static object CreateInstance(Type type, params object[] args)
         {
             //根据参数列表返回参数类型数组
             var parameterTypes = args.Select(selector: c => c.GetType()).ToArray();
@@ -43,7 +50,7 @@ namespace FS.Reflection
                 CacheList.TryAdd(key: hashCode, value: val);
             }
 
-            return (T)val(arg: args);
+            return val(arg: args);
         }
 
         /// <summary>

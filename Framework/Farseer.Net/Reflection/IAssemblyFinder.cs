@@ -27,5 +27,13 @@ namespace FS.Reflection
         ///     找继承TType接口的实现类
         /// </summary>
         Type[] GetType<TType>();
+        /// <summary>
+        ///     找继承TType接口的实现类
+        /// </summary>
+        Type[] GetType(Type baseType);
+        /// <summary>
+        ///     找继承TType接口的实现类
+        /// </summary>
+        Type[] GetType();
     }
 }
