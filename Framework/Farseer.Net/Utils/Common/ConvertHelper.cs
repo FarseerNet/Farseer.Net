@@ -102,9 +102,9 @@ namespace FS.Utils.Common
             // 枚举处理
             if (returnType.GetTypeInfo().IsEnum)
             {
-                if (sourceValue is bool)
+                if (sourceValue is bool value)
                 {
-                    sourceValue = (bool)sourceValue ? 1 : 0;
+                    sourceValue = value ? 1 : 0;
                     objString   = sourceValue.ToString();
                 }
 
@@ -134,7 +134,7 @@ namespace FS.Utils.Common
             if (string.IsNullOrWhiteSpace(value: objString)) return null;
 
             //  bool转数字
-            if (sourceValue is bool)
+            if (sourceValue is bool value)
             {
                 switch (returnTypeCode)
                 {
@@ -147,7 +147,7 @@ namespace FS.Utils.Common
                     case TypeCode.SByte:
                     case TypeCode.UInt16:
                     case TypeCode.UInt32:
-                    case TypeCode.UInt64: return (bool)sourceValue ? 1 : 0;
+                    case TypeCode.UInt64: return value ? 1 : 0;
                 }
             }
 
@@ -155,56 +155,43 @@ namespace FS.Utils.Common
             {
                 case TypeCode.Boolean: return !string.IsNullOrWhiteSpace(value: objString) && (objString == "1" || objString.ToLower().Equals(value: "on") || objString.ToLower().Equals(value: "true"));
                 case TypeCode.Char:
-                    char outChar;
-                    if (char.TryParse(s: objString, result: out outChar)) return outChar;
+                    if (char.TryParse(s: objString, result: out var outChar)) return outChar;
                     break;
                 case TypeCode.SByte:
-                    sbyte outSbyte;
-                    if (sbyte.TryParse(s: objString, result: out outSbyte)) return outSbyte;
+                    if (sbyte.TryParse(s: objString, result: out var outSbyte)) return outSbyte;
                     break;
                 case TypeCode.Byte:
-                    byte outByte;
-                    if (byte.TryParse(s: objString, result: out outByte)) return outByte;
+                    if (byte.TryParse(s: objString, result: out var outByte)) return outByte;
                     break;
                 case TypeCode.Int16:
-                    short outInt16;
-                    if (short.TryParse(s: objString, result: out outInt16)) return outInt16;
+                    if (short.TryParse(s: objString, result: out var outInt16)) return outInt16;
                     break;
                 case TypeCode.UInt16:
-                    ushort outUInt16;
-                    if (ushort.TryParse(s: objString, result: out outUInt16)) return outUInt16;
+                    if (ushort.TryParse(s: objString, result: out var outUInt16)) return outUInt16;
                     break;
                 case TypeCode.Int32:
-                    int outInt32;
-                    if (int.TryParse(s: objString, result: out outInt32)) return outInt32;
+                    if (int.TryParse(s: objString, result: out var outInt32)) return outInt32;
                     break;
                 case TypeCode.UInt32:
-                    uint outUInt32;
-                    if (uint.TryParse(s: objString, result: out outUInt32)) return outUInt32;
+                    if (uint.TryParse(s: objString, result: out var outUInt32)) return outUInt32;
                     break;
                 case TypeCode.Int64:
-                    long outInt64;
-                    if (long.TryParse(s: objString, result: out outInt64)) return outInt64;
+                    if (long.TryParse(s: objString, result: out var outInt64)) return outInt64;
                     break;
                 case TypeCode.UInt64:
-                    ulong outUInt64;
-                    if (ulong.TryParse(s: objString, result: out outUInt64)) return outUInt64;
+                    if (ulong.TryParse(s: objString, result: out var outUInt64)) return outUInt64;
                     break;
                 case TypeCode.Single:
-                    float outSingle;
-                    if (float.TryParse(s: objString, result: out outSingle)) return outSingle;
+                    if (float.TryParse(s: objString, result: out var outSingle)) return outSingle;
                     break;
                 case TypeCode.Double:
-                    double outDouble;
-                    if (double.TryParse(s: objString, result: out outDouble)) return outDouble;
+                    if (double.TryParse(s: objString, result: out var outDouble)) return outDouble;
                     break;
                 case TypeCode.Decimal:
-                    decimal outDecimal;
-                    if (decimal.TryParse(s: objString, result: out outDecimal)) return outDecimal;
+                    if (decimal.TryParse(s: objString, result: out var outDecimal)) return outDecimal;
                     break;
                 case TypeCode.DateTime:
-                    DateTime outDateTime;
-                    if (DateTime.TryParse(s: objString, result: out outDateTime)) return outDateTime;
+                    if (DateTime.TryParse(s: objString, result: out var outDateTime)) return outDateTime;
                     break;
                 case TypeCode.Empty:
                 case TypeCode.String: return objString;
@@ -212,8 +199,7 @@ namespace FS.Utils.Common
                 {
                     if (returnType == typeof(Guid))
                     {
-                        Guid guid;
-                        if (Guid.TryParse(input: objString, result: out guid)) return guid;
+                        if (Guid.TryParse(input: objString, result: out var guid)) return guid;
                     }
 
                     break;
