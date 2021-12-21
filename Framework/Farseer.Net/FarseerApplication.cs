@@ -121,7 +121,7 @@ namespace FS
                 IocManager.Container.Install(new LoggerInstaller());
                 IocManager.Container.Install(new FarseerInstaller());
 
-                IocManager.Logger<FarseerApplication>().LogInformation(message: "注册系统核心组件");
+                IocManager.Logger<FarseerApplication>().LogInformation(message: $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] 注册系统核心组件");
 
                 IocManager.Resolve<FarseerStartupConfiguration>().Initialize();
                 _moduleManager = IocManager.Resolve<IFarseerModuleManager>();
@@ -130,19 +130,19 @@ namespace FS
 
                 // 获取业务实现类
                 var lstModel = IocManager.GetCustomComponent();
-                Console.WriteLine(value: $"共有{lstModel.Count}个业务实例注册到容器");
+                var lstLog   = new List<string>() { $"共有{lstModel.Count}个业务实例注册到容器" };
                 for (var index = 0; index < lstModel.Count; index++)
                 {
                     var model        = lstModel[index: index];
                     var name         = model.Name != model.Implementation.FullName ? $"{model.Name} ==>" : "";
                     var interfaceCom = model.Services.FirstOrDefault(predicate: o => o.IsInterface) ?? model.Services.FirstOrDefault();
-                    Console.WriteLine(value: interfaceCom.IsInterface ? $"{index + 1}、{name} {model.Implementation.Name} ==> {interfaceCom.Name}" : $"{index + 1}、{name} {model.Implementation.Name}");
+                    lstLog.Add(interfaceCom.IsInterface ? $"{index + 1}、{name} {model.Implementation.Name} ==> {interfaceCom.Name}" : $"{index + 1}、{name} {model.Implementation.Name}");
                 }
-
+                IocManager.Logger<FarseerApplication>().LogInformation(string.Join("\r\n", lstLog));
 
                 IocManager.Logger<FarseerApplication>().LogInformation(message: "启动初始化回调");
                 foreach (var action in InitCallback) action();
-                IocManager.Logger<FarseerApplication>().LogInformation(message: $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]系统初始化完毕，耗时{(DateTime.Now - StartupAt).TotalMilliseconds:n}ms");
+                IocManager.Logger<FarseerApplication>().LogInformation(message: $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] 系统初始化完毕，耗时{(DateTime.Now - StartupAt).TotalMilliseconds:n}ms");
             }
             catch (Exception ex)
             {

@@ -64,12 +64,12 @@ namespace FS.Modules
         {
             var sortedModules = _moduleCollection.GetListSortDependency();
 
-            _iocManager.Logger<FarseerModuleManager>().LogInformation(message: $"模块加载完毕，开始启动{sortedModules.Count}个模块...");
+            _iocManager.Logger<FarseerModuleManager>().LogInformation(message: $"开始启动{sortedModules.Count}个模块...");
             sortedModules.ForEach(action: module => module.Instance.PreInitialize());
             sortedModules.ForEach(action: module => module.Instance.Initialize());
             sortedModules.ForEach(action: module => module.Instance.PostInitialize());
 
-            _iocManager.Logger<FarseerModuleManager>().LogInformation(message: "模块启动完毕...");
+            _iocManager.Logger<FarseerModuleManager>().LogInformation(message: $"{sortedModules.Count}个模块启动完毕...");
         }
 
         /// <summary>
@@ -93,11 +93,11 @@ namespace FS.Modules
         {
             var moduleTypes = FindAllModules();
 
-            _iocManager.Logger<FarseerModuleManager>().LogInformation(message: $"总共找到 {moduleTypes.Count} 个模块");
-
+            var lstLog = new List<string>(){$"开始加载 {moduleTypes.Count} 个模块："};
+            lstLog.AddRange(moduleTypes.Select(moduleType => $"已经加载模块: {moduleType.AssemblyQualifiedName}"));
             RegisterModules(moduleTypes: moduleTypes);
             CreateModules(moduleTypes: moduleTypes);
-
+            _iocManager.Logger<FarseerModuleManager>().LogInformation(string.Join("\r\n", lstLog));
             FarseerModuleCollection.EnsureKernelModuleToBeFirst(modules: _moduleCollection);
 
             SetDependencies();
@@ -133,8 +133,6 @@ namespace FS.Modules
                 _moduleCollection.Add(item: moduleInfo);
 
                 if (moduleType == _startupModuleType) StartupModule = moduleInfo;
-
-                _iocManager.Logger<FarseerModuleManager>().LogInformation(message: $"已经加载模块: {moduleType.AssemblyQualifiedName}");
             }
         }
 
