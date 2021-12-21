@@ -15,7 +15,7 @@ namespace Farseer.Net.JobDemo.Job
         public async Task<bool> Execute(IFssContext context)
         {
             // 告诉FSS平台，当前进度执行了 20%
-            await context.SetProgressAsync(rate: 20);
+            context.SetProgress(rate: 20);
 
             // 让FSS平台，记录日志
             await context.LoggerAsync(logLevel: LogLevel.Information, log: "你好，世界！");

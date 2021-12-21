@@ -44,7 +44,7 @@ namespace FS.Job
                 }
                 catch (Exception e)
                 {
-                    IocManager.Instance.Logger<TaskManager>().LogError(exception: e, message: e.Message);
+                    IocManager.Instance.Logger<TaskManager>().LogError(message: e.Message);
                 }
             }
             return new List<TaskVO>();
@@ -74,7 +74,7 @@ namespace FS.Job
                 }
                 catch (Exception e)
                 {
-                    IocManager.Instance.Logger<TaskManager>().LogError(exception: e, message: e.Message);
+                    IocManager.Instance.Logger<TaskManager>().LogError(message: e.Message);
                 }
             }
         }

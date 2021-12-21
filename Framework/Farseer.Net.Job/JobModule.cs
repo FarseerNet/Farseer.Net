@@ -57,7 +57,7 @@ namespace FS.Job
                     var sw = Stopwatch.StartNew();
                     try
                     {
-                        Task.WaitAll(IocManager.Resolve<IFssJob>(name: $"fss_job_{jobType.Key}").Execute(context: new FssContext(ioc: IocManager, jobType.Key, sw: sw, Jsons.ToObject<Dictionary<string, string>>(fssJobAttribute.DebugMetaData))));
+                        Task.WaitAll(IocManager.Resolve<IFssJob>(name: $"fss_job_{jobType.Key}").Execute(context: new FssContext(jobType.Key, sw: sw, Jsons.ToObject<Dictionary<string, string>>(fssJobAttribute.DebugMetaData))));
                     }
                     catch (Exception e)
                     {

@@ -144,7 +144,7 @@ namespace FS.Job
                 while (!cts.Token.IsCancellationRequested)
                 {
                     await receiveContext.ActivateTask();
-                    await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken: cts.Token);
+                    await Task.Delay(TimeSpan.FromSeconds(3), cancellationToken: cts.Token);
                 }
             }, cancellationToken: cts.Token);
 

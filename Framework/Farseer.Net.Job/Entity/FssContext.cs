@@ -34,7 +34,7 @@ namespace FS.Job.Entity
         /// <summary>
         ///     DEBUG模式
         /// </summary>
-        internal FssContext(IIocManager ioc, string jobName, Stopwatch sw, Dictionary<string, string> debugMetaData)
+        internal FssContext(string jobName, Stopwatch sw, Dictionary<string, string> debugMetaData)
         {
             Meta = new TaskVO
             {
@@ -58,11 +58,11 @@ namespace FS.Job.Entity
         /// <summary>
         ///     返回进度0-100
         /// </summary>
-        public Task SetProgressAsync(int rate)
+        public void SetProgress(int rate)
         {
             if (rate is < 0 or > 100) throw new Exception(message: "ReceiveContext.SetProgress的rate只能是0-100");
             Progress = rate;
-            return ActivateTask();
+            //return ActivateTask();
         }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace FS.Job.Entity
         /// </summary>
         public async Task ActivateTask()
         {
-            if (!_isDebug)
+            if (!_isDebug && _taskStatus == EumTaskType.Working)
             {
                 await TaskManager.JobInvokeAsync(request: new JobInvokeRequest
                 {

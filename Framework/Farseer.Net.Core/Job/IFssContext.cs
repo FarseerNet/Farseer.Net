@@ -9,7 +9,7 @@ namespace FS.Core.Job
         /// <summary>
         ///     返回进度0-100
         /// </summary>
-        Task SetProgressAsync(int rate);
+        void SetProgress(int rate);
         /// <summary>
         ///     本次执行完后，下一次执行的间隔时间
         /// </summary>
