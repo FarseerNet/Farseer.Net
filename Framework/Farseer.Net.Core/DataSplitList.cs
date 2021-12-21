@@ -4,7 +4,9 @@
 // ********************************************
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
+using FS.Extends;
 
 namespace FS.Core
 {
@@ -15,12 +17,25 @@ namespace FS.Core
     [DataContract]
     public class DataSplitList<TEntity> where TEntity : class
     {
+        public DataSplitList()
+        {
+            
+        }
+        
         /// <summary>
         ///     数据分页列表及总数
         /// </summary>
-        public DataSplitList(List<TEntity> list, int totalCount)
+        public DataSplitList(List<TEntity> list, long totalCount)
         {
             List       = list;
+            TotalCount = totalCount;
+        }
+        /// <summary>
+        ///     数据分页列表及总数
+        /// </summary>
+        public DataSplitList(IEnumerable<TEntity> list, long totalCount)
+        {
+            List       = list.ToList();
             TotalCount = totalCount;
         }
 
@@ -28,7 +43,7 @@ namespace FS.Core
         ///     总页数
         /// </summary>
         [DataMember]
-        public int TotalCount { get; set; }
+        public long TotalCount { get; set; }
 
         /// <summary>
         ///     数据列表
