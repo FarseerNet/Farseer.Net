@@ -38,6 +38,8 @@ namespace FS.Data
             var dbConnectionName = $"dbConnection_{name}";
             if (!IocManager.Instance.IsRegistered(name: dbConnectionName)) throw new FarseerException(message: $"未找到数据库的配置：{name}");
             _internalContext.ContextConnection = IocManager.GetService<IContextConnection>(name: dbConnectionName);
+            
+            Initializer();
         }
 
         /// <summary>
@@ -51,6 +53,8 @@ namespace FS.Data
         public DbContext(string connectionString, eumDbType db, int commandTimeout = 30, string dataVer = null, bool isUnitOfWork = false) : this(isUnitOfWork: isUnitOfWork)
         {
             _internalContext.ContextConnection = new ContextConnection(connectionString: connectionString, dbType: db, commandTimeout: commandTimeout, dataVer: dataVer);
+            
+            Initializer();
         }
 
         /// <summary>
@@ -193,25 +197,46 @@ namespace FS.Data
         {
             get
             {
-                if (!_internalContext.IsInitializer)
-                {
-                    // 分库方案
-                    if (_internalContext.ContextConnection == null) _internalContext.ContextConnection = SplitDatabase();
-
-                    _internalContext.Initializer();
-                }
-
-                if (!_internalContext.IsInitModelName)
-                {
-                    // 初始化模型映射
-                    CreateModelInit(map: _internalContext.ContextMap.SetDataList.ToDictionary(keySelector: o => o.TableName));
-                    _internalContext.IsInitModelName = true;
-                }
+                // if (!_internalContext.IsInitializer)
+                // {
+                //     // 分库方案
+                //     if (_internalContext.ContextConnection == null) _internalContext.ContextConnection = SplitDatabase();
+                //
+                //     _internalContext.Initializer();
+                // }
+                //
+                // if (!_internalContext.IsInitModelName)
+                // {
+                //     _internalContext.IsInitModelName = true;
+                //     // 初始化模型映射
+                //     CreateModelInit(map: _internalContext.ContextMap.SetDataList.ToDictionary(keySelector: o => o.TableName));
+                // }
 
                 return _internalContext;
             }
         }
 
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        protected void Initializer()
+        {
+            if (!_internalContext.IsInitializer)
+            {
+                // 分库方案
+                if (_internalContext.ContextConnection == null) _internalContext.ContextConnection = SplitDatabase();
+
+                _internalContext.Initializer();
+            }
+
+            if (!_internalContext.IsInitModelName)
+            {
+                _internalContext.IsInitModelName = true;
+                // 初始化模型映射
+                CreateModelInit(map: _internalContext.ContextMap.SetDataList.ToDictionary(keySelector: o => o.TableName));
+            }
+        }
+        
         #endregion
 
         #region 动态查找Set类型

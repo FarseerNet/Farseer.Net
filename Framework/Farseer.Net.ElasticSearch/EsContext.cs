@@ -61,9 +61,9 @@ namespace FS.ElasticSearch
 
                 if (!_internalContext.IsInitModelName)
                 {
+                    _internalContext.IsInitModelName = true;
                     // 初始化模型映射
                     CreateModelInit(map: _internalContext.ContextMap.SetDataList.ToDictionary(keySelector: o => o.ClassProperty.Name));
-                    _internalContext.IsInitModelName = true;
                 }
 
                 return _internalContext;
