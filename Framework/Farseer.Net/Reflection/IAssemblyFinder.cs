@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
@@ -22,18 +21,5 @@ namespace FS.Reflection
         /// <param name="folderPath"> </param>
         /// <param name="searchOption"> </param>
         List<Assembly> GetAssembliesFromFolder(string folderPath, SearchOption searchOption);
-
-        /// <summary>
-        ///     找继承TType接口的实现类
-        /// </summary>
-        Type[] GetType<TType>();
-        /// <summary>
-        ///     找继承TType接口的实现类
-        /// </summary>
-        Type[] GetType(Type baseType);
-        /// <summary>
-        ///     找继承TType接口的实现类
-        /// </summary>
-        Type[] GetType();
     }
 }

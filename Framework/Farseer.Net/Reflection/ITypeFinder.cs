@@ -19,5 +19,9 @@ namespace FS.Reflection
         /// </summary>
         /// <returns> </returns>
         Type[] FindAll();
+        /// <summary>
+        ///     找继承TType接口的实现类
+        /// </summary>
+        Type[] Find<TInterface>();
     }
 }

@@ -4,7 +4,6 @@ using System.Reflection;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using FS.DI;
 using FS.Reflection;
 
 namespace FS.Job
@@ -13,18 +12,14 @@ namespace FS.Job
     {
         public static readonly Dictionary<string, Type> JobImpList = new();
 
-        /// <summary>
-        ///     依赖获取接口
-        /// </summary>
-        private readonly IIocResolver _iocResolver;
+        private readonly ITypeFinder _typeFinder;
 
         /// <summary>
         ///     构造函数
         /// </summary>
-        /// <param name="iocResolver"> </param>
-        public JobInstaller(IIocResolver iocResolver)
+        public JobInstaller(ITypeFinder typeFinder)
         {
-            _iocResolver = iocResolver;
+            _typeFinder  = typeFinder;
         }
 
         /// <summary>
@@ -35,7 +30,7 @@ namespace FS.Job
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             // 业务job
-            var types = container.Resolve<IAssemblyFinder>().GetType<IFssJob>();
+            var types = _typeFinder.Find<IFssJob>();
             foreach (var jobType in types)
             {
                 var fssJobAttribute = jobType.GetCustomAttribute<FssJobAttribute>();

@@ -17,6 +17,13 @@ namespace FS.MQ.Rabbit
     /// </summary>
     public class RabbitInstaller : IWindsorInstaller
     {
+        public RabbitInstaller(ITypeFinder typeFinder)
+        {
+            _typeFinder = typeFinder;
+        }
+        
+        private readonly ITypeFinder _typeFinder;
+
         /// <inheritdoc />
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
@@ -53,7 +60,7 @@ namespace FS.MQ.Rabbit
             try
             {
                 // 启动单次消费程序
-                foreach (var consumerType in container.Resolve<IAssemblyFinder>().GetType<IListenerMessage>())
+                foreach (var consumerType in _typeFinder.Find<IListenerMessage>())
                 {
                     var consumerAtt = consumerType.GetCustomAttribute<ConsumerAttribute>();
                     if (consumerAtt is
@@ -71,7 +78,7 @@ namespace FS.MQ.Rabbit
                 }
 
                 // 启动批量消费程序
-                foreach (var consumerType in container.Resolve<IAssemblyFinder>().GetType<IListenerMessageBatch>())
+                foreach (var consumerType in _typeFinder.Find<IListenerMessageBatch>())
                 {
                     var consumerAtt = consumerType.GetCustomAttribute<ConsumerAttribute>();
                     if (consumerAtt is

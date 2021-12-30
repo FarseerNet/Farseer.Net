@@ -31,6 +31,15 @@ namespace FS.Reflection
         public Type[] Find(Func<Type, bool> predicate) => GetAllTypes().Where(predicate: predicate).ToArray();
 
         /// <summary>
+        ///     找继承TType接口的实现类
+        /// </summary>
+        public Type[] Find<TInterface>()
+        {
+            var baseType = typeof(TInterface);
+            return Find(t => t.BaseType == baseType || t.GetInterfaces().Contains(baseType));
+        }
+
+        /// <summary>
         ///     查找所有的类型
         /// </summary>
         public Type[] FindAll() => GetAllTypes().ToArray();

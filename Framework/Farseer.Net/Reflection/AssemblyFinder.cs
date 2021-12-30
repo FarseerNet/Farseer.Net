@@ -24,56 +24,6 @@ namespace FS.Reflection
             _moduleManager = moduleManager;
         }
 
-
-        /// <summary>
-        ///     找继承TType接口的实现类
-        /// </summary>
-        public Type[] GetType<TType>()
-        {
-            var baseType = typeof(TType);
-            return GetType(baseType);
-        }
-        
-        /// <summary>
-        ///     找继承TType接口的实现类
-        /// </summary>
-        public Type[] GetType(Type baseType)
-        {
-            //var lst      = new List<Type>();
-            return GetType().Where(predicate: t => t.BaseType == baseType || t.GetInterfaces().Contains(baseType)).ToArray();
-            // foreach (var assembly in GetAllAssemblies())
-            // {
-            //     try
-            //     {
-            //         var types = assembly.GetTypes().Where(predicate: t => t.BaseType == baseType || t.GetInterfaces().Contains(baseType));
-            //         if (types.Any()) lst.AddRange(types);
-            //     }
-            //     catch
-            //     {
-            //     }
-            // }
-            // return lst.ToArray();
-        }
-        
-        /// <summary>
-        ///     找继承TType接口的实现类
-        /// </summary>
-        public Type[] GetType()
-        {
-            var lst = new List<Type>();
-            foreach (var assembly in GetAllAssemblies())
-            {
-                try
-                {
-                    lst.AddRange(assembly.GetTypes());
-                }
-                catch
-                {
-                }
-            }
-            return lst.ToArray();
-        }
-
         /// <summary>
         ///     获取所有的程序集
         /// </summary>

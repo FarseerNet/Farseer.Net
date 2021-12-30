@@ -9,6 +9,7 @@ using FS.DI;
 using FS.Job.Configuration;
 using FS.Job.Entity;
 using FS.Modules;
+using FS.Reflection;
 using FS.Utils.Common;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -17,20 +18,20 @@ namespace FS.Job
 {
     public class JobModule : FarseerModule
     {
-        public static ClientVO Client { get; set; }
-
-        /// <summary>
-        ///     初始化之前
-        /// </summary>
-        public override void PreInitialize()
+        public JobModule(ITypeFinder typeFinder)
         {
+            _typeFinder = typeFinder;
         }
+
+        private readonly ITypeFinder _typeFinder;
+
+        public static ClientVO Client { get; set; }
 
         public override void PostInitialize()
         {
             var fssAttribute = Assembly.GetEntryAssembly().EntryPoint.DeclaringType.GetCustomAttribute<FssAttribute>();
             if (fssAttribute is not { Enable: true }) return;
-            
+
             var jobItemConfig = IocManager.Resolve<IConfigurationRoot>().GetSection(key: "FSS").Get<JobItemConfig>();
             if (jobItemConfig == null)
             {
@@ -68,7 +69,7 @@ namespace FS.Job
                         IocManager.Logger<JobModule>().LogDebug(message: $"Debug：{jobType.Key} 耗时 {sw.ElapsedMilliseconds} ms");
                     }
                 }
-                    
+
                 TaskQueueList.PullJob();
                 TaskQueueList.RunJob();
             });
@@ -79,7 +80,7 @@ namespace FS.Job
         /// </summary>
         public override void Initialize()
         {
-            IocManager.Container.Install(new JobInstaller(iocResolver: IocManager));
+            IocManager.Container.Install(new JobInstaller(_typeFinder));
             IocManager.RegisterAssemblyByConvention(assembly: Assembly.GetExecutingAssembly(), config: new ConventionalRegistrationConfig { InstallInstallers = false });
             AppContext.SetSwitch(switchName: "System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", isEnabled: true);
         }
