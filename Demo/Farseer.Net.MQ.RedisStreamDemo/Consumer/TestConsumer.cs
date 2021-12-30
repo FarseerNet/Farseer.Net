@@ -9,7 +9,7 @@ namespace Farseer.Net.MQ.RedisStreamDemo.Consumer
     /// <summary>
     ///     消费客户端
     /// </summary>
-    [Consumer(Enable = true, Server = "default", GroupName = "", QueueName = "test2", PullCount = 2, ConsumeThreadNums = 1)]
+    [Consumer(Enable = true, Server = "test2", GroupName = "", QueueName = "test2", PullCount = 2, ConsumeThreadNums = 1)]
     public class TestConsumer : IListenerMessage
     {
         public Task<bool> Consumer(StreamEntry[] messages, ConsumeContext ea)

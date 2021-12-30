@@ -12,7 +12,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="App_Data\" />
         <Folder Include="Properties\" />
     </ItemGroup>
 
@@ -24,12 +23,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="App_Data\Farseer.Net.dev.json">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="App_Data\Farseer.Net.json">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
+      <None Update="appsettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>
