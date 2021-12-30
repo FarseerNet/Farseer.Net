@@ -1,12 +1,13 @@
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
+using Farseer.Net.Grpc;
 using FS.Core.Exception;
 using FS.DI;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace Farseer.Net.Grpc
+namespace FS.Grpc
 {
     public class GrpcTools
     {

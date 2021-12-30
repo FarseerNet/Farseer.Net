@@ -1,4 +1,4 @@
-namespace Farseer.Net.Grpc.Configuration
+namespace FS.Grpc.Configuration
 {
     public class GrpcItemConfig
     {

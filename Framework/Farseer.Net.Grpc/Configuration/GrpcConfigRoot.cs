@@ -3,7 +3,7 @@ using System.Linq;
 using FS.DI;
 using Microsoft.Extensions.Configuration;
 
-namespace Farseer.Net.Grpc.Configuration
+namespace FS.Grpc.Configuration
 {
     /// <summary>
     ///     读取Grpc配置

@@ -2,7 +2,7 @@
 using FS.DI;
 using FS.Modules;
 
-namespace Farseer.Net.Grpc
+namespace FS.Grpc
 {
     /// <summary>
     ///     Grpc模块

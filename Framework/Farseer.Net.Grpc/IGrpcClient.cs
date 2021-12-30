@@ -1,7 +1,7 @@
 using System;
 using Grpc.Core;
 
-namespace Farseer.Net.Grpc
+namespace FS.Grpc
 {
     public interface IGrpcClient
     {

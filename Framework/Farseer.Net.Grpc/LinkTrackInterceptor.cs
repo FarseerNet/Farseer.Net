@@ -2,12 +2,11 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FS.Core.LinkTrack;
-using FS.DI;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Newtonsoft.Json;
 
-namespace Farseer.Net.Grpc
+namespace FS.Grpc
 {
     /// <summary>
     ///     链路追踪（Grpc入口）

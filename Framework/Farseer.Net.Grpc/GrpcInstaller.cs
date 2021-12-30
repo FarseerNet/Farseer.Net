@@ -1,10 +1,9 @@
 ﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using Farseer.Net.Grpc.Configuration;
-using FS.Grpc;
+using FS.Grpc.Configuration;
 
-namespace Farseer.Net.Grpc
+namespace FS.Grpc
 {
     /// <summary>
     ///     IOC注册

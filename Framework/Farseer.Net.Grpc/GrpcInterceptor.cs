@@ -2,7 +2,7 @@ using System;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 
-namespace Farseer.Net.Grpc
+namespace FS.Grpc
 {
     /// <summary>
     ///     调用CSC RPC时拦截

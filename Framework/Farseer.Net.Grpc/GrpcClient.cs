@@ -1,7 +1,7 @@
 using System;
 using Farseer.Net.Grpc;
-using Farseer.Net.Grpc.Configuration;
 using FS.DI;
+using FS.Grpc.Configuration;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Grpc.Net.Client;
