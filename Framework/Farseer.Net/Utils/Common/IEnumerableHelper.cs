@@ -23,5 +23,19 @@ namespace FS.Utils.Common
             foreach (var item in lst) sb.Append(value: item        + sign);
             return sb.Length > 0 ? sb.Remove(startIndex: sb.Length - sign.Length, length: sign.Length).ToString() : string.Empty;
         }
+
+        /// <summary>
+        ///     将List转换成字符串
+        /// </summary>
+        /// <param name="lst"> 要拼接的LIST </param>
+        /// <param name="sign"> 分隔符 </param>
+        public static string ToString(IList lst, string sign = ",")
+        {
+            return string.Join(sign, lst);
+            if (lst == null) return string.Empty;
+            var sb = new StringBuilder();
+            foreach (var item in lst) sb.Append(value: item        + sign);
+            return sb.Length > 0 ? sb.Remove(startIndex: sb.Length - sign.Length, length: sign.Length).ToString() : string.Empty;
+        }
     }
 }
