@@ -12,8 +12,7 @@ namespace FS.Cache
     /// </summary>
     public class CacheManager : ICacheManager
     {
-        private IGetCache _getCache;
-        private string    _redisItemConfigName;
+        private string _redisItemConfigName;
 
         private CacheManager()
         {
@@ -32,9 +31,9 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public List<TEntity> GetList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, Func<List<TEntity>> get)
         {
-            SetCache(cacheKey);
+            var getCache = SetCache(cacheKey);
 
-            var lst = _getCache.GetList(cacheKey);
+            var lst = getCache.GetList(cacheKey);
             if (lst != null && lst.Count != 0) return lst;
             if (get == null) return default;
 
@@ -43,11 +42,11 @@ namespace FS.Cache
             slimLock.Wait();
             try
             {
-                lst = _getCache.GetList(cacheKey);
+                lst = getCache.GetList(cacheKey);
                 if (lst != null && lst.Count != 0) return lst;
 
                 lst = get();
-                if (lst?.Count > 0) _getCache.SaveList(cacheKey, lst: lst);
+                if (lst?.Count > 0) getCache.SaveList(cacheKey, lst: lst);
             }
             finally
             {
@@ -62,8 +61,8 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public List<TEntity> GetList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey)
         {
-            SetCache(cacheKey: cacheKey);
-            return _getCache.GetList(cacheKey);
+            var getCache = SetCache(cacheKey);
+            return getCache.GetList(cacheKey);
         }
 
         /// <summary>
@@ -72,8 +71,8 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public Task<List<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey)
         {
-            SetCache(cacheKey: cacheKey);
-            return _getCache.GetListAsync(cacheKey);
+            var getCache = SetCache(cacheKey);
+            return getCache.GetListAsync(cacheKey);
         }
 
         /// <summary>
@@ -83,9 +82,9 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public async Task<List<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, Func<List<TEntity>> get)
         {
-            SetCache(cacheKey: cacheKey);
+            var getCache = SetCache(cacheKey);
 
-            var lst = await _getCache.GetListAsync(cacheKey);
+            var lst = await getCache.GetListAsync(cacheKey);
             if (lst != null && lst.Count != 0) return lst;
             if (get == null) return default;
 
@@ -94,11 +93,11 @@ namespace FS.Cache
             await slimLock.WaitAsync();
             try
             {
-                lst = await _getCache.GetListAsync(cacheKey);
+                lst = await getCache.GetListAsync(cacheKey);
                 if (lst != null && lst.Count != 0) return lst;
 
                 lst = get();
-                if (lst?.Count > 0) await _getCache.SaveListAsync(cacheKey, lst: lst);
+                if (lst?.Count > 0) await getCache.SaveListAsync(cacheKey, lst: lst);
             }
             finally
             {
@@ -114,8 +113,8 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public async Task<List<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, Func<Task<List<TEntity>>> get)
         {
-            SetCache(cacheKey: cacheKey);
-            var lst = await _getCache.GetListAsync(cacheKey);
+            var getCache = SetCache(cacheKey);
+            var lst      = await getCache.GetListAsync(cacheKey);
             if (lst != null && lst.Count != 0) return lst;
             if (get == null) return default;
 
@@ -124,11 +123,11 @@ namespace FS.Cache
             await slimLock.WaitAsync();
             try
             {
-                lst = await _getCache.GetListAsync(cacheKey);
+                lst = await getCache.GetListAsync(cacheKey);
                 if (lst != null && lst.Count != 0) return lst;
 
                 lst = await get();
-                if (lst?.Count > 0) await _getCache.SaveListAsync(cacheKey, lst: lst);
+                if (lst?.Count > 0) await getCache.SaveListAsync(cacheKey, lst: lst);
                 return lst;
             }
             finally
@@ -145,9 +144,9 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public TEntity GetItem<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<List<TEntity>> get)
         {
-            SetCache(cacheKey: cacheKey);
+            var getCache = SetCache(cacheKey);
 
-            var entity = _getCache.GetItem(cacheKey, fieldKey: fieldKey);
+            var entity = getCache.GetItem(cacheKey, fieldKey: fieldKey);
             if (entity != null) return entity;
             if (get    == null) return default;
 
@@ -156,7 +155,7 @@ namespace FS.Cache
             slimLock.Wait();
             try
             {
-                entity = _getCache.GetItem(cacheKey, fieldKey: fieldKey);
+                entity = getCache.GetItem(cacheKey, fieldKey: fieldKey);
                 if (entity != null) return entity;
 
                 var lst = get();
@@ -165,7 +164,7 @@ namespace FS.Cache
                     Count: > 0
                 })
                 {
-                    _getCache.SaveList(cacheKey, lst: lst);
+                    getCache.SaveList(cacheKey, lst: lst);
                     return lst.Find(match: o => cacheKey.GetField(o).ToString() == fieldKey.ToString());
                 }
 
@@ -185,8 +184,8 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public TEntity GetItem<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<TEntity> get)
         {
-            SetCache(cacheKey: cacheKey);
-            var entity = _getCache.GetItem(cacheKey, fieldKey: fieldKey);
+            var getCache = SetCache(cacheKey);
+            var entity   = getCache.GetItem(cacheKey, fieldKey: fieldKey);
             if (entity != null) return entity;
             if (get    == null) return default;
 
@@ -195,11 +194,11 @@ namespace FS.Cache
             slimLock.Wait();
             try
             {
-                entity = _getCache.GetItem(cacheKey, fieldKey: fieldKey);
+                entity = getCache.GetItem(cacheKey, fieldKey: fieldKey);
                 if (entity != null) return entity;
 
                 entity = get();
-                _getCache.SaveItem(cacheKey, entity);
+                getCache.SaveItem(cacheKey, entity);
 
                 return entity;
             }
@@ -217,8 +216,8 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public TEntity GetItem<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey)
         {
-            SetCache(cacheKey: cacheKey);
-            return _getCache.GetItem(cacheKey, fieldKey: fieldKey) ?? default;
+            var getCache = SetCache(cacheKey);
+            return getCache.GetItem(cacheKey, fieldKey: fieldKey) ?? default;
         }
 
         /// <summary>
@@ -230,8 +229,8 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public async Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<Task<List<TEntity>>> get)
         {
-            SetCache(cacheKey: cacheKey);
-            var entity = await _getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
+            var getCache = SetCache(cacheKey);
+            var entity   = await getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
             if (entity != null) return entity;
             if (get    == null) return default;
 
@@ -240,7 +239,7 @@ namespace FS.Cache
             await slimLock.WaitAsync();
             try
             {
-                entity = await _getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
+                entity = await getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
                 if (entity != null) return entity;
 
                 var lst = await get();
@@ -249,7 +248,7 @@ namespace FS.Cache
                     Count: > 0
                 })
                 {
-                    await _getCache.SaveListAsync(cacheKey, lst: lst);
+                    await getCache.SaveListAsync(cacheKey, lst: lst);
                     return lst.Find(match: o => cacheKey.GetField(arg: o).ToString() == fieldKey.ToString());
                 }
 
@@ -270,8 +269,8 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public async Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<List<TEntity>> get)
         {
-            SetCache(cacheKey: cacheKey);
-            var entity = await _getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
+            var getCache = SetCache(cacheKey);
+            var entity   = await getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
             if (entity != null) return entity;
             if (get    == null) return default;
 
@@ -280,7 +279,7 @@ namespace FS.Cache
             await slimLock.WaitAsync();
             try
             {
-                entity = await _getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
+                entity = await getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
                 if (entity != null) return entity;
 
                 var lst = get();
@@ -289,7 +288,7 @@ namespace FS.Cache
                     Count: > 0
                 })
                 {
-                    await _getCache.SaveListAsync(cacheKey, lst: lst);
+                    await getCache.SaveListAsync(cacheKey, lst: lst);
                     return lst.Find(match: o => cacheKey.GetField(arg: o).ToString() == fieldKey.ToString());
                 }
 
@@ -310,8 +309,8 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public async Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<TEntity> get = null)
         {
-            SetCache(cacheKey: cacheKey);
-            var entity = await _getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
+            var getCache = SetCache(cacheKey);
+            var entity   = await getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
             if (entity != null) return entity;
             if (get    == null) return default;
 
@@ -320,13 +319,13 @@ namespace FS.Cache
             await slimLock.WaitAsync();
             try
             {
-                entity = await _getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
+                entity = await getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
                 if (entity != null) return entity;
 
                 entity = get();
                 if (entity != null)
                 {
-                    await _getCache.SaveItemAsync(cacheKey, entity: entity);
+                    await getCache.SaveItemAsync(cacheKey, entity: entity);
                     return entity;
                 }
                 return default;
@@ -346,8 +345,8 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public async Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<Task<TEntity>> get)
         {
-            SetCache(cacheKey: cacheKey);
-            var entity = await _getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
+            var getCache = SetCache(cacheKey);
+            var entity   = await getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
             if (entity != null) return entity;
             if (get    == null) return default;
 
@@ -355,13 +354,13 @@ namespace FS.Cache
             await slimLock.WaitAsync();
             try
             {
-                entity = await _getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
+                entity = await getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
                 if (entity != null) return entity;
 
                 entity = await get();
                 if (entity != null)
                 {
-                    await _getCache.SaveItemAsync(cacheKey, entity: entity);
+                    await getCache.SaveItemAsync(cacheKey, entity: entity);
                     return entity;
                 }
 
@@ -379,8 +378,8 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public bool Exists(CacheKey cacheKey)
         {
-            SetCache(cacheKey: cacheKey);
-            return _getCache.Exists(cacheKey);
+            var getCache = SetCache(cacheKey);
+            return getCache.Exists(cacheKey);
         }
 
         /// <summary>
@@ -389,8 +388,8 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public Task<bool> ExistsAsync(CacheKey cacheKey)
         {
-            SetCache(cacheKey: cacheKey);
-            return _getCache.ExistsAsync(cacheKey);
+            var getCache = SetCache(cacheKey);
+            return getCache.ExistsAsync(cacheKey);
         }
 
         /// <summary>
@@ -400,8 +399,8 @@ namespace FS.Cache
         /// <param name="fieldKey"> 实体的ID（必须是具有唯一性） </param>
         public bool ExistsItem<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey)
         {
-            SetCache(cacheKey: cacheKey);
-            return _getCache.ExistsItem(cacheKey, fieldKey);
+            var getCache = SetCache(cacheKey);
+            return getCache.ExistsItem(cacheKey, fieldKey);
         }
 
         /// <summary>
@@ -411,8 +410,8 @@ namespace FS.Cache
         /// <param name="fieldKey"> 实体的ID（必须是具有唯一性） </param>
         public Task<bool> ExistsItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey)
         {
-            SetCache(cacheKey: cacheKey);
-            return _getCache.ExistsItemAsync(cacheKey, fieldKey);
+            var getCache = SetCache(cacheKey);
+            return getCache.ExistsItemAsync(cacheKey, fieldKey);
         }
 
         /// <summary>
@@ -421,8 +420,8 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public long GetCount(CacheKey cacheKey)
         {
-            SetCache(cacheKey: cacheKey);
-            return _getCache.GetCount(cacheKey);
+            var getCache = SetCache(cacheKey);
+            return getCache.GetCount(cacheKey);
         }
 
         /// <summary>
@@ -431,8 +430,8 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public Task<long> GetCountAsync(CacheKey cacheKey)
         {
-            SetCache(cacheKey: cacheKey);
-            return _getCache.GetCountAsync(cacheKey);
+            var getCache = SetCache(cacheKey);
+            return getCache.GetCountAsync(cacheKey);
         }
 
         /// <summary>
@@ -443,8 +442,8 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public void SaveList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, List<TEntity> lst)
         {
-            SetCache(cacheKey: cacheKey);
-            _getCache.SaveList(cacheKey, lst: lst);
+            var getCache = SetCache(cacheKey);
+            getCache.SaveList(cacheKey, lst: lst);
         }
 
         /// <summary>
@@ -455,8 +454,8 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public Task SaveListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, List<TEntity> lst)
         {
-            SetCache(cacheKey: cacheKey);
-            return _getCache.SaveListAsync(cacheKey, lst: lst);
+            var getCache = SetCache(cacheKey);
+            return getCache.SaveListAsync(cacheKey, lst: lst);
         }
 
         /// <summary>
@@ -467,8 +466,8 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public void SaveItem<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntity entity)
         {
-            SetCache(cacheKey);
-            _getCache.SaveItem(cacheKey, entity: entity);
+            var getCache = SetCache(cacheKey);
+            getCache.SaveItem(cacheKey, entity: entity);
         }
 
         /// <summary>
@@ -479,8 +478,8 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public Task SaveItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntity entity)
         {
-            SetCache(cacheKey: cacheKey);
-            return _getCache.SaveItemAsync(cacheKey, entity: entity);
+            var getCache = SetCache(cacheKey);
+            return getCache.SaveItemAsync(cacheKey, entity: entity);
         }
 
         /// <summary>
@@ -490,8 +489,8 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public void RemoveItem<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey)
         {
-            SetCache(cacheKey);
-            _getCache.Remove(cacheKey, fieldKey: fieldKey);
+            var getCache = SetCache(cacheKey);
+            getCache.Remove(cacheKey, fieldKey: fieldKey);
         }
 
 
@@ -502,8 +501,8 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public Task RemoveItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey)
         {
-            SetCache(cacheKey);
-            return _getCache.RemoveAsync(cacheKey, fieldKey: fieldKey);
+            var getCache = SetCache(cacheKey);
+            return getCache.RemoveAsync(cacheKey, fieldKey: fieldKey);
         }
 
         /// <summary>
@@ -512,8 +511,8 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public void Remove(CacheKey cacheKey)
         {
-            SetCache(cacheKey);
-            _getCache.Remove(cacheKey);
+            var getCache = SetCache(cacheKey);
+            getCache.Remove(cacheKey);
         }
 
         /// <summary>
@@ -522,8 +521,8 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public Task RemoveAsync(CacheKey cacheKey)
         {
-            SetCache(cacheKey);
-            return _getCache.RemoveAsync(cacheKey);
+            var getCache = SetCache(cacheKey);
+            return getCache.RemoveAsync(cacheKey);
         }
 
 
@@ -534,8 +533,8 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public TEntity Get<TEntity>(CacheKey<TEntity> cacheKey, Func<TEntity> get)
         {
-            SetCache(cacheKey: cacheKey);
-            var entity = _getCache.Get(cacheKey);
+            var getCache = SetCache(cacheKey);
+            var entity   = getCache.Get(cacheKey);
             if (entity != null) return entity;
             if (get    == null) return default;
 
@@ -544,11 +543,11 @@ namespace FS.Cache
             slimLock.Wait();
             try
             {
-                entity = _getCache.Get(cacheKey);
+                entity = getCache.Get(cacheKey);
                 if (entity != null) return entity;
 
                 entity = get();
-                if (entity != null) _getCache.Save(cacheKey, entity: entity);
+                if (entity != null) getCache.Save(cacheKey, entity: entity);
                 return entity;
             }
             finally
@@ -563,8 +562,8 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public TEntity Get<TEntity>(CacheKey<TEntity> cacheKey)
         {
-            SetCache(cacheKey: cacheKey);
-            return _getCache.Get(cacheKey);
+            var getCache = SetCache(cacheKey);
+            return getCache.Get(cacheKey);
         }
 
         /// <summary>
@@ -573,8 +572,8 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public Task<TEntity> GetAsync<TEntity>(CacheKey<TEntity> cacheKey)
         {
-            SetCache(cacheKey: cacheKey);
-            return _getCache.GetAsync(cacheKey);
+            var getCache = SetCache(cacheKey);
+            return getCache.GetAsync(cacheKey);
         }
 
         /// <summary>
@@ -584,21 +583,21 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public async Task<TEntity> GetAsync<TEntity>(CacheKey<TEntity> cacheKey, Func<TEntity> get)
         {
-            SetCache(cacheKey: cacheKey);
-            var entity = await _getCache.GetAsync(cacheKey);
+            var getCache = SetCache(cacheKey);
+            var entity   = await getCache.GetAsync(cacheKey);
             if (entity != null) return entity;
-            if (get    == null) return entity;
+            if (get    == null) return default;
 
             // 缓存没有，则通过get委托获取（一般是数据库的数据源）
             var slimLock = GetLock(cacheKey);
             await slimLock.WaitAsync();
             try
             {
-                entity = await _getCache.GetAsync(cacheKey);
+                entity = await getCache.GetAsync(cacheKey);
                 if (entity != null) return entity;
 
                 entity = get();
-                if (entity != null) await _getCache.SaveAsync(cacheKey, entity: entity);
+                if (entity != null) await getCache.SaveAsync(cacheKey, entity: entity);
                 return entity;
             }
             finally
@@ -614,21 +613,21 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public async Task<TEntity> GetAsync<TEntity>(CacheKey<TEntity> cacheKey, Func<Task<TEntity>> get)
         {
-            SetCache(cacheKey: cacheKey);
-            var entity = await _getCache.GetAsync<TEntity>(cacheKey);
+            var getCache = SetCache(cacheKey);
+            var entity   = await getCache.GetAsync(cacheKey);
             if (entity != null) return entity;
-            if (get    == null) return entity;
+            if (get    == null) return default;
 
             // 缓存没有，则通过get委托获取（一般是数据库的数据源）
             var slimLock = GetLock(cacheKey);
             await slimLock.WaitAsync();
             try
             {
-                entity = await _getCache.GetAsync<TEntity>(cacheKey);
+                entity = await getCache.GetAsync(cacheKey);
                 if (entity != null) return entity;
 
                 entity = await get();
-                if (entity != null) await _getCache.SaveAsync(cacheKey, entity: entity);
+                if (entity != null) await getCache.SaveAsync(cacheKey, entity: entity);
                 return entity;
             }
             finally
@@ -644,8 +643,8 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public void Save<TEntity>(CacheKey<TEntity> cacheKey, TEntity entity)
         {
-            SetCache(cacheKey: cacheKey);
-            _getCache.Save(cacheKey, entity: entity);
+            var getCache = SetCache(cacheKey);
+            getCache.Save(cacheKey, entity: entity);
         }
 
         /// <summary>
@@ -655,8 +654,8 @@ namespace FS.Cache
         /// <param name="cacheKey"> 缓存策略 </param>
         public Task SaveAsync<TEntity>(CacheKey<TEntity> cacheKey, TEntity entity)
         {
-            SetCache(cacheKey: cacheKey);
-            return _getCache.SaveAsync(cacheKey, entity: entity);
+            var getCache = SetCache(cacheKey);
+            return getCache.SaveAsync(cacheKey, entity: entity);
         }
 
         /// <summary>
@@ -671,20 +670,18 @@ namespace FS.Cache
         /// <summary>
         ///     设置缓存策略
         /// </summary>
-        private void SetCache(CacheKey cacheKey)
+        private IGetCache SetCache(CacheKey cacheKey)
         {
             switch (cacheKey.CacheStoreType)
             {
                 case EumCacheStoreType.Memory:
-                    _getCache = IocManager.GetService<IGetCache>(name: "GetCacheInMemory");
-                    break;
+                    return IocManager.GetService<IGetCache>(name: "GetCacheInMemory");
                 case EumCacheStoreType.Redis:
-                    _getCache = IocManager.GetService<IGetCache>(name: $"GetCacheInRedis_{_redisItemConfigName}");
-                    break;
+                    return IocManager.GetService<IGetCache>(name: $"GetCacheInRedis_{_redisItemConfigName}");
                 case EumCacheStoreType.MemoryAndRedis:
-                    _getCache = IocManager.GetService<IGetCache>(name: $"GetCacheInMemoryAndRedis_{_redisItemConfigName}");
-                    break;
+                    return IocManager.GetService<IGetCache>(name: $"GetCacheInMemoryAndRedis_{_redisItemConfigName}");
             }
+            throw new Exception($"缓存策略枚举值不正确");
         }
 
         private static readonly Dictionary<string, SemaphoreSlim> DicLock = new();
