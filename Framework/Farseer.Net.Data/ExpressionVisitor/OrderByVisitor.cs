@@ -38,7 +38,7 @@ namespace FS.Data.ExpressionVisitor
             }
 
             lst.Reverse();
-            return IEnumerableHelper.ToString(lst: lst, sign: ", ");
+            return string.Join(", ", lst);
         }
     }
 }

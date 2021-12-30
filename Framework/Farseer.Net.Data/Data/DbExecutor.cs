@@ -52,7 +52,7 @@ namespace FS.Data.Data
         ///     序列化（serializable）：     最严格的隔离级别，事务必须依次进行。
         /// </param>
         /// <param name="dbProvider"> </param>
-        public DbExecutor(string connectionString, eumDbType dbType = eumDbType.SqlServer, int commandTimeout = 30, IsolationLevel tranLevel = IsolationLevel.Unspecified, AbsDbProvider dbProvider = null)
+        public DbExecutor(string connectionString, eumDbType dbType, int commandTimeout = 30, IsolationLevel tranLevel = IsolationLevel.Unspecified, AbsDbProvider dbProvider = null)
         {
             _connectionString = connectionString;
             _commandTimeout   = commandTimeout;

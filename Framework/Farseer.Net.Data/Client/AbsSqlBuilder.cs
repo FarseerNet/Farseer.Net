@@ -154,7 +154,7 @@ namespace FS.Data.Client
 
             Check.IsTure(isTrue: string.IsNullOrWhiteSpace(value: strOrderBySql) && ExpBuilder.SetMap.PhysicsMap.PrimaryFields.Count == 0, parameterName: "不指定排序字段时，需要设置主键ID");
 
-            strOrderBySql = "ORDER BY " + (string.IsNullOrWhiteSpace(value: strOrderBySql) ? $"{IEnumerableHelper.ToString(lst: ExpBuilder.SetMap.PhysicsMap.PrimaryFields.Select(selector: o => o.Value.Name))} ASC" : strOrderBySql);
+            strOrderBySql = "ORDER BY " + (string.IsNullOrWhiteSpace(value: strOrderBySql) ? $"{string.Join(",", ExpBuilder.SetMap.PhysicsMap.PrimaryFields.Select(selector: o => o.Value.Name))} ASC" : strOrderBySql);
             var strOrderBySqlReverse = strOrderBySql.Replace(oldValue: " DESC", newValue: " [倒序]").Replace(oldValue: "ASC", newValue: "DESC").Replace(oldValue: "[倒序]", newValue: "ASC");
 
             if (!string.IsNullOrWhiteSpace(value: strWhereSql)) strWhereSql = "WHERE " + strWhereSql;

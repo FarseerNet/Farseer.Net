@@ -42,7 +42,7 @@ namespace FS.Data.Client.SqlServer
 
             Check.IsTure(isTrue: string.IsNullOrWhiteSpace(value: strOrderBySql) && ExpBuilder.SetMap.PhysicsMap.PrimaryFields.Count == 0, parameterName: "不指定排序字段时，需要设置主键ID");
 
-            strOrderBySql = "ORDER BY " + (string.IsNullOrWhiteSpace(value: strOrderBySql) ? $"{IEnumerableHelper.ToString(lst: ExpBuilder.SetMap.PhysicsMap.PrimaryFields.Select(selector: o => o.Value.Name))} ASC" : strOrderBySql);
+            strOrderBySql = "ORDER BY " + (string.IsNullOrWhiteSpace(value: strOrderBySql) ? $"{string.Join(",", ExpBuilder.SetMap.PhysicsMap.PrimaryFields.Select(selector: o => o.Value.Name))} ASC" : strOrderBySql);
 
             Sql.Append(value: string.Format(format: "SELECT {1} FROM (SELECT {0} {1},ROW_NUMBER() OVER({2}) as Row FROM {3} {4}) a WHERE Row BETWEEN {5} AND {6}", strDistinctSql, strSelectSql, strOrderBySql, DbTableName, strWhereSql, (pageIndex - 1) * pageSize + 1, pageIndex * pageSize));
             return this;

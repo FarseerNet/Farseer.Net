@@ -29,7 +29,8 @@ namespace FS.Data.ExpressionVisitor
         public new string Visit(Expression exp)
         {
             base.Visit(exp: exp);
-            return IEnumerableHelper.ToString(lst: SqlList.Reverse(), sign: " AND ");
+            return string.Join(" AND ", SqlList.Reverse());
+            //return IEnumerableHelper.ToString(lst: SqlList.Reverse(), sign: " AND ");
         }
 
         protected override NewExpression VisitNew(NewExpression nex)

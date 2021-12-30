@@ -56,10 +56,10 @@ namespace FS.Data.Internal
         /// </summary>
         public IExecuteSql Executeor { get; private set; }
 
-        /// <summary>
-        ///     映射结构关系
-        /// </summary>
-        public ContextDataMap ContextMap { get; private set; }
+        // /// <summary>
+        // ///     映射结构关系
+        // /// </summary>
+        //public ContextDataMap ContextMap { get; private set; }
 
         /// <summary>
         ///     队列管理
@@ -109,7 +109,7 @@ namespace FS.Data.Internal
 
 
             // 上下文映射关系
-            ContextMap = new ContextDataMap(type: ContextType, context: this);
+            //ContextMap = new ContextDataMap(type: ContextType, context: this);
             // 不再需要初始化
             IsInitializer = true;
         }
@@ -135,7 +135,7 @@ namespace FS.Data.Internal
             // 手动编写SQL
             ManualSql = new ManualSql(context: this);
             // 上下文映射关系
-            ContextMap = new ContextDataMap(type: ContextType, context: this);
+            //ContextMap = new ContextDataMap(type: ContextType, context: this);
 
             IsInitializer = true;
         }

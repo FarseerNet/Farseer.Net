@@ -175,9 +175,9 @@ namespace FS.Data.Internal
                     }
                     case EumStorageType.Json:
                     {
+                        string type;
                         if (propertyType.IsGenericType)
                         {
-                            string type;
                             if (propertyType.IsArray) // 数组
                             {
                                 type = $"{propertyType.GenericTypeArguments[0].FullName}[]";
@@ -191,8 +191,9 @@ namespace FS.Data.Internal
                             {
                                 type = $"List<{propertyType.GenericTypeArguments[0].FullName}>";
                             }
-                            sb.Append(value: $"{propertyAssign} = JsonConvert.DeserializeObject(col.ToString(),typeof({type})) as {type}; ");
                         }
+                        else type = propertyType.FullName;
+                        sb.Append(value: $"{propertyAssign} = JsonConvert.DeserializeObject(col.ToString(),typeof({type})) as {type}; ");
 
                         break;
                     }

@@ -28,8 +28,8 @@ namespace FS.Data.ExpressionVisitor
         public new string Visit(Expression exp)
         {
             base.Visit(exp: exp);
-            var str = IEnumerableHelper.ToString(lst: SqlList.Reverse());
-            return str.Length > 0 ? str : "*";
+            if (SqlList.Count == 0) return "*";
+            return string.Join(",", SqlList.Reverse());
         }
 
         /// <summary>

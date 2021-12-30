@@ -18,6 +18,13 @@ namespace FS.Data
     /// </summary>
     public class DataModule : FarseerModule
     {
+        private readonly ITypeFinder _typeFinder;
+
+        public DataModule(ITypeFinder typeFinder)
+        {
+            _typeFinder = typeFinder;
+        }
+        
         /// <summary>
         ///     初始化之前
         /// </summary>
@@ -36,7 +43,7 @@ namespace FS.Data
             Task.Run(() =>
             {
                 // 找到Context
-                var lstContext = IocManager.Container.Resolve<IAssemblyFinder>().GetType().Where(o => !o.IsGenericType && o.IsClass && o.BaseType != null && o.BaseType.BaseType != null && o.BaseType.BaseType == typeof(DbContext));
+                var lstContext = _typeFinder.Find(o => !o.IsGenericType && o.IsClass && o.BaseType != null && o.BaseType.BaseType != null && o.BaseType.BaseType == typeof(DbContext));
 
                 foreach (var context in lstContext)
                 {
@@ -56,7 +63,7 @@ namespace FS.Data
                             lstLog.Add($"编译：{setType.GenericTypeArguments[0].FullName} \t耗时：{(sw.ElapsedMilliseconds - beginIndex):n} ms");
                         }
                         lstLog.Add($"编译共耗时：{sw.ElapsedMilliseconds:n} ms");
-                        IocManager.Logger<FarseerApplication>().LogInformation(string.Join("\r\n", lstLog));
+                        IocManager.Logger<FarseerApplication>().LogDebug(string.Join("\r\n", lstLog));
                     }
                 }
             });
