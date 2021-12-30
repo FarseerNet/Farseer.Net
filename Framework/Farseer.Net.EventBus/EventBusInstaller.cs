@@ -16,7 +16,6 @@ namespace FS.EventBus
     /// </summary>
     public class EventBusInstaller : IWindsorInstaller
     {
-
         /// <inheritdoc />
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
@@ -34,7 +33,7 @@ namespace FS.EventBus
             try
             {
                 // 启动订阅程序
-                foreach (var consumerType in container.Resolve<IAssemblyFinder>().GetType<IListenerMessage>())
+                foreach (var consumerType in container.Resolve<ITypeFinder>().Find<IListenerMessage>())
                 {
                     var consumerAtt = consumerType.GetCustomAttribute<ConsumerAttribute>();
 
