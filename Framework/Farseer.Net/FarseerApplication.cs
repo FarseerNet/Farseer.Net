@@ -131,15 +131,23 @@ namespace FS
                 // 获取业务实现类
                 var lstModel = IocManager.GetCustomComponent();
                 var lstLog   = new List<string>() { $"共有{lstModel.Count}个业务实例注册到容器" };
+
+                Dictionary<string, List<string>> dicImplName = new();
+
                 for (var index = 0; index < lstModel.Count; index++)
                 {
                     var model        = lstModel[index: index];
-                    var name         = model.Name != model.Implementation.FullName ? $"{model.Name} ==>" : "";
                     var interfaceCom = model.Services.FirstOrDefault(predicate: o => o.IsInterface) ?? model.Services.FirstOrDefault();
-                    lstLog.Add(interfaceCom.IsInterface ? $"{index + 1}、{name} {model.Implementation.Name} ==> {interfaceCom.Name}" : $"{index + 1}、{name} {model.Implementation.Name}");
+                    if (interfaceCom.IsInterface)
+                    {
+                        if (!dicImplName.ContainsKey(interfaceCom.Name)) dicImplName[interfaceCom.Name] = new();
+                        dicImplName[interfaceCom.Name].Add(model.Implementation.Name);
+                    }
                 }
-                IocManager.Logger<FarseerApplication>().LogInformation(string.Join("\r\n", lstLog));
 
+                lstLog.AddRange(dicImplName.Select(impl => $"{impl.Key}\t---->\t{string.Join("|", impl.Value)}"));
+
+                IocManager.Logger<FarseerApplication>().LogInformation(string.Join("\r\n", lstLog));
                 IocManager.Logger<FarseerApplication>().LogInformation(message: "启动初始化回调");
                 foreach (var action in InitCallback) action();
                 IocManager.Logger<FarseerApplication>().LogInformation(message: $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] 系统初始化完毕，耗时{(DateTime.Now - StartupAt).TotalMilliseconds:n}ms");
