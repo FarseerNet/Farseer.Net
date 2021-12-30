@@ -19,7 +19,7 @@ namespace FS.Mapper
         /// <summary>
         ///     查找所有标注了AutoMap、AutoMapFrom以及AutoMapTo特性的类型，并完成他们之间的Map
         /// </summary>
-        public override void PostInitialize()
+        public override void PreInitialize()
         {
             var types = _typeFinder.Find(predicate: type =>
                                              type.IsDefined(attributeType: typeof(MapAttribute))     ||
