@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using FS.ElasticSearch;
-using FS.ElasticSearch.Map;
 
 namespace Farseer.Net.ElasticSearchDemo
 {
@@ -19,9 +17,9 @@ namespace Farseer.Net.ElasticSearchDemo
         /// </summary>
         public IndexSet<UserPo> User { get; set; }
 
-        protected override void CreateModelInit(Dictionary<string, SetDataMap> map)
+        protected override void CreateModelInit()
         {
-            map[key: "User"].SetName(indexName: $"User_{DateTime.Now:yyyy_MM_dd}", shardsCount: 2, replicasCount: 0, 1, "User");
+            User.SetName(indexName: $"User_{DateTime.Now:yyyy_MM_dd}", shardsCount: 2, replicasCount: 0, 1, "User");
         }
     }
 }
