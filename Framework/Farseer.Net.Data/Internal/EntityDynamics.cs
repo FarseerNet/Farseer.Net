@@ -193,8 +193,8 @@ namespace FS.Data.Internal
                             }
                         }
                         else type = propertyType.FullName;
-                        sb.Append(value: $"{propertyAssign} = JsonConvert.DeserializeObject(col.ToString(),typeof({type})) as {type}; ");
-
+                        
+                        sb.Append(value: $"{propertyAssign} = Jsons.ToObject<{type}>(col.ToString()); ");
                         break;
                     }
                     case EumStorageType.Array:
