@@ -4,6 +4,8 @@ using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using FS.Core;
+using FS.Data.Features;
 using FS.Utils.Common;
 
 namespace FS.Data.Infrastructure
@@ -24,6 +26,12 @@ namespace FS.Data.Infrastructure
         public TSet SetName(string dbName, string tableName)
         {
             SetMap.SetName(dbName, tableName);
+            return (TSet)this;
+        }
+
+        public TSet SetName(string dbName, string tableName, EumTableEnginesType eumTableEnginesType)
+        {
+            SetMap.SetName(dbName, tableName, eumTableEnginesType);
             return (TSet)this;
         }
 
@@ -115,19 +123,19 @@ namespace FS.Data.Infrastructure
 
         #region ToTable
 
-        /// <summary> 查询多条记录（不支持延迟加载） </summary>
+        /// <summary> 查询多条记录 </summary>
         /// <param name="top"> 限制显示的数量 </param>
         /// <param name="isDistinct"> 返回当前条件下非重复数据 </param>
         /// <param name="isRand"> 返回当前条件下随机的数据 </param>
         public virtual DataTable ToTable(int top = 0, bool isDistinct = false, bool isRand = false) => QueueManger.Commit(map: SetMap, act: queue => Context.Executeor.ToTable(callMethod: $"{typeof(TEntity).Name}.ToTable", sqlParam: queue.SqlBuilder.ToList(top: top, isDistinct: isDistinct, isRand: isRand)), joinSoftDeleteCondition: true);
 
-        /// <summary> 异步查询多条记录（不支持延迟加载） </summary>
+        /// <summary> 异步查询多条记录 </summary>
         /// <param name="top"> 限制显示的数量 </param>
         /// <param name="isDistinct"> 返回当前条件下非重复数据 </param>
         /// <param name="isRand"> 返回当前条件下随机的数据 </param>
         public virtual Task<DataTable> ToTableAsync(int top = 0, bool isDistinct = false, bool isRand = false) => QueueManger.CommitAsync(map: SetMap, act: queue => Context.Executeor.ToTableAsync(callMethod: $"{typeof(TEntity).Name}.ToTableAsync", sqlParam: queue.SqlBuilder.ToList(top: top, isDistinct: isDistinct, isRand: isRand)), joinSoftDeleteCondition: true);
 
-        /// <summary> 查询多条记录（不支持延迟加载） </summary>
+        /// <summary> 查询多条记录 </summary>
         /// <param name="pageSize"> 每页显示数量 </param>
         /// <param name="pageIndex"> 分页索引 </param>
         /// <param name="isDistinct"> 返回当前条件下非重复数据 </param>
@@ -141,7 +149,7 @@ namespace FS.Data.Infrastructure
             return QueueManger.Commit(map: SetMap, act: queue => Context.Executeor.ToTable(callMethod: $"{typeof(TEntity).Name}.ToTable", sqlParam: queue.SqlBuilder.ToList(pageSize: pageSize, pageIndex: pageIndex, isDistinct: isDistinct)), joinSoftDeleteCondition: true);
         }
 
-        /// <summary> 异步查询多条记录（不支持延迟加载） </summary>
+        /// <summary> 异步查询多条记录 </summary>
         /// <param name="pageSize"> 每页显示数量 </param>
         /// <param name="pageIndex"> 分页索引 </param>
         /// <param name="isDistinct"> 返回当前条件下非重复数据 </param>
@@ -155,7 +163,7 @@ namespace FS.Data.Infrastructure
             return QueueManger.CommitAsync(map: SetMap, act: queue => Context.Executeor.ToTableAsync(callMethod: $"{typeof(TEntity).Name}.ToTableAsync", sqlParam: queue.SqlBuilder.ToList(pageSize: pageSize, pageIndex: pageIndex, isDistinct: isDistinct)), joinSoftDeleteCondition: true);
         }
 
-        /// <summary> 查询多条记录（不支持延迟加载） </summary>
+        /// <summary> 查询多条记录 </summary>
         /// <param name="pageSize"> 每页显示数量 </param>
         /// <param name="pageIndex"> 分页索引 </param>
         /// <param name="recordCount"> 总记录数量 </param>
@@ -173,7 +181,7 @@ namespace FS.Data.Infrastructure
             return ToTable(pageSize: pageSize, pageIndex: pageIndex, isDistinct: isDistinct);
         }
 
-        /// <summary> 异步查询多条记录（不支持延迟加载） </summary>
+        /// <summary> 异步查询多条记录 </summary>
         /// <param name="pageSize"> 每页显示数量 </param>
         /// <param name="pageIndex"> 分页索引 </param>
         /// <param name="recordCount"> 总记录数量 </param>
@@ -195,20 +203,20 @@ namespace FS.Data.Infrastructure
 
         #region ToList
 
-        /// <summary> 查询多条记录（不支持延迟加载） </summary>
+        /// <summary> 查询多条记录 </summary>
         /// <param name="top"> 限制显示的数量 </param>
         /// <param name="isDistinct"> 返回当前条件下非重复数据 </param>
         /// <param name="isRand"> 返回当前条件下随机的数据 </param>
         public virtual List<TEntity> ToList(int top = 0, bool isDistinct = false, bool isRand = false) => QueueManger.Commit(map: SetMap, act: queue => Context.Executeor.ToList<TEntity>(callMethod: $"{typeof(TEntity).Name}.ToList", sqlParam: queue.SqlBuilder.ToList(top: top, isDistinct: isDistinct, isRand: isRand)), joinSoftDeleteCondition: true);
 
-        /// <summary> 查询多条记录（不支持延迟加载） </summary>
+        /// <summary> 查询多条记录 </summary>
         /// <param name="top"> 限制显示的数量 </param>
         /// <param name="isDistinct"> 返回当前条件下非重复数据 </param>
         /// <param name="isRand"> 返回当前条件下随机的数据 </param>
         public virtual Task<List<TEntity>> ToListAsync(int top = 0, bool isDistinct = false, bool isRand = false) => QueueManger.CommitAsync(map: SetMap, act: queue => Context.Executeor.ToListAsync<TEntity>(callMethod: $"{typeof(TEntity).Name}.ToListAsync", sqlParam: queue.SqlBuilder.ToList(top: top, isDistinct: isDistinct, isRand: isRand)), joinSoftDeleteCondition: true);
 
         /// <summary>
-        ///     查询多条记录（不支持延迟加载）
+        ///     查询多条记录
         /// </summary>
         /// <param name="pageSize"> 每页显示数量 </param>
         /// <param name="pageIndex"> 分页索引 </param>
@@ -224,7 +232,7 @@ namespace FS.Data.Infrastructure
         }
 
         /// <summary>
-        ///     查询多条记录（不支持延迟加载）
+        ///     查询多条记录
         /// </summary>
         /// <param name="pageSize"> 每页显示数量 </param>
         /// <param name="pageIndex"> 分页索引 </param>
@@ -240,62 +248,43 @@ namespace FS.Data.Infrastructure
         }
 
         /// <summary>
-        ///     查询多条记录（不支持延迟加载）
+        ///     查询分页记录
         /// </summary>
         /// <param name="pageSize"> 每页显示数量 </param>
         /// <param name="pageIndex"> 分页索引 </param>
-        /// <param name="recordCount"> 总记录数量 </param>
         /// <param name="isDistinct"> 返回当前条件下非重复数据 </param>
-        public virtual List<TEntity> ToList(int pageSize, int pageIndex, out int recordCount, bool isDistinct = false)
+        public virtual PageList<TEntity> ToPageList(int pageSize, int pageIndex, bool isDistinct = false)
         {
             // 计算总页数
             Check.IsTure(isTrue: pageIndex < 1, parameterName: $"参数{nameof(pageIndex)}，不能小于1");
             Check.IsTure(isTrue: pageSize  < 1, parameterName: $"参数{nameof(pageSize)}，不能小于1");
 
-            var queue = Queue;
-            recordCount = Count();
+            var queue       = Queue;
+            var recordCount = Count();
             Queue.Copy(queue: queue);
 
-            return ToList(pageSize: pageSize, pageIndex: pageIndex, isDistinct: isDistinct);
+            var lst = ToList(pageSize: pageSize, pageIndex: pageIndex, isDistinct: isDistinct);
+            return new PageList<TEntity>(lst, recordCount);
         }
 
         /// <summary>
-        ///     查询多条记录（不支持延迟加载）
+        ///     查询分页记录
         /// </summary>
         /// <param name="pageSize"> 每页显示数量 </param>
         /// <param name="pageIndex"> 分页索引 </param>
-        /// <param name="recordCount"> 总记录数量 </param>
-        public virtual List<TEntity> ToList(int pageSize, int pageIndex, out long recordCount)
-        {
-            // 计算总页数
-            Check.IsTure(isTrue: pageIndex < 1, parameterName: $"参数{nameof(pageIndex)}，不能小于1");
-            Check.IsTure(isTrue: pageSize  < 1, parameterName: $"参数{nameof(pageSize)}，不能小于1");
-
-            var queue = Queue;
-            recordCount = Count();
-            Queue.Copy(queue: queue);
-
-            return ToList(pageSize: pageSize, pageIndex: pageIndex);
-        }
-
-        /// <summary>
-        ///     查询多条记录（不支持延迟加载）
-        /// </summary>
-        /// <param name="pageSize"> 每页显示数量 </param>
-        /// <param name="pageIndex"> 分页索引 </param>
-        /// <param name="recordCount"> 总记录数量 </param>
         /// <param name="isDistinct"> 返回当前条件下非重复数据 </param>
-        public virtual Task<List<TEntity>> ToListAsync(int pageSize, int pageIndex, out int recordCount, bool isDistinct = false)
+        public virtual async Task<PageList<TEntity>> ToPageListAsync(int pageSize, int pageIndex, bool isDistinct = false)
         {
             // 计算总页数
             Check.IsTure(isTrue: pageIndex < 1, parameterName: $"参数{nameof(pageIndex)}，不能小于1");
             Check.IsTure(isTrue: pageSize  < 1, parameterName: $"参数{nameof(pageSize)}，不能小于1");
 
-            var queue = Queue;
-            recordCount = Count();
+            var queue       = Queue;
+            var recordCount = await CountAsync();
             Queue.Copy(queue: queue);
 
-            return ToListAsync(pageSize: pageSize, pageIndex: pageIndex, isDistinct: isDistinct);
+            var lst = await ToListAsync(pageSize: pageSize, pageIndex: pageIndex, isDistinct: isDistinct);
+            return new PageList<TEntity>(lst, recordCount);
         }
 
         #endregion
@@ -503,12 +492,12 @@ namespace FS.Data.Infrastructure
         #region ToEntity
 
         /// <summary>
-        ///     查询单条记录（不支持延迟加载）
+        ///     查询单条记录
         /// </summary>
         public virtual TEntity ToEntity() => QueueManger.Commit(map: SetMap, act: queue => Context.Executeor.ToEntity<TEntity>(callMethod: $"{typeof(TEntity).Name}.ToEntity", sqlParam: queue.SqlBuilder.ToEntity()), joinSoftDeleteCondition: true);
 
         /// <summary>
-        ///     查询单条记录（不支持延迟加载）
+        ///     查询单条记录
         /// </summary>
         public virtual Task<TEntity> ToEntityAsync() => QueueManger.CommitAsync(map: SetMap, act: queue => Context.Executeor.ToEntityAsync<TEntity>(callMethod: $"{typeof(TEntity).Name}.ToEntityAsync", sqlParam: queue.SqlBuilder.ToEntity()), joinSoftDeleteCondition: true);
 
@@ -541,12 +530,12 @@ namespace FS.Data.Infrastructure
         #region Count
 
         /// <summary>
-        ///     查询数量（不支持延迟加载）
+        ///     查询数量
         /// </summary>
         public virtual int Count(bool isDistinct = false, bool isRand = false) => QueueManger.Commit(map: SetMap, act: queue => Context.Executeor.GetValue<int>(callMethod: $"{typeof(TEntity).Name}.Count", sqlParam: queue.SqlBuilder.Count()), joinSoftDeleteCondition: true);
 
         /// <summary>
-        ///     查询数量（不支持延迟加载）
+        ///     查询数量
         /// </summary>
         public virtual Task<int> CountAsync(bool isDistinct = false, bool isRand = false) => QueueManger.CommitAsync(map: SetMap, act: queue => Context.Executeor.GetValueAsync<int>(callMethod: $"{typeof(TEntity).Name}.CountAsync", sqlParam: queue.SqlBuilder.Count()), joinSoftDeleteCondition: true);
 
@@ -603,12 +592,12 @@ namespace FS.Data.Infrastructure
         #region IsHaving
 
         /// <summary>
-        ///     查询数据是否存在（不支持延迟加载）
+        ///     查询数据是否存在
         /// </summary>
         public virtual bool IsHaving() => Count() > 0;
 
         /// <summary>
-        ///     查询数据是否存在（不支持延迟加载）
+        ///     查询数据是否存在
         /// </summary>
         public virtual async Task<bool> IsHavingAsync() => await CountAsync() > 0;
 
@@ -649,7 +638,7 @@ namespace FS.Data.Infrastructure
         #region GetValue
 
         /// <summary>
-        ///     查询单个值（不支持延迟加载）
+        ///     查询单个值
         /// </summary>
         public virtual T GetValue<T>(Expression<Func<TEntity, T>> fieldName, T defValue = default)
         {
@@ -660,7 +649,7 @@ namespace FS.Data.Infrastructure
         }
 
         /// <summary>
-        ///     查询单个值（不支持延迟加载）
+        ///     查询单个值
         /// </summary>
         public virtual Task<T> GetValueAsync<T>(Expression<Func<TEntity, T>> fieldName, T defValue = default)
         {
@@ -697,7 +686,7 @@ namespace FS.Data.Infrastructure
         #region 聚合
 
         /// <summary>
-        ///     累计和（不支持延迟加载）
+        ///     累计和
         /// </summary>
         public virtual T Sum<T>(Expression<Func<TEntity, T>> fieldName, T defValue = default)
         {
@@ -708,7 +697,7 @@ namespace FS.Data.Infrastructure
         }
 
         /// <summary>
-        ///     累计和（不支持延迟加载）
+        ///     累计和
         /// </summary>
         public virtual Task<T> SumAsync<T>(Expression<Func<TEntity, T>> fieldName, T defValue = default)
         {
@@ -719,7 +708,7 @@ namespace FS.Data.Infrastructure
         }
 
         /// <summary>
-        ///     查询最大数（不支持延迟加载）
+        ///     查询最大数
         /// </summary>
         public virtual T Max<T>(Expression<Func<TEntity, T>> fieldName, T defValue = default) where T : struct
         {
@@ -730,7 +719,7 @@ namespace FS.Data.Infrastructure
         }
 
         /// <summary>
-        ///     查询最大数（不支持延迟加载）
+        ///     查询最大数
         /// </summary>
         public virtual Task<T> MaxAsync<T>(Expression<Func<TEntity, T>> fieldName, T defValue = default) where T : struct
         {
@@ -741,7 +730,7 @@ namespace FS.Data.Infrastructure
         }
 
         /// <summary>
-        ///     查询最小数（不支持延迟加载）
+        ///     查询最小数
         /// </summary>
         public virtual T Min<T>(Expression<Func<TEntity, T>> fieldName, T defValue = default) where T : struct
         {
@@ -752,7 +741,7 @@ namespace FS.Data.Infrastructure
         }
 
         /// <summary>
-        ///     查询最小数（不支持延迟加载）
+        ///     查询最小数
         /// </summary>
         public virtual Task<T> MinAsync<T>(Expression<Func<TEntity, T>> fieldName, T defValue = default) where T : struct
         {
