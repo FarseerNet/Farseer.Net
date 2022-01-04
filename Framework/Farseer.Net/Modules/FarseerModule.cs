@@ -21,7 +21,7 @@ namespace FS.Modules
         /// <summary>
         ///     初始配置
         /// </summary>
-        protected internal IFarseerStartupConfiguration Configuration { get; internal set; }
+        protected internal IFarseerStartupConfiguration StartupConfiguration { get; internal set; }
 
         /// <summary>
         ///     预初始化
@@ -55,7 +55,7 @@ namespace FS.Modules
         ///     获取模块附加的程序集
         /// </summary>
         /// <returns> </returns>
-        public virtual Assembly[] GetAdditionalAssemblies() => new Assembly[0];
+        public virtual Assembly[] GetAdditionalAssemblies() => Array.Empty<Assembly>();
 
         /// <summary>
         ///     给定类型是否FarseerModule
@@ -97,8 +97,6 @@ namespace FS.Modules
         /// <summary>
         ///     递归魔惑所有依赖模块
         /// </summary>
-        /// <param name="modules"> </param>
-        /// <param name="module"> </param>
         private static void AddModuleAndDependenciesResursively(List<Type> modules, Type module)
         {
             if (!IsFarseerModule(type: module)) throw new FarseerInitException(message: "此类型不是一个有效的模块: " + module.AssemblyQualifiedName);

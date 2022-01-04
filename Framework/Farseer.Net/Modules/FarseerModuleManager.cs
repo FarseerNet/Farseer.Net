@@ -126,7 +126,7 @@ namespace FS.Modules
                 Check.NotNull<FarseerModule, FarseerInitException>(value: moduleObject, parameterName: $"此类型不是一个有效的模块: {moduleType.AssemblyQualifiedName}");
 
                 moduleObject.IocManager    = _iocManager;
-                moduleObject.Configuration = _iocManager.Resolve<IFarseerStartupConfiguration>();
+                moduleObject.StartupConfiguration = _iocManager.Resolve<IFarseerStartupConfiguration>();
 
                 var moduleInfo = new FarseerModuleInfo(type: moduleType, instance: moduleObject);
 
