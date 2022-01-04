@@ -14,9 +14,8 @@ namespace FS.EC
 
         public IndexSet<HostPO> Host { get; set; }
 
-        protected override void CreateModelInit(Dictionary<string, SetDataMap> map)
+        protected override void CreateModelInit()
         {
-            map["Host"].SetName(indexName: $"env_host_{DateTime.Now:yyyy_MM}", shardsCount: 1, replicasCount: 0, 1, "env_host");
             Host.SetName(indexName: $"env_host_{DateTime.Now:yyyy_MM}", shardsCount: 1, replicasCount: 0, 1, "env_host");
         }
     }

@@ -39,7 +39,7 @@ namespace FS.ElasticSearch
         /// <summary>
         ///     在创建模型时调用
         /// </summary>
-        protected virtual void CreateModelInit(Dictionary<string, SetDataMap> map)
+        protected virtual void CreateModelInit()
         {
         }
 
@@ -63,7 +63,7 @@ namespace FS.ElasticSearch
                 {
                     _internalContext.IsInitModelName = true;
                     // 初始化模型映射
-                    CreateModelInit(map: _internalContext.ContextMap.SetDataList.ToDictionary(keySelector: o => o.ClassProperty.Name));
+                    CreateModelInit();
                 }
 
                 return _internalContext;
