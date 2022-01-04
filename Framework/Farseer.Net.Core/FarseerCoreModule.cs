@@ -35,7 +35,7 @@ namespace FS.Core
         /// </summary>
         public override void Initialize()
         {
-            foreach (var replaceAction in ((FarseerStartupConfiguration)Configuration).ServiceReplaceActions.Values) replaceAction();
+            foreach (var replaceAction in ((FarseerStartupConfiguration)StartupConfiguration).ServiceReplaceActions.Values) replaceAction();
             IocManager.RegisterAssemblyByConvention(assembly: Assembly.GetExecutingAssembly(), config: new ConventionalRegistrationConfig { InstallInstallers = false });
         }
     }

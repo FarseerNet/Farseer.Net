@@ -3,10 +3,10 @@
 // 时间：2017-05-30 20:53
 // ********************************************
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using FS.Extends;
 
 namespace FS.Core
 {
@@ -15,40 +15,43 @@ namespace FS.Core
     /// </summary>
     /// <typeparam name="TEntity"> </typeparam>
     [DataContract]
-    public class DataSplitList<TEntity> where TEntity : class
+    public class PageList<TEntity> : IPageList
     {
-        public DataSplitList()
+        public PageList()
         {
-            
+            List = new();
         }
         
         /// <summary>
         ///     数据分页列表及总数
         /// </summary>
-        public DataSplitList(List<TEntity> list, long totalCount)
+        public PageList(List<TEntity> list, long recordCount)
         {
             List       = list;
-            TotalCount = totalCount;
+            RecordCount = recordCount;
         }
+        
         /// <summary>
         ///     数据分页列表及总数
         /// </summary>
-        public DataSplitList(IEnumerable<TEntity> list, long totalCount)
+        public PageList(IEnumerable<TEntity> list, long recordCount)
         {
             List       = list.ToList();
-            TotalCount = totalCount;
+            RecordCount = recordCount;
         }
 
         /// <summary>
         ///     总页数
         /// </summary>
         [DataMember]
-        public long TotalCount { get; set; }
+        public long RecordCount { get; set; }
 
         /// <summary>
         ///     数据列表
         /// </summary>
         [DataMember]
         public List<TEntity> List { get; set; }
+        
+        public IEnumerable GetList() => List;
     }
 }
