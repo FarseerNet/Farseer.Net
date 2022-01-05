@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 using Castle.Core.Internal;
+using FS.Core;
 using FS.Core.LinkTrack;
 using FS.DI;
 using FS.ElasticSearch.ExpressionVisitor;
@@ -396,12 +397,10 @@ namespace FS.ElasticSearch
         /// </summary>
         /// <param name="pageSize"> 显示每页多少条数据 </param>
         /// <param name="pageIndex"> 索引页 </param>
-        /// <param name="recordCount"> 命中的总记录数 </param>
-        public List<TDocument> ToList(int pageSize, int pageIndex, out long recordCount)
+        public PageList<TDocument> ToPageList(int pageSize, int pageIndex)
         {
-            using (FsLinkTrack.TrackElasticsearch(method: "ToList"))
+            using (FsLinkTrack.TrackElasticsearch(method: "ToPageList"))
             {
-                recordCount = 0;
                 var from                = 0;
                 if (pageIndex > 1) from = (pageIndex - 1) * pageSize;
 
@@ -416,12 +415,42 @@ namespace FS.ElasticSearch
 
                 if (!searchResponse.IsValid)
                 {
-                    if (searchResponse.ApiCall.HttpStatusCode == 404) return new List<TDocument>();
+                    if (searchResponse.ApiCall.HttpStatusCode == 404) return new PageList<TDocument>();
                     throw searchResponse.OriginalException;
                 }
 
-                recordCount = searchResponse.Total;
-                return searchResponse.Documents.ToList();
+                return new PageList<TDocument>(searchResponse.Documents.ToList(),searchResponse.Total);
+            }
+        }
+
+        /// <summary>
+        ///     获取数据列表（不推荐翻页超过1万条数据）
+        /// </summary>
+        /// <param name="pageSize"> 显示每页多少条数据 </param>
+        /// <param name="pageIndex"> 索引页 </param>
+        public async Task<PageList<TDocument>> ToPageListAsync(int pageSize, int pageIndex)
+        {
+            using (FsLinkTrack.TrackElasticsearch(method: "ToPageList"))
+            {
+                var from                = 0;
+                if (pageIndex > 1) from = (pageIndex - 1) * pageSize;
+
+                var searchResponse = await Client.SearchAsync<TDocument>(selector: s =>
+                {
+                    var searchDescriptor                        = s.Index(index: SetMap.AliasNames).Size(size: pageSize).From(from: from);
+                    if (_query        != null) searchDescriptor = searchDescriptor.Query(query: q => _query);
+                    if (_sort         != null) searchDescriptor = searchDescriptor.Sort(selector: _sort);
+                    if (_selectFields != null) searchDescriptor = searchDescriptor.Source(selector: s => s.Includes(fields: i => i.Fields(fields: _selectFields)));
+                    return searchDescriptor;
+                });
+
+                if (!searchResponse.IsValid)
+                {
+                    if (searchResponse.ApiCall.HttpStatusCode == 404) return new PageList<TDocument>();
+                    throw searchResponse.OriginalException;
+                }
+
+                return new PageList<TDocument>(searchResponse.Documents.ToList(),searchResponse.Total);
             }
         }
 
