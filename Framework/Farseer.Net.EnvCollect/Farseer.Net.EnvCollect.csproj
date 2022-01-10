@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
+        <TargetFramework>netstandard2.1</TargetFramework>
         <Company>steden</Company>
         <Copyright>http://www.fsgit.com</Copyright>
         <Product>主机环境数据采集器</Product>

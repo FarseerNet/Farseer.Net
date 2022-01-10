@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
+        <TargetFramework>netstandard2.1</TargetFramework>
         <Company>steden</Company>
         <Copyright>http://www.fsgit.com</Copyright>
         <Product>全链路调用追踪</Product>

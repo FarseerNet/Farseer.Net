@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
+        <TargetFramework>netstandard2.1</TargetFramework>
         <Company>steden</Company>
         <Copyright>http://www.fsgit.com</Copyright>
         <Product>Grpc组件</Product>
@@ -19,9 +19,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Google.Protobuf" Version="3.19.1" />
-        <PackageReference Include="Grpc" Version="2.42.0" />
-        <PackageReference Include="Grpc.Core" Version="2.42.0" />
+        <PackageReference Include="Google.Protobuf" Version="3.19.2" />
+        <PackageReference Include="Grpc" Version="2.43.0" />
+        <PackageReference Include="Grpc.Core" Version="2.43.0" />
         <PackageReference Include="Grpc.Net.Client" Version="2.41.0" />
     </ItemGroup>
 
