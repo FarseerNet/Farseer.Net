@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Reflection;
+using FS.Core.Data;
 using FS.Data.Cache;
 using FS.Data.Client;
 using FS.Data.Infrastructure;
@@ -16,7 +17,7 @@ namespace FS.Data
     /// <summary>
     ///     数据库上下文（使用实例化方式时，必须末尾，执行Commit()方法，否则会产生事务死锁）
     /// </summary>
-    public class DbContext : IDisposable
+    public class DbContext : IDbContext, IDisposable
     {
         /// <summary>
         ///     当事务提交后，会调用该委托
@@ -90,11 +91,11 @@ namespace FS.Data
         ///     创建来自其它上下文的共享
         /// </summary>
         /// <param name="masterContext"> 其它上下文（主上下文） </param>
-        internal static TNewDbContext TransactionInstance<TNewDbContext>(DbContext masterContext) where TNewDbContext : DbContext, new()
+        internal static TNewDbContext TransactionInstance<TNewDbContext>(IDbContext masterContext) where TNewDbContext : DbContext, new()
         {
             var newInstance = new TNewDbContext();
-            newInstance._internalContext.TransactionInstance(currentContextType: typeof(TNewDbContext), masterContext: masterContext.InternalContext);
-            newInstance._masterContext = masterContext;
+            newInstance._internalContext.TransactionInstance(currentContextType: typeof(TNewDbContext), masterContext: ((DbContext)masterContext).InternalContext);
+            newInstance._masterContext = (DbContext)masterContext;
             return newInstance;
         }
 

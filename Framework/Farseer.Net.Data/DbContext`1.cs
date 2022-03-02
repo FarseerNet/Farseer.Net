@@ -1,4 +1,5 @@
-﻿using FS.Data.Infrastructure;
+﻿using FS.Core.Data;
+using FS.Data.Infrastructure;
 
 namespace FS.Data
 {
@@ -36,7 +37,7 @@ namespace FS.Data
         ///     创建来自其它上下文的共享
         /// </summary>
         /// <param name="otherContext"> 其它上下文（主上下文） </param>
-        public static TPo TransactionInstance(DbContext otherContext)
+        public static TPo TransactionInstance(IDbContext otherContext)
         {
             return otherContext switch
             {
