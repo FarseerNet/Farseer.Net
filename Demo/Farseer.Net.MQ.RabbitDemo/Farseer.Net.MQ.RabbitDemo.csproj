@@ -7,12 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="RabbitMQ.Client" Version="6.2.2"/>
+        <PackageReference Include="RabbitMQ.Client" Version="6.2.4" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Framework\Farseer.Net.MQ.Rabbit\Farseer.Net.MQ.Rabbit.csproj"/>
-        <ProjectReference Include="..\..\Framework\Farseer.Net.Utils\Farseer.Net.Utils.csproj"/>
+        <ProjectReference Include="..\..\Framework\Farseer.Net.MQ.Rabbit\Farseer.Net.MQ.Rabbit.csproj" />
+        <ProjectReference Include="..\..\Framework\Farseer.Net.Utils\Farseer.Net.Utils.csproj" />
     </ItemGroup>
 
     <ItemGroup>
