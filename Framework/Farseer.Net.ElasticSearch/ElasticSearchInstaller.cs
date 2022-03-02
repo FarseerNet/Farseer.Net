@@ -42,6 +42,7 @@ namespace FS.ElasticSearch
                 
                 var lstUrls  = elasticSearchItemConfig.Server.Split(',').Select(selector: o => new Uri(uriString: o)).ToList();
                 var settings = new ConnectionSettings(connectionPool: new StaticConnectionPool(uris: lstUrls));
+                settings.DisableDirectStreaming();
                 // 如果设置了用户名，则附加鉴权设置
                 if (!string.IsNullOrWhiteSpace(value: elasticSearchItemConfig.Username) || !string.IsNullOrWhiteSpace(value: elasticSearchItemConfig.Password)) settings.BasicAuthentication(username: elasticSearchItemConfig.Username, password: elasticSearchItemConfig.Password);
                 // 注册ES实例
