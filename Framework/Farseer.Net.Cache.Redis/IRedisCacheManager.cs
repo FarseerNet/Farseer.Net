@@ -39,4 +39,11 @@ public interface IRedisCacheManager : IDisposable
     ///     事务，批量写入HASH
     /// </summary>
     Task HashSetTransactionAsync<TEntity, TEntityId>(string key, List<TEntity> lst, Func<TEntity, TEntityId> funcDataKey, Func<TEntity, string> funcData = null, TimeSpan? expiry = null);
+    
+    /// <summary>
+    /// 事务锁
+    /// </summary>
+    /// <param name="key">KEY</param>
+    /// <param name="lockTime">锁的时长</param>
+    RedisLock GetLocker(string key, TimeSpan lockTime);
 }

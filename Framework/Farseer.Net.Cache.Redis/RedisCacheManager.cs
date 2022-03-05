@@ -50,6 +50,13 @@ namespace FS.Cache.Redis
         public ICacheManager CacheManager => IocManager.GetService<ICacheManager>(name: $"GetCacheInMemory_{_config.Name}");
 
         /// <summary>
+        /// 事务锁
+        /// </summary>
+        /// <param name="key">KEY</param>
+        /// <param name="lockTime">锁的时长</param>
+        public RedisLock GetLocker(string key, TimeSpan lockTime) => new(Db, key, lockTime);
+
+        /// <summary>
         ///     Redis服务端
         /// </summary>
         public string Server => _config.Server;
