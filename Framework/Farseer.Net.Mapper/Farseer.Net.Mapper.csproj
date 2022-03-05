@@ -23,12 +23,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="11.0.1" />
+        <PackageReference Include="AutoMapper" Version="11.0.1"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Farseer.Net.Core\Farseer.Net.Core.csproj" />
-        <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />
+        <ProjectReference Include="..\Farseer.Net.Core\Farseer.Net.Core.csproj"/>
+        <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj"/>
     </ItemGroup>
 
 </Project>

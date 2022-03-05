@@ -16,13 +16,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
-        <PackageReference Include="StackExchange.Redis" Version="2.2.88" />
+        <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0"/>
+        <PackageReference Include="StackExchange.Redis" Version="2.2.88"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Farseer.Net.Cache\Farseer.Net.Cache.csproj" />
-        <ProjectReference Include="..\Farseer.Net.Core\Farseer.Net.Core.csproj" />
-        <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />
+        <ProjectReference Include="..\Farseer.Net.Cache\Farseer.Net.Cache.csproj"/>
+        <ProjectReference Include="..\Farseer.Net.Core\Farseer.Net.Core.csproj"/>
+        <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj"/>
     </ItemGroup>
 </Project>

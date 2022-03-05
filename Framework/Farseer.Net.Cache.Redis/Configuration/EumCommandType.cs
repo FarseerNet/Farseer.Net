@@ -1,25 +1,24 @@
-﻿namespace FS.Cache.Redis.Configuration
+﻿namespace FS.Cache.Redis.Configuration;
+
+public enum EumCommandType
 {
-    public enum EumCommandType
-    {
-        /// <summary>
-        ///     哨兵模式
-        /// </summary>
-        Default,
+    /// <summary>
+    ///     哨兵模式
+    /// </summary>
+    Default,
 
-        /// <summary>
-        ///     哨兵模式
-        /// </summary>
-        Sentinel,
+    /// <summary>
+    ///     哨兵模式
+    /// </summary>
+    Sentinel,
 
-        /// <summary>
-        ///     代理模式
-        /// </summary>
-        Twemproxy,
+    /// <summary>
+    ///     代理模式
+    /// </summary>
+    Twemproxy,
 
-        /// <summary>
-        ///     SSDB模式
-        /// </summary>
-        SSDB
-    }
+    /// <summary>
+    ///     SSDB模式
+    /// </summary>
+    SSDB
 }
