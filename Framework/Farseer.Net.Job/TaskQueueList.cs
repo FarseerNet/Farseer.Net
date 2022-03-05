@@ -153,7 +153,7 @@ namespace FS.Job
                 // 执行业务JOB
                 var  fssJob = IocManager.GetService<IFssJob>(name: jobInsName);
                 bool result;
-                using (FsLinkTrack.TrackFss(clientHost: task.ClientHost, jobName: task.JobName, taskGroupId: task.TaskGroupId,task.Data))
+                using (FsLinkTrack.TrackFss(clientHost: task.ClientHost, jobName: task.JobName, taskGroupId: task.TaskGroupId, task.Data))
                 {
                     // 执行具体任务（业务执行）
                     sw.Start();
@@ -167,6 +167,10 @@ namespace FS.Job
                     await receiveContext.SuccessAsync();
                 else
                     await receiveContext.FailAsync();
+            }
+            catch (FssException e)
+            {
+                IocManager.Instance.Logger<TaskQueueList>().LogError(exception: e, message: $"taskGroupId={receiveContext.Meta.TaskGroupId},caption={receiveContext.Meta.Caption}：{e.Message}");
             }
             catch (Exception e)
             {

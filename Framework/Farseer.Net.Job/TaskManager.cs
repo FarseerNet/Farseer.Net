@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using FS.Core;
+using FS.Core.Exception;
 using FS.Core.Http;
 using FS.Core.Job;
 using FS.Core.Net;
@@ -66,17 +67,24 @@ namespace FS.Job
                 var url = server.StartsWith(value: "http") ? $"{server}/task/JobInvoke" : $"http://{server}/task/JobInvoke";
                 try
                 {
-                    var json = await HttpPost.PostAsync(url: url, postData: JsonConvert.SerializeObject(value: request), headerData: _header, contentType: "application/json");
-                    var api  = Jsons.ToObject<ApiResponseJson>(obj: json);
-                    if (!api.Status) IocManager.Instance.Logger<TaskManager>().LogWarning(message: api.StatusMessage);
-
+                    var api = await HttpPost.PostAsync<ApiResponseJson>(url: url, postData: JsonConvert.SerializeObject(value: request), headerData: _header, contentType: "application/json");
+                    if (!api.Status)
+                    {
+                        throw new FssException(api.StatusMessage, statusCode: api.StatusCode);
+                    }
                     return;
                 }
-                catch (Exception e)
+                catch (FssException)
                 {
-                    IocManager.Instance.Logger<TaskManager>().LogError(message: e.Message);
+                    throw;
+                }
+                catch (Exception)
+                {
+                    continue;
                 }
             }
+
+            throw new Exception($"上传任务状态失败了，请检查服务端是否正常。");
         }
     }
 }
