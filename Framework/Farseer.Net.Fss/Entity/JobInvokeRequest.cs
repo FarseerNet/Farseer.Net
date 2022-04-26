@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using FS.Core.Job;
 
-namespace FS.Job.Entity
+namespace FS.Fss.Entity
 {
     /// <summary>
     ///     客户端执行情况

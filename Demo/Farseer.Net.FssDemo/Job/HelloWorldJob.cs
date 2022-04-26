@@ -1,10 +1,10 @@
 using System.Threading.Tasks;
 using FS.Core.Job;
+using FS.Fss;
 using FS.Job;
-using FS.Job.Entity;
 using Microsoft.Extensions.Logging;
 
-namespace Farseer.Net.JobDemo.Job
+namespace Farseer.Net.FssDemo.Job
 {
     [FssJob(Name = "testJob")] // Name与FSS平台配置的JobName保持一致
     public class HelloWorldJob : IFssJob

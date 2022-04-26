@@ -3,10 +3,11 @@
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <OutputType>Exe</OutputType>
+        <RootNamespace>Farseer.Net.FssDemo</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Framework\Farseer.Net.Job\Farseer.Net.Job.csproj"/>
+        <ProjectReference Include="..\..\Framework\Farseer.Net.Fss\Farseer.Net.Fss.csproj" />
     </ItemGroup>
 
     <ItemGroup>

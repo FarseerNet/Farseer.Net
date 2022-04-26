@@ -1,7 +1,7 @@
-﻿using FS.Job;
+﻿using FS.Fss;
 using FS.Modules;
 
-namespace Farseer.Net.JobDemo
+namespace Farseer.Net.FssDemo
 {
     /// <summary>
     ///     启动模块

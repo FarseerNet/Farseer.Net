@@ -1,5 +1,5 @@
 
-namespace FS.Job.Configuration
+namespace FS.Fss.Configuration
 {
     public class JobItemConfig
     {

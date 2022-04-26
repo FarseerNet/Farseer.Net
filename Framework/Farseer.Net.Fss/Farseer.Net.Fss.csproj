@@ -12,7 +12,7 @@
         <Version>2.6.1</Version>
         <PackageTags>FSS、Farseer.Net、Job、Task</PackageTags>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <RootNamespace>FS.Job</RootNamespace>
+        <RootNamespace>FS.Fss</RootNamespace>
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
 

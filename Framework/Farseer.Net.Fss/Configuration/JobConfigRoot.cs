@@ -2,7 +2,7 @@ using System;
 using FS.DI;
 using Microsoft.Extensions.Configuration;
 
-namespace FS.Job.Configuration
+namespace FS.Fss.Configuration
 {
     /// <summary>
     ///     读取Job配置

@@ -7,7 +7,7 @@ using FS.DI;
 using FS.Extends;
 using Microsoft.Extensions.Logging;
 
-namespace FS.Job.Entity
+namespace FS.Fss.Entity
 {
     /// <summary>
     ///     任务接收的上下文

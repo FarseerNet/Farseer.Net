@@ -6,7 +6,7 @@
 using System.Runtime.Serialization;
 using System.ServiceModel;
 
-namespace FS.Job
+namespace FS.Fss
 {
     /// <summary>
     ///     用指定的错误消息初始化，并指定错误码

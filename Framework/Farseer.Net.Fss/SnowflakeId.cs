@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using Snowflake.Core;
 
-namespace FS.Job
+namespace FS.Fss
 {
     /// <summary>
     ///     雪花算法ID

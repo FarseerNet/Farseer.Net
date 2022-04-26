@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 using FS.Core.Job;
 using FS.Core.LinkTrack;
 using FS.DI;
-using FS.Job.Configuration;
-using FS.Job.Entity;
+using FS.Fss.Configuration;
+using FS.Fss.Entity;
 using Microsoft.Extensions.Logging;
 
-namespace FS.Job
+namespace FS.Fss
 {
     /// <summary>
     ///     从服务端摘取的任务列表

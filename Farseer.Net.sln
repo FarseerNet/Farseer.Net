@@ -29,9 +29,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Farseer.Net.Cache.Redis", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.DataDemo", "Demo\Farseer.Net.DataDemo\Farseer.Net.DataDemo.csproj", "{3A1A3A49-0A8E-429E-A8D3-2197938A6A30}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.Job", "Framework\Farseer.Net.Job\Farseer.Net.Job.csproj", "{7B9E3921-22FC-4032-B933-2EA44579DA1E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.Fss", "Framework\Farseer.Net.Fss\Farseer.Net.Fss.csproj", "{7B9E3921-22FC-4032-B933-2EA44579DA1E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.JobDemo", "Demo\Farseer.Net.JobDemo\Farseer.Net.JobDemo.csproj", "{7D96EE9D-33A3-4510-B178-D63ADFF989DD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.FssDemo", "Demo\Farseer.Net.FssDemo\Farseer.Net.FssDemo.csproj", "{7D96EE9D-33A3-4510-B178-D63ADFF989DD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.MQ.RabbitDemo", "Demo\Farseer.Net.MQ.RabbitDemo\Farseer.Net.MQ.RabbitDemo.csproj", "{E595ACDF-8435-42AD-87BB-534BA221A5DA}"
 EndProject

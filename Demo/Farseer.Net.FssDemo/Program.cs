@@ -2,7 +2,7 @@
 using FS;
 using FS.Job;
 
-namespace Farseer.Net.JobDemo
+namespace Farseer.Net.FssDemo
 {
     [Fss] // 开启后，才能注册到FSS平台
     public class Program

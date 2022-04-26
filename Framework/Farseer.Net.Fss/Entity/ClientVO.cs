@@ -1,4 +1,4 @@
-namespace FS.Job.Entity
+namespace FS.Fss.Entity
 {
     public class ClientVO
     {

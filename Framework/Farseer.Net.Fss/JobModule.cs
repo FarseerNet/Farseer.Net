@@ -6,15 +6,16 @@ using System.Reflection;
 using System.Threading.Tasks;
 using FS.Core;
 using FS.DI;
-using FS.Job.Configuration;
-using FS.Job.Entity;
+using FS.Fss.Configuration;
+using FS.Fss.Entity;
+using FS.Job;
 using FS.Modules;
 using FS.Reflection;
 using FS.Utils.Common;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace FS.Job
+namespace FS.Fss
 {
     public class JobModule : FarseerModule
     {

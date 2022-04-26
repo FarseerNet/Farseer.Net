@@ -1,19 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
-using FS.Core;
-using FS.Core.Exception;
 using FS.Core.Http;
 using FS.Core.Job;
 using FS.Core.Net;
 using FS.DI;
-using FS.Job.Configuration;
-using FS.Job.Entity;
+using FS.Fss.Configuration;
+using FS.Fss.Entity;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace FS.Job
+namespace FS.Fss
 {
     /// <summary>
     ///     任务管理

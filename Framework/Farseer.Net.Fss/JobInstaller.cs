@@ -4,9 +4,10 @@ using System.Reflection;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
+using FS.Job;
 using FS.Reflection;
 
-namespace FS.Job
+namespace FS.Fss
 {
     public class JobInstaller : IWindsorInstaller
     {

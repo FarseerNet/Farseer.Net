@@ -1,8 +1,7 @@
 using System.Threading.Tasks;
 using FS.Core.Job;
-using FS.Job.Entity;
 
-namespace FS.Job
+namespace FS.Fss
 {
     public interface IFssJob
     {
