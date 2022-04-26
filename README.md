@@ -139,8 +139,19 @@ public class TestEvent : IListenerMessage
   }
 ```
 
-### Farseer.Net.Fss 任务调度组件：
+### Farseer.Net.Fss 分布式任务调度组件：
 ```c#
+  [Fss] // 开启后，才能注册到FSS平台
+  public class Program
+  {
+      public static void Main()
+      {
+          // 初始化模块
+          FarseerApplication.Run<StartupModule>().Initialize();
+          Thread.Sleep(millisecondsTimeout: -1);
+      }
+  }
+    
   [FssJob(Name = "testJob")] // Name与FSS平台配置的JobName保持一致
   public class HelloWorldJob : IFssJob
   {
@@ -160,6 +171,37 @@ public class TestEvent : IListenerMessage
   
           // 任务执行成功
           return true;
+      }
+  }
+```
+
+### Farseer.Net.Tasks 本地任务调度组件：
+```c#
+  [Tasks] // 开启后，才能把JOB自动注册进来
+  public class Program
+  {
+      public static void Main()
+      {
+          // 初始化模块
+          FarseerApplication.Run<StartupModule>().Initialize();
+          Thread.Sleep(millisecondsTimeout: -1);
+      }
+  }
+    
+  [Job(Interval = 200)] // 需要附加Job特性，并设置执行间隔
+  public class HelloWorldJob : IJob
+  {
+      /// <summary>
+      ///     执行任务
+      /// </summary>
+      public Task Execute(ITaskContext context)
+      {
+          // 让FSS平台，记录日志
+          context.Logger(logLevel: LogLevel.Information, log: "你好，世界！");
+
+          context.SetNext(TimeSpan.FromSeconds(5));
+          // 任务执行成功
+          return Task.FromResult(0);
       }
   }
 ```
