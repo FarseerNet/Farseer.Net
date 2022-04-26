@@ -139,7 +139,7 @@ public class TestEvent : IListenerMessage
   }
 ```
 
-### Farseer.Net.Job 任务调度组件：
+### Farseer.Net.Fss 任务调度组件：
 ```c#
   [FssJob(Name = "testJob")] // Name与FSS平台配置的JobName保持一致
   public class HelloWorldJob : IFssJob
@@ -197,7 +197,7 @@ public class TestEvent : IListenerMessage
   *  基于ES的ORM封装，于`Farseer.Net.Data`组件使用相似
 * `Farseer.Net.EventBus`
   *  事件总线，实现轻量级的进程内发布与订阅。
-* `Farseer.Net.Job`
+* `Farseer.Net.Fss`
   *  基于`FSS`分布式调度平台的客户端，实现高可用的分布式的任务调度
 * `Farseer.Net.LinkTrack`
   *  全链路追踪监控
