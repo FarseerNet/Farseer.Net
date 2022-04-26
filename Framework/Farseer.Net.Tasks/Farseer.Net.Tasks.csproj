@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <Company>steden</Company>
+        <Copyright>http://www.fsgit.com</Copyright>
+        <Authors>steden</Authors>
+        <Product>本地任务组件</Product>
+        <Description>本地任务组件</Description>
+        <AssemblyVersion>2.6.1</AssemblyVersion>
+        <FileVersion>2.6.1</FileVersion>
+        <Version>2.6.1</Version>
+        <PackageTags>Farseer.Net、Job、Task</PackageTags>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <RootNamespace>FS.Tasks</RootNamespace>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Farseer.Net.Core\Farseer.Net.Core.csproj" />
+        <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
+        <PackageReference Include="Snowflake.Core" Version="2.0.0" />
+        <PackageReference Include="System.ServiceProcess.ServiceController" Version="6.0.0" />
+    </ItemGroup>
+</Project>

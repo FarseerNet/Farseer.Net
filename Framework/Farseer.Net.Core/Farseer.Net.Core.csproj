@@ -18,12 +18,12 @@
 
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.CSharp" Version="4.7.0"/>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
-        <PackageReference Include="Snowflake.Core" Version="2.0.0"/>
-        <PackageReference Include="System.ServiceModel.Primitives" Version="4.9.0"/>
-        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.16.0"/>
-        <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj"/>
+        <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="Snowflake.Core" Version="2.0.0" />
+        <PackageReference Include="System.ServiceModel.Primitives" Version="4.9.0" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.16.0" />
+        <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />
     </ItemGroup>
 
 </Project>  
