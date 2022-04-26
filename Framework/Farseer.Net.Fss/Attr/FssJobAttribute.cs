@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 
 // ReSharper disable once CheckNamespace
-namespace FS.Job
+namespace FS.Fss
 {
     /// <summary>
     ///     JOB配置

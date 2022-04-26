@@ -6,7 +6,7 @@ namespace Farseer.Net.FssDemo
     /// <summary>
     ///     启动模块
     /// </summary>
-    [DependsOn(typeof(JobModule))] // 依赖Job模块
+    [DependsOn(typeof(FssModule))] // 依赖Job模块
     public class StartupModule : FarseerModule
     {
         public override void PreInitialize()

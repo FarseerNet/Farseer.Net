@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using FS;
-using FS.Job;
+using FS.Fss;
 
 namespace Farseer.Net.FssDemo
 {

@@ -17,7 +17,7 @@ namespace FS.Fss
     /// </summary>
     public class TaskManager
     {
-        private static readonly Dictionary<string, string> _header = new() { { "ClientIp", JobModule.Client.ClientIp }, { "ClientId", JobModule.Client.Id.ToString() }, { "ClientName", JobModule.Client.ClientName }, { "ClientJobs", string.Join(separator: ",", value: JobModule.Client.Jobs) } };
+        private static readonly Dictionary<string, string> _header = new() { { "ClientIp", FssModule.Client.ClientIp }, { "ClientId", FssModule.Client.Id.ToString() }, { "ClientName", FssModule.Client.ClientName }, { "ClientJobs", string.Join(separator: ",", value: FssModule.Client.Jobs) } };
 
         /// <summary>
         ///     到FSS平台拉取任务

@@ -4,12 +4,11 @@ using System.Reflection;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using FS.Job;
 using FS.Reflection;
 
 namespace FS.Fss
 {
-    public class JobInstaller : IWindsorInstaller
+    public class FssInstaller : IWindsorInstaller
     {
         public static readonly Dictionary<string, Type> JobImpList = new();
 
@@ -18,7 +17,7 @@ namespace FS.Fss
         /// <summary>
         ///     构造函数
         /// </summary>
-        public JobInstaller(ITypeFinder typeFinder)
+        public FssInstaller(ITypeFinder typeFinder)
         {
             _typeFinder  = typeFinder;
         }

@@ -1,7 +1,7 @@
 using System;
 
 // ReSharper disable once CheckNamespace
-namespace FS.Job
+namespace FS.Fss
 {
     /// <summary>
     ///     标记Main方法启用消费

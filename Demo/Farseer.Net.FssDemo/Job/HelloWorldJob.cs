@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using FS.Core.Job;
 using FS.Fss;
-using FS.Job;
 using Microsoft.Extensions.Logging;
 
 namespace Farseer.Net.FssDemo.Job

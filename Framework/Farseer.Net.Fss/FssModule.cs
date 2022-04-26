@@ -8,7 +8,6 @@ using FS.Core;
 using FS.DI;
 using FS.Fss.Configuration;
 using FS.Fss.Entity;
-using FS.Job;
 using FS.Modules;
 using FS.Reflection;
 using FS.Utils.Common;
@@ -17,9 +16,9 @@ using Microsoft.Extensions.Logging;
 
 namespace FS.Fss
 {
-    public class JobModule : FarseerModule
+    public class FssModule : FarseerModule
     {
-        public JobModule(ITypeFinder typeFinder)
+        public FssModule(ITypeFinder typeFinder)
         {
             _typeFinder = typeFinder;
         }
@@ -36,7 +35,7 @@ namespace FS.Fss
             var jobItemConfig = IocManager.Resolve<IConfigurationRoot>().GetSection(key: "FSS").Get<JobItemConfig>();
             if (jobItemConfig == null)
             {
-                IocManager.Logger<JobModule>().LogWarning(message: "未找到FSS配置，无法启动任务");
+                IocManager.Logger<FssModule>().LogWarning(message: "未找到FSS配置，无法启动任务");
                 return;
             }
 
@@ -45,17 +44,17 @@ namespace FS.Fss
                 ClientIp   = IpHelper.GetIp,
                 Id         = SnowflakeId.GenerateId(),
                 ClientName = Environment.MachineName,
-                Jobs       = JobInstaller.JobImpList.Keys.Select(selector: o => o).ToArray()
+                Jobs       = FssInstaller.JobImpList.Keys.Select(selector: o => o).ToArray()
             };
 
             FarseerApplication.AddInitCallback(() =>
             {
                 // 查找启用了Debug状态的job，立即执行
-                foreach (var jobType in JobInstaller.JobImpList)
+                foreach (var jobType in FssInstaller.JobImpList)
                 {
                     var fssJobAttribute = jobType.Value.GetCustomAttribute<FssJobAttribute>();
                     if (fssJobAttribute == null || !fssJobAttribute.Debug) continue;
-                    IocManager.Logger<JobModule>().LogDebug(message: $"Debug：启动{jobType.Key}。");
+                    IocManager.Logger<FssModule>().LogDebug(message: $"Debug：启动{jobType.Key}。");
                     var sw = Stopwatch.StartNew();
                     try
                     {
@@ -63,11 +62,11 @@ namespace FS.Fss
                     }
                     catch (Exception e)
                     {
-                        IocManager.Logger<JobModule>().LogError(exception: e, message: e.Message);
+                        IocManager.Logger<FssModule>().LogError(exception: e, message: e.Message);
                     }
                     finally
                     {
-                        IocManager.Logger<JobModule>().LogDebug(message: $"Debug：{jobType.Key} 耗时 {sw.ElapsedMilliseconds} ms");
+                        IocManager.Logger<FssModule>().LogDebug(message: $"Debug：{jobType.Key} 耗时 {sw.ElapsedMilliseconds} ms");
                     }
                 }
 
@@ -81,7 +80,7 @@ namespace FS.Fss
         /// </summary>
         public override void Initialize()
         {
-            IocManager.Container.Install(new JobInstaller(_typeFinder));
+            IocManager.Container.Install(new FssInstaller(_typeFinder));
             IocManager.RegisterAssemblyByConvention(assembly: Assembly.GetExecutingAssembly(), config: new ConventionalRegistrationConfig { InstallInstallers = false });
             AppContext.SetSwitch(switchName: "System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", isEnabled: true);
         }
