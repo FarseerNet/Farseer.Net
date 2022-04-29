@@ -31,5 +31,10 @@ namespace FS.Extends
         ///     获取枚举列表
         /// </summary>
         public static List<int> ToList(this Type enumType) => Enum.GetValues(enumType: enumType).Cast<int>().ToList();
+
+        /// <summary>
+        ///     获取枚举列表
+        /// </summary>
+        public static List<TEnum> ToList<TEnum>(this Type enumType) => Enum.GetValues(enumType: enumType).Cast<TEnum>().ToList();
     }
 }
