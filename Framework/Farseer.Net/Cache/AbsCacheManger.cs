@@ -36,11 +36,7 @@ namespace FS.Cache
         /// <summary>
         ///     通过缓存获取数据
         /// </summary>
-        public TValue GetValue()
-        {
-            if (CacheList.ContainsKey(key: Key)) return CacheList[key: Key];
-            return SetCacheLock();
-        }
+        public TValue GetValue() => CacheList.ContainsKey(key: Key) ? CacheList[key: Key] : SetCacheLock();
 
         /// <summary>
         ///     更新缓存
