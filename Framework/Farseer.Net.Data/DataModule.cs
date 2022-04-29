@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -10,6 +11,7 @@ using FS.DI;
 using FS.Modules;
 using FS.Reflection;
 using Microsoft.Extensions.Logging;
+using Activator = FS.Reflection.Activator;
 
 namespace FS.Data
 {
@@ -24,14 +26,13 @@ namespace FS.Data
         {
             _typeFinder = typeFinder;
         }
-        
+
         /// <summary>
         ///     初始化之前
         /// </summary>
         public override void PreInitialize()
         {
         }
-
         /// <summary>
         ///     初始化
         /// </summary>
@@ -39,12 +40,16 @@ namespace FS.Data
         {
             IocManager.Container.Install(new DataInstaller());
             IocManager.RegisterAssemblyByConvention(assembly: Assembly.GetExecutingAssembly(), config: new ConventionalRegistrationConfig { InstallInstallers = false });
+        }
 
-            Task.Run(() =>
+        public override void PostInitialize()
+        {
+            //Task.Run(() =>
             {
                 // 找到Context
                 var lstContext = _typeFinder.Find(o => !o.IsGenericType && o.IsClass && o.BaseType != null && o.BaseType.BaseType != null && o.BaseType.BaseType == typeof(DbContext));
 
+                var lstLog = new List<string>();
                 foreach (var context in lstContext)
                 {
                     // 需要做实例化，才能初始化上下文
@@ -54,19 +59,22 @@ namespace FS.Data
                     var lstPOType = set.Select(o => o.PropertyType).Where(o => o.GetInterfaces().Any(i => i == typeof(IDbSet)));
                     if (lstPOType != null)
                     {
-                        var lstLog = new List<string>() { $"开启异步编译{context.Name}上下文中的{lstPOType.Count()}个实体类" };
-                        var sw     = Stopwatch.StartNew();
+                        lstLog.Add($"{context.Name}上下文（{lstPOType.Count()}个）：");
+                        var sw = Stopwatch.StartNew();
+
                         foreach (var setType in lstPOType)
                         {
                             var beginIndex = sw.ElapsedMilliseconds;
                             new EntityDynamics().BuildType(setType.GenericTypeArguments[0]);
                             lstLog.Add($"编译：{setType.GenericTypeArguments[0].FullName} \t耗时：{(sw.ElapsedMilliseconds - beginIndex):n} ms");
                         }
-                        lstLog.Add($"编译共耗时：{sw.ElapsedMilliseconds:n} ms");
-                        IocManager.Logger<FarseerApplication>().LogDebug(string.Join("\r\n", lstLog));
+                        lstLog.Add($"耗时：{sw.ElapsedMilliseconds:n} ms");
+                        lstLog.Add($"------------------------------------------");
                     }
                 }
-            });
+                IocManager.Logger<FarseerApplication>().LogInformation(string.Join("\r\n", lstLog));
+            } //);
         }
+
     }
 }
