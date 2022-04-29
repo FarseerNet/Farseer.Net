@@ -149,6 +149,13 @@ namespace FS.DI
         /// <summary>
         ///     注册
         /// </summary>
+        /// <param name="instance">实例 </param>
+        /// <param name="lifeStyle">实例生命周期</param>
+        public void Register<T>(T instance, DependencyLifeStyle lifeStyle = DependencyLifeStyle.Singleton) where T : class => Container.Register(ApplyLifestyle(Component.For<T>().Instance(instance), lifeStyle));
+
+        /// <summary>
+        ///     注册
+        /// </summary>
         /// <param name="type"> </param>
         /// <returns> </returns>
         public bool IsRegistered(Type type) => Container.Kernel.HasComponent(service: type);
@@ -254,7 +261,7 @@ namespace FS.DI
                 default:                            return registration;
             }
         }
-        
+
         /// <summary>
         ///     获取实例
         /// </summary>

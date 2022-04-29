@@ -53,5 +53,11 @@ namespace FS.DI
         /// </summary>
         /// <returns> </returns>
         List<ComponentModel> GetCustomComponent();
+        /// <summary>
+        ///     注册
+        /// </summary>
+        /// <param name="instance">实例 </param>
+        /// <param name="lifeStyle">实例生命周期</param>
+        void Register<T>(T instance, DependencyLifeStyle lifeStyle = DependencyLifeStyle.Singleton) where T : class;
     }
 }
