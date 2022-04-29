@@ -67,6 +67,11 @@ namespace FS
         /// </summary>
         public static string AppName { get; set; }
 
+        /// <summary>
+        ///     应用ID（每次重启应用后会重新生成）
+        /// </summary>
+        public static string AppId { get; set; }
+
         private static List<Action> InitCallback { get; } = new();
 
         /// <summary>
@@ -116,6 +121,7 @@ namespace FS
         {
             try
             {
+                AppId     = Guid.NewGuid().ToString("N");
                 StartupAt = DateTime.Now;
                 RegisterBootstrapper();
                 IocManager.Container.Install(new LoggerInstaller());
