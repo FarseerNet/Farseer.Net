@@ -95,6 +95,29 @@ namespace FS.ElasticSearch
             return this;
         }
 
+
+
+        /// <summary>
+        ///     动态设置索引名称、别名
+        /// </summary>
+        /// <param name="indexName"> 新的索引名称 </param>
+        public IndexSet<TDocument> SetName(string indexName)
+        {
+            SetMap.SetName(indexName: indexName);
+            return this;
+        }
+
+        /// <summary>
+        ///     动态设置索引名称、别名
+        /// </summary>
+        /// <param name="indexName"> 新的索引名称 </param>
+        /// <param name="aliasNames"> 别名 </param>
+        public IndexSet<TDocument> SetName(string indexName, params string[] aliasNames)
+        {
+            SetMap.SetName(indexName: indexName, aliasNames: aliasNames);
+            return this;
+        }
+
         /// <summary>
         ///     条件
         /// </summary>
@@ -419,7 +442,7 @@ namespace FS.ElasticSearch
                     throw searchResponse.OriginalException;
                 }
 
-                return new PageList<TDocument>(searchResponse.Documents.ToList(),searchResponse.Total);
+                return new PageList<TDocument>(searchResponse.Documents.ToList(), searchResponse.Total);
             }
         }
 
@@ -450,7 +473,7 @@ namespace FS.ElasticSearch
                     throw searchResponse.OriginalException;
                 }
 
-                return new PageList<TDocument>(searchResponse.Documents.ToList(),searchResponse.Total);
+                return new PageList<TDocument>(searchResponse.Documents.ToList(), searchResponse.Total);
             }
         }
 

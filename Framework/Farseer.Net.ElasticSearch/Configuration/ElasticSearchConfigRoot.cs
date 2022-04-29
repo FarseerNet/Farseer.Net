@@ -13,18 +13,16 @@ namespace FS.ElasticSearch.Configuration
         /// <summary>
         ///     读取配置
         /// </summary>
-        public static List<ElasticSearchItemConfig> Get()
+        public static IEnumerable<ElasticSearchItemConfig> Get()
         {
             var configs   = IocManager.GetService<IConfigurationRoot>().GetSection(key: "ElasticSearch").GetChildren();
-            var lstConfig = new List<ElasticSearchItemConfig>();
             foreach (var configurationSection in configs)
             {
                 var config = ConfigConvert.ToEntity<ElasticSearchItemConfig>(configurationSection.Value);
                 if (config == null) continue;
                 config.Name = configurationSection.Key;
-                lstConfig.Add(config);
+                yield return config;
             }
-            return lstConfig;
         }
     }
 }

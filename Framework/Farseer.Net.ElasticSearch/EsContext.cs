@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using FS.DI;
 using FS.ElasticSearch.Cache;
+using FS.ElasticSearch.Configuration;
 using FS.ElasticSearch.Internal;
 using FS.ElasticSearch.Map;
 using Nest;
@@ -13,11 +14,17 @@ namespace FS.ElasticSearch
     public class EsContext : IDisposable
     {
         /// <summary>
+        /// 配置名称
+        /// </summary>
+        private readonly string _configName;
+
+        /// <summary>
         ///     通过配置，连接ElasticSearch
         /// </summary>
         /// <param name="configName"> 配置名称 </param>
         protected EsContext(string configName)
         {
+            _configName      = configName;
             Client           = IocManager.GetService<IElasticClient>(name: configName);
             _internalContext = new InternalContext(contextType: GetType());
 
@@ -61,6 +68,13 @@ namespace FS.ElasticSearch
 
                 if (!_internalContext.IsInitModelName)
                 {
+                    // 设置默认的副本、分片、刷新数量
+                    var esConfig = ElasticSearchConfigRoot.Get().FirstOrDefault(o => o.Name == _configName);
+                    foreach (var setDataMap in _internalContext.ContextMap.SetDataList)
+                    {
+                        setDataMap.SetName(esConfig.ShardsCount, esConfig.ReplicasCount, esConfig.RefreshInterval, esConfig.IndexFormat);
+                    }
+
                     _internalContext.IsInitModelName = true;
                     // 初始化模型映射
                     CreateModelInit();
