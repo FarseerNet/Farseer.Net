@@ -4,6 +4,7 @@ using Castle.Windsor;
 using FS.Configuration.Startup;
 using FS.Modules;
 using FS.Reflection;
+using Microsoft.Extensions.Logging;
 
 namespace FS.DI.Installers
 {
