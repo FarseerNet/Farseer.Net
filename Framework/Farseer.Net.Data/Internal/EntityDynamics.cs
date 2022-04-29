@@ -11,6 +11,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Loader;
 using System.Text;
 using System.Threading.Tasks;
 using FS.Core;
@@ -53,7 +54,7 @@ namespace FS.Data.Internal
         /// </summary>
         private Type BuildEntity(Type entityType)
         {
-            var setPhysicsMap = SetMapCacheManger.Cache(key: entityType); // new SetPhysicsMap(entityType); 
+            var setPhysicsMap = SetMapCacheManger.Cache(key: entityType); 
             var clsName       = entityType.Name + "ByDataRow";            // 类名
 
             var sb = new StringBuilder();
@@ -68,6 +69,7 @@ namespace FS.Data.Internal
             var scriptOptions = ScriptOptions.Default
                                              .AddReferences(typeof(List<>).Assembly, typeof(ConvertHelper).Assembly, typeof(MapingData).Assembly, entityType.Assembly)
                                              .AddImports("System.Collections.Generic")
+                                             .AddImports("System.Linq")
                                              .AddImports("Newtonsoft.Json")
                                              .AddImports("FS.Core")
                                              .AddImports("FS.Utils.Common")
@@ -98,6 +100,7 @@ namespace FS.Data.Internal
             var asmName     = scriptState.Script.GetCompilation().AssemblyName;
             var assembly    = AppDomain.CurrentDomain.GetAssemblies().First(predicate: a => a.FullName.StartsWith(value: asmName, comparisonType: StringComparison.OrdinalIgnoreCase));
             return assembly.DefinedTypes.FirstOrDefault(predicate: o => o.Name == clsName);
+            //AssemblyLoadContext
         }
 
         /// <summary> 生成ToList转换方法 </summary>
@@ -205,7 +208,7 @@ namespace FS.Data.Internal
                             sb.Append(value: $"{propertyAssign} = ConvertHelper.ConvertType(col,typeof({asType})) as {asType}; ");
                         }
                         else // List集合
-                            sb.Append(value: $"{propertyAssign} = StringHelper.ToList<{propertyType.GetGenericArguments()[0].FullName}>(col.ToString()); ");
+                            sb.Append(value: $"{propertyAssign} = StringHelper.ToList<{propertyType.GetGenericArguments()[0].FullName}>(col.ToString()).ToList(); ");
                         break;
                     }
                 }
