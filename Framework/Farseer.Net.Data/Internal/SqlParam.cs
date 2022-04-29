@@ -21,7 +21,7 @@ namespace FS.Data.Internal
 
         public SqlParam(IProcParam procParam)
         {
-            Param  = procParam.Param;
+            Param  = procParam.Param?.ToList();
             SetMap = procParam.SetMap;
         }
 

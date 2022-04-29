@@ -85,9 +85,8 @@ namespace FS.Reflection
         /// <param name="parameterTypes"> 类型数组 </param>
         /// <param name="paramExp"> lambda表达式的参数表达式（参数是：object[]） </param>
         /// <returns> 构造函数的参数表达式数组 </returns>
-        private static Expression[] BuildParameters(ParameterExpression paramExp, params Type[] parameterTypes)
+        private static IEnumerable<UnaryExpression> BuildParameters(ParameterExpression paramExp, params Type[] parameterTypes)
         {
-            var list = new List<Expression>();
             for (var i = 0; i < parameterTypes.Length; i++)
             {
                 //从参数表达式（参数是：object[]）中取出参数
@@ -95,10 +94,8 @@ namespace FS.Reflection
                 //把参数转化成指定类型
                 var argCast = Expression.Convert(expression: arg, type: parameterTypes[i]);
 
-                list.Add(item: argCast);
+                yield return argCast;
             }
-
-            return list.ToArray();
         }
     }
 }

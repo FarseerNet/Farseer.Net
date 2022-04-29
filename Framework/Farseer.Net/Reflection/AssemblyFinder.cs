@@ -62,21 +62,23 @@ namespace FS.Reflection
         ///     在当前运行目录下，查找所有dll
         /// </summary>
         /// <returns> </returns>
-        public List<Assembly> GetAssembliesFromFolder()
+        public IEnumerable<Assembly> GetAssembliesFromFolder()
         {
-            var assemblies = new List<Assembly>();
-            var files      = Directory.GetFiles(path: $"{AppContext.BaseDirectory}", searchPattern: "*.dll");
+            var files = Directory.GetFiles(path: $"{AppContext.BaseDirectory}", searchPattern: "*.dll");
             foreach (var file in files)
+            {
+                Assembly assembly = null;
                 try
                 {
-                    assemblies.Add(item: Assembly.Load(assemblyRef: AssemblyLoadContext.GetAssemblyName(assemblyPath: file)));
+                    assembly = Assembly.Load(assemblyRef: AssemblyLoadContext.GetAssemblyName(assemblyPath: file));
                 }
                 catch (Exception)
                 {
                     // ignored 失败的原因是非托管程序
                 }
-
-            return assemblies;
+                
+                if (assembly != null) yield return assembly;
+            }
         }
     }
 }

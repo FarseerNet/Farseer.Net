@@ -66,21 +66,18 @@ namespace FS.Modules
         /// <summary>
         ///     查找模块依赖的模块
         /// </summary>
-        public static List<Type> FindDependedModuleTypes(Type moduleType)
+        public static IEnumerable<Type> FindDependedModuleTypes(Type moduleType)
         {
             if (!IsFarseerModule(type: moduleType)) throw new FarseerInitException(message: "此类型不是一个有效的模块: " + moduleType.AssemblyQualifiedName);
 
-            var list = new List<Type>();
 
             if (moduleType.GetTypeInfo().IsDefined(attributeType: typeof(DependsOnAttribute), inherit: true))
             {
                 var dependsOnAttributes = moduleType.GetTypeInfo().GetCustomAttributes(attributeType: typeof(DependsOnAttribute), inherit: true).Cast<DependsOnAttribute>();
                 foreach (var dependsOnAttribute in dependsOnAttributes)
                     foreach (var dependedModuleType in dependsOnAttribute.DependedModuleTypes)
-                        list.Add(item: dependedModuleType);
+                        yield return dependedModuleType;
             }
-
-            return list;
         }
 
         /// <summary>

@@ -23,11 +23,9 @@ namespace FS.Extends
         /// <typeparam name="TEntity"> 实体 </typeparam>
         /// <param name="lst"> 列表 </param>
         /// <param name="count"> 生成的数据 </param>
-        public static List<TEntity> TestData<TEntity>(this IList<TEntity> lst, int count) where TEntity : class, new()
+        public static IEnumerable<TEntity> TestData<TEntity>(this IList<TEntity> lst, int count) where TEntity : class, new()
         {
-            lst = new List<TEntity>();
-            for (var i = 0; i < count; i++) lst.Add(item: new TEntity().FillRandData());
-            return lst.ToList();
+            for (var i = 0; i < count; i++) yield return new TEntity().FillRandData();
         }
 
         /// <summary>

@@ -71,7 +71,7 @@ namespace FS.MQ.RedisStream
         /// <summary>
         ///     启动消费程序
         /// </summary>
-        private void RunConsumer(IWindsorContainer container, Type consumerType, List<RedisStreamConfig> rabbitItemConfigs)
+        private void RunConsumer(IWindsorContainer container, Type consumerType, IEnumerable<RedisStreamConfig> rabbitItemConfigs)
         {
             // 没有使用consumerAttribute特性的，不启用
             var consumerAttribute = consumerType.GetCustomAttribute<ConsumerAttribute>();

@@ -22,6 +22,6 @@ namespace FS.Data.Infrastructure
         /// <summary>
         ///     当前生成的参数
         /// </summary>
-        List<DbParameter> Param { get; }
+        IEnumerable<DbParameter> Param { get; }
     }
 }

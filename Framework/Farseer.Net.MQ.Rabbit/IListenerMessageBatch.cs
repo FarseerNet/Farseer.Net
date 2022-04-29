@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FS.DI;
 using FS.MQ.Rabbit.Attr;
@@ -34,7 +35,7 @@ namespace FS.MQ.Rabbit
         async Task Init(IIocManager iocManager, ConsumerAttribute consumerAtt, Type consumerType)
         {
             // 读取配置
-            var rabbitItemConfig = RabbitConfigRoot.Get().Find(match: o => o.Server.Name == consumerAtt.Server);
+            var rabbitItemConfig = RabbitConfigRoot.Get().FirstOrDefault(o => o.Server.Name == consumerAtt.Server);
             if (rabbitItemConfig == null)
             {
                 iocManager.Logger<IListenerMessageBatch>().LogWarning(message: $"未找到：{consumerType.FullName}的配置项：{consumerAtt.Server}");

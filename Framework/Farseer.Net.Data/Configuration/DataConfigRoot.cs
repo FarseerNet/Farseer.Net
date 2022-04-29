@@ -13,10 +13,9 @@ namespace FS.Data.Configuration
         /// <summary>
         ///     读取配置
         /// </summary>
-        public static List<DbItemConfig> Get()
+        public static IEnumerable<DbItemConfig> Get()
         {
             var configs         = IocManager.GetService<IConfigurationRoot>().GetSection(key: "Database").GetChildren();
-            var lstConfig = new List<DbItemConfig>();
             foreach (var configurationSection in configs)
             {
                 var config = ConfigConvert.ToEntity<DbItemConfig>(configurationSection.Value);
@@ -31,9 +30,8 @@ namespace FS.Data.Configuration
                 if (config.ConnectTimeout == 0) config.ConnectTimeout = 600;
                 if (config.CommandTimeout == 0) config.CommandTimeout = 300;
                 config.Name = configurationSection.Key;
-                lstConfig.Add(config);
+                yield return config;
             }
-            return lstConfig;
         }
     }
 

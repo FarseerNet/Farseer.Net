@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using FS.Utils.Common;
@@ -23,7 +24,7 @@ namespace FS.Extends
         /// <typeparam name="T"> 基本类型 </typeparam>
         public static List<T> ToList<T>(this string str, T defValue, string splitString = ",")
         {
-            return StringHelper.ToList(str, defValue, splitString);
+            return StringHelper.ToList(str, defValue, splitString).ToList();
         }
 
         /// <summary>

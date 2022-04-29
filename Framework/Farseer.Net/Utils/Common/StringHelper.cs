@@ -17,9 +17,9 @@ namespace FS.Utils.Common
         /// <param name="splitString"> 分隔符为NullOrEmpty时，则直接拆份为Char </param>
         /// <param name="defValue"> 默认值(单项转换失败时，默认值为NullOrEmpty时，则不添加，否则替换为默认值) </param>
         /// <typeparam name="T"> 基本类型 </typeparam>
-        public static List<T> ToList<T>(string str, T defValue = default, string splitString = ",")
+        public static IEnumerable<T> ToList<T>(string str, T defValue = default, string splitString = ",")
         {
-            if (string.IsNullOrWhiteSpace(value: str)) return new List<T>();
+            if (string.IsNullOrWhiteSpace(value: str)) yield break;
             var      returnType     = typeof(T);
             var      returnTypeCode = Type.GetTypeCode(type: returnType);
             string[] strArray;
@@ -32,14 +32,11 @@ namespace FS.Utils.Common
             else
                 strArray = splitString.Length == 1 ? str.Split(splitString[index: 0]) : str.Split(separator: new[] { splitString }, options: StringSplitOptions.None);
 
-            var lst = new List<T>(capacity: strArray.Length);
             foreach (var item in strArray)
             {
                 var val = ConvertHelper.ConvertSimple(sourceValue: item, objString: item, returnType: returnType, returnTypeCode: returnTypeCode);
-                lst.Add(item: val == null ? defValue : (T)val);
+                yield return val == null ? defValue : (T)val;
             }
-
-            return lst;
         }
 
         /// <summary>

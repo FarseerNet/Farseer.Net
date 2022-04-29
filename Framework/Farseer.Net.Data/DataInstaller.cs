@@ -1,9 +1,11 @@
-﻿using Castle.MicroKernel.Registration;
+﻿using System.Linq;
+using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using FS.Data.Client;
 using FS.Data.Configuration;
 using FS.Data.Internal;
+using FS.Extends;
 
 namespace FS.Data
 {
@@ -20,7 +22,7 @@ namespace FS.Data
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             // 读取配置
-            var dbConfigs = DataConfigRoot.Get();
+            var dbConfigs = DataConfigRoot.Get().ToList();
             dbConfigs.ForEach(action: m =>
             {
                 // 注册Db连接

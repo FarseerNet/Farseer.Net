@@ -41,7 +41,7 @@ namespace FS.Data.Internal
         /// <summary>
         ///     当前生成的参数
         /// </summary>
-        public List<DbParameter> Param { get; private set; }
+        public IEnumerable<DbParameter> Param { get; private set; }
 
         /// <summary>
         ///     存储过程创建SQL 输入、输出参数化

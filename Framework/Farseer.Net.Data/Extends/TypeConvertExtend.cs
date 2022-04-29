@@ -122,10 +122,9 @@ namespace FS.Extends
         /// <summary>
         ///     将XML转成实体
         /// </summary>
-        public static List<TEntity> ToList<TEntity>(this XElement element) where TEntity : class
+        public static IEnumerable<TEntity> ToList<TEntity>(this XElement element) where TEntity : class
         {
             var orm  = SetMapCacheManger.Cache(key: typeof(TEntity));
-            var list = new List<TEntity>();
 
             foreach (var el in element.Elements())
             {
@@ -154,10 +153,8 @@ namespace FS.Extends
                     }
                 }
 
-                list.Add(item: t);
+                yield return t;
             }
-
-            return list;
         }
 
         /// <summary>

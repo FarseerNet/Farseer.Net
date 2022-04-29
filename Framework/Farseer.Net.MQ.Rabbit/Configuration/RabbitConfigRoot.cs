@@ -15,10 +15,9 @@ namespace FS.MQ.Rabbit.Configuration
         /// <summary>
         ///     读取配置
         /// </summary>
-        public static List<RabbitItemConfig> Get()
+        public static IEnumerable<RabbitItemConfig> Get()
         {
             var configs   = IocManager.GetService<IConfigurationRoot>().GetSection(key: "Rabbit").GetChildren();
-            var lstConfig = new List<RabbitItemConfig>();
             foreach (var configurationSection in configs)
             {
                 var config = new RabbitItemConfig
@@ -35,8 +34,6 @@ namespace FS.MQ.Rabbit.Configuration
                     config.Server.Port   = servers[1].ConvertType(-1);
                 }
                 
-                lstConfig.Add(config);
-
                 // 生产者配置
                 var products = configurationSection.GetSection("Product").GetChildren();
                 foreach (var product in products)
@@ -46,8 +43,9 @@ namespace FS.MQ.Rabbit.Configuration
                     productItemConfig.Name = product.Key;
                     config.Product.Add(productItemConfig);
                 }
+
+                yield return config;
             }
-            return lstConfig;
         }
     }
 }

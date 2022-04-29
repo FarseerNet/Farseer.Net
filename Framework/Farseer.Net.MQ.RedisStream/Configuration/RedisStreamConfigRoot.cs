@@ -15,10 +15,9 @@ namespace FS.MQ.RedisStream.Configuration
         /// <summary>
         ///     读取配置
         /// </summary>
-        public static List<RedisStreamConfig> Get()
+        public static IEnumerable<RedisStreamConfig> Get()
         {
             var configs   = IocManager.GetService<IConfigurationRoot>().GetSection(key: "RedisStream").GetChildren();
-            var lstConfig = new List<RedisStreamConfig>();
             foreach (var configurationSection in configs)
             {
                 var config = new RedisStreamConfig
@@ -28,7 +27,6 @@ namespace FS.MQ.RedisStream.Configuration
                 };
                 if (config.Server == null) continue;
                 config.Server.Name = configurationSection.Key;
-                lstConfig.Add(config);
                 
                 // 生产者配置
                 var products = configurationSection.GetSection("Product").GetChildren();
@@ -39,8 +37,9 @@ namespace FS.MQ.RedisStream.Configuration
                     productItemConfig.QueueName = product.Key;
                     config.Product.Add(productItemConfig);
                 }
+
+                yield return config;
             }
-            return lstConfig;
         }
     }
 }

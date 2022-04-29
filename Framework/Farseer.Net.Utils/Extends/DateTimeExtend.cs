@@ -122,15 +122,12 @@ namespace FS.Extends
         ///     返回当前的所有天数
         /// </summary>
         /// <param name="dt"> 时间 </param>
-        public static List<int> GetAllDay(this DateTime dt)
+        public static IEnumerable<int> GetAllDay(this DateTime dt)
         {
-            var lst = new List<int>();
             for (var i = 1; i <= dt.GetLastDay(); i++)
             {
-                lst.Add(i);
+                yield return i;
             }
-
-            return lst;
         }
     }
 }

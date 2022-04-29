@@ -62,8 +62,8 @@ namespace FS.Data.Client
         /// </summary>
         /// <param name="fieldName"> 字符名称 </param>
         public virtual string KeywordAegis(string fieldName) =>
-            //if (Regex.IsMatch(fieldName, "[\\(\\)\\,\\[\\]\\+\\= ]+")) { return fieldName; }
-            $"[{fieldName}]";
+        //if (Regex.IsMatch(fieldName, "[\\(\\)\\,\\[\\]\\+\\= ]+")) { return fieldName; }
+        $"[{fieldName}]";
 
         #region 返回DbProvider
 
@@ -104,18 +104,15 @@ namespace FS.Data.Client
         /// <typeparam name="TEntity"> 实体类 </typeparam>
         /// <param name="map"> 实体类结构 </param>
         /// <param name="entity"> 实体类 </param>
-        public List<DbParameter> InitParam<TEntity>(SetPhysicsMap map, TEntity entity) where TEntity : class, new()
+        public IEnumerable<DbParameter> InitParam<TEntity>(SetPhysicsMap map, TEntity entity) where TEntity : class, new()
         {
-            var lstParam = new List<DbParameter>();
-            if (entity == null) return lstParam;
+            if (entity == null) yield break;
 
             foreach (var kic in map.MapList.Where(predicate: o => o.Value.Field.IsInParam || o.Value.Field.IsOutParam))
             {
                 var obj = PropertyGetCacheManger.Cache(key: kic.Key, instance: entity);
-                lstParam.Add(item: CreateDbParam(name: kic.Value.Field.Name, value: obj, valType: kic.Key.PropertyType, output: kic.Value.Field.IsOutParam));
+                yield return CreateDbParam(name: kic.Value.Field.Name, value: obj, valType: kic.Key.PropertyType, output: kic.Value.Field.IsOutParam);
             }
-
-            return lstParam;
         }
 
         /// <summary>
@@ -125,13 +122,13 @@ namespace FS.Data.Client
         /// <param name="map"> 实体类结构 </param>
         /// <param name="lstParam"> SQL参数列表 </param>
         /// <param name="entity"> 实体类 </param>
-        public void SetParamToEntity<TEntity>(SetPhysicsMap map, List<DbParameter> lstParam, TEntity entity) where TEntity : class, new()
+        public void SetParamToEntity<TEntity>(SetPhysicsMap map, IEnumerable<DbParameter> lstParam, TEntity entity) where TEntity : class, new()
         {
             if (entity == null) return;
 
             foreach (var kic in map.MapList.Where(predicate: o => o.Value.Field.IsOutParam))
             {
-                var oVal = ConvertHelper.ConvertType(sourceValue: lstParam.Find(match: o => o.ParameterName == ParamsPrefix(paramName: kic.Value.Field.Name)).Value, returnType: kic.Key.PropertyType);
+                var oVal = ConvertHelper.ConvertType(sourceValue: lstParam.FirstOrDefault(o => o.ParameterName == ParamsPrefix(paramName: kic.Value.Field.Name)).Value, returnType: kic.Key.PropertyType);
                 PropertySetCacheManger.Cache(key: kic.Key, instance: entity, value: oVal);
             }
         }
