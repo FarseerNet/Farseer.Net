@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Castle.MicroKernel.Registration;
 using FS.Configuration.Startup;
@@ -127,7 +128,7 @@ namespace FS
                 IocManager.Container.Install(new LoggerInstaller());
                 IocManager.Container.Install(new FarseerInstaller());
 
-                IocManager.Logger<FarseerApplication>().LogInformation(message: $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] 注册系统核心组件");
+                IocManager.Logger<FarseerApplication>().LogInformation(message: $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] 注册系统核心组件，当前进程ID：{Process.GetCurrentProcess().Id}");
 
                 IocManager.Resolve<FarseerStartupConfiguration>().Initialize();
                 _moduleManager = IocManager.Resolve<IFarseerModuleManager>();
