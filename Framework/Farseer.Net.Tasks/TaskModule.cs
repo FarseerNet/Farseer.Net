@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using FS.Core.LinkTrack;
 using FS.DI;
 using FS.Extends;
 using FS.Modules;
@@ -47,28 +48,24 @@ public class TaskModule : FarseerModule
 
                     while (true)
                     {
-
-                        IocManager.Logger<TaskModule>().LogDebug(message: $"【{job.Key.Name}】 开始执行");
                         var sw          = Stopwatch.StartNew();
                         var taskContext = new TaskContext(jobType: job.Key, sw: sw);
+                        using (var track = FsLinkTrack.TrackBackgroundService(job.Key.Name))
+                        {
+                            try
+                            {
+                                Task.WaitAll(IocManager.Resolve<IJob>(name: $"task_job_{job.Key.FullName}").Execute(context: taskContext));
+                            }
+                            catch (Exception e)
+                            {
+                                IocManager.Logger<TaskModule>().LogError(exception: e, message: e.Message);
+                            }
+                        }
 
-                        try
-                        {
-                            Task.WaitAll(IocManager.Resolve<IJob>(name: $"task_job_{job.Key.FullName}").Execute(context: taskContext));
-                        }
-                        catch (Exception e)
-                        {
-                            IocManager.Logger<TaskModule>().LogError(exception: e, message: e.Message);
-                        }
-                        finally
-                        {
-                            IocManager.Logger<TaskModule>().LogDebug(message: $"【{job.Key.Name}】 耗时 {sw.ElapsedMilliseconds} ms");
-                            // 如果设置了下次执行时间
-                            if (taskContext.NextTimespan > 0) job.Value.Interval = taskContext.NextTimespan - DateTime.Now.ToTimestamps();
-
-                            // 间隔执行
-                            if (job.Value.Interval > 0) Thread.Sleep(timeout: TimeSpan.FromMilliseconds(value: job.Value.Interval));
-                        }
+                        // 如果设置了下次执行时间
+                        if (taskContext.NextTimespan > 0) job.Value.Interval = taskContext.NextTimespan - DateTime.Now.ToTimestamps();
+                        // 间隔执行
+                        if (job.Value.Interval > 0) Thread.Sleep(timeout: TimeSpan.FromMilliseconds(value: job.Value.Interval));
                     }
                 }, creationOptions: TaskCreationOptions.LongRunning);
         });
