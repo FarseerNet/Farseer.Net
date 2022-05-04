@@ -39,7 +39,7 @@ namespace FS.DI
         /// <summary>
         ///     根据约定注册程序集
         /// </summary>
-        void RegisterAssemblyByConvention(params Assembly[] assemblys);
+        void RegisterAssemblyByConvention(IEnumerable<Assembly> assemblys);
 
         /// <summary>
         ///     注册
