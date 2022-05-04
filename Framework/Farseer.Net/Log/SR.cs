@@ -317,7 +317,7 @@ namespace FS.Log
             {
                 str = SR.ResourceManager.GetString(resourceKey);
             }
-            catch (System.Resources.MissingManifestResourceException ex)
+            catch (System.Resources.MissingManifestResourceException)
             {
             }
             return defaultString != null && resourceKey.Equals(str) ? defaultString : str;
