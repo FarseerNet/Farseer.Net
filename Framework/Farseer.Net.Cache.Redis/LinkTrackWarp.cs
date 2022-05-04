@@ -7,34 +7,24 @@ using StackExchange.Redis;
 
 namespace FS.Cache.Redis
 {
-    public class LinkTrackWarp : IDatabase
+    public partial class LinkTrackWarp : IDatabase
     {
         private readonly IDatabase _db;
 
-        public LinkTrackWarp(IDatabase db)
-        {
-            _db = db;
-        }
+        public LinkTrackWarp(IDatabase db) => _db = db;
 
         public int            Database                                          => _db.Database;
         public Task<TimeSpan> PingAsync(CommandFlags flags = CommandFlags.None) => _db.PingAsync(flags: flags);
+        public TimeSpan       Ping(CommandFlags      flags = CommandFlags.None) => _db.Ping(flags: flags);
 
-        public bool                   TryWait(Task          task)                  => _db.TryWait(task: task);
-        public void                   Wait(Task             task)                  => _db.Wait(task: task);
-        public T                      Wait<T>(Task<T>       task)                  => _db.Wait(task: task);
-        public void                   WaitAll(params Task[] tasks)                 => _db.WaitAll(tasks: tasks);
-        public IConnectionMultiplexer Multiplexer                                  => _db.Multiplexer;
-        public TimeSpan               Ping(CommandFlags flags = CommandFlags.None) => _db.Ping(flags: flags);
+        public bool TryWait(Task          task)  => _db.TryWait(task: task);
+        public void Wait(Task             task)  => _db.Wait(task: task);
+        public T    Wait<T>(Task<T>       task)  => _db.Wait(task: task);
+        public void WaitAll(params Task[] tasks) => _db.WaitAll(tasks: tasks);
+
+        public IConnectionMultiplexer Multiplexer => _db.Multiplexer;
 
         public bool IsConnected(RedisKey key, CommandFlags flags = CommandFlags.None) => _db.IsConnected(key: key, flags: flags);
-
-        public Task KeyMigrateAsync(RedisKey key, EndPoint toServer, int toDatabase = 0, int timeoutMilliseconds = 0, MigrateOptions migrateOptions = MigrateOptions.None, CommandFlags flags = CommandFlags.None)
-        {
-            using (FsLinkTrack.TrackRedis(method: "KeyMigrateAsync", key: key))
-            {
-                return _db.KeyMigrateAsync(key: key, toServer: toServer, toDatabase: toDatabase, timeoutMilliseconds: timeoutMilliseconds, migrateOptions: migrateOptions, flags: flags);
-            }
-        }
 
         public Task<RedisValue> DebugObjectAsync(RedisKey key, CommandFlags flags = CommandFlags.None)
         {
@@ -51,7 +41,6 @@ namespace FS.Cache.Redis
                 return _db.GeoAddAsync(key: key, longitude: longitude, latitude: latitude, member: member, flags: flags);
             }
         }
-
         public Task<bool> GeoAddAsync(RedisKey key, GeoEntry value, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "GeoAddAsync", key: key))
@@ -59,7 +48,6 @@ namespace FS.Cache.Redis
                 return _db.GeoAddAsync(key: key, value: value, flags: flags);
             }
         }
-
         public Task<long> GeoAddAsync(RedisKey key, GeoEntry[] values, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "GeoAddAsync", key: key))
@@ -67,7 +55,6 @@ namespace FS.Cache.Redis
                 return _db.GeoAddAsync(key: key, values: values, flags: flags);
             }
         }
-
         public Task<bool> GeoRemoveAsync(RedisKey key, RedisValue member, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "GeoRemoveAsync", key: key))
@@ -75,7 +62,6 @@ namespace FS.Cache.Redis
                 return _db.GeoRemoveAsync(key: key, member: member, flags: flags);
             }
         }
-
         public Task<double?> GeoDistanceAsync(RedisKey key, RedisValue member1, RedisValue member2, GeoUnit unit = GeoUnit.Meters, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "GeoDistanceAsync", key: key))
@@ -83,7 +69,6 @@ namespace FS.Cache.Redis
                 return _db.GeoDistanceAsync(key: key, member1: member1, member2: member2, unit: unit, flags: flags);
             }
         }
-
         public Task<string[]> GeoHashAsync(RedisKey key, RedisValue[] members, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "GeoHashAsync", key: key))
@@ -91,7 +76,6 @@ namespace FS.Cache.Redis
                 return _db.GeoHashAsync(key: key, members: members, flags: flags);
             }
         }
-
         public Task<string> GeoHashAsync(RedisKey key, RedisValue member, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "GeoHashAsync", key: key))
@@ -99,7 +83,6 @@ namespace FS.Cache.Redis
                 return _db.GeoHashAsync(key: key, member: member, flags: flags);
             }
         }
-
         public Task<GeoPosition?[]> GeoPositionAsync(RedisKey key, RedisValue[] members, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "GeoPositionAsync", key: key))
@@ -107,7 +90,6 @@ namespace FS.Cache.Redis
                 return _db.GeoPositionAsync(key: key, members: members, flags: flags);
             }
         }
-
         public Task<GeoPosition?> GeoPositionAsync(RedisKey key, RedisValue member, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "GeoPositionAsync", key: key))
@@ -115,7 +97,6 @@ namespace FS.Cache.Redis
                 return _db.GeoPositionAsync(key: key, member: member, flags: flags);
             }
         }
-
         public Task<GeoRadiusResult[]> GeoRadiusAsync(RedisKey key, RedisValue member, double radius, GeoUnit unit = GeoUnit.Meters, int count = -1, Order? order = null, GeoRadiusOptions options = GeoRadiusOptions.Default, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "GeoRadiusAsync", key: key))
@@ -123,7 +104,6 @@ namespace FS.Cache.Redis
                 return _db.GeoRadiusAsync(key: key, member: member, radius: radius, unit: unit, count: count, order: order, options: options, flags: flags);
             }
         }
-
         public Task<GeoRadiusResult[]> GeoRadiusAsync(RedisKey key, double longitude, double latitude, double radius, GeoUnit unit = GeoUnit.Meters, int count = -1, Order? order = null, GeoRadiusOptions options = GeoRadiusOptions.Default, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "GeoRadiusAsync", key: key))
@@ -139,7 +119,6 @@ namespace FS.Cache.Redis
                 return _db.HashDecrementAsync(key: key, hashField: hashField, value: value, flags: flags);
             }
         }
-
         public Task<double> HashDecrementAsync(RedisKey key, RedisValue hashField, double value, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "HashDecrementAsync", key: key, member: hashField))
@@ -147,7 +126,6 @@ namespace FS.Cache.Redis
                 return _db.HashDecrementAsync(key: key, hashField: hashField, value: value, flags: flags);
             }
         }
-
         public Task<bool> HashDeleteAsync(RedisKey key, RedisValue hashField, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "HashDeleteAsync", key: key, member: hashField))
@@ -155,7 +133,6 @@ namespace FS.Cache.Redis
                 return _db.HashDeleteAsync(key: key, hashField: hashField, flags: flags);
             }
         }
-
         public Task<long> HashDeleteAsync(RedisKey key, RedisValue[] hashFields, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "HashDeleteAsync", key: key, member: string.Join(separator: ",", values: hashFields)))
@@ -163,7 +140,6 @@ namespace FS.Cache.Redis
                 return _db.HashDeleteAsync(key: key, hashFields: hashFields, flags: flags);
             }
         }
-
         public Task<bool> HashExistsAsync(RedisKey key, RedisValue hashField, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "HashExistsAsync", key: key, member: hashField))
@@ -171,7 +147,6 @@ namespace FS.Cache.Redis
                 return _db.HashExistsAsync(key: key, hashField: hashField, flags: flags);
             }
         }
-
         public async Task<RedisValue> HashGetAsync(RedisKey key, RedisValue hashField, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "HashGetAsync", key: key, member: hashField))
@@ -179,7 +154,6 @@ namespace FS.Cache.Redis
                 return await _db.HashGetAsync(key: key, hashField: hashField, flags: flags);
             }
         }
-
         public Task<Lease<byte>> HashGetLeaseAsync(RedisKey key, RedisValue hashField, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "HashGetLeaseAsync", key: key, member: hashField))
@@ -187,7 +161,6 @@ namespace FS.Cache.Redis
                 return _db.HashGetLeaseAsync(key: key, hashField: hashField, flags: flags);
             }
         }
-
         public Task<RedisValue[]> HashGetAsync(RedisKey key, RedisValue[] hashFields, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "HashGetAsync", key: key, member: string.Join(separator: ",", values: hashFields)))
@@ -195,7 +168,6 @@ namespace FS.Cache.Redis
                 return _db.HashGetAsync(key: key, hashFields: hashFields, flags: flags);
             }
         }
-
         public Task<HashEntry[]> HashGetAllAsync(RedisKey key, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "HashGetAllAsync", key: key))
@@ -203,7 +175,6 @@ namespace FS.Cache.Redis
                 return _db.HashGetAllAsync(key: key, flags: flags);
             }
         }
-
         public Task<long> HashIncrementAsync(RedisKey key, RedisValue hashField, long value = 1, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "HashIncrementAsync", key: key, member: hashField))
@@ -211,7 +182,6 @@ namespace FS.Cache.Redis
                 return _db.HashIncrementAsync(key: key, hashField: hashField, value: value, flags: flags);
             }
         }
-
         public Task<double> HashIncrementAsync(RedisKey key, RedisValue hashField, double value, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "HashIncrementAsync", key: key, member: hashField))
@@ -219,7 +189,6 @@ namespace FS.Cache.Redis
                 return _db.HashIncrementAsync(key: key, hashField: hashField, value: value, flags: flags);
             }
         }
-
         public Task<RedisValue[]> HashKeysAsync(RedisKey key, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "HashKeysAsync", key: key))
@@ -227,7 +196,6 @@ namespace FS.Cache.Redis
                 return _db.HashKeysAsync(key: key, flags: flags);
             }
         }
-
         public Task<long> HashLengthAsync(RedisKey key, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "HashLengthAsync", key: key))
@@ -235,7 +203,6 @@ namespace FS.Cache.Redis
                 return _db.HashLengthAsync(key: key, flags: flags);
             }
         }
-
         public IAsyncEnumerable<HashEntry> HashScanAsync(RedisKey key, RedisValue pattern = new(), int pageSize = 250, long cursor = 0, int pageOffset = 0, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "HashScanAsync", key: key))
@@ -243,7 +210,6 @@ namespace FS.Cache.Redis
                 return _db.HashScanAsync(key: key, pattern: pattern, pageSize: pageSize, cursor: cursor, pageOffset: pageOffset, flags: flags);
             }
         }
-
         public Task HashSetAsync(RedisKey key, HashEntry[] hashFields, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "HashSetAsync", key: key, member: string.Join(separator: ",", values: hashFields)))
@@ -251,7 +217,6 @@ namespace FS.Cache.Redis
                 return _db.HashSetAsync(key: key, hashFields: hashFields, flags: flags);
             }
         }
-
         public Task<bool> HashSetAsync(RedisKey key, RedisValue hashField, RedisValue value, When when = When.Always, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "HashSetAsync", key: key, member: hashField))
@@ -259,7 +224,6 @@ namespace FS.Cache.Redis
                 return _db.HashSetAsync(key: key, hashField: hashField, value: value, when: when, flags: flags);
             }
         }
-
         public Task<long> HashStringLengthAsync(RedisKey key, RedisValue hashField, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "HashStringLengthAsync", key: key, member: hashField))
@@ -267,7 +231,6 @@ namespace FS.Cache.Redis
                 return _db.HashStringLengthAsync(key: key, hashField: hashField, flags: flags);
             }
         }
-
         public Task<RedisValue[]> HashValuesAsync(RedisKey key, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "HashValuesAsync", key: key))
@@ -283,7 +246,6 @@ namespace FS.Cache.Redis
                 return _db.HyperLogLogAddAsync(key: key, value: value, flags: flags);
             }
         }
-
         public Task<bool> HyperLogLogAddAsync(RedisKey key, RedisValue[] values, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "HyperLogLogAddAsync", key: key))
@@ -291,7 +253,6 @@ namespace FS.Cache.Redis
                 return _db.HyperLogLogAddAsync(key: key, values: values, flags: flags);
             }
         }
-
         public Task<long> HyperLogLogLengthAsync(RedisKey key, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "HyperLogLogLengthAsync", key: key))
@@ -299,7 +260,6 @@ namespace FS.Cache.Redis
                 return _db.HyperLogLogLengthAsync(key: key, flags: flags);
             }
         }
-
         public Task<long> HyperLogLogLengthAsync(RedisKey[] keys, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "HyperLogLogLengthAsync", key: string.Join(separator: ",", values: keys)))
@@ -307,7 +267,6 @@ namespace FS.Cache.Redis
                 return _db.HyperLogLogLengthAsync(keys: keys, flags: flags);
             }
         }
-
         public Task HyperLogLogMergeAsync(RedisKey destination, RedisKey first, RedisKey second, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "HyperLogLogMergeAsync"))
@@ -315,7 +274,6 @@ namespace FS.Cache.Redis
                 return _db.HyperLogLogMergeAsync(destination: destination, first: first, second: second, flags: flags);
             }
         }
-
         public Task HyperLogLogMergeAsync(RedisKey destination, RedisKey[] sourceKeys, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "HyperLogLogMergeAsync"))
@@ -339,7 +297,6 @@ namespace FS.Cache.Redis
                 return _db.KeyDeleteAsync(key: key, flags: flags);
             }
         }
-
         public Task<long> KeyDeleteAsync(RedisKey[] keys, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "KeyDeleteAsync", key: string.Join(separator: ",", values: keys)))
@@ -347,7 +304,6 @@ namespace FS.Cache.Redis
                 return _db.KeyDeleteAsync(keys: keys, flags: flags);
             }
         }
-
         public Task<byte[]> KeyDumpAsync(RedisKey key, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "KeyDumpAsync", key: key))
@@ -355,7 +311,6 @@ namespace FS.Cache.Redis
                 return _db.KeyDumpAsync(key: key, flags: flags);
             }
         }
-
         public Task<bool> KeyExistsAsync(RedisKey key, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "KeyExistsAsync", key: key))
@@ -363,7 +318,6 @@ namespace FS.Cache.Redis
                 return _db.KeyExistsAsync(key: key, flags: flags);
             }
         }
-
         public Task<long> KeyExistsAsync(RedisKey[] keys, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "KeyExistsAsync", key: string.Join(separator: ",", values: keys)))
@@ -371,7 +325,6 @@ namespace FS.Cache.Redis
                 return _db.KeyExistsAsync(keys: keys, flags: flags);
             }
         }
-
         public Task<bool> KeyExpireAsync(RedisKey key, TimeSpan? expiry, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "KeyExpireAsync", key: key))
@@ -379,7 +332,6 @@ namespace FS.Cache.Redis
                 return _db.KeyExpireAsync(key: key, expiry: expiry, flags: flags);
             }
         }
-
         public Task<bool> KeyExpireAsync(RedisKey key, DateTime? expiry, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "KeyExpireAsync", key: key))
@@ -387,7 +339,6 @@ namespace FS.Cache.Redis
                 return _db.KeyExpireAsync(key: key, expiry: expiry, flags: flags);
             }
         }
-
         public Task<TimeSpan?> KeyIdleTimeAsync(RedisKey key, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "KeyIdleTimeAsync", key: key))
@@ -395,7 +346,6 @@ namespace FS.Cache.Redis
                 return _db.KeyIdleTimeAsync(key: key, flags: flags);
             }
         }
-
         public Task<bool> KeyMoveAsync(RedisKey key, int database, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "KeyMoveAsync", key: key))
@@ -403,7 +353,6 @@ namespace FS.Cache.Redis
                 return _db.KeyMoveAsync(key: key, database: database, flags: flags);
             }
         }
-
         public Task<bool> KeyPersistAsync(RedisKey key, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "KeyPersistAsync", key: key))
@@ -411,7 +360,6 @@ namespace FS.Cache.Redis
                 return _db.KeyPersistAsync(key: key, flags: flags);
             }
         }
-
         public Task<RedisKey> KeyRandomAsync(CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "KeyRandomAsync"))
@@ -419,7 +367,6 @@ namespace FS.Cache.Redis
                 return _db.KeyRandomAsync(flags: flags);
             }
         }
-
         public Task<bool> KeyRenameAsync(RedisKey key, RedisKey newKey, When when = When.Always, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "KeyRenameAsync", key: key))
@@ -427,7 +374,6 @@ namespace FS.Cache.Redis
                 return _db.KeyRenameAsync(key: key, newKey: newKey, when: when, flags: flags);
             }
         }
-
         public Task KeyRestoreAsync(RedisKey key, byte[] value, TimeSpan? expiry = null, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "KeyRestoreAsync", key: key))
@@ -435,7 +381,6 @@ namespace FS.Cache.Redis
                 return _db.KeyRestoreAsync(key: key, value: value, expiry: expiry, flags: flags);
             }
         }
-
         public Task<TimeSpan?> KeyTimeToLiveAsync(RedisKey key, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "KeyTimeToLiveAsync", key: key))
@@ -443,7 +388,6 @@ namespace FS.Cache.Redis
                 return _db.KeyTimeToLiveAsync(key: key, flags: flags);
             }
         }
-
         public Task<RedisType> KeyTypeAsync(RedisKey key, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "KeyTypeAsync", key: key))
@@ -459,7 +403,6 @@ namespace FS.Cache.Redis
                 return _db.ListGetByIndexAsync(key: key, index: index, flags: flags);
             }
         }
-
         public Task<long> ListInsertAfterAsync(RedisKey key, RedisValue pivot, RedisValue value, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "ListInsertAfterAsync", key: key))
@@ -467,7 +410,6 @@ namespace FS.Cache.Redis
                 return _db.ListInsertAfterAsync(key: key, pivot: pivot, value: value, flags: flags);
             }
         }
-
         public Task<long> ListInsertBeforeAsync(RedisKey key, RedisValue pivot, RedisValue value, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "ListInsertBeforeAsync", key: key))
@@ -475,7 +417,6 @@ namespace FS.Cache.Redis
                 return _db.ListInsertBeforeAsync(key: key, pivot: pivot, value: value, flags: flags);
             }
         }
-
         public Task<RedisValue> ListLeftPopAsync(RedisKey key, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "ListLeftPopAsync", key: key))
@@ -490,7 +431,6 @@ namespace FS.Cache.Redis
                 return _db.ListLeftPopAsync(key: key, count, flags: flags);
             }
         }
-
         public Task<long> ListLeftPushAsync(RedisKey key, RedisValue value, When when = When.Always, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "ListLeftPushAsync", key: key))
@@ -498,7 +438,6 @@ namespace FS.Cache.Redis
                 return _db.ListLeftPushAsync(key: key, value: value, when: when, flags: flags);
             }
         }
-
         public Task<long> ListLeftPushAsync(RedisKey key, RedisValue[] values, When when = When.Always, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "ListLeftPushAsync", key: key))
@@ -506,7 +445,6 @@ namespace FS.Cache.Redis
                 return _db.ListLeftPushAsync(key: key, values: values, when: when, flags: flags);
             }
         }
-
         public Task<long> ListLeftPushAsync(RedisKey key, RedisValue[] values, CommandFlags flags)
         {
             using (FsLinkTrack.TrackRedis(method: "ListLeftPushAsync", key: key))
@@ -514,7 +452,6 @@ namespace FS.Cache.Redis
                 return _db.ListLeftPushAsync(key: key, values: values, flags: flags);
             }
         }
-
         public Task<long> ListLengthAsync(RedisKey key, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "ListLengthAsync", key: key))
@@ -522,7 +459,6 @@ namespace FS.Cache.Redis
                 return _db.ListLengthAsync(key: key, flags: flags);
             }
         }
-
         public Task<RedisValue[]> ListRangeAsync(RedisKey key, long start = 0, long stop = -1, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "ListRangeAsync", key: key))
@@ -530,7 +466,6 @@ namespace FS.Cache.Redis
                 return _db.ListRangeAsync(key: key, start: start, stop: stop, flags: flags);
             }
         }
-
         public Task<long> ListRemoveAsync(RedisKey key, RedisValue value, long count = 0, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "ListRemoveAsync", key: key))
@@ -538,7 +473,6 @@ namespace FS.Cache.Redis
                 return _db.ListRemoveAsync(key: key, value: value, count: count, flags: flags);
             }
         }
-
         public Task<RedisValue> ListRightPopAsync(RedisKey key, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "ListRightPopAsync", key: key))
@@ -553,7 +487,6 @@ namespace FS.Cache.Redis
                 return _db.ListRightPopAsync(key: key, count, flags: flags);
             }
         }
-
         public Task<RedisValue> ListRightPopLeftPushAsync(RedisKey source, RedisKey destination, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "ListRightPopLeftPushAsync"))
@@ -561,7 +494,6 @@ namespace FS.Cache.Redis
                 return _db.ListRightPopLeftPushAsync(source: source, destination: destination, flags: flags);
             }
         }
-
         public Task<long> ListRightPushAsync(RedisKey key, RedisValue value, When when = When.Always, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "ListRightPushAsync", key: key))
@@ -569,7 +501,6 @@ namespace FS.Cache.Redis
                 return _db.ListRightPushAsync(key: key, value: value, when: when, flags: flags);
             }
         }
-
         public Task<long> ListRightPushAsync(RedisKey key, RedisValue[] values, When when = When.Always, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "ListRightPushAsync", key: key))
@@ -577,7 +508,6 @@ namespace FS.Cache.Redis
                 return _db.ListRightPushAsync(key: key, values: values, when: when, flags: flags);
             }
         }
-
         public Task<long> ListRightPushAsync(RedisKey key, RedisValue[] values, CommandFlags flags)
         {
             using (FsLinkTrack.TrackRedis(method: "ListRightPushAsync", key: key))
@@ -585,7 +515,6 @@ namespace FS.Cache.Redis
                 return _db.ListRightPushAsync(key: key, values: values, flags: flags);
             }
         }
-
         public Task ListSetByIndexAsync(RedisKey key, long index, RedisValue value, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "ListSetByIndexAsync", key: key))
@@ -593,7 +522,6 @@ namespace FS.Cache.Redis
                 return _db.ListSetByIndexAsync(key: key, index: index, value: value, flags: flags);
             }
         }
-
         public Task ListTrimAsync(RedisKey key, long start, long stop, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "ListTrimAsync", key: key))
@@ -609,7 +537,6 @@ namespace FS.Cache.Redis
                 return _db.LockExtendAsync(key: key, value: value, expiry: expiry, flags: flags);
             }
         }
-
         public Task<RedisValue> LockQueryAsync(RedisKey key, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "LockQueryAsync", key: key))
@@ -617,7 +544,6 @@ namespace FS.Cache.Redis
                 return _db.LockQueryAsync(key: key, flags: flags);
             }
         }
-
         public Task<bool> LockReleaseAsync(RedisKey key, RedisValue value, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "LockReleaseAsync", key: key))
@@ -625,7 +551,6 @@ namespace FS.Cache.Redis
                 return _db.LockReleaseAsync(key: key, value: value, flags: flags);
             }
         }
-
         public Task<bool> LockTakeAsync(RedisKey key, RedisValue value, TimeSpan expiry, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "LockTakeAsync", key: key))
@@ -649,7 +574,6 @@ namespace FS.Cache.Redis
                 return _db.ExecuteAsync(command: command, args: args);
             }
         }
-
         public Task<RedisResult> ExecuteAsync(string command, ICollection<object> args, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "ExecuteAsync"))
@@ -919,6 +843,13 @@ namespace FS.Cache.Redis
             using (FsLinkTrack.TrackRedis(method: "SortedSetRangeByRankAsync", key: key))
             {
                 return _db.SortedSetRangeByRankAsync(key: key, start: start, stop: stop, order: order, flags: flags);
+            }
+        }
+        public Task<long> SortedSetRangeAndStoreAsync(RedisKey key, RedisKey destinationKey, RedisValue start, RedisValue stop, SortedSetOrder sortedSetOrder = SortedSetOrder.ByRank, Exclude exclude = Exclude.None, Order order = Order.Ascending, long skip = 0, long? take = null, CommandFlags flags = CommandFlags.None)
+        {
+            using (FsLinkTrack.TrackRedis(method: "SortedSetRangeAndStoreAsync", key: key))
+            {
+                return _db.SortedSetRangeAndStoreAsync(key, destinationKey, start: start, stop: stop, sortedSetOrder, exclude, order, skip, take, flags: flags);
             }
         }
 
@@ -1361,6 +1292,20 @@ namespace FS.Cache.Redis
                 return _db.StringGetSetAsync(key: key, value: value, flags: flags);
             }
         }
+        public Task<RedisValue> StringGetSetExpiryAsync(RedisKey key, TimeSpan? expiry, CommandFlags flags = CommandFlags.None)
+        {
+            using (FsLinkTrack.TrackRedis(method: "StringGetSetExpiryAsync", key: key))
+            {
+                return _db.StringGetSetExpiryAsync(key, expiry, flags);
+            }
+        }
+        public Task<RedisValue> StringGetSetExpiryAsync(RedisKey key, DateTime expiry, CommandFlags flags = CommandFlags.None)
+        {
+            using (FsLinkTrack.TrackRedis(method: "StringGetSetExpiryAsync", key: key))
+            {
+                return _db.StringGetSetExpiryAsync(key, expiry, flags);
+            }
+        }
         public Task<RedisValue> StringGetDeleteAsync(RedisKey key, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "StringGetDeleteAsync", key: key))
@@ -1408,12 +1353,33 @@ namespace FS.Cache.Redis
                 return _db.StringSetAsync(key: key, value: value, expiry: expiry, when: when, flags: flags);
             }
         }
+        public Task<bool> StringSetAsync(RedisKey key, RedisValue value, TimeSpan? expiry = null, bool keepTtl = false, When when = When.Always, CommandFlags flags = CommandFlags.None)
+        {
+            using (FsLinkTrack.TrackRedis(method: "StringSetAsync", key: key))
+            {
+                return _db.StringSetAsync(key, value, expiry, keepTtl, when, flags);
+            }
+        }
 
         public Task<bool> StringSetAsync(KeyValuePair<RedisKey, RedisValue>[] values, When when = When.Always, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "StringSetAsync"))
             {
                 return _db.StringSetAsync(values: values, when: when, flags: flags);
+            }
+        }
+        public Task<RedisValue> StringSetAndGetAsync(RedisKey key, RedisValue value, TimeSpan? expiry, When when, CommandFlags flags)
+        {
+            using (FsLinkTrack.TrackRedis(method: "StringSetAndGetAsync"))
+            {
+                return _db.StringSetAndGetAsync(key, value, expiry, when, flags);
+            }
+        }
+        public Task<RedisValue> StringSetAndGetAsync(RedisKey key, RedisValue value, TimeSpan? expiry = null, bool keepTtl = false, When when = When.Always, CommandFlags flags = CommandFlags.None)
+        {
+            using (FsLinkTrack.TrackRedis(method: "StringSetAndGetAsync"))
+            {
+                return _db.StringSetAndGetAsync(key, value, expiry, keepTtl, when, flags);
             }
         }
 
@@ -1882,6 +1848,14 @@ namespace FS.Cache.Redis
             using (FsLinkTrack.TrackRedis(method: "KeyType", key: key))
             {
                 return _db.KeyType(key: key, flags: flags);
+            }
+        }
+
+        public Task KeyMigrateAsync(RedisKey key, EndPoint toServer, int toDatabase = 0, int timeoutMilliseconds = 0, MigrateOptions migrateOptions = MigrateOptions.None, CommandFlags flags = CommandFlags.None)
+        {
+            using (FsLinkTrack.TrackRedis(method: "KeyMigrateAsync", key: key))
+            {
+                return _db.KeyMigrateAsync(key: key, toServer: toServer, toDatabase: toDatabase, timeoutMilliseconds: timeoutMilliseconds, migrateOptions: migrateOptions, flags: flags);
             }
         }
 
@@ -2370,7 +2344,13 @@ namespace FS.Cache.Redis
                 return _db.SortedSetRangeByRank(key: key, start: start, stop: stop, order: order, flags: flags);
             }
         }
-
+        public long SortedSetRangeAndStore(RedisKey sourceKey, RedisKey destinationKey, RedisValue start, RedisValue stop, SortedSetOrder sortedSetOrder = SortedSetOrder.ByRank, Exclude exclude = Exclude.None, Order order = Order.Ascending, long skip = 0, long? take = null, CommandFlags flags = CommandFlags.None)
+        {
+            using (FsLinkTrack.TrackRedis(method: "SortedSetRangeAndStore", key: sourceKey))
+            {
+                return _db.SortedSetRangeAndStore(sourceKey, destinationKey, start, stop, sortedSetOrder, exclude, order, skip, take, flags);
+            }
+        }
         public SortedSetEntry[] SortedSetRangeByRankWithScores(RedisKey key, long start = 0, long stop = -1, Order order = Order.Ascending, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "SortedSetRangeByRankWithScores", key: key))
@@ -2810,6 +2790,20 @@ namespace FS.Cache.Redis
                 return _db.StringGetSet(key: key, value: value, flags: flags);
             }
         }
+        public RedisValue StringGetSetExpiry(RedisKey key, TimeSpan? expiry, CommandFlags flags = CommandFlags.None)
+        {
+            using (FsLinkTrack.TrackRedis(method: "StringGetSetExpiry", key: key))
+            {
+                return _db.StringGetSetExpiry(key, expiry, flags);
+            }
+        }
+        public RedisValue StringGetSetExpiry(RedisKey key, DateTime expiry, CommandFlags flags = CommandFlags.None)
+        {
+            using (FsLinkTrack.TrackRedis(method: "StringGetSetExpiry", key: key))
+            {
+                return _db.StringGetSetExpiry(key, expiry, flags);
+            }
+        }
         public RedisValue StringGetDelete(RedisKey key, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "StringGetDelete", key: key))
@@ -2857,7 +2851,13 @@ namespace FS.Cache.Redis
                 return _db.StringSet(key: key, value: value, expiry: expiry, when: when, flags: flags);
             }
         }
-
+        public bool StringSet(RedisKey key, RedisValue value, TimeSpan? expiry = null, bool keepTtl = false, When when = When.Always, CommandFlags flags = CommandFlags.None)
+        {
+            using (FsLinkTrack.TrackRedis(method: "StringSet"))
+            {
+                return _db.StringSet(key, value, expiry, keepTtl, when, flags);
+            }
+        }
         public bool StringSet(KeyValuePair<RedisKey, RedisValue>[] values, When when = When.Always, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "StringSet"))
@@ -2865,7 +2865,21 @@ namespace FS.Cache.Redis
                 return _db.StringSet(values: values, when: when, flags: flags);
             }
         }
+        public RedisValue StringSetAndGet(RedisKey key, RedisValue value, TimeSpan? expiry, When when, CommandFlags flags)
+        {
+            using (FsLinkTrack.TrackRedis(method: "StringSetAndGet"))
+            {
+                return _db.StringSetAndGet(key, value, expiry, when, flags);
+            }
+        }
 
+        public RedisValue StringSetAndGet(RedisKey key, RedisValue value, TimeSpan? expiry = null, bool keepTtl = false, When when = When.Always, CommandFlags flags = CommandFlags.None)
+        {
+            using (FsLinkTrack.TrackRedis(method: "StringSetAndGet"))
+            {
+                return _db.StringSetAndGet(key, value, expiry, keepTtl, when, flags);
+            }
+        }
         public bool StringSetBit(RedisKey key, long offset, bool bit, CommandFlags flags = CommandFlags.None)
         {
             using (FsLinkTrack.TrackRedis(method: "StringSetBit", key: key))
