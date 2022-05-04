@@ -28,9 +28,6 @@ public class RedisItemConfig
     /// <summary> 超时 </summary>
     public int SyncTimeout { get; set; }
 
-    /// <summary> 超时 </summary>
-    public int ResponseTimeout { get; set; }
-
     /// <summary> 命令类型（默认集群模式） </summary>
     public EumCommandType CommandType { get; set; }
 

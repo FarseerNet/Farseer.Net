@@ -14,14 +14,17 @@ namespace FS.Utils.Component
         /// </summary>
         /// <param name="cmd"> </param>
         /// <param name="arguments"> </param>
-        /// <param name="actReceiveOutput"> 外部第一时间，处理拿到的消息 </param>
+        /// <param name="receiveOutput"> 外部第一时间，处理拿到的消息 </param>
         /// <param name="workingDirectory"> 设定Shell的工作目录 </param>
-        public static async Task<RunShellResult> Run(string cmd, string arguments, Action<string> actReceiveOutput, Dictionary<string, string> environment, string workingDirectory = null, CancellationToken cancellationToken = default)
+        /// <param name="environment">注入环境变量</param>
+        /// <param name="cancellationToken">取消令牌</param>
+        public static async Task<int> Run(string cmd, string arguments, IProgress<string> receiveOutput, Dictionary<string, string> environment, string workingDirectory = null, CancellationToken cancellationToken = default)
         {
+            var exitCode = 0;
             try
             {
                 // 打印当前执行的命令
-                if (actReceiveOutput != null) actReceiveOutput(obj: $"{cmd} {arguments}");
+                if (receiveOutput != null) receiveOutput.Report($"{cmd} {arguments}");
                 var psi = new ProcessStartInfo(fileName: cmd, arguments: arguments)
                 {
                     RedirectStandardOutput = true,
@@ -35,9 +38,6 @@ namespace FS.Utils.Component
                     foreach (var env in environment)
                         psi.Environment.Add(item: env);
 
-                // 结果
-                var runShellResult = new RunShellResult { IsError = false, Output = new List<string>() };
-
                 // 开始执行
                 using (var proc = Process.Start(startInfo: psi))
                 {
@@ -47,9 +47,8 @@ namespace FS.Utils.Component
                     void ProcOnOutputDataReceived(object sender, DataReceivedEventArgs args)
                     {
                         if (string.IsNullOrWhiteSpace(value: args.Data)) return;
-                        runShellResult.Output.Add(item: args.Data);
                         // 外部第一时间，处理拿到的消息
-                        if (actReceiveOutput != null) actReceiveOutput(obj: args.Data);
+                        if (receiveOutput != null) receiveOutput.Report(args.Data);
                     }
 
                     proc.OutputDataReceived += ProcOnOutputDataReceived;
@@ -58,12 +57,12 @@ namespace FS.Utils.Component
                     proc.BeginErrorReadLine();
 
                     // 增加取消令牌
-                    var tcs = new TaskCompletionSource<RunShellResult>(creationOptions: TaskCreationOptions.RunContinuationsAsynchronously);
+                    var tcs = new TaskCompletionSource<int>(creationOptions: TaskCreationOptions.RunContinuationsAsynchronously);
 
                     void ProcessExited(object sender, EventArgs e)
                     {
-                        runShellResult.IsError = proc.ExitCode != 0;
-                        tcs.TrySetResult(result: runShellResult);
+                        exitCode = proc.ExitCode;
+                        tcs.TrySetResult(proc.ExitCode);
                     }
 
                     proc.Exited += ProcessExited;
@@ -72,8 +71,7 @@ namespace FS.Utils.Component
                     {
                         if (proc.HasExited)
                         {
-                            runShellResult.IsError = proc.ExitCode != 0;
-                            return runShellResult;
+                            return proc.ExitCode;
                         }
 
                         using (cancellationToken.Register(callback: () => tcs.TrySetCanceled()))
@@ -91,12 +89,13 @@ namespace FS.Utils.Component
                     //runShellResult.IsError = proc.ExitCode != 0;
                 }
 
-                return runShellResult;
+                return exitCode;
             }
             catch (Exception e)
             {
-                if (actReceiveOutput != null) actReceiveOutput(obj: e.Message);
-                return new RunShellResult(isError: true, output: e.Message);
+                if (receiveOutput != null) receiveOutput.Report(e.Message);
+                if (exitCode      == 0) exitCode = -1;
+                return exitCode;
             }
         }
     }

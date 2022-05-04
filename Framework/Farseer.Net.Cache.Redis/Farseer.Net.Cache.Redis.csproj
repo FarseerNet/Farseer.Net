@@ -17,7 +17,7 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
-        <PackageReference Include="StackExchange.Redis" Version="2.2.88" />
+        <PackageReference Include="StackExchange.Redis" Version="2.5.61" />
     </ItemGroup>
 
     <ItemGroup>

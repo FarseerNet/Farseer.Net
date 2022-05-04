@@ -7,8 +7,6 @@ namespace FS.Core.Entity
         /// <summary>
         ///     立即返回错误的结果
         /// </summary>
-        /// <param name="isError"> </param>
-        /// <param name="output"> </param>
         public RunShellResult(bool isError, string output)
         {
             IsError = isError;

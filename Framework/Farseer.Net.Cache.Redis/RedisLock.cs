@@ -22,7 +22,7 @@ public class RedisLock : IDisposable
     /// </summary>
     public bool TryLock()
     {
-        return _canLock = _db.StringSet(_key, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), _lockTime, When.NotExists);
+        return _canLock = _db.StringSet(_key, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), _lockTime, when: When.NotExists);
     }
 
     public void Dispose()

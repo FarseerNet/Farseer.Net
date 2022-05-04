@@ -111,7 +111,6 @@ namespace FS.Cache.Redis
                 _dbIndex = _config.DB;
                 if (_config.SyncTimeout     > 0) option.SyncTimeout     = _config.SyncTimeout;
                 if (_config.ConnectTimeout  > 0) option.ConnectTimeout  = _config.ConnectTimeout;
-                if (_config.ResponseTimeout > 0) option.ResponseTimeout = _config.ResponseTimeout;
                 _connection = ConnectionMultiplexer.Connect(configuration: option);
             }
             return _connection;

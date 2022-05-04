@@ -17,22 +17,22 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Castle.Facilities.AspNetCore" Version="5.1.1"/>
-        <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2"/>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5"/>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.2"/>
-        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1"/>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0"/>
-        <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0"/>
-        <PackageReference Include="NETStandard.Library" Version="2.0.3"/>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
+        <PackageReference Include="Castle.Facilities.AspNetCore" Version="5.1.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.4" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
+        <PackageReference Include="NETStandard.Library" Version="2.0.3" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Farseer.Net.Core\Farseer.Net.Core.csproj"/>
-        <ProjectReference Include="..\Farseer.Net.LinkTrack\Farseer.Net.LinkTrack.csproj"/>
-        <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj"/>
+        <ProjectReference Include="..\Farseer.Net.Core\Farseer.Net.Core.csproj" />
+        <ProjectReference Include="..\Farseer.Net.LinkTrack\Farseer.Net.LinkTrack.csproj" />
+        <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />
     </ItemGroup>
 
 </Project>
