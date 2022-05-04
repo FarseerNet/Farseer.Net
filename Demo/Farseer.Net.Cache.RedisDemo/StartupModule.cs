@@ -16,7 +16,7 @@ namespace Farseer.Net.Cache.RedisDemo
 
         public override void PostInitialize()
         {
-            IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly());
+            IocManager.RegisterAssemblyByConvention(this.GetType());
         }
     }
 }

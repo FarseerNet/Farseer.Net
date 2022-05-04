@@ -15,7 +15,7 @@ namespace Farseer.Net.Demo
 
         public override void PostInitialize()
         {
-            IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly());
+            IocManager.RegisterAssemblyByConvention(this.GetType());
         }
     }
 }
