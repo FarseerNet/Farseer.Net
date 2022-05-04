@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Castle.Core;
 using Castle.MicroKernel.Registration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FS.DI
@@ -33,6 +34,7 @@ namespace FS.DI
         {
             // 注册Farseer Ioc到IServiceCollection
             services.AddSingleton<IIocManager>(implementationInstance: ioc);
+            services.AddSingleton<IConfigurationRoot>(ioc.Resolve<IConfigurationRoot>());
 
             // 获取业务实现类
             foreach (var model in ioc.GetCustomComponent())
