@@ -44,7 +44,7 @@ namespace FS.Data
 
         public override void PostInitialize()
         {
-            //Task.Run(() =>
+            Task.Run(() =>
             {
                 // 找到Context
                 var lstContext = _typeFinder.Find(o => !o.IsGenericType && o.IsClass && o.BaseType != null && o.BaseType.BaseType != null && o.BaseType.BaseType == typeof(DbContext));
@@ -73,7 +73,7 @@ namespace FS.Data
                     }
                 }
                 IocManager.Logger<FarseerApplication>().LogInformation(string.Join("\r\n", lstLog));
-            } //);
+            });
         }
 
     }
