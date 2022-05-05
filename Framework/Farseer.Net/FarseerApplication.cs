@@ -142,7 +142,7 @@ namespace FS
             }
             catch (Exception ex)
             {
-                IocManager.Logger<FarseerApplication>().LogError(exception: ex, message: ex.ToString());
+                IocManager.Logger<FarseerApplication>().LogError(ex.Message);
                 throw;
             }
         }
