@@ -3,6 +3,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using FS.DI;
+using Microsoft.Extensions.Logging;
 
 namespace FS.Core.Async
 {
@@ -78,13 +80,13 @@ namespace FS.Core.Async
 
                     if (_callBackList.Count > 0)
                     {
-                         await OnDequeue(callbackList: _callBackList, remainCount: QueueCount); //交由用户处理
+                        await OnDequeue(callbackList: _callBackList, remainCount: QueueCount); //交由用户处理
                         _callBackList.Clear();
                     }
                 }
                 catch (System.Exception e)
                 {
-                    Console.WriteLine(value: e.Message);
+                    IocManager.Instance.Logger<BaseAsyncQueue<T>>().LogError(e.Message, e);
                 }
 
                 Thread.Sleep(millisecondsTimeout: _sleepMs);
