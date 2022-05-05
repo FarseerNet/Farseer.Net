@@ -54,10 +54,7 @@ namespace FS.Core.Async
         }
 
         /// <summary> 开始异步出队 </summary>
-        public void StartDequeue(CancellationToken cancellationToken)
-        {
-            LoopDequeue(cancellationToken);
-        }
+        public void StartDequeue(CancellationToken cancellationToken) => LoopDequeue(cancellationToken);
 
         /// <summary>
         ///     回调 数据给用户处理
@@ -70,28 +67,31 @@ namespace FS.Core.Async
         ///     循环从队列中拉出数据,回调给用户处理
         /// </summary>
         /// <param name="token"> 取消令牌 </param>
-        private async Task LoopDequeue(CancellationToken token)
+        private void LoopDequeue(CancellationToken token)
         {
-            while (true)
+            Task.Factory.StartNew(async () =>
             {
-                token.ThrowIfCancellationRequested(); //取消退出线程函数
-                try
+                while (true)
                 {
-                    DeQueue(); //队列数据出队保存到回调数据列表
-
-                    if (_callBackList.Count > 0)
+                    token.ThrowIfCancellationRequested(); //取消退出线程函数
+                    try
                     {
-                        await OnDequeue(callbackList: _callBackList, remainCount: QueueCount); //交由用户处理
-                        _callBackList.Clear();
-                    }
-                }
-                catch (System.Exception e)
-                {
-                    IocManager.Instance.Logger<BaseAsyncQueue<T>>().LogError(e.Message, e);
-                }
+                        DeQueue(); //队列数据出队保存到回调数据列表
 
-                Thread.Sleep(millisecondsTimeout: _sleepMs);
-            }
+                        if (_callBackList.Count > 0)
+                        {
+                            await OnDequeue(callbackList: _callBackList, remainCount: QueueCount); //交由用户处理
+                            _callBackList.Clear();
+                        }
+                    }
+                    catch (System.Exception e)
+                    {
+                        IocManager.Instance.Logger<BaseAsyncQueue<T>>().LogError(e.Message, e);
+                    }
+
+                    Thread.Sleep(millisecondsTimeout: _sleepMs);
+                }
+            }, TaskCreationOptions.LongRunning);
         }
 
         /// <summary>
