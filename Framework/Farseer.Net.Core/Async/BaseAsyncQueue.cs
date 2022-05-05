@@ -21,6 +21,7 @@ namespace FS.Core.Async
 
         /// <summary> 队列最大长度 </summary>
         private readonly int _maxQueueSize;
+        private readonly int _callBackListCapacity;
 
         private readonly int _sleepMs;
 
@@ -34,9 +35,10 @@ namespace FS.Core.Async
         /// <param name="callBackListCapacity"> 每次回调出队最大数量 </param>
         protected BaseAsyncQueue(int maxQueueSize = 5000, int callBackListCapacity = 10, int sleepMs = 500)
         {
-            _maxQueueSize = maxQueueSize;
-            _callBackList = new List<T>(capacity: callBackListCapacity);
-            _sleepMs      = sleepMs;
+            _maxQueueSize         = maxQueueSize;
+            _callBackListCapacity = callBackListCapacity;
+            _callBackList         = new List<T>(capacity: callBackListCapacity);
+            _sleepMs              = sleepMs;
         }
 
         /// <summary> 队列数据元素个数 </summary>
@@ -54,8 +56,7 @@ namespace FS.Core.Async
         /// <summary> 开始异步出队 </summary>
         public void StartDequeue(CancellationToken cancellationToken)
         {
-            _dequeueTask = new Task(action: async () => await LoopDequeue(token: cancellationToken), creationOptions: TaskCreationOptions.LongRunning);
-            _dequeueTask.Start();
+            LoopDequeue(cancellationToken);
         }
 
         /// <summary>
@@ -76,7 +77,7 @@ namespace FS.Core.Async
                 token.ThrowIfCancellationRequested(); //取消退出线程函数
                 try
                 {
-                    DeQueue(callbackList: _callBackList); //队列数据出队保存到回调数据列表
+                    DeQueue(); //队列数据出队保存到回调数据列表
 
                     if (_callBackList.Count > 0)
                     {
@@ -96,18 +97,15 @@ namespace FS.Core.Async
         /// <summary>
         ///     从队列中拉出指定数量的数据,放到回调数据队列中,直到队列为空,或者回调队列满
         /// </summary>
-        /// <param name="callbackList"> 回调数据队列 </param>
-        /// <returns> </returns>
-        private void DeQueue(List<T> callbackList)
+        private void DeQueue()
         {
-            var maxSize = callbackList.Capacity;
-            if (callbackList == null) throw new System.Exception(message: "回调数据队列为Null");
-            callbackList.Clear();
-            for (var i = 0; i < maxSize; i++)
-                if (_concurrentQueue.TryDequeue(result: out var tempObj))
-                    callbackList.Add(item: tempObj);
-                else
-                    break;
+            if (_callBackList == null) throw new System.Exception(message: "回调数据队列为Null");
+            _callBackList.Clear();
+
+            while (_callBackList.Count < _callBackListCapacity && _concurrentQueue.TryDequeue(result: out var tempObj))
+            {
+                _callBackList.Add(item: tempObj);
+            }
         }
     }
 }
