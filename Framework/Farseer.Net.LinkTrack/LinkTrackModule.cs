@@ -1,12 +1,12 @@
 ﻿using System.Reflection;
 using FS.DI;
 using FS.ElasticSearch;
-using FS.Mapper;
 using FS.Modules;
+using FS.MQ.Queue;
 
 namespace FS.LinkTrack
 {
-    [DependsOn(typeof(ElasticSearchModule), typeof(MapperModule))]
+    [DependsOn(typeof(ElasticSearchModule),typeof(QueueModule))]
     public class LinkTrackModule : FarseerModule
     {
         /// <summary>

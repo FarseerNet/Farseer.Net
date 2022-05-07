@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using FS.Core.LinkTrack;
-using FS.Mapper;
+using Mapster;
 using Nest;
 
 namespace FS.LinkTrack.Dal
 {
-    [Map(typeof(LinkTrackContext))]
     public class LinkTrackContextPO : LinkTrackContext
     {
         [Keyword]
