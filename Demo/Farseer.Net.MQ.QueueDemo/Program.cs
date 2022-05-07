@@ -2,13 +2,14 @@
 using System.Diagnostics;
 using System.Threading;
 using FS;
+using FS.Core.LinkTrack;
 using FS.DI;
+using FS.LinkTrack;
 using FS.MQ.Queue;
 using FS.MQ.Queue.Attr;
 
 namespace Farseer.Net.MQ.QueueDemo
 {
-    [Queue]
     internal class Program
     {
         private static void Main(string[] args)
@@ -34,9 +35,11 @@ namespace Farseer.Net.MQ.QueueDemo
             var count = 0;
             startNew.Reset();
             startNew.Restart();
+            var linkTrackQueue = new LinkTrackQueue();
             while (startNew.ElapsedMilliseconds < 1000)
             {
-                rabbitProduct.Send(DateTime.Now.ToString());
+                linkTrackQueue.Enqueue(new LinkTrackContext());
+                //rabbitProduct.Send(DateTime.Now.ToString());
                 count++;
             }
 

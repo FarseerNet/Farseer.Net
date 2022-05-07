@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Castle.MicroKernel.Registration;
@@ -27,8 +28,23 @@ namespace FS.MQ.Queue
         /// <inheritdoc />
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
+            var iocManager = container.Resolve<IIocManager>();
+
             // 读取配置
-            var queueConfigs = QueueRoot.Get();
+            var queueConfigs = QueueRoot.Get().ToList();
+            // 从消费中找到未包含配置文件的。并生成到配置中
+            var consumerAttributes = _typeFinder.Find<IListenerMessage>().Select(o => o.GetCustomAttribute<ConsumerAttribute>()).Where(o => o != null);
+            foreach (var consumerAtt in consumerAttributes)
+            {
+                if (!queueConfigs.Exists(o => o.Name == consumerAtt.Name))
+                    queueConfigs.Add(new QueueConfig
+                    {
+                        Name      = consumerAtt.Name,
+                        PullCount = consumerAtt.PullCount,
+                        MaxCount  = consumerAtt.MaxCount,
+                        SleepTime = consumerAtt.SleepTime
+                    });
+            }
 
             // 注册生产者
             foreach (var queueConfig in queueConfigs)
@@ -38,7 +54,7 @@ namespace FS.MQ.Queue
                                             .Named(name: $"queue_list_{queueConfig.Name}")
                                             .ImplementedBy<QueueList>()
                                             .DependsOn(Dependency.OnValue<QueueConfig>(value: queueConfig)).LifestyleSingleton());
-                
+
                 // 注册生产者
                 container.Register(Component.For<IQueueManager>()
                                             .Named(name: queueConfig.Name)
@@ -47,44 +63,41 @@ namespace FS.MQ.Queue
             }
 
             // 查找入口方法是否启用了Queue消费
-            var rabbitAttribute = Assembly.GetEntryAssembly().EntryPoint.DeclaringType.GetCustomAttribute<QueueAttribute>();
-            if (rabbitAttribute is not
+            var queueAttribute = Assembly.GetEntryAssembly().EntryPoint.DeclaringType.GetCustomAttribute<QueueAttribute>();
+            if (queueAttribute is
                 {
-                    Enable: true
+                    Enable: false
                 }) return;
 
-            var iocManager = container.Resolve<IIocManager>();
-            try
-            {
-                // 启动单次消费程序
-                foreach (var consumerType in _typeFinder.Find<IListenerMessage>())
-                {
-                    var consumerAtt = consumerType.GetCustomAttribute<ConsumerAttribute>();
-                    if (consumerAtt is
-                        {
-                            Enable: false
-                        })
-                        continue;
 
-                    var queueConfig = queueConfigs.FirstOrDefault(o=>o.Name == consumerAtt.Name);
-                    if (queueConfig == null) throw new FarseerException($"注册{consumerType.FullName}的Queue消费失败，在配置中找不到队列名称：{consumerAtt.Name}");
-                    if (!iocManager.IsRegistered(name: consumerType.FullName)) iocManager.Register(type: consumerType, name: consumerType.FullName, lifeStyle: DependencyLifeStyle.Transient);
-                    
-                    FarseerApplication.AddInitCallback(act: () =>
+            Dictionary<string, Type> dicConsumerName = new();
+            // 启动单次消费程序
+            foreach (var consumerType in _typeFinder.Find<IListenerMessage>())
+            {
+                var consumerAtt = consumerType.GetCustomAttribute<ConsumerAttribute>();
+                if (consumerAtt is
                     {
-                        // 注册消费端            
-                        iocManager.Logger<QueueInstaller>().LogInformation(message: $"正在启动：{consumerAtt.Name} Queue消费");
-                        var consumerInstance = new QueueConsumer(iocManager: iocManager, consumerType: consumerType, queueConfig: queueConfig);
-                        consumerInstance.StartWhile();
-                    });
-                }
+                        Enable: false
+                    })
+                    continue;
 
-                IocManager.Instance.Logger<QueueInstaller>().LogInformation(message: "全部消费启动完成!");
+                var queueConfig = queueConfigs.FirstOrDefault(o => o.Name == consumerAtt.Name);
+                // 重复队列名，检查
+                if (dicConsumerName.ContainsKey(consumerAtt.Name)) throw new Exception($"Farseer.Net.MQ.Queue组件发现，已经包含了同名的消费：{consumerAtt.Name} ===> {dicConsumerName[consumerAtt.Name].FullName}、{consumerType.FullName}，Queue组件只允许一个队列名称，对应一个消费");
+                dicConsumerName.Add(consumerAtt.Name, consumerType);
+
+                if (!iocManager.IsRegistered(name: consumerType.FullName)) iocManager.Register(type: consumerType, name: consumerType.FullName, lifeStyle: DependencyLifeStyle.Transient);
+
+                FarseerApplication.AddInitCallback(act: () =>
+                {
+                    // 注册消费端            
+                    iocManager.Logger<QueueInstaller>().LogInformation(message: $"正在启动：{consumerAtt.Name} Queue消费");
+                    var consumerInstance = new QueueConsumer(iocManager: iocManager, consumerType: consumerType, queueConfig: queueConfig);
+                    consumerInstance.StartWhile();
+                });
             }
-            catch (Exception e)
-            {
-                IocManager.Instance.Logger<QueueInstaller>().LogError(exception: e, message: e.Message);
-            }
+
+            IocManager.Instance.Logger<QueueInstaller>().LogInformation(message: "全部消费启动完成!");
         }
     }
 }

@@ -14,6 +14,7 @@ public class QueueList : IQueueList
 
     public QueueList(QueueConfig queueConfig)
     {
+        if (queueConfig.MaxCount == 0) queueConfig.MaxCount = 100000000;
         _queueConfig = queueConfig;
         Queues       = new List<object>[(queueConfig.MaxCount / queueConfig.PullCount) + 1];
         CurQueue     = new(queueConfig.PullCount);
@@ -41,7 +42,10 @@ public class QueueList : IQueueList
                     while (CurQueue.Count > _queueConfig.PullCount)
                     {
                         Queues[QueueEmptyIndex] = CurQueue.Take(_queueConfig.PullCount).ToList();
-                        CurQueue.RemoveRange(0, _queueConfig.PullCount);
+                        for (int i = 0; i < _queueConfig.PullCount; i++)
+                        {
+                            CurQueue.RemoveAt(0);
+                        }
                         QueueEmptyIndex++;
                     }
                 }
@@ -66,7 +70,7 @@ public class QueueList : IQueueList
     public void Add(List<object> datalist)
     {
         // 当前所有队列的总数 大于 允许的最大数量时，则丢弃最新的数据
-        if (TotalCount >= _queueConfig.MaxCount) return;
+        if (_queueConfig.MaxCount > 0 && TotalCount >= _queueConfig.MaxCount) return;
 
         // 当前所有队列的总数 + datalist数量 大于 允许的最大数量时，则丢弃最新的数据
         if (TotalCount + datalist.Count >= _queueConfig.MaxCount)
@@ -107,7 +111,7 @@ public class QueueList : IQueueList
             {
                 Queues[index] = Queues[index + 1];
             }
-            
+
             QueueEmptyIndex--;
             return queue;
         }
@@ -117,7 +121,11 @@ public class QueueList : IQueueList
         if (curCount > 0)
         {
             var objects = CurQueue.Take(curCount).ToList();
-            CurQueue.RemoveRange(0, objects.Count);
+            for (int i = 0; i < objects.Count; i++)
+            {
+                CurQueue.RemoveAt(0);
+            }
+            //CurQueue.RemoveRange(0, objects.Count);
             TotalCount -= objects.Count;
             return objects;
         }

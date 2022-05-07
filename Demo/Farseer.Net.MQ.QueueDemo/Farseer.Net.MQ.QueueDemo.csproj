@@ -7,13 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Framework\Farseer.Net.LinkTrack\Farseer.Net.LinkTrack.csproj" />
       <ProjectReference Include="..\..\Framework\Farseer.Net.MQ.Queue\Farseer.Net.MQ.Queue.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Content Include="appsettings.json">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
     </ItemGroup>
 
 </Project>
