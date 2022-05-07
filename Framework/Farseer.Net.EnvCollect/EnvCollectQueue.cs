@@ -3,35 +3,27 @@ using System.Linq;
 using System.Threading.Tasks;
 using FS.Core.Async;
 using FS.Core.LinkTrack;
+using FS.DI;
 using FS.EC.Dal;
 using FS.Extends;
+using FS.MQ.Queue;
 
 namespace FS.EC
 {
-    public class EnvCollectQueue : BaseAsyncQueue<LinkTrackContext>, ILinkTrackQueue
+    public class EnvCollectQueue : IEnvCollectQueue
     {
-        internal EnvCollectQueue() : base(maxQueueSize: 500000, callBackListCapacity: 1000, sleepMs: 500)
+        readonly IQueueProduct _queueProduct;
+        internal EnvCollectQueue()
         {
+            _queueProduct = IocManager.GetService<IQueueManager>(name: "EnvCollect").Product;
         }
 
         /// <summary>
         ///     将链路追踪写入队列
         /// </summary>
-        public void Enqueue() => base.Enqueue(obj: FsLinkTrack.Current.Get());
-
-        /// <summary>
-        ///     回调 数据给用户处理
-        /// </summary>
-        /// <param name="lst"> 回调的 数据列表 </param>
-        /// <param name="remainCount"> 队列中当前剩余多少要处理 </param>
-        protected override Task OnDequeue(List<LinkTrackContext> lst, int remainCount)
+        public void Enqueue()
         {
-            // 设置C#的调用链
-            foreach (var linkTrackContext in lst) linkTrackContext.List.ForEach(action: o => o.SetCallStackTrace());
-
-            return Task.WhenAll(
-                                EnvCollectEsContext.Data.Host.InsertAsync(lst.Select(o => o.Map<HostPO>()).ToList())
-                                );
+            _queueProduct.Send(FsLinkTrack.Current.Get());
         }
     }
 }

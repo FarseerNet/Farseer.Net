@@ -17,11 +17,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
-        <ProjectReference Include="..\Farseer.Net.Core\Farseer.Net.Core.csproj"/>
-        <ProjectReference Include="..\Farseer.Net.ElasticSearch\Farseer.Net.ElasticSearch.csproj"/>
-        <ProjectReference Include="..\Farseer.Net.Mapper\Farseer.Net.Mapper.csproj"/>
-        <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <ProjectReference Include="..\Farseer.Net.Core\Farseer.Net.Core.csproj" />
+        <ProjectReference Include="..\Farseer.Net.ElasticSearch\Farseer.Net.ElasticSearch.csproj" />
+        <ProjectReference Include="..\Farseer.Net.Mapper\Farseer.Net.Mapper.csproj" />
+        <ProjectReference Include="..\Farseer.Net.MQ.Queue\Farseer.Net.MQ.Queue.csproj" />
+        <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />
     </ItemGroup>
 
 </Project>  

@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using Castle.MicroKernel.Registration;
+﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using FS.Core.LinkTrack;
@@ -30,11 +29,7 @@ namespace FS.EC
         /// <param name="store"> </param>
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
-            var cts            = new CancellationTokenSource();
-            var envCollectQueue = new EnvCollectQueue();
-            envCollectQueue.StartDequeue(cancellationToken: cts.Token);
-
-            container.Register(Component.For<ILinkTrackQueue>().Instance(instance: envCollectQueue).LifestyleSingleton());
+            container.Register(Component.For<IEnvCollectQueue>().ImplementedBy(typeof(EnvCollectQueue)).LifestyleSingleton());
         }
     }
 }

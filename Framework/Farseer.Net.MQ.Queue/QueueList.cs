@@ -42,10 +42,11 @@ public class QueueList : IQueueList
                     while (CurQueue.Count > _queueConfig.PullCount)
                     {
                         Queues[QueueEmptyIndex] = CurQueue.Take(_queueConfig.PullCount).ToList();
-                        for (int i = 0; i < _queueConfig.PullCount; i++)
-                        {
-                            CurQueue.RemoveAt(0);
-                        }
+                        // for (int i = 0; i < _queueConfig.PullCount; i++)
+                        // {
+                        //     CurQueue.RemoveAt(0);
+                        // }
+                        CurQueue.RemoveRange(0, _queueConfig.PullCount);
                         QueueEmptyIndex++;
                     }
                 }
@@ -121,11 +122,11 @@ public class QueueList : IQueueList
         if (curCount > 0)
         {
             var objects = CurQueue.Take(curCount).ToList();
-            for (int i = 0; i < objects.Count; i++)
-            {
-                CurQueue.RemoveAt(0);
-            }
-            //CurQueue.RemoveRange(0, objects.Count);
+            // for (int i = 0; i < objects.Count; i++)
+            // {
+            //     CurQueue.RemoveAt(0);
+            // }
+            CurQueue.RemoveRange(0, objects.Count);
             TotalCount -= objects.Count;
             return objects;
         }
