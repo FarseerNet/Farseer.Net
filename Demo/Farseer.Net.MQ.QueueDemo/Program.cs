@@ -17,15 +17,16 @@ namespace Farseer.Net.MQ.QueueDemo
             FarseerApplication.Run<StartupModule>().Initialize();
 
             // ******************** 以下演示消息发送 *********************
-            var rabbitProduct = IocManager.GetService<IQueueManager>(name: "test").Product;
+            var queueProduct = IocManager.GetService<IQueueManager>(name: "test").Product;
             // 先执行jit
-            rabbitProduct.Send("测试发送消息内容");
+            queueProduct.Send("测试发送消息内容");
             // 开启时间测试
             var startNew = Stopwatch.StartNew();
             // 以上也是JIT
 
             // ******************** 测试1秒内，能发送多少条消息 *********************
-            Send(startNew: startNew, rabbitProduct: rabbitProduct);
+            // 每秒发送：2,041,833条数据
+            Send(startNew: startNew, rabbitProduct: queueProduct);
             Thread.Sleep(millisecondsTimeout: -1);
         }
         private static void Send(Stopwatch startNew, IQueueProduct rabbitProduct)

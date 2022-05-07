@@ -109,6 +109,35 @@ public class TestEvent : IListenerMessage
     }
 }
 ```
+### Farseer.Net.MQ.Queue 进程级别的消息队列组件：
+`使用场景：多次发送数据后，集中批量写入ES、或数据库。`
+
+`2.6 GHz 六核Intel Core i7`
+`16 GB 2400 MHz DDR4`
+`每秒发送：2,041,833条数据`
+#### 发送
+```c#
+  // 取出实例
+  var queueProduct = IocManager.GetService<IQueueManager>(name: "test").Product;
+  // 发送
+  queueProduct.Send("测试发送消息内容");
+```
+#### 消费
+```c#
+  /// <summary>
+  ///     消费客户端
+  /// </summary>
+  [Consumer(Enable = true, Name = "test")]
+  public class TestConsumer : IListenerMessage
+  {
+      public Task<bool> Consumer(List<object> queueList)
+      {
+          Console.WriteLine(value: $"消费到{queueList.Count}条");
+          return Task.FromResult(result: true);
+      }
+      public Task<bool> FailureHandling(List<object> messages) => throw new NotImplementedException();
+  }
+```
 
 ### Farseer.Net.MQ.RedisStream RedisStream组件：
 #### 发送
@@ -247,8 +276,10 @@ public class TestEvent : IListenerMessage
   *  对象类型转换组件（基于AutoMapper)
 * `Farseer.Net.MongoDB`
   *  MongoDB 组件
-* `Farseer.Net.MQ.Kafka`
-  *  基于Confluent.Kafka的模块化封装
+* `Farseer.Net.MQ.Queue`
+  *  RabbitMQ 消息队列组件
+* `Farseer.Net.MQ.Queue`
+  *  进程级别的消息队列（批量消费场景）
 * `Farseer.Net.MQ.Rabbit`
   *  RabbitMQ 消息队列组件
 * `Farseer.Net.MQ.RocketMQ`
