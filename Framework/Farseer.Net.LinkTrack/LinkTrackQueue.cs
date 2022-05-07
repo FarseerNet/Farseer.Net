@@ -7,7 +7,7 @@ namespace FS.LinkTrack
     public class LinkTrackQueue : ILinkTrackQueue
     {
         readonly IQueueProduct _queueProduct;
-        internal LinkTrackQueue()
+        public LinkTrackQueue()
         {
             _queueProduct = IocManager.GetService<IQueueManager>(name: "LinkTrack").Product;
         }
