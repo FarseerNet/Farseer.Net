@@ -31,7 +31,7 @@ namespace FS.LinkTrack.Consumer
             return true;
         }
 
-        public Task<bool> FailureHandling(List<object> messages) => Task.FromResult(true);
+        public Task<bool> FailureHandling(List<object> messages) => Task.FromResult(false);
 
         /// <summary>
         /// 依赖外部系统的，单独存储，用于统计慢查询
@@ -121,6 +121,7 @@ namespace FS.LinkTrack.Consumer
                     }
                 }
             }
+            if (lstSlowQuery.Count == 0) return Task.FromResult(true);
             return LinkTrackEsContext.Data.SlowQuery.InsertAsync(lstSlowQuery);
         }
     }
