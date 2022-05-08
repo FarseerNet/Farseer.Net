@@ -13,7 +13,7 @@ namespace FS.LinkTrack.Consumer
     /// <summary>
     ///     消费客户端
     /// </summary>
-    [Consumer(Enable = true, Name = "LinkTrack", PullCount = 1000, SleepTime = 500)]
+    [Consumer(Enable = true, Name = "LinkTrackQueue", PullCount = 1000, SleepTime = 500)]
     public class LinkTrackConsumer : IListenerMessage
     {
         public async Task<bool> Consumer(List<object> queueList)

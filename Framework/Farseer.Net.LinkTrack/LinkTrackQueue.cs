@@ -9,7 +9,7 @@ namespace FS.LinkTrack
         readonly IQueueProduct _queueProduct;
         public LinkTrackQueue()
         {
-            _queueProduct = IocManager.GetService<IQueueManager>(name: "LinkTrack").Product;
+            _queueProduct = IocManager.GetService<IQueueManager>(name: "LinkTrackQueue").Product;
         }
 
         /// <summary>
