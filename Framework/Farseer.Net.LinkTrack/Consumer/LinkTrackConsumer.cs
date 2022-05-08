@@ -19,6 +19,7 @@ namespace FS.LinkTrack.Consumer
         public async Task<bool> Consumer(List<object> queueList)
         {
             var lst = queueList.Select(o => (LinkTrackContext)o).ToList();
+            if (lst.Count == 0) return true;
             
             // 设置C#的调用链
             foreach (var linkTrackContext in lst) linkTrackContext.List.ForEach(action: o => o.SetCallStackTrace());
@@ -29,9 +30,9 @@ namespace FS.LinkTrack.Consumer
 
             return true;
         }
-        
-        public Task<bool> FailureHandling(List<object> messages) => throw new NotImplementedException();
-        
+
+        public Task<bool> FailureHandling(List<object> messages) => Task.FromResult(true);
+
         /// <summary>
         /// 依赖外部系统的，单独存储，用于统计慢查询
         /// </summary>
