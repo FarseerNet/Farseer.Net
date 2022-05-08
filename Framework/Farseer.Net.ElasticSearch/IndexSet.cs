@@ -890,12 +890,11 @@ namespace FS.ElasticSearch
                                                                                         .Aliases(selector: des =>
                                                                                         {
                                                                                             foreach (var aliasName in SetMap.AliasNames) des.Alias(alias: aliasName);
-
                                                                                             return des;
                                                                                         })
                                                                                         .Settings(selector: s => s.NumberOfReplicas(numberOfReplicas: SetMap.ReplicasCount).NumberOfShards(numberOfShards: SetMap.ShardsCount).RefreshInterval(SetMap.RefreshInterval))
                                                );
-                if (!rsp.IsValid) throw new Exception(message: rsp.OriginalException.Message);
+                if (!rsp.IsValid) throw new Exception(message: $"索引创建失败：Uri={string.Join(",", Client.ConnectionSettings.ConnectionPool.Nodes.Select(o => o.Uri.ToString()))}，Index={SetMap.IndexName}，AliasNames={string.Join(",", SetMap.AliasNames)}{rsp.OriginalException.Message}");
 
                 return true;
             }
