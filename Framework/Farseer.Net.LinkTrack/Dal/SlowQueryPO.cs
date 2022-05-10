@@ -19,8 +19,18 @@ namespace FS.LinkTrack.Dal
         ///     应用
         /// </summary>
         [Keyword]
-        public string AppId { get; set; }
-        
+        public string AppName { get; set; }
+        /// <summary>
+        ///     应用Id
+        /// </summary>
+        public long AppId { get; set; }
+
+        /// <summary>
+        ///     应用Ip
+        /// </summary>
+        [Keyword]
+        public string AppIp { get; set; }
+
         /// <summary>
         ///     调用类型
         /// </summary>

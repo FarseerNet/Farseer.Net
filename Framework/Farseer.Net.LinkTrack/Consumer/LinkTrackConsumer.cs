@@ -20,7 +20,7 @@ namespace FS.LinkTrack.Consumer
         {
             var lst = queueList.Select(o => (LinkTrackContext)o).ToList();
             if (lst.Count == 0) return true;
-            
+
             // 设置C#的调用链
             foreach (var linkTrackContext in lst) linkTrackContext.List.ForEach(action: o => o.SetCallStackTrace());
 
@@ -48,7 +48,9 @@ namespace FS.LinkTrack.Consumer
                         case EumCallType.HttpClient:
                             lstSlowQuery.Add(new SlowQueryPO
                             {
-                                AppId           = linkTrackContext.AppName,
+                                AppName         = linkTrackContext.AppName,
+                                AppId           = linkTrackContext.AppId,
+                                AppIp           = linkTrackContext.AppIp,
                                 ContextId       = linkTrackContext.ContextId,
                                 CallType        = linkTrackDetail.CallType,
                                 UseTs           = linkTrackDetail.UseTs,
@@ -61,7 +63,9 @@ namespace FS.LinkTrack.Consumer
                         case EumCallType.GrpcClient:
                             lstSlowQuery.Add(new SlowQueryPO
                             {
-                                AppId     = linkTrackContext.AppName,
+                                AppName   = linkTrackContext.AppName,
+                                AppId     = linkTrackContext.AppId,
+                                AppIp     = linkTrackContext.AppIp,
                                 ContextId = linkTrackContext.ContextId,
                                 CallType  = linkTrackDetail.CallType,
                                 UseTs     = linkTrackDetail.UseTs,
@@ -74,7 +78,9 @@ namespace FS.LinkTrack.Consumer
                             if (!linkTrackDetail.Data.ContainsKey("Sql")) break;
                             lstSlowQuery.Add(new SlowQueryPO
                             {
-                                AppId       = linkTrackContext.AppName,
+                                AppName     = linkTrackContext.AppName,
+                                AppId       = linkTrackContext.AppId,
+                                AppIp       = linkTrackContext.AppIp,
                                 ContextId   = linkTrackContext.ContextId,
                                 CallType    = linkTrackDetail.CallType,
                                 UseTs       = linkTrackDetail.UseTs,
@@ -87,7 +93,9 @@ namespace FS.LinkTrack.Consumer
                         case EumCallType.Redis:
                             lstSlowQuery.Add(new SlowQueryPO
                             {
-                                AppId           = linkTrackContext.AppName,
+                                AppName         = linkTrackContext.AppName,
+                                AppId           = linkTrackContext.AppId,
+                                AppIp           = linkTrackContext.AppIp,
                                 ContextId       = linkTrackContext.ContextId,
                                 CallType        = linkTrackDetail.CallType,
                                 UseTs           = linkTrackDetail.UseTs,
@@ -99,7 +107,9 @@ namespace FS.LinkTrack.Consumer
                         case EumCallType.Mq:
                             lstSlowQuery.Add(new SlowQueryPO
                             {
-                                AppId     = linkTrackContext.AppName,
+                                AppName   = linkTrackContext.AppName,
+                                AppId     = linkTrackContext.AppId,
+                                AppIp     = linkTrackContext.AppIp,
                                 ContextId = linkTrackContext.ContextId,
                                 CallType  = linkTrackDetail.CallType,
                                 UseTs     = linkTrackDetail.UseTs,
@@ -110,7 +120,9 @@ namespace FS.LinkTrack.Consumer
                         case EumCallType.Elasticsearch:
                             lstSlowQuery.Add(new SlowQueryPO
                             {
-                                AppId     = linkTrackContext.AppName,
+                                AppName   = linkTrackContext.AppName,
+                                AppId     = linkTrackContext.AppId,
+                                AppIp     = linkTrackContext.AppIp,
                                 ContextId = linkTrackContext.ContextId,
                                 CallType  = linkTrackDetail.CallType,
                                 UseTs     = linkTrackDetail.UseTs,
