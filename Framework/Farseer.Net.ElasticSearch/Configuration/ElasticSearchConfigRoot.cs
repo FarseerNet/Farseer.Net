@@ -15,7 +15,7 @@ namespace FS.ElasticSearch.Configuration
         /// </summary>
         public static IEnumerable<ElasticSearchItemConfig> Get()
         {
-            var configs   = IocManager.GetService<IConfigurationRoot>().GetSection(key: "ElasticSearch").GetChildren();
+            var configs = IocManager.GetService<IConfigurationRoot>().GetSection(key: "ElasticSearch").GetChildren();
             foreach (var configurationSection in configs)
             {
                 var config = ConfigConvert.ToEntity<ElasticSearchItemConfig>(configurationSection.Value);

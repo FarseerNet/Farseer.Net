@@ -7,6 +7,7 @@ using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Castle.Windsor.Installer;
 using FS.Modules;
+using FS.Reflection;
 using Microsoft.Extensions.Logging;
 
 namespace FS.DI
@@ -77,7 +78,7 @@ namespace FS.DI
         {
             var assemblyNames = type.Assembly.GetReferencedAssemblies().Select(Assembly.Load).ToList();
             assemblyNames.Add(type.Assembly);
-            RegisterAssemblyByConvention(assemblyNames);
+            RegisterAssemblyByConvention(GetService<ITypeFinder>().IgnoreAssembly(assemblyNames));
         }
         
         /// <summary>
@@ -88,7 +89,7 @@ namespace FS.DI
             foreach (var assembly in assemblys.Where(assembly => !_isRegistrarWindsorInstaller.ContainsKey(key: assembly)))
             {
                 // 忽略程序集
-                if (ignores.Any(predicate: ignore => assembly.FullName.StartsWith(value: ignore))) continue;
+                if (ignores.Any(predicate: ignore => assembly.ManifestModule.Name.StartsWith(value: ignore))) continue;
 
                 try
                 {

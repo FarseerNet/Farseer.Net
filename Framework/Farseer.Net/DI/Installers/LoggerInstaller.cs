@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
@@ -13,7 +14,6 @@ namespace FS.DI.Installers
     /// </summary>
     public class LoggerInstaller : IWindsorInstaller
     {
-
         /// <summary>
         ///     注册
         /// </summary>
@@ -21,19 +21,11 @@ namespace FS.DI.Installers
         /// <param name="store"> </param>
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
-            // 注册配置文件
-            var configuration = new ConfigurationBuilder()
-                                .AddJsonFile(path: "appsettings.json", optional: true, reloadOnChange: true)
-                                .AddJsonFile(path: $"appsettings.{Environment.GetEnvironmentVariable(variable: "ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true) //增加环境配置文件
-                                .AddEnvironmentVariables()
-                                .Build();
-            
-            container.Register(Component.For<IConfigurationRoot>().Instance(instance: configuration).LifestyleSingleton());
-
             // 注册默认日志组件
             var loggerFactory = LoggerFactory.Create(configure: o =>
             {
-                o.AddFarseerLogging();
+                o.AddConsole();
+                o.AddDebug();
             });
             container.Register(Component.For<ILoggerFactory>().Instance(instance: loggerFactory).LifestyleSingleton());
         }

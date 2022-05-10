@@ -1,20 +1,4 @@
-﻿//------------------------------------------------------------------------------
-// <copyright file="FarseerKernelModule.cs" company="Farseer">
-//     Copyright (c) Shanghai Zhongtongji Network Technology Co., Ltd.  All rights reserved.
-// </copyright>                                                                
-//------------------------------------------------------------------------------
-
-/*
- * FarseerKernelModule.cs
- * 
- * Copyright (c) 2016-2030, Farseer Corporation
- * 
- */
-
-using System.Reflection;
-using FS.Configuration.Startup;
-using FS.DI;
-using FS.Modules;
+﻿using FS.Modules;
 
 namespace FS.Core
 {
@@ -35,8 +19,6 @@ namespace FS.Core
         /// </summary>
         public override void Initialize()
         {
-            foreach (var replaceAction in ((FarseerStartupConfiguration)StartupConfiguration).ServiceReplaceActions.Values) replaceAction();
-            IocManager.RegisterAssemblyByConvention(assembly: Assembly.GetExecutingAssembly(), config: new ConventionalRegistrationConfig { InstallInstallers = false });
         }
     }
 }

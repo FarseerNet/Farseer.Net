@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Castle.Core.Internal;
@@ -60,6 +61,22 @@ namespace FS.Reflection
             return _types;
         }
 
+        private string[] _IgnoreAssembly       = { "Newtonsoft.Json.dll", "Elasticsearch.Net.dll", "Mapster.Core.dll", "Mapster.dll", "Mapster.Async.dll", "Castle.Core.dll", "Castle.Windsor.dll", "Docker.DotNet.dll", "Snowflake.Core.dll", "Nest.dll", "netstandard.dll" };
+        private string[] _IgnorePrefixAssembly = { "Microsoft.Extensions.", "Microsoft.Bcl.", "Castle.Windsor.", "System.Security.", "System.Private.", "System.Configuration.", "System.Drawing.", "System.ServiceModel.", "System.Windows.", "Microsoft.IdentityModel.", "Microsoft.Win32.", "Microsoft.DotNet.", "System.ServiceProcess.", "System.IdentityModel.", "System.Diagnostics." };
+
+        /// <summary>
+        /// 忽略微软及常用的程序集
+        /// </summary>
+        public IEnumerable<Assembly> IgnoreAssembly(List<Assembly> assemblies)
+        {
+            foreach (var assembly in assemblies)
+            {
+                if (_IgnorePrefixAssembly.Any(o => assembly.ManifestModule.Name.StartsWith(o))) continue;
+                if (_IgnoreAssembly.Contains(assembly.ManifestModule.Name)) continue;
+                yield return assembly;
+            }
+        }
+
         /// <summary>
         ///     创建类型列表
         /// </summary>
@@ -68,11 +85,14 @@ namespace FS.Reflection
         {
             var allTypes = new List<Type>();
 
-            var assemblies = _assemblyFinder.GetAllAssemblies().Distinct();
+            var assemblies = IgnoreAssembly(_assemblyFinder.GetAllAssemblies());
 
             foreach (var assembly in assemblies)
+            {
                 try
                 {
+                    if (_IgnorePrefixAssembly.Any(o => assembly.ManifestModule.Name.StartsWith(o))) continue;
+                    if (_IgnoreAssembly.Contains(assembly.ManifestModule.Name)) continue;
                     Type[] typesInThisAssembly;
 
                     try
@@ -92,7 +112,7 @@ namespace FS.Reflection
                 {
                     IocManager.Instance.Logger<TypeFinder>().LogWarning(exception: ex, message: ex.ToString());
                 }
-
+            }
             return allTypes;
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Castle.MicroKernel.Registration;
@@ -28,11 +29,13 @@ namespace FS.MQ.Queue
         /// <inheritdoc />
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
+            var sw         = Stopwatch.StartNew();
             var iocManager = container.Resolve<IIocManager>();
 
             // 读取配置
             var queueConfigs = QueueRoot.Get().ToList();
-            // 从消费中找到未包含配置文件的。并生成到配置中
+
+            // 从消费中找到未包含配置文件的。并生成到配置中 耗时：31 ms
             var consumerAttributes = _typeFinder.Find<IListenerMessage>().Select(o => o.GetCustomAttribute<ConsumerAttribute>()).Where(o => o != null);
             foreach (var consumerAtt in consumerAttributes)
             {
@@ -45,7 +48,6 @@ namespace FS.MQ.Queue
                         SleepTime = consumerAtt.SleepTime
                     });
             }
-
             // 注册生产者
             foreach (var queueConfig in queueConfigs)
             {
@@ -90,14 +92,12 @@ namespace FS.MQ.Queue
 
                 FarseerApplication.AddInitCallback(act: () =>
                 {
-                    // 注册消费端            
-                    iocManager.Logger<QueueInstaller>().LogInformation(message: $"正在启动：{consumerAtt.Name} Queue消费");
+                    // 注册消费端
+                    iocManager.Logger<QueueInstaller>().LogInformation(message: $"正在启动Queue消费：{consumerAtt.Name}");
                     var consumerInstance = new QueueConsumer(iocManager: iocManager, consumerType: consumerType, queueConfig: queueConfig);
                     consumerInstance.StartWhile();
                 });
             }
-
-            IocManager.Instance.Logger<QueueInstaller>().LogInformation(message: "全部消费启动完成!");
         }
     }
 }

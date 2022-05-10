@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace FS.Reflection
 {
@@ -23,5 +25,9 @@ namespace FS.Reflection
         ///     找继承TType接口的实现类
         /// </summary>
         Type[] Find<TInterface>();
+        /// <summary>
+        /// 忽略微软及常用的程序集
+        /// </summary>
+        IEnumerable<Assembly> IgnoreAssembly(List<Assembly> assemblies);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using FS.Configuration.Startup;
 using FS.DI;
 using Microsoft.Extensions.Logging;
 
@@ -62,14 +62,32 @@ namespace FS.Modules
         /// </summary>
         public virtual void StartModules()
         {
+            var sw            = Stopwatch.StartNew();
             var sortedModules = _moduleCollection.GetListSortDependency();
 
-            _iocManager.Logger<FarseerModuleManager>().LogInformation(message: $"开始启动{sortedModules.Count}个模块...");
-            sortedModules.ForEach(action: module => module.Instance.PreInitialize());
-            sortedModules.ForEach(action: module => module.Instance.Initialize());
-            sortedModules.ForEach(action: module => module.Instance.PostInitialize());
-
-            _iocManager.Logger<FarseerModuleManager>().LogInformation(message: $"{sortedModules.Count}个模块启动完毕...");
+            var lstLog = new List<string>(100) { $"Modules模块初始化..." };
+            foreach (var module in sortedModules)
+            {
+                sw.Restart();
+                module.Instance.PreInitialize();
+                lstLog.Add($"耗时：{sw.ElapsedMilliseconds} ms：{module.Type.Name}.PreInitialize()");
+            }
+            lstLog.Add("---------------------------------------");
+            foreach (var module in sortedModules)
+            {
+                sw.Restart();
+                module.Instance.Initialize();
+                lstLog.Add($"耗时：{sw.ElapsedMilliseconds} ms：{module.Type.Name}.Initialize()");
+            }
+            lstLog.Add("---------------------------------------");
+            foreach (var module in sortedModules)
+            {
+                sw.Restart();
+                module.Instance.PostInitialize();
+                lstLog.Add($"耗时：{sw.ElapsedMilliseconds} ms：{module.Type.Name}.PostInitialize()");
+            }
+            lstLog.Add("---------------------------------------");
+            _iocManager.Logger<FarseerModuleManager>().LogInformation(string.Join("\r\n", lstLog));
         }
 
         /// <summary>
@@ -93,11 +111,15 @@ namespace FS.Modules
         {
             var moduleTypes = FindAllModules();
 
-            var lstLog = new List<string>(){$"开始加载 {moduleTypes.Count} 个模块："};
-            lstLog.AddRange(moduleTypes.Select(moduleType => $"已经加载模块: {moduleType.AssemblyQualifiedName}"));
+            var lstLog = new List<string>() { $"开始加载 {moduleTypes.Count} 个模块：" };
+            lstLog.AddRange(moduleTypes.Select(moduleType => $"加载模块: {moduleType.AssemblyQualifiedName}"));
+
             RegisterModules(moduleTypes: moduleTypes);
+
             CreateModules(moduleTypes: moduleTypes);
+
             _iocManager.Logger<FarseerModuleManager>().LogInformation(string.Join("\r\n", lstLog));
+
             FarseerModuleCollection.EnsureKernelModuleToBeFirst(modules: _moduleCollection);
 
             SetDependencies();
@@ -123,15 +145,9 @@ namespace FS.Modules
             foreach (var moduleType in moduleTypes)
             {
                 var moduleObject = _iocManager.Resolve(type: moduleType) as FarseerModule;
-                Check.NotNull<FarseerModule, FarseerInitException>(value: moduleObject, parameterName: $"此类型不是一个有效的模块: {moduleType.AssemblyQualifiedName}");
-
-                moduleObject.IocManager    = _iocManager;
-                moduleObject.StartupConfiguration = _iocManager.Resolve<IFarseerStartupConfiguration>();
-
+                moduleObject.IocManager = _iocManager;
                 var moduleInfo = new FarseerModuleInfo(type: moduleType, instance: moduleObject);
-
                 _moduleCollection.Add(item: moduleInfo);
-
                 if (moduleType == _startupModuleType) StartupModule = moduleInfo;
             }
         }

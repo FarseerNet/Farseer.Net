@@ -4,7 +4,7 @@ using System.Reflection;
 namespace FS.Cache
 {
     /// <summary>
-    ///     表达式树委托实例化缓存
+    ///     根据对象Type，创建实例（替换反射创建实例）
     /// </summary>
     public class InstanceStaticCacheManger : AbsCacheManger<int, Func<object[], object>>
     {

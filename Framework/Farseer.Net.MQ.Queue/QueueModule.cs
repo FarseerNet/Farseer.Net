@@ -25,9 +25,9 @@ namespace FS.MQ.Queue
         /// <inheritdoc />
         public override void Initialize()
         {
+            // 耗时：357 ms
             //模块初始化，实现IOC信息的注册
             IocManager.Container.Install(new QueueInstaller(_typeFinder));
-            IocManager.RegisterAssemblyByConvention(assembly: Assembly.GetExecutingAssembly(), config: new ConventionalRegistrationConfig { InstallInstallers = false });
         }
     }
 }

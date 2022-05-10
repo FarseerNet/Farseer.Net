@@ -35,18 +35,20 @@ namespace FS.ElasticSearch
         {
             // 读取配置
             var elasticSearchItemConfigs = ElasticSearchConfigRoot.Get();
-            if (elasticSearchItemConfigs == null || !elasticSearchItemConfigs.Any()) return;
+            
+            if (elasticSearchItemConfigs == null) return;
             foreach (var elasticSearchItemConfig in elasticSearchItemConfigs)
             {
                 if (string.IsNullOrWhiteSpace(elasticSearchItemConfig.Server)) throw new FarseerException($"Elasticsearch配置:{elasticSearchItemConfig.Name}，缺少Server节点");
                 
-                var lstUrls  = elasticSearchItemConfig.Server.Split(',').Select(selector: o => new Uri(uriString: o)).ToList();
-                var settings = new ConnectionSettings(connectionPool: new StaticConnectionPool(uris: lstUrls));
+                var lstUrls              = elasticSearchItemConfig.Server.Split(',').Select(selector: o => new Uri(uriString: o)).ToList();
+                var settings = new ConnectionSettings(connectionPool: new StaticConnectionPool(uris: lstUrls)); // 耗时：43 ms
                 settings.DisableDirectStreaming();
                 // 如果设置了用户名，则附加鉴权设置
                 if (!string.IsNullOrWhiteSpace(value: elasticSearchItemConfig.Username) || !string.IsNullOrWhiteSpace(value: elasticSearchItemConfig.Password)) settings.BasicAuthentication(username: elasticSearchItemConfig.Username, password: elasticSearchItemConfig.Password);
                 // 注册ES实例
                 container.Register(Component.For<IElasticClient>().Named(name: elasticSearchItemConfig.Name).Instance(instance: new ElasticClient(connectionSettings: settings)).LifestyleSingleton());
+                
             }
         }
     }

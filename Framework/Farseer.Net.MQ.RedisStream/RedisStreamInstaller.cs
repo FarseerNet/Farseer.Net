@@ -108,7 +108,7 @@ namespace FS.MQ.RedisStream
 
             FarseerApplication.AddInitCallback(act: () =>
             {
-                IocManager.Instance.Logger<RedisStreamInstaller>().LogInformation(message: $"正在启动：{consumerType.Name} Redis消费");
+                IocManager.Instance.Logger<RedisStreamInstaller>().LogInformation(message: $"正在启动Redis消费：{consumerType.Name}");
                 consumerInstance.Start();
             });
         }

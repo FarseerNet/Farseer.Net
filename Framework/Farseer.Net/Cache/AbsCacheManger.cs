@@ -43,10 +43,7 @@ namespace FS.Cache
         /// </summary>
         /// <param name="key"> 缓存Key </param>
         /// <param name="value"> 要更新的值 </param>
-        public static void Update(TKey key, TValue value)
-        {
-            CacheList[key: key] = value;
-        }
+        public static void Update(TKey key, TValue value) => CacheList[key: key] = value;
 
         /// <summary>
         ///     当缓存不存在时，上锁加入缓存

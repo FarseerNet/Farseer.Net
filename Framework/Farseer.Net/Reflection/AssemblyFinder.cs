@@ -30,7 +30,7 @@ namespace FS.Reflection
         /// <returns> </returns>
         public List<Assembly> GetAllAssemblies()
         {
-            var assemblies = new List<Assembly>();
+            var assemblies = new List<Assembly>(200);
 
             foreach (var module in _moduleManager.Modules)
             {

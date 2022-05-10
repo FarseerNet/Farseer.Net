@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Castle.MicroKernel.Registration;
-using FS.Configuration.Startup;
 using FS.DI;
 using FS.DI.Installers;
 using FS.Modules;
@@ -122,23 +121,47 @@ namespace FS
         {
             try
             {
-                AppId     = Guid.NewGuid().ToString("N");
                 StartupAt = DateTime.Now;
+                AppId     = Guid.NewGuid().ToString("N");
+                
+                var lstLog = new List<string>(100)
+                {
+                    $"系统时间：{StartupAt:yyyy-MM-dd HH:mm:ss}",
+                    $"进程ID：{Process.GetCurrentProcess().Id}",
+                    $"应用ID：{AppId}",
+                    "---------------------------------------"
+                };
+
+                var sw = Stopwatch.StartNew();
                 RegisterBootstrapper();
+                lstLog.Add($"耗时：{sw.ElapsedMilliseconds} ms：注册FarseerApplication组件");   
+
+                sw.Restart();
+                IocManager.Container.Install(new ConfigurationInstaller());
+                lstLog.Add($"耗时：{sw.ElapsedMilliseconds} ms：注册ConfigurationInstaller组件");   
+                
+                sw.Restart();
                 IocManager.Container.Install(new LoggerInstaller());
+                lstLog.Add($"耗时：{sw.ElapsedMilliseconds} ms：注册LoggerInstaller组件");   
+                
+                sw.Restart();
                 IocManager.Container.Install(new FarseerInstaller());
-
-                IocManager.Logger<FarseerApplication>().LogInformation(message: $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] 注册系统核心组件，当前进程ID：{Process.GetCurrentProcess().Id}");
-
-                IocManager.Resolve<FarseerStartupConfiguration>().Initialize();
+                lstLog.Add($"耗时：{sw.ElapsedMilliseconds} ms：注册FarseerInstaller组件");   
+                lstLog.Add($"基础组件初始化完成");
+                IocManager.Logger<FarseerModuleManager>().LogInformation(string.Join("\r\n", lstLog));
+                
                 _moduleManager = IocManager.Resolve<IFarseerModuleManager>();
                 _moduleManager.Initialize(startupModule: StartupModule);
+
                 _moduleManager.StartModules();
 
                 ShowIocInstance();
+
                 IocManager.Logger<FarseerApplication>().LogInformation(message: "启动初始化回调");
                 foreach (var action in InitCallback) action();
-                IocManager.Logger<FarseerApplication>().LogInformation(message: $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] 系统初始化完毕，耗时{(DateTime.Now - StartupAt).TotalMilliseconds:n}ms");
+
+                // 优化前：1.3s，优化后：700ms
+                IocManager.Logger<FarseerApplication>().LogInformation(message: $"初始化完毕，共耗时{(DateTime.Now - StartupAt).TotalMilliseconds:n}ms");
             }
             catch (Exception ex)
             {
@@ -146,7 +169,7 @@ namespace FS
                 throw;
             }
         }
-        
+
         /// <summary>
         /// 显示IOC的注册实例
         /// </summary>

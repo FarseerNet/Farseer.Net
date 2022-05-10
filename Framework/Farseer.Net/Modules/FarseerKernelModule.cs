@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using System.Reflection;
-using FS.Configuration.Startup;
 using FS.DI;
 
 namespace FS.Modules
@@ -25,7 +24,6 @@ namespace FS.Modules
         /// </summary>
         public override void Initialize()
         {
-            foreach (var replaceAction in ((FarseerStartupConfiguration)StartupConfiguration).ServiceReplaceActions.Values) replaceAction();
             IocManager.RegisterAssemblyByConvention(assembly: GetType().GetTypeInfo().Assembly, config: new ConventionalRegistrationConfig { InstallInstallers = false });
         }
 

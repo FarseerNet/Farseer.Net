@@ -36,7 +36,6 @@ namespace FS.Log
         public static ILoggingBuilder AddFarseerLogging(this ILoggingBuilder builder, Action<JsonConsoleFormatterOptions> options = null)
         {
             var configurationRoot = IocManager.GetService<IConfigurationRoot>();
-            //builder.AddConfiguration(configurationRoot.GetSection("Logging"));
             
             var logFormat         = configurationRoot.GetSection("Logging:Format").Value;
             if (logFormat?.ToLower() == "json")

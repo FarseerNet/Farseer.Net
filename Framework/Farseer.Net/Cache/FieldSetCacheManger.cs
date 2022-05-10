@@ -38,9 +38,6 @@ namespace FS.Cache
         /// <param name="key"> 缓存Key </param>
         /// <param name="instance"> 对象 </param>
         /// <param name="value"> 要设置的值 </param>
-        public static void Cache(FieldInfo key, object instance, object value)
-        {
-            new FieldSetCacheManger(key: key).GetValue()(arg1: instance, arg2: value);
-        }
+        public static void Cache(FieldInfo key, object instance, object value) => new FieldSetCacheManger(key: key).GetValue()(arg1: instance, arg2: value);
     }
 }

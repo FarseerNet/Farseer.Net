@@ -26,9 +26,4 @@
         <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />
     </ItemGroup>
 
-
-    <ItemGroup>
-      <Folder Include="Queue" />
-    </ItemGroup>
-
 </Project>  

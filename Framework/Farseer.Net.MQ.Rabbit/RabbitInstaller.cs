@@ -73,6 +73,7 @@ namespace FS.MQ.Rabbit
 
                     FarseerApplication.AddInitCallback(act: () =>
                     {
+                        iocManager.Logger<RabbitInstaller>().LogInformation(message: $"正在启动Rabbit消费：{consumerAtt.QueueName}");
                         Task.WaitAll(iocManager.Resolve<IListenerMessage>(name: consumerType.FullName).Init(iocManager: iocManager, consumerAtt: consumerAtt, consumerType: consumerType));
                     });
                 }
@@ -91,11 +92,10 @@ namespace FS.MQ.Rabbit
 
                     FarseerApplication.AddInitCallback(act: () =>
                     {
+                        iocManager.Logger<RabbitInstaller>().LogInformation(message: $"正在启动Rabbit批量消费：{consumerAtt.QueueName}");
                         Task.WhenAll(iocManager.Resolve<IListenerMessageBatch>(name: consumerType.FullName).Init(iocManager: iocManager, consumerAtt: consumerAtt, consumerType: consumerType));
                     });
                 }
-
-                IocManager.Instance.Logger<RabbitInstaller>().LogInformation(message: "全部消费启动完成!");
             }
             catch (Exception e)
             {
