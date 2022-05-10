@@ -10,12 +10,17 @@ namespace FS.Utils.Common
     /// </summary>
     public static class IpHelper
     {
-        private static string _localIp;
+        private static string[] _localIpList;
 
         /// <summary>
         ///     获取当前节点IP
         /// </summary>
-        public static string GetIp => _localIp ??= GetIps().Select(selector: o => o.Address.MapToIPv4().ToString()).FirstOrDefault();
+        public static string GetIp => _localIpList.FirstOrDefault();
+        
+        /// <summary>
+        ///     获取当前节点IP
+        /// </summary>
+        public static string[] GetIpList => _localIpList ??= GetIps().Select(selector: o => o.Address.MapToIPv4().ToString()).ToArray();
 
         // /// <summary>
         // /// 获取网络IP

@@ -5,14 +5,24 @@ namespace FS.Core.LinkTrack
     public class LinkTrackContext
     {
         /// <summary>
-        ///     应用
+        ///     应用Id
         /// </summary>
-        public virtual string AppId { get; set; }
+        public virtual long AppId { get; set; }
+        
+        /// <summary>long
+        ///     应用名称
+        /// </summary>
+        public virtual string AppName { get; set; }
+        
+        /// <summary>
+        ///     应用Ip
+        /// </summary>
+        public virtual string AppIp { get; set; }
 
         /// <summary>
         ///     上游应用
         /// </summary>
-        public virtual string ParentAppId { get; set; }
+        public virtual string ParentAppName { get; set; }
 
         /// <summary>
         ///     上下文ID

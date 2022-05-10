@@ -52,19 +52,21 @@ namespace FS.Core.LinkTrack
         {
             AsyncLocal.Value = new LinkTrackContext
             {
-                LinkType    = EumLinkType.Consumer,
-                AppId       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
-                ParentAppId = "",
-                ContextId   = SnowflakeId.GenerateId.ToString(),
-                StartTs     = DateTime.Now.ToTimestamps(),
-                List        = new List<LinkTrackDetail>(),
-                Method      = method,
-                Path        = queueName,
-                Domain      = endPort,
-                RequestIp   = IpHelper.GetIp,
-                RequestBody = message,
-                ContentType = "",
-                StatusCode  = "",
+                LinkType      = EumLinkType.Consumer,
+                AppName       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
+                AppId         = FarseerApplication.AppId,
+                AppIp         = FarseerApplication.AppIp.FirstOrDefault(),
+                ParentAppName = "",
+                ContextId     = SnowflakeId.GenerateId.ToString(),
+                StartTs       = DateTime.Now.ToTimestamps(),
+                List          = new List<LinkTrackDetail>(),
+                Method        = method,
+                Path          = queueName,
+                Domain        = endPort,
+                RequestIp     = IpHelper.GetIp,
+                RequestBody   = message,
+                ContentType   = "",
+                StatusCode    = "",
             };
             return new TrackEnd(linkTrackContext: AsyncLocal.Value);
         }
@@ -76,18 +78,20 @@ namespace FS.Core.LinkTrack
         {
             AsyncLocal.Value = new LinkTrackContext
             {
-                LinkType    = EumLinkType.Fss,
-                AppId       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
-                ParentAppId = "",
-                ContextId   = SnowflakeId.GenerateId.ToString(),
-                StartTs     = DateTime.Now.ToTimestamps(),
-                List        = new List<LinkTrackDetail>(),
-                Method      = jobName,
-                Path        = $"{taskGroupId}",
-                Domain      = clientHost,
-                RequestIp   = IpHelper.GetIp,
-                RequestBody = JsonConvert.SerializeObject(taskData ?? new()),
-                ContentType = ""
+                LinkType      = EumLinkType.Fss,
+                AppName       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
+                AppId         = FarseerApplication.AppId,
+                AppIp         = FarseerApplication.AppIp.FirstOrDefault(),
+                ParentAppName = "",
+                ContextId     = SnowflakeId.GenerateId.ToString(),
+                StartTs       = DateTime.Now.ToTimestamps(),
+                List          = new List<LinkTrackDetail>(),
+                Method        = jobName,
+                Path          = $"{taskGroupId}",
+                Domain        = clientHost,
+                RequestIp     = IpHelper.GetIp,
+                RequestBody   = JsonConvert.SerializeObject(taskData ?? new()),
+                ContentType   = ""
             };
             return new TrackEnd(linkTrackContext: AsyncLocal.Value);
         }
@@ -99,16 +103,18 @@ namespace FS.Core.LinkTrack
         {
             AsyncLocal.Value = new LinkTrackContext
             {
-                LinkType    = EumLinkType.BackgroundService,
-                AppId       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
-                ParentAppId = "",
-                ContextId   = SnowflakeId.GenerateId.ToString(),
-                StartTs     = DateTime.Now.ToTimestamps(),
-                List        = new List<LinkTrackDetail>(),
-                RequestIp   = IpHelper.GetIp,
-                Method      = "",
-                Path        = jobName,
-                ContentType = ""
+                LinkType      = EumLinkType.BackgroundService,
+                AppName       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
+                AppId         = FarseerApplication.AppId,
+                AppIp         = FarseerApplication.AppIp.FirstOrDefault(),
+                ParentAppName = "",
+                ContextId     = SnowflakeId.GenerateId.ToString(),
+                StartTs       = DateTime.Now.ToTimestamps(),
+                List          = new List<LinkTrackDetail>(),
+                RequestIp     = IpHelper.GetIp,
+                Method        = "",
+                Path          = jobName,
+                ContentType   = ""
             };
             return new TrackEnd(linkTrackContext: AsyncLocal.Value);
         }
@@ -132,20 +138,22 @@ namespace FS.Core.LinkTrack
 
             AsyncLocal.Value = new LinkTrackContext()
             {
-                LinkType    = EumLinkType.ApiServer,
-                AppId       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
-                ParentAppId = parentAppId ?? "",
-                ContextId   = contextId,
-                StartTs     = DateTime.Now.ToTimestamps(),
-                List        = new List<LinkTrackDetail>(),
-                Domain      = domain,
-                Path        = path,
-                Method      = method,
-                ContentType = contentType,
-                Headers     = headerDictionary,
-                RequestBody = requestBody,
-                RequestIp   = ip,
-                StatusCode  = ""
+                LinkType      = EumLinkType.ApiServer,
+                AppName       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
+                AppId         = FarseerApplication.AppId,
+                AppIp         = FarseerApplication.AppIp.FirstOrDefault(),
+                ParentAppName = parentAppId ?? "",
+                ContextId     = contextId,
+                StartTs       = DateTime.Now.ToTimestamps(),
+                List          = new List<LinkTrackDetail>(),
+                Domain        = domain,
+                Path          = path,
+                Method        = method,
+                ContentType   = contentType,
+                Headers       = headerDictionary,
+                RequestBody   = requestBody,
+                RequestIp     = ip,
+                StatusCode    = ""
             };
 
             return new TrackEnd(linkTrackContext: AsyncLocal.Value);

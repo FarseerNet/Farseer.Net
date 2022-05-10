@@ -12,7 +12,7 @@ namespace FS.Core.Http
             if (linkTrackContext == null) return;
             
             httpWebRequest.Headers.Add(name: "FsContextId", value: linkTrackContext.ContextId);
-            httpWebRequest.Headers.Add(name: "FsAppId", value: linkTrackContext.AppId);
+            httpWebRequest.Headers.Add(name: "FsAppId", value: linkTrackContext.AppName);
         }
 
         public static void AddTraceInfoToHeader(this HttpContentHeaders httpWebRequest)
@@ -21,7 +21,7 @@ namespace FS.Core.Http
             if (linkTrackContext == null) return;
             
             httpWebRequest.Add(name: "FsContextId", value: linkTrackContext.ContextId);
-            httpWebRequest.Add(name: "FsAppId", value: linkTrackContext.AppId);
+            httpWebRequest.Add(name: "FsAppId", value: linkTrackContext.AppName);
         }
     }
 }

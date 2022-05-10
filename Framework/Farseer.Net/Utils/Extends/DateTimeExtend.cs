@@ -22,7 +22,7 @@ namespace FS.Extends
         }
 
         /// <summary>
-        ///     日期转换成时间戳（毫秒）
+        ///     日期转换成时间戳（毫秒，13位）
         /// </summary>
         /// <param name="dt"> 时间 </param>
         public static long ToTimestamps(this DateTime dt)

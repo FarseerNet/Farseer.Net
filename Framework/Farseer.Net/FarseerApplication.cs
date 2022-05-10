@@ -10,7 +10,9 @@ using System.Linq;
 using Castle.MicroKernel.Registration;
 using FS.DI;
 using FS.DI.Installers;
+using FS.Extends;
 using FS.Modules;
+using FS.Utils.Common;
 using Microsoft.Extensions.Logging;
 
 namespace FS
@@ -70,7 +72,12 @@ namespace FS
         /// <summary>
         ///     应用ID（每次重启应用后会重新生成）
         /// </summary>
-        public static string AppId { get; set; }
+        public static long AppId { get; set; }
+
+        /// <summary>
+        ///     应用IP
+        /// </summary>
+        public static string[] AppIp { get; set; }
 
         private static List<Action> InitCallback { get; } = new();
 
@@ -122,34 +129,36 @@ namespace FS
             try
             {
                 StartupAt = DateTime.Now;
-                AppId     = Guid.NewGuid().ToString("N");
-                
+                AppId     = long.Parse($"{StartupAt.ToTimestamps()}{new Random().Next(100, 999)}");
+                AppIp     = IpHelper.GetIpList;
+
                 var lstLog = new List<string>(100)
                 {
                     $"系统时间：{StartupAt:yyyy-MM-dd HH:mm:ss}",
                     $"进程ID：{Process.GetCurrentProcess().Id}",
                     $"应用ID：{AppId}",
+                    $"应用IP：{string.Join(",", AppIp)}",
                     "---------------------------------------"
                 };
 
                 var sw = Stopwatch.StartNew();
                 RegisterBootstrapper();
-                lstLog.Add($"耗时：{sw.ElapsedMilliseconds} ms：注册FarseerApplication组件");   
+                lstLog.Add($"耗时：{sw.ElapsedMilliseconds} ms：注册FarseerApplication组件");
 
                 sw.Restart();
                 IocManager.Container.Install(new ConfigurationInstaller());
-                lstLog.Add($"耗时：{sw.ElapsedMilliseconds} ms：注册ConfigurationInstaller组件");   
-                
+                lstLog.Add($"耗时：{sw.ElapsedMilliseconds} ms：注册ConfigurationInstaller组件");
+
                 sw.Restart();
                 IocManager.Container.Install(new LoggerInstaller());
-                lstLog.Add($"耗时：{sw.ElapsedMilliseconds} ms：注册LoggerInstaller组件");   
-                
+                lstLog.Add($"耗时：{sw.ElapsedMilliseconds} ms：注册LoggerInstaller组件");
+
                 sw.Restart();
                 IocManager.Container.Install(new FarseerInstaller());
-                lstLog.Add($"耗时：{sw.ElapsedMilliseconds} ms：注册FarseerInstaller组件");   
+                lstLog.Add($"耗时：{sw.ElapsedMilliseconds} ms：注册FarseerInstaller组件");
                 lstLog.Add($"基础组件初始化完成");
                 IocManager.Logger<FarseerModuleManager>().LogInformation(string.Join("\r\n", lstLog));
-                
+
                 _moduleManager = IocManager.Resolve<IFarseerModuleManager>();
                 _moduleManager.Initialize(startupModule: StartupModule);
 

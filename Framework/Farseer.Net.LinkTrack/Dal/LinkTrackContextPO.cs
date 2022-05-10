@@ -11,16 +11,13 @@ namespace FS.LinkTrack.Dal
         public override string ContextId { get; set; }
 
         [Keyword]
-        public override string AppId { get; set; }
+        public override string AppName { get; set; }
 
         [Keyword]
-        public override string ParentAppId { get; set; }
+        public override string AppIp { get; set; }
 
-        [Number(type: NumberType.Long)]
-        public override long StartTs { get; set; }
-
-        [Number(type: NumberType.Long)]
-        public override long EndTs { get; set; }
+        [Keyword]
+        public override string ParentAppName { get; set; }
 
         [Keyword]
         public override string Domain { get; set; }
