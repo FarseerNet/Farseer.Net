@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using FS.Core.LinkTrack;
 using Nest;
 

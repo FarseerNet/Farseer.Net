@@ -87,7 +87,7 @@ namespace FS.Grpc
             var callOptions = SetCallOptions(context.Options.WithHeaders(headers: new Metadata
             {
                 { "FsContextId", linkTrackContext.ContextId },
-                { "FsAppId", linkTrackContext.AppName }
+                { "FsAppName", linkTrackContext.AppName }
             }));
 
             // 添加头部信息

@@ -32,7 +32,7 @@ public class LinkTrackMiddleware
         var parentAppId = "";
         if (!string.IsNullOrWhiteSpace(value: contextId))
         {
-            httpContext.Request.Headers.TryGetValue(key: "FsAppId", value: out var parentAppId2);
+            httpContext.Request.Headers.TryGetValue(key: "FsAppName", value: out var parentAppId2);
             parentAppId = parentAppId2.ToString();
         }
 
