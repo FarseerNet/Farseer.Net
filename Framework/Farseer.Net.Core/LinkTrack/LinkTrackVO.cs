@@ -32,6 +32,6 @@ namespace FS.Core.LinkTrack
         /// </summary>
         public string Desc { get; set; }
 
-        public string AppId { get; set; }
+        public string AppName { get; set; }
     }
 }
