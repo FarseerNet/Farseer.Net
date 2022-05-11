@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using FS.Cache;
 
@@ -39,7 +40,15 @@ namespace FS.Core.Configuration
                         long.TryParse(dicConfig[propertyInfo.Name], out var result);
                         PropertySetCacheManger.Cache(propertyInfo, config, result);
                     }
-                    else PropertySetCacheManger.Cache(propertyInfo, config, dicConfig[propertyInfo.Name]);
+                    else if (propertyInfo.PropertyType.BaseType == typeof(Enum))
+                    {
+                        var result = Enum.Parse(propertyInfo.PropertyType, dicConfig[propertyInfo.Name]);
+                        PropertySetCacheManger.Cache(propertyInfo, config, result);
+                    }
+                    else
+                    {
+                        PropertySetCacheManger.Cache(propertyInfo, config, dicConfig[propertyInfo.Name]);
+                    }
                 }
             }
 
