@@ -47,7 +47,7 @@ namespace FS.MQ.Queue
             _consumerTypeName = consumerType.FullName;
             _queueList        = IocManager.GetService<IQueueList>($"queue_list_{queueConfig.Name}");
             if (!iocManager.IsRegistered(name: consumerType.FullName)) iocManager.Register(type: consumerType, name: consumerType.FullName, lifeStyle: DependencyLifeStyle.Transient);
-            _useLinkTrack = _iocManager.IsRegistered<ILinkTrackQueue>();
+            _useLinkTrack = consumerType.Module.Name != "Farseer.Net.LinkTrack.dll" && _iocManager.IsRegistered<ILinkTrackQueue>();
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace FS.MQ.Queue
             {
                 // 消费
                 // 由于全链路追踪的数据是通过QueueConsumer消费后写入ES的，所以LinkTrackConsumer的消费不能再次调用消费追踪，否则会重复
-                if (consumerService.GetType().Module.Name == "Farseer.Net.LinkTrack.dll")
+                if (!_useLinkTrack)
                 {
                     result = await consumerService.Consumer(lst);
                 }
@@ -98,10 +98,9 @@ namespace FS.MQ.Queue
                     {
                         result = await consumerService.Consumer(lst);
                     }
+                    _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
                 }
 
-                // 写入链路追踪
-                if (_useLinkTrack) _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
             }
             catch (Exception e)
             {
@@ -112,7 +111,7 @@ namespace FS.MQ.Queue
                 try
                 {
                     // 由于全链路追踪的数据是通过QueueConsumer消费后写入ES的，所以LinkTrackConsumer的消费不能再次调用消费追踪，否则会重复
-                    if (consumerService.GetType().Module.Name == "Farseer.Net.LinkTrack.dll")
+                    if (!_useLinkTrack)
                     {
                         result = await consumerService.FailureHandling(lst);
                     }
@@ -122,10 +121,8 @@ namespace FS.MQ.Queue
                         {
                             result = await consumerService.FailureHandling(lst);
                         }
+                        _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
                     }
-
-                    // 写入链路追踪
-                    if (_useLinkTrack) _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
                 }
                 catch (Exception exception)
                 {
