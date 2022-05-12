@@ -1,20 +1,29 @@
 using System.Collections.Generic;
 using FS.Core.LinkTrack;
-using Mapster;
 using Nest;
 
 namespace FS.LinkTrack.Dal
 {
     public class LinkTrackContextPO : LinkTrackContext
     {
+        /// <summary>
+        ///     应用Id
+        /// </summary>
+        public long AppId { get; set; }
+
+        /// <summary>
+        ///     应用Ip
+        /// </summary>
+        [Keyword]
+        public string AppIp { get; set; }
+        /// <summary>long
+        ///     应用名称
+        /// </summary>
+        [Keyword]
+        public string AppName { get; set; }
+
         [Keyword]
         public override string ContextId { get; set; }
-
-        [Keyword]
-        public override string AppName { get; set; }
-
-        [Keyword]
-        public override string AppIp { get; set; }
 
         [Keyword]
         public override string ParentAppName { get; set; }

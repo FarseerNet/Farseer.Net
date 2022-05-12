@@ -17,15 +17,23 @@ namespace FS.LinkTrack.Consumer
     {
         public async Task<bool> Consumer(List<object> queueList)
         {
-            var lst = queueList.Select(o => (LinkTrackContext)o).ToList();
-            if (lst.Count == 0) return true;
+            if (queueList.Count == 0) return true;
+            
+            var lst = queueList.Select(o => o.Adapt<LinkTrackContextPO>()).ToList();
 
             // 设置C#的调用链
-            foreach (var linkTrackContext in lst) linkTrackContext.List.ForEach(action: o => o.SetCallStackTrace());
+            foreach (var linkTrackContext in lst)
+            {
+                linkTrackContext.List.ForEach(action: o => o.SetCallStackTrace());
+                linkTrackContext.AppName = FarseerApplication.AppName;
+                linkTrackContext.AppId   = FarseerApplication.AppId;
+                linkTrackContext.AppIp   = FarseerApplication.AppIp.FirstOrDefault();
+            }
 
-            await LinkTrackEsContext.Data.LinkTrackContext.InsertAsync(lst.Select(o => o.Adapt<LinkTrackContextPO>()).ToList());
+            await LinkTrackEsContext.Data.LinkTrackContext.InsertAsync(lst);
+
             // 依赖外部系统的，单独存储，用于统计慢查询
-            await AddSlowQuery(lst: lst);
+            await AddSlowQuery(lst);
 
             return true;
         }
@@ -35,7 +43,7 @@ namespace FS.LinkTrack.Consumer
         /// <summary>
         /// 依赖外部系统的，单独存储，用于统计慢查询
         /// </summary>
-        private Task AddSlowQuery(List<LinkTrackContext> lst)
+        private Task AddSlowQuery(List<LinkTrackContextPO> lst)
         {
             var lstSlowQuery = new List<SlowQueryPO>();
             foreach (var linkTrackContext in lst)

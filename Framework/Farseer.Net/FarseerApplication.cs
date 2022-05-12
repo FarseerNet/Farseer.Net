@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using Castle.MicroKernel.Registration;
 using FS.DI;
 using FS.DI.Installers;
@@ -131,7 +132,7 @@ namespace FS
                 StartupAt = DateTime.Now;
                 AppId     = long.Parse($"{StartupAt.ToTimestamps()}{new Random().Next(100, 999)}");
                 AppIp     = IpHelper.GetIpList;
-
+                AppName   = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower();
                 var lstLog = new List<string>(100)
                 {
                     $"系统时间：{StartupAt:yyyy-MM-dd HH:mm:ss}",

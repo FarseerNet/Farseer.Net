@@ -4,7 +4,6 @@ using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using FS.Extends;
 using FS.Utils.Common;
@@ -53,9 +52,6 @@ namespace FS.Core.LinkTrack
             AsyncLocal.Value = new LinkTrackContext
             {
                 LinkType      = EumLinkType.Consumer,
-                AppName       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
-                AppId         = FarseerApplication.AppId,
-                AppIp         = FarseerApplication.AppIp.FirstOrDefault(),
                 ParentAppName = "",
                 ContextId     = SnowflakeId.GenerateId.ToString(),
                 StartTs       = DateTime.Now.ToTimestamps(),
@@ -79,9 +75,6 @@ namespace FS.Core.LinkTrack
             AsyncLocal.Value = new LinkTrackContext
             {
                 LinkType      = EumLinkType.Fss,
-                AppName       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
-                AppId         = FarseerApplication.AppId,
-                AppIp         = FarseerApplication.AppIp.FirstOrDefault(),
                 ParentAppName = "",
                 ContextId     = SnowflakeId.GenerateId.ToString(),
                 StartTs       = DateTime.Now.ToTimestamps(),
@@ -104,9 +97,6 @@ namespace FS.Core.LinkTrack
             AsyncLocal.Value = new LinkTrackContext
             {
                 LinkType      = EumLinkType.BackgroundService,
-                AppName       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
-                AppId         = FarseerApplication.AppId,
-                AppIp         = FarseerApplication.AppIp.FirstOrDefault(),
                 ParentAppName = "",
                 ContextId     = SnowflakeId.GenerateId.ToString(),
                 StartTs       = DateTime.Now.ToTimestamps(),
@@ -139,9 +129,6 @@ namespace FS.Core.LinkTrack
             AsyncLocal.Value = new LinkTrackContext()
             {
                 LinkType      = EumLinkType.ApiServer,
-                AppName       = Assembly.GetEntryAssembly().FullName.Split(',')[0].ToLower(),
-                AppId         = FarseerApplication.AppId,
-                AppIp         = FarseerApplication.AppIp.FirstOrDefault(),
                 ParentAppName = parentAppId ?? "",
                 ContextId     = contextId,
                 StartTs       = DateTime.Now.ToTimestamps(),

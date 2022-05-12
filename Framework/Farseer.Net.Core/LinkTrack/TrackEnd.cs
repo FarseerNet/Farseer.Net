@@ -61,7 +61,7 @@ namespace FS.Core.LinkTrack
             if (_linkTrackContext != null)
             {
                 _linkTrackContext.EndTs = DateTime.Now.ToTimestamps();
-                if (!Env.IsPro && _linkTrackContext.ContentType != "MessageQueue")
+                if (!Env.IsPro)
                 {
                     var lst = new List<string>
                     {

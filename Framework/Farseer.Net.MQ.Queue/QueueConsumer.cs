@@ -83,14 +83,21 @@ namespace FS.MQ.Queue
             if (lst == null) return 0;
 
             var consumerService = _iocManager.Resolve<IListenerMessage>(name: _consumerTypeName);
-            var result = false;
+            var result          = false;
             try
             {
-
                 // 消费
-                using (FsLinkTrack.TrackMqConsumer(endPort: "127.0.0.1", queueName: _queueConfig.Name, method: "QueueConsumer", $"本次消费{lst.Count}条"))
+                // 由于全链路追踪的数据是通过QueueConsumer消费后写入ES的，所以LinkTrackConsumer的消费不能再次调用消费追踪，否则会重复
+                if (consumerService.GetType().Module.Name == "Farseer.Net.LinkTrack.dll")
                 {
                     result = await consumerService.Consumer(lst);
+                }
+                else
+                {
+                    using (FsLinkTrack.TrackMqConsumer(endPort: "127.0.0.1", queueName: _queueConfig.Name, method: "QueueConsumer", $"本次消费{lst.Count}条"))
+                    {
+                        result = await consumerService.Consumer(lst);
+                    }
                 }
 
                 // 写入链路追踪
@@ -104,9 +111,17 @@ namespace FS.MQ.Queue
                 // 消费失败后处理
                 try
                 {
-                    using (FsLinkTrack.TrackMqConsumer(endPort: "127.0.0.1", queueName: _queueConfig.Name, method: "QueueConsumer", $"本次消费{lst.Count}条"))
+                    // 由于全链路追踪的数据是通过QueueConsumer消费后写入ES的，所以LinkTrackConsumer的消费不能再次调用消费追踪，否则会重复
+                    if (consumerService.GetType().Module.Name == "Farseer.Net.LinkTrack.dll")
                     {
                         result = await consumerService.FailureHandling(lst);
+                    }
+                    else
+                    {
+                        using (FsLinkTrack.TrackMqConsumer(endPort: "127.0.0.1", queueName: _queueConfig.Name, method: "QueueConsumer", $"本次消费{lst.Count}条"))
+                        {
+                            result = await consumerService.FailureHandling(lst);
+                        }
                     }
 
                     // 写入链路追踪
