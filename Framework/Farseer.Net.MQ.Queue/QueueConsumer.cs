@@ -100,7 +100,6 @@ namespace FS.MQ.Queue
                     }
                     _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
                 }
-
             }
             catch (Exception e)
             {

@@ -59,7 +59,7 @@ namespace FS.Core.LinkTrack
                 Method        = method,
                 Path          = queueName,
                 Domain        = endPort,
-                RequestIp     = IpHelper.GetIp,
+                RequestIp     = FarseerApplication.AppIp.FirstOrDefault(),
                 RequestBody   = message,
                 ContentType   = "",
                 StatusCode    = "",
@@ -82,7 +82,7 @@ namespace FS.Core.LinkTrack
                 Method        = jobName,
                 Path          = $"{taskGroupId}",
                 Domain        = clientHost,
-                RequestIp     = IpHelper.GetIp,
+                RequestIp     = FarseerApplication.AppIp.FirstOrDefault(),
                 RequestBody   = JsonConvert.SerializeObject(taskData ?? new()),
                 ContentType   = ""
             };
@@ -101,7 +101,7 @@ namespace FS.Core.LinkTrack
                 ContextId     = SnowflakeId.GenerateId.ToString(),
                 StartTs       = DateTime.Now.ToTimestamps(),
                 List          = new List<LinkTrackDetail>(),
-                RequestIp     = IpHelper.GetIp,
+                RequestIp     = FarseerApplication.AppIp.FirstOrDefault(),
                 Method        = "",
                 Path          = jobName,
                 ContentType   = ""
@@ -112,7 +112,7 @@ namespace FS.Core.LinkTrack
         /// <summary>
         ///     追踪ApiServer
         /// </summary>
-        public static TrackEnd TrackApiServer(string contextId, string parentAppId, string domain, string path, string method, string contentType, Dictionary<string, string> headerDictionary, string requestBody, string ip)
+        public static TrackEnd TrackApiServer(string contextId, string parentAppId, string domain, string path, string method, string contentType, Dictionary<string, string> headerDictionary, string requestBody, string requestIp)
         {
             if (string.IsNullOrWhiteSpace(contextId)) contextId = SnowflakeId.GenerateId.ToString();
             // 移除charset的类型
@@ -139,7 +139,7 @@ namespace FS.Core.LinkTrack
                 ContentType   = contentType,
                 Headers       = headerDictionary,
                 RequestBody   = requestBody,
-                RequestIp     = ip,
+                RequestIp     = requestIp,
                 StatusCode    = ""
             };
 

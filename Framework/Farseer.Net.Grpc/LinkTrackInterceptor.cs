@@ -29,7 +29,7 @@ namespace FS.Grpc
             var       dicHeader = context.RequestHeaders.ToDictionary(keySelector: o => o.Key, elementSelector: o => o.Value);
             var       path      = $"http://{context.Host}{context.Method.ToLower()}";
 
-            using (var trackEnd = FsLinkTrack.TrackApiServer(contextId, parentAppId, domain: context.Host, path: path, method: "GRPC", contentType: "application/grpc", headerDictionary: dicHeader, requestBody: JsonConvert.SerializeObject(value: request), ip: context.Peer))
+            using (var trackEnd = FsLinkTrack.TrackApiServer(contextId, parentAppId, domain: context.Host, path: path, method: "GRPC", contentType: "application/grpc", headerDictionary: dicHeader, requestBody: JsonConvert.SerializeObject(value: request), context.Peer))
             {
                 try
                 {

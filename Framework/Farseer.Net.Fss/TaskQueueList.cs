@@ -153,6 +153,7 @@ namespace FS.Fss
                 // 执行业务JOB
                 var  fssJob = IocManager.GetService<IFssJob>(name: jobInsName);
                 bool result;
+                
                 using (FsLinkTrack.TrackFss(clientHost: task.ClientHost, jobName: task.JobName, taskGroupId: task.TaskGroupId, task.Data))
                 {
                     // 执行具体任务（业务执行）
