@@ -172,7 +172,7 @@ namespace FS.Data.Internal
                         {
                             sb.Append(value: $"if (col is {propertyType.FullName}) {{ {propertyAssign} = ({propertyType.FullName})col; }} else {{ if ({propertyType.FullName}.TryParse(col.ToString(), out {propertyType.FullName} {filedName}_Out)) {{ {propertyAssign} = {filedName}_Out; }} }}");
                             // ClickHouse的DateTime类型，需要将UTC转为Local
-                            if (setPhysicsMap.InternalContext.ContextConnection.DbType == eumDbType.ClickHouse && propertyType == typeof(DateTime)) sb.Append(value: map.Key.PropertyType.IsGenericType ? $"{propertyAssign} = {propertyAssign}.GetValueOrDefault().ToLocalTime();" : $"{propertyAssign} = {propertyAssign}.ToLocalTime();");
+                            if (setPhysicsMap.InternalContext.DatabaseConnection.DbType == eumDbType.ClickHouse && propertyType == typeof(DateTime)) sb.Append(value: map.Key.PropertyType.IsGenericType ? $"{propertyAssign} = {propertyAssign}.GetValueOrDefault().ToLocalTime();" : $"{propertyAssign} = {propertyAssign}.ToLocalTime();");
                         }
                         break;
                     }

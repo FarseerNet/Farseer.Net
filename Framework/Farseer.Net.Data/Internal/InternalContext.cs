@@ -19,18 +19,43 @@ namespace FS.Data.Internal
         /// </summary>
         /// <param name="contextType"> 外部上下文类型 </param>
         /// <param name="isUnitOfWork"> 是否启用单元工作模式 </param>
-        /// <param name="contextConnection"> 上下文数据库连接信息 </param>
-        public InternalContext(Type contextType, bool isUnitOfWork, ContextConnection contextConnection = null)
+        public InternalContext(Type contextType, bool isUnitOfWork)
         {
-            ContextType       = contextType;
-            IsUnitOfWork      = isUnitOfWork;
-            ContextConnection = contextConnection;
+            ContextType  = contextType;
+            IsUnitOfWork = isUnitOfWork;
         }
 
         /// <summary>
         ///     上下文数据库连接信息
         /// </summary>
-        internal IContextConnection ContextConnection { get; set; }
+        internal IDatabaseConnection DatabaseConnection { get; private set; }
+
+        /// <summary>
+        /// 设置数据库连接信息
+        /// </summary>
+        internal void SetDatabaseConnection(string dbConfigName)
+        {
+            var dbConnectionName = $"dbConnection_{dbConfigName}";
+            if (!IocManager.Instance.IsRegistered(name: dbConnectionName)) throw new FarseerException(message: $"未找到数据库的配置：{dbConfigName}");
+            
+            DatabaseConnection = IocManager.GetService<IDatabaseConnection>(name: dbConnectionName);
+        }
+        
+        /// <summary>
+        /// 设置数据库连接信息
+        /// </summary>
+        internal void SetDatabaseConnection(IDatabaseConnection databaseConnection)
+        {
+            DatabaseConnection = databaseConnection;
+        }
+        
+        /// <summary>
+        /// 设置数据库连接信息
+        /// </summary>
+        internal void SetDatabaseConnection(string connectionString, eumDbType db, int commandTimeout, string dataVer)
+        {
+            DatabaseConnection = new DatabaseConnection(connectionString: connectionString, dbType: db, commandTimeout: commandTimeout, dataVer: dataVer);
+        }
 
         /// <summary>
         ///     外部上下文类型
@@ -50,7 +75,7 @@ namespace FS.Data.Internal
         /// <summary>
         ///     数据库提供者（不同数据库的特性）
         /// </summary>
-        public AbsDbProvider DbProvider => IocManager.GetService<AbsDbProvider>($"dbProvider_{ContextConnection.DbType}");
+        public AbsDbProvider DbProvider => IocManager.GetService<AbsDbProvider>($"dbProvider_{DatabaseConnection.DbType}");
 
         /// <summary>
         ///     执行数据库操作
@@ -79,16 +104,6 @@ namespace FS.Data.Internal
         public ManualSql ManualSql { get; internal set; }
 
         /// <summary>
-        ///     释放资源
-        /// </summary>
-        [EditorBrowsable(state: EditorBrowsableState.Never)]
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(obj: this);
-        }
-
-        /// <summary>
         ///     初始化数据库环境（共享自其它上下文）、实例化子类中，所有Set属性
         /// </summary>
         /// <param name="currentContextType"> 外部上下文类型 </param>
@@ -98,7 +113,7 @@ namespace FS.Data.Internal
             ContextType  = currentContextType;
             IsUnitOfWork = masterContext.IsUnitOfWork;
             //  连接字符串
-            ContextConnection = masterContext.ContextConnection;
+            DatabaseConnection = masterContext.DatabaseConnection;
             // 手动编写SQL
             ManualSql = masterContext.ManualSql;
             // 默认SQL执行者
@@ -125,10 +140,13 @@ namespace FS.Data.Internal
             // 数据库提供者
             //DbProvider = IocManager.GetService<AbsDbProvider>($"dbProvider_{ContextConnection.DbType}");
 
-            // 默认SQL执行者
-            Executeor = new ExecuteSql(dataBase: new DbExecutor(connectionString: ContextConnection.ConnectionString, dbType: ContextConnection.DbType, commandTimeout: ContextConnection.CommandTimeout, tranLevel: !IsUnitOfWork && DbProvider.IsSupportTransaction ? IsolationLevel.RepeatableRead : IsolationLevel.Unspecified, dbProvider: DbProvider), contextProvider: this);
+            // 数据库的事务级别
+            var tranLevel = !IsUnitOfWork && DbProvider.IsSupportTransaction ? IsolationLevel.RepeatableRead : IsolationLevel.Unspecified;
 
-            // 记录执行链路
+            // 默认SQL执行者
+            Executeor = new ExecuteSql(dataBase: new DbExecutor(connectionString: DatabaseConnection.ConnectionString, dbType: DatabaseConnection.DbType, commandTimeout: DatabaseConnection.CommandTimeout, tranLevel: tranLevel, dbProvider: DbProvider), contextProvider: this);
+
+            // 记录执行链路（通过代理模式实现）
             Executeor = new ExecuteSqlMonitorProxy(db: Executeor, dbProvider: DbProvider);
 
             // 队列管理者
@@ -139,6 +157,16 @@ namespace FS.Data.Internal
             //ContextMap = new ContextDataMap(type: ContextType, context: this);
 
             IsInitializer = true;
+        }
+
+        /// <summary>
+        ///     释放资源
+        /// </summary>
+        [EditorBrowsable(state: EditorBrowsableState.Never)]
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(obj: this);
         }
 
         /// <summary>

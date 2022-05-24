@@ -2,7 +2,7 @@ using FS.Data.Infrastructure;
 
 namespace FS.Data.Internal
 {
-    public interface IContextConnection
+    public interface IDatabaseConnection
     {
         /// <summary>
         ///     连接字符串

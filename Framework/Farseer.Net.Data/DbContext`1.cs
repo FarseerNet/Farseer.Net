@@ -10,6 +10,14 @@ namespace FS.Data
     public class DbContext<TPo> : DbContext where TPo : DbContext<TPo>, new()
     {
         /// <summary>
+        ///     动态分库方案，此时需要重写：SplitDatabase方法
+        /// </summary>
+        /// <param name="isUnitOfWork"> 是否工作单元模式 </param>
+        protected DbContext(bool isUnitOfWork = false) : base(name: null, isUnitOfWork: isUnitOfWork)
+        {
+        }
+        
+        /// <summary>
         ///     通过数据库配置，连接数据库
         /// </summary>
         /// <param name="name"> 数据库配置名称 </param>

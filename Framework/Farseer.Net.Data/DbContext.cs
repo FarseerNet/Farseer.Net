@@ -37,10 +37,8 @@ namespace FS.Data
         public DbContext(string name, bool isUnitOfWork = false)
         {
             InitializerSet(isUnitOfWork);
-
-            var dbConnectionName = $"dbConnection_{name}";
-            if (!IocManager.Instance.IsRegistered(name: dbConnectionName)) throw new FarseerException(message: $"未找到数据库的配置：{name}");
-            _internalContext.ContextConnection = IocManager.GetService<IContextConnection>(name: dbConnectionName);
+            // 如果name=null,说明需要动态分库
+            if (!string.IsNullOrWhiteSpace(name)) _internalContext.SetDatabaseConnection(name);
         }
 
         /// <summary>
@@ -54,7 +52,7 @@ namespace FS.Data
         public DbContext(string connectionString, eumDbType db, int commandTimeout = 30, string dataVer = null, bool isUnitOfWork = false)
         {
             InitializerSet(isUnitOfWork);
-            _internalContext.ContextConnection = new ContextConnection(connectionString: connectionString, dbType: db, commandTimeout: commandTimeout, dataVer: dataVer);
+            _internalContext.SetDatabaseConnection(connectionString: connectionString, db, commandTimeout: commandTimeout, dataVer: dataVer);
         }
 
         /// <summary>
@@ -85,7 +83,7 @@ namespace FS.Data
         /// <summary>
         ///     实现动态链接数据库（比如：分库）
         /// </summary>
-        protected virtual IContextConnection SplitDatabase() => _internalContext.ContextConnection;
+        protected virtual IDatabaseConnection SplitDatabase() => throw new FarseerConfigException("未对上下文设置连接字符串信息时，需要实现SplitDatabase方法，返回数据库连接信息，通常这里为了动态分库目的");
 
         /// <summary>
         ///     创建来自其它上下文的共享
@@ -158,11 +156,6 @@ namespace FS.Data
             InternalContext.Executeor.DataBase.Close(dispose: true);
         }
 
-        // /// <summary>
-        // ///     取消命令合并（不需要调用SaveChange()方法）
-        // /// </summary>
-        // public void CancelMergeCommand() => InternalContext.IsUnitOfWork = true;
-
         /// <summary>
         ///     改变事务级别
         /// </summary>
@@ -194,7 +187,7 @@ namespace FS.Data
                 if (!_internalContext.IsInitializer)
                 {
                     // 分库方案
-                    if (_internalContext.ContextConnection == null) _internalContext.ContextConnection = SplitDatabase();
+                    if (_internalContext.DatabaseConnection == null) _internalContext.SetDatabaseConnection(SplitDatabase());
 
                     _internalContext.Initializer();
                 }

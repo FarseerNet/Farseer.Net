@@ -40,9 +40,9 @@ namespace FS.Data
                 // 注册Db连接
                 var dbConnectionString = IocManager.GetService<AbsDbProvider>($"dbProvider_{m.DataType}").ConnectionString.Create(server: m.Server, port: m.Port, userId: m.UserID, passWord: m.PassWord, catalog: m.Catalog, dataVer: m.DataVer, additional: m.Additional, connectTimeout: m.ConnectTimeout, poolMinSize: m.PoolMinSize, poolMaxSize: m.PoolMaxSize);
                 container.Register(
-                                   Component.For<IContextConnection>()
+                                   Component.For<IDatabaseConnection>()
                                             .Named(name: $"dbConnection_{m.Name}")
-                                            .ImplementedBy<ContextConnection>()
+                                            .ImplementedBy<DatabaseConnection>()
                                             .DependsOn(
                                                        Dependency.OnValue(dependencyType: dbConnectionString.GetType(), value: dbConnectionString),
                                                        Dependency.OnValue(dependencyType: m.DataType.GetType(), value: m.DataType),
