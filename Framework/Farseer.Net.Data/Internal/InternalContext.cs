@@ -70,7 +70,7 @@ namespace FS.Data.Internal
         /// <summary>
         ///     是否初始化实体类名（表名、视图、存储过程）
         /// </summary>
-        public bool IsInitModelName { get; internal set; }
+        public bool IsInitModelName { get; private set; }
 
         /// <summary>
         ///     数据库提供者（不同数据库的特性）
@@ -96,12 +96,12 @@ namespace FS.Data.Internal
         ///     true:立即执行，不需要调用SaveChange()方法 执行
         ///     false:启用合并执行命令、并延迟加载，执行完后，需要调用SaveChange()方法
         /// </summary>
-        public bool IsUnitOfWork { get; internal set; }
+        public bool IsUnitOfWork { get; private set; }
 
         /// <summary>
         ///     手动编写SQL
         /// </summary>
-        public ManualSql ManualSql { get; internal set; }
+        public ManualSql ManualSql { get; private set; }
 
         /// <summary>
         ///     初始化数据库环境（共享自其它上下文）、实例化子类中，所有Set属性
@@ -158,6 +158,11 @@ namespace FS.Data.Internal
 
             IsInitializer = true;
         }
+
+        /// <summary>
+        /// 使用工作单元模式
+        /// </summary>
+        public void UseUnitOfWork() => IsUnitOfWork = true;
 
         /// <summary>
         ///     释放资源

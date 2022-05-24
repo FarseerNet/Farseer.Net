@@ -108,7 +108,7 @@ namespace FS.Data
             // 解决：由于此处进行了_internalContext的二次初始化（在SqlSet进行了初始化）。需保证当前_internalContext未被初始化。
             var newInstance = new TPo();
             // 上下文初始化器
-            newInstance._internalContext.IsUnitOfWork = true;
+            newInstance._internalContext.UseUnitOfWork();
             return newInstance;
         }
 
@@ -194,7 +194,8 @@ namespace FS.Data
 
                 if (!_internalContext.IsInitModelName)
                 {
-                    _internalContext.IsInitModelName = true;
+                    _internalContext.UseUnitOfWork();
+                    
                     // 设置表名称
                     CreateModelInit();
                 }
