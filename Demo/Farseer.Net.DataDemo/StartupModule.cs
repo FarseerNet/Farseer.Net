@@ -9,8 +9,5 @@ namespace Farseer.Net.DataDemo
     [DependsOn(typeof(DataModule))]
     public class StartupModule : FarseerModule
     {
-        public override void PreInitialize()
-        {
-        }
     }
 }

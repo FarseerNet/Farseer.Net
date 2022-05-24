@@ -7,15 +7,18 @@ namespace Farseer.Net.DataDemo
     /// </summary>
     public class MysqlContext : DbContext<MysqlContext>
     {
-        public MysqlContext() : base("default")
+        public MysqlContext() : base("test")
         {
         }
 
-        public TableSet<TaskGroupPO> TaskGroup { get; set; }
+        public TableSet<UserPO> User { get; set; }
 
+        /// <summary>
+        /// 这里可以设置表名
+        /// </summary>
         protected override void CreateModelInit()
         {
-            TaskGroup.SetName("task_group");
+            User.SetName("user");
         }
     }
 }

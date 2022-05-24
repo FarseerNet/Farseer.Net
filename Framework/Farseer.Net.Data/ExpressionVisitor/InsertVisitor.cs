@@ -83,10 +83,11 @@ namespace FS.Data.ExpressionVisitor
             if (cexp == null) return null;
 
             //  查找组中是否存在已有的参数，有则直接取出
-            CurrentDbParameter = DbProvider.CreateDbParam(name: "p" + ParamList.Count + "_" + CurrentFieldName, value: cexp.Value, valType: cexp.Type);
+            CurrentDbParameter = DbProvider.DbParam.Create(name: $"p{ParamList.Count}_{CurrentFieldName}", value: cexp.Value, valType: cexp.Type);
             ParamList.Add(item: CurrentDbParameter);
             CurrentFieldName = null;
             return cexp;
         }
+        
     }
 }

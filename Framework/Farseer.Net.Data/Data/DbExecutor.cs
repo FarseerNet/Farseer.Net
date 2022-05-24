@@ -218,13 +218,13 @@ namespace FS.Data.Data
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
 
-                if (_dbProvider is
-                {
-                    IsSupportParam: true
-                } && parameters is
-                {
-                    Length: > 0
-                })
+                if (_dbProvider.DbParam is
+                    {
+                        IsSupportParam: true
+                    } && parameters is
+                    {
+                        Length: > 0
+                    })
                     _comm.Parameters.AddRange(values: parameters);
 
                 //using (FsLinkTrack.TrackDatabase("ExecuteScalar", _connectionString, cmdType, cmdText, parameters))
@@ -259,13 +259,13 @@ namespace FS.Data.Data
                 await OpenAsync();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
-                if (_dbProvider is
-                {
-                    IsSupportParam: true
-                } && parameters is
-                {
-                    Length: > 0
-                })
+                if (_dbProvider.DbParam is
+                    {
+                        IsSupportParam: true
+                    } && parameters is
+                    {
+                        Length: > 0
+                    })
                     _comm.Parameters.AddRange(values: parameters);
 
                 //using (FsLinkTrack.TrackDatabase("ExecuteScalarAsync", _connectionString, cmdType, cmdText, parameters))
@@ -300,13 +300,13 @@ namespace FS.Data.Data
                 Open();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
-                if (_dbProvider is
-                {
-                    IsSupportParam: true
-                } && parameters is
-                {
-                    Length: > 0
-                })
+                if (_dbProvider.DbParam is
+                    {
+                        IsSupportParam: true
+                    } && parameters is
+                    {
+                        Length: > 0
+                    })
                     _comm.Parameters.AddRange(values: parameters);
 
                 //using (FsLinkTrack.TrackDatabase("ExecuteNonQuery", _connectionString, cmdType, cmdText, parameters))
@@ -341,13 +341,13 @@ namespace FS.Data.Data
                 await OpenAsync();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
-                if (_dbProvider is
-                {
-                    IsSupportParam: true
-                } && parameters is
-                {
-                    Length: > 0
-                })
+                if (_dbProvider.DbParam is
+                    {
+                        IsSupportParam: true
+                    } && parameters is
+                    {
+                        Length: > 0
+                    })
                     _comm.Parameters.AddRange(values: parameters);
 
                 //using (FsLinkTrack.TrackDatabase("ExecuteNonQueryAsync", _connectionString, cmdType, cmdText, parameters))
@@ -382,13 +382,13 @@ namespace FS.Data.Data
                 Open();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
-                if (_dbProvider is
-                {
-                    IsSupportParam: true
-                } && parameters is
-                {
-                    Length: > 0
-                })
+                if (_dbProvider.DbParam is
+                    {
+                        IsSupportParam: true
+                    } && parameters is
+                    {
+                        Length: > 0
+                    })
                     _comm.Parameters.AddRange(values: parameters);
 
                 //using (FsLinkTrack.TrackDatabase("ExecuteReader", _connectionString, cmdType, cmdText, parameters))
@@ -420,13 +420,13 @@ namespace FS.Data.Data
 
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
-                if (_dbProvider is
-                {
-                    IsSupportParam: true
-                } && parameters is
-                {
-                    Length: > 0
-                })
+                if (_dbProvider.DbParam is
+                    {
+                        IsSupportParam: true
+                    } && parameters is
+                    {
+                        Length: > 0
+                    })
                     _comm.Parameters.AddRange(values: parameters);
 
                 //using (FsLinkTrack.TrackDatabase("ExecuteReaderAsync", _connectionString, cmdType, cmdText, parameters))
@@ -457,13 +457,13 @@ namespace FS.Data.Data
                 Open();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
-                if (_dbProvider is
-                {
-                    IsSupportParam: true
-                } && parameters is
-                {
-                    Length: > 0
-                })
+                if (_dbProvider.DbParam is
+                    {
+                        IsSupportParam: true
+                    } && parameters is
+                    {
+                        Length: > 0
+                    })
                     _comm.Parameters.AddRange(values: parameters);
 
                 //using (FsLinkTrack.TrackDatabase("CreateDataAdapter", _connectionString, cmdType, cmdText, parameters))
@@ -502,13 +502,13 @@ namespace FS.Data.Data
                 await OpenAsync();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
-                if (_dbProvider is
-                {
-                    IsSupportParam: true
-                } && parameters is
-                {
-                    Length: > 0
-                })
+                if (_dbProvider.DbParam is
+                    {
+                        IsSupportParam: true
+                    } && parameters is
+                    {
+                        Length: > 0
+                    })
                     _comm.Parameters.AddRange(values: parameters);
 
                 //using (FsLinkTrack.TrackDatabase("CreateDataAdapter", _connectionString, cmdType, cmdText, parameters))

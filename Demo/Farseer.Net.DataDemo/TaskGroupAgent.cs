@@ -12,24 +12,24 @@ namespace Farseer.Net.DataDemo
         /// <summary>
         /// 获取所有任务组列表
         /// </summary>
-        public Task<List<TaskGroupPO>> ToListAsync() => MysqlContext.Data.TaskGroup.ToListAsync();
+        public Task<List<UserPO>> ToListAsync() => MysqlContext.Data.User.ToListAsync();
 
         /// <summary>
         /// 获取任务组信息
         /// </summary>
-        public Task<TaskGroupPO> ToEntityAsync(int id) => MysqlContext.Data.TaskGroup.Where(o => o.Id == id).ToEntityAsync();
+        public Task<UserPO> ToEntityAsync(int id) => MysqlContext.Data.User.Where(o => o.Id == id).ToEntityAsync();
 
         /// <summary>
         /// 更新任务组信息
         /// </summary>
-        public Task UpdateAsync(int id, TaskGroupPO taskGroup) => MysqlContext.Data.TaskGroup.Where(o => o.Id == id).UpdateAsync(taskGroup);
+        public Task UpdateAsync(int id, UserPO user) => MysqlContext.Data.User.Where(o => o.Id == id).UpdateAsync(user);
 
         /// <summary>
         /// 添加任务组
         /// </summary>
-        public async Task<int> AddAsync(TaskGroupPO po)
+        public async Task<int> AddAsync(UserPO po)
         {
-            await MysqlContext.Data.TaskGroup.InsertAsync(po, true);
+            await MysqlContext.Data.User.InsertAsync(po, true);
             return po.Id.GetValueOrDefault();
         }
 
@@ -38,7 +38,7 @@ namespace Farseer.Net.DataDemo
         /// </summary>
         public async Task DeleteAsync(int taskGroupId)
         {
-            await MysqlContext.Data.TaskGroup.Where(o => o.Id == taskGroupId).DeleteAsync();
+            await MysqlContext.Data.User.Where(o => o.Id == taskGroupId).DeleteAsync();
         }
     }
 }

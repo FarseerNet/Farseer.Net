@@ -61,6 +61,8 @@ namespace FS.Utils.Common
         /// <param name="dest"> 新文件夹路径 </param>
         public static void CopyFolder(string sources, string dest)
         {
+            if (!Directory.Exists(dest)) Directory.CreateDirectory(path: dest);
+            
             var dinfo = new DirectoryInfo(path: sources);
             //注，这里面传的是路径，并不是文件，所以不能包含带后缀的文件                
             foreach (var f in dinfo.GetFileSystemInfos())

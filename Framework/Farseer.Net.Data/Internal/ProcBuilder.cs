@@ -50,7 +50,7 @@ namespace FS.Data.Internal
         /// <param name="entity"> 实体类 </param>
         internal IProcParam InitParam<TEntity>(TEntity entity) where TEntity : class, new()
         {
-            Param = _dbProvider.InitParam(map: SetMap.PhysicsMap, entity: entity);
+            Param = _dbProvider.DbParam.InitParam(map: SetMap.PhysicsMap, entity: entity);
             return this;
         }
 
@@ -61,7 +61,7 @@ namespace FS.Data.Internal
         /// <param name="entity"> 实体类 </param>
         internal void SetParamToEntity<TEntity>(TEntity entity) where TEntity : class, new()
         {
-            _dbProvider.SetParamToEntity(map: SetMap.PhysicsMap, lstParam: Param, entity: entity);
+            _dbProvider.DbParam.SetParamToEntity(map: SetMap.PhysicsMap, lstParam: Param, entity: entity);
         }
     }
 }

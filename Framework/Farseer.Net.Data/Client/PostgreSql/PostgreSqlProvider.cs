@@ -13,6 +13,8 @@ namespace FS.Data.Client.PostgreSql
     {
         public override DbProviderFactory   DbProviderFactory    => (DbProviderFactory)Assembly.Load(assemblyString: "Npgsql").GetType(name: "Npgsql.NpgsqlFactory").GetField(name: "Instance").GetValue(obj: null); //(DbProviderFactory)InstanceCacheManger.Cache(Assembly.Load("Npgsql").GetType("Npgsql.NpgsqlFactory"));
         public override AbsFunctionProvider FunctionProvider     => new PostgreSqlFunctionProvider();
+        public override AbsDbParam          DbParam              => new PostgreSqlParam(DbProviderFactory);
+        public override AbsConnectionString ConnectionString     => new PostgreSqlConnectionString();
         public override bool                IsSupportTransaction => true;
 
         public override string KeywordAegis(string fieldName) =>
@@ -20,19 +22,5 @@ namespace FS.Data.Client.PostgreSql
             $"\"{fieldName}\"";
 
         internal override AbsSqlBuilder CreateSqlBuilder(ExpressionBuilder expBuilder, SetDataMap setMap) => new PostgreSqlBuilder(dbProvider: this, expBuilder: expBuilder, setMap);
-
-        public override string CreateDbConnstring(string server, string port, string userId, string passWord = null, string catalog = null, string dataVer = null, string additional = null, int connectTimeout = 60, int poolMinSize = 16, int poolMaxSize = 100)
-        {
-            var sb = new StringBuilder(value: $"Data Source='{server}';User ID='{userId}';");
-            if (!string.IsNullOrWhiteSpace(value: port)) sb.Append(value: $"Port='{port}';");
-            if (!string.IsNullOrWhiteSpace(value: passWord)) sb.Append(value: $"Password='{passWord}';");
-            if (!string.IsNullOrWhiteSpace(value: catalog)) sb.Append(value: $"Database='{catalog}';");
-
-            if (poolMinSize    > 0) sb.Append(value: $"Min Pool Size='{poolMinSize}';");
-            if (poolMaxSize    > 0) sb.Append(value: $"Max Pool Size='{poolMaxSize}';");
-            if (connectTimeout > 0) sb.Append(value: $"Connect Timeout='{connectTimeout}';");
-            sb.Append(value: additional);
-            return sb.ToString();
-        }
     }
 }
