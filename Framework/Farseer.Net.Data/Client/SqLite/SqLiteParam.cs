@@ -4,8 +4,5 @@ namespace FS.Data.Client.SqLite;
 
 public class SqLiteParam : AbsDbParam
 {
-    public SqLiteParam(DbProviderFactory dbProviderFactory) : base(dbProviderFactory)
-    {
-    }
-
+    public SqLiteParam(DbProviderFactory dbProviderFactory) : base(dbProviderFactory) { }
 }

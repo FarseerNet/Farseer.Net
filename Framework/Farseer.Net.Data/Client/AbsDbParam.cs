@@ -141,7 +141,7 @@ public abstract class AbsDbParam
         foreach (var kic in map.MapList.Where(predicate: o => o.Value.Field.IsInParam || o.Value.Field.IsOutParam))
         {
             var obj = PropertyGetCacheManger.Cache(key: kic.Key, instance: entity);
-            yield return Create(name: kic.Value.Field.Name, value: obj, valType: kic.Key.PropertyType, output: kic.Value.Field.IsOutParam);
+            yield return Create(kic.Value.Field.Name, parameterName: kic.Value.Field.Name, value: obj, valType: kic.Key.PropertyType, output: kic.Value.Field.IsOutParam);
         }
     }
 
@@ -166,34 +166,36 @@ public abstract class AbsDbParam
     /// <summary>
     ///     创建一个数据库参数对象
     /// </summary>
-    /// <param name="name"> 参数名称 </param>
+    /// <param name="parameterName"> 参数名称 </param>
     /// <param name="value"> 参数值 </param>
     /// <param name="output"> 是否是输出值 </param>
-    public DbParameter Create(string name, object value, bool output = false) => Create(name: name, value: value, valType: value.GetType(), output: output);
+    public DbParameter Create(string parameterName, object value, bool output = false) => Create(null, parameterName: parameterName, value: value, valType: value.GetType(), output: output);
 
     /// <summary>
     ///     创建一个数据库参数对象
     /// </summary>
-    /// <param name="name"> 参数名称 </param>
+    /// <param name="columnName">字段名称 </param>
+    /// <param name="parameterName"> 参数名称 </param>
     /// <param name="value"> 参数值 </param>
     /// <param name="valType"> 值类型 </param>
     /// <param name="output"> 是否是输出值 </param>
     /// <param name="len"> 参数长度，不指定时自动判断 </param>
-    public DbParameter Create(string name, object value, Type valType, bool output = false, int len = 0)
+    public DbParameter Create(string columnName, string parameterName, object value, Type valType, bool output = false, int len = 0)
     {
         var dbType = GetDbType(type: valType, len: out var dblen);
-        return Create(name: name, value: value, type: dbType, output: output, len: len > 0 ? len : dblen);
+        return Create(columnName, parameterName: parameterName, value: value, type: dbType, output: output, len: len > 0 ? len : dblen);
     }
 
     /// <summary>
     ///     创建一个数据库参数对象
     /// </summary>
-    /// <param name="name"> 参数名称 </param>
+    /// <param name="columnName">字段名称 </param>
+    /// <param name="parameterName"> 参数名称 </param>
     /// <param name="value"> 参数值 </param>
     /// <param name="type"> 参数类型 </param>
     /// <param name="len"> 参数长度 </param>
     /// <param name="output"> 是否是输出值 </param>
-    public virtual DbParameter Create(string name, object value, DbType type, bool output = false, int len = 0)
+    public virtual DbParameter Create(string columnName, string parameterName, object value, DbType type, bool output = false, int len = 0)
     {
         // DbType.String——> nvarchar
         // DbType.StringFixedLength——> nchar
@@ -202,8 +204,9 @@ public abstract class AbsDbParam
         var param = IsSupportParam ? _dbProviderFactory.CreateParameter() : new SqlParameter();
         value = ParamConvertValue(value: value, type: type);
 
+        param.SourceColumn  = columnName;
         param.DbType        = type;
-        param.ParameterName = ParamsPrefix(paramName: Regex.Replace(input: name, pattern: "[\\(\\),=\\-\\+ ]*", replacement: ""));
+        param.ParameterName = ParamsPrefix(paramName: Regex.Replace(input: parameterName, pattern: "[\\(\\),=\\-\\+ ]*", replacement: ""));
         param.Value         = value;
         if (len > 0) param.Size     = len;
         if (output) param.Direction = ParameterDirection.Output;

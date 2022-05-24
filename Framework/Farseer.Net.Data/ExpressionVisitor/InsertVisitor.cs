@@ -27,8 +27,13 @@ namespace FS.Data.ExpressionVisitor
         {
             base.Visit(exp: exp);
 
-            var lst = SqlList.Reverse().ToList();
-            return "(" + string.Join(separator: ",", values: lst) + ") VALUES (" + string.Join(separator: ",", values: ParamList.Select(selector: o => o.ParameterName)) + ")";
+            var fieldNames = string.Join(separator: ",", ParamList.Select(selector: o => DbProvider.KeywordAegis(o.SourceColumn)));
+            var paramNames      = string.Join(separator: ",", ParamList.Select(selector: o => o.ParameterName));
+            return $"({fieldNames}) VALUES ({paramNames})";
+            
+            //var lst = SqlList.Reverse().ToList();
+            //return "(" + string.Join(separator: ",", values: lst) + ") VALUES (" + string.Join(separator: ",", values: ParamList.Select(selector: o => o.ParameterName)) + ")";
+            
         }
 
         /// <summary>
@@ -75,19 +80,18 @@ namespace FS.Data.ExpressionVisitor
             return b;
         }
 
-        /// <summary>
-        ///     将属性变量的右边值，转换成T-SQL的字段值
-        /// </summary>
-        protected override Expression VisitConstant(ConstantExpression cexp)
-        {
-            if (cexp == null) return null;
-
-            //  查找组中是否存在已有的参数，有则直接取出
-            CurrentDbParameter = DbProvider.DbParam.Create(name: $"p{ParamList.Count}_{CurrentFieldName}", value: cexp.Value, valType: cexp.Type);
-            ParamList.Add(item: CurrentDbParameter);
-            CurrentFieldName = null;
-            return cexp;
-        }
-        
+        // /// <summary>
+        // ///     将属性变量的右边值，转换成T-SQL的字段值
+        // /// </summary>
+        // protected override Expression VisitConstant(ConstantExpression cexp)
+        // {
+        //     if (cexp == null) return null;
+        //
+        //     //  查找组中是否存在已有的参数，有则直接取出
+        //     CurrentDbParameter = DbProvider.DbParam.Create(CurrentField.Key.Name, parameterName: $"p{ParamList.Count}_{CurrentFieldName}", value: cexp.Value, valType: cexp.Type);
+        //     ParamList.Add(item: CurrentDbParameter);
+        //     CurrentFieldName = null;
+        //     return cexp;
+        // }
     }
 }

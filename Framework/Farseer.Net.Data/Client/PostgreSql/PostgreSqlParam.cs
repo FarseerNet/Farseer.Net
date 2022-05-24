@@ -4,8 +4,5 @@ namespace FS.Data.Client.PostgreSql;
 
 public class PostgreSqlParam : AbsDbParam
 {
-    public PostgreSqlParam(DbProviderFactory dbProviderFactory) : base(dbProviderFactory)
-    {
-    }
-
+    public PostgreSqlParam(DbProviderFactory dbProviderFactory) : base(dbProviderFactory) { }
 }

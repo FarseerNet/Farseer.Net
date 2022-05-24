@@ -181,7 +181,8 @@ namespace FS.Data.ExpressionVisitor
                 var index        = 0;
                 foreach (var val in paramValue.Split(','))
                 {
-                    var param = DbProvider.DbParam.Create(name: CurrentDbParameter.ParameterName.Substring(startIndex: 1) + "_" + index++, value: val, valType: fieldType);
+                    var columnName = CurrentDbParameter.ParameterName.Substring(startIndex: 1);
+                    var param        = DbProvider.DbParam.Create(columnName, parameterName: columnName + "_" + index++, value: val, valType: fieldType);
                     lstParamName.Add(item: param.ParameterName);
                     ParamList.Add(item: param);
                 }

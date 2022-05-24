@@ -38,6 +38,7 @@ namespace FS.Data.ExpressionVisitor
 
         /// <summary>
         ///     当前字段名称
+        ///     与CurrentField区别是，在调用PO类中的属性的子属性时，CurrentField有可能是无法获取的。所以才有了CurrentFieldName
         /// </summary>
         protected string CurrentFieldName;
 
@@ -109,9 +110,9 @@ namespace FS.Data.ExpressionVisitor
             }
 
             if (CurrentDbParameter is
-            {
-                Value: null
-            })
+                {
+                    Value: null
+                })
             {
                 right = "NULL";
                 ParamList.RemoveAt(index: ParamList.Count - 1);
@@ -195,25 +196,26 @@ namespace FS.Data.ExpressionVisitor
                 switch (CurrentField.Value.Field.StorageType)
                 {
                     case EumStorageType.Json:
-                        CurrentDbParameter = DbProvider.DbParam.Create(name: $"p{ParamList.Count}_{CurrentField.Key.Name}", value: JsonConvert.SerializeObject(cexp.Value), type: DbType.String, output: false, len: CurrentField.Value.Field.FieldLength);
+                        CurrentDbParameter = DbProvider.DbParam.Create(CurrentField.Value.Field.Name, parameterName: $"p{ParamList.Count}_{CurrentField.Value.Field.Name}", value: JsonConvert.SerializeObject(cexp.Value), type: DbType.String, output: false, len: CurrentField.Value.Field.FieldLength);
                         break;
                     case EumStorageType.Array:
                         if (cexp.Value is not IEnumerable lst) throw new DataException($"数据库字段设为EumStorageType.Array类型，但当前字段的类型不是有效的IEnumerable类型");
-                        CurrentDbParameter = DbProvider.DbParam.Create(name: $"p{ParamList.Count}_{CurrentField.Key.Name}", value: lst.ToString(","), type: DbType.String, output: false, len: CurrentField.Value.Field.FieldLength);
+                        CurrentDbParameter = DbProvider.DbParam.Create(CurrentField.Value.Field.Name, parameterName: $"p{ParamList.Count}_{CurrentField.Value.Field.Name}", value: lst.ToString(","), type: DbType.String, output: false, len: CurrentField.Value.Field.FieldLength);
                         break;
                     default:
                         if (CurrentField.Value.Field.DbType != DbType.Object)
                         {
-                            CurrentDbParameter = DbProvider.DbParam.Create(name: $"p{ParamList.Count}_{CurrentField.Key.Name}", value: cexp.Value, type: CurrentField.Value.Field.DbType, output: false, len: CurrentField.Value.Field.FieldLength);
+                            CurrentDbParameter = DbProvider.DbParam.Create(CurrentField.Value.Field.Name, parameterName: $"p{ParamList.Count}_{CurrentField.Value.Field.Name}", value: cexp.Value, type: CurrentField.Value.Field.DbType, output: false, len: CurrentField.Value.Field.FieldLength);
                         }
                         break;
                 }
             }
+            
             // 手动指定类型
-            CurrentDbParameter ??= DbProvider.DbParam.Create(name: $"p{ParamList.Count}_{(CurrentField.Key != null ? CurrentField.Key.Name : CurrentFieldName)}", value: cexp.Value, valType: cexp.Type, output: false, len: CurrentField.Value?.Field.FieldLength ?? 0);
+            CurrentDbParameter ??= DbProvider.DbParam.Create(CurrentFieldName, parameterName: $"p{ParamList.Count}_{CurrentFieldName}", value: cexp.Value, valType: cexp.Type, output: false, len: CurrentField.Value?.Field.FieldLength ?? 0);
 
             ParamList.Add(item: CurrentDbParameter);
-            SqlList.Push(item: CurrentDbParameter.ParameterName);
+            PushParamName(CurrentDbParameter.ParameterName);
             CurrentFieldName = null;
             return cexp;
         }
@@ -226,29 +228,26 @@ namespace FS.Data.ExpressionVisitor
             if (m == null) return null;
 
             CurrentField = SetMap.PhysicsMap.GetState(propertyName: m.Member.Name);
-            // 解析带SQL函数的字段
+            // 为null，说明当前不是属性字段，而是属性字段的属性，如.Count、.Length等
             if (CurrentField.Key == null)
             {
-                switch (m.Member.Name)
+                if (m.Member.Name is "Count" or "Length")
                 {
-                    case "Count":
-                    case "Length":
-                    {
-                        VisitMemberAccess(m: (MemberExpression)m.Expression);
-                        SqlList.Push(item: FunctionProvider.Len(fieldName: SqlList.Pop()));
-                        return m;
-                    }
+                    VisitMemberAccess(m: (MemberExpression)m.Expression);
+                    PushFieldName(FunctionProvider.Len(SqlList.Pop()));
+                    return m;
                 }
 
+                // 子属性不是Count、length时，说明当前属性并未识别，先简单过滤掉。直接获取上一级属性（暂时不知道哪些时候会发生这个情况）
                 if (m.Expression != null && m.Expression.NodeType == ExpressionType.MemberAccess)
                 {
                     VisitMemberAccess(m: (MemberExpression)m.Expression);
                     return m;
                 }
 
-                // 加入Sql队列
+                // 上一级属性并不是属性时，只能直接把当前的Member.Name作为数据库字段名称了。（暂时不知道哪些时候会发生这个情况）
                 CurrentFieldName = m.Member.Name;
-                SqlList.Push(item: DbProvider.KeywordAegis(fieldName: CurrentFieldName));
+                PushFieldName(DbProvider.KeywordAegis(CurrentFieldName));
                 return m;
             }
 
@@ -264,7 +263,7 @@ namespace FS.Data.ExpressionVisitor
         /// <param name="keyValue"> 当前字段属性 </param>
         protected virtual void VisitMemberAccess(KeyValuePair<PropertyInfo, DbFieldMapState> keyValue)
         {
-            SqlList.Push(item: keyValue.Value.Field.IsFun ? keyValue.Value.Field.Name : DbProvider.KeywordAegis(fieldName: keyValue.Value.Field.Name));
+            PushFieldName(keyValue.Value.Field.IsFun ? keyValue.Value.Field.Name : DbProvider.KeywordAegis(fieldName: keyValue.Value.Field.Name));
         }
 
         /// <summary>
@@ -338,6 +337,22 @@ namespace FS.Data.ExpressionVisitor
                 case "ToDateTime": return true;
                 default:           return false;
             }
+        }
+        
+        /// <summary>
+        /// 将字段名称加入到列表
+        /// </summary>
+        protected void PushFieldName(string fieldName)
+        {
+            SqlList.Push(fieldName);
+        }
+        
+        /// <summary>
+        /// 将参数名称加入到列表
+        /// </summary>
+        protected void PushParamName(string paramName)
+        {
+            SqlList.Push(paramName);
         }
     }
 }
