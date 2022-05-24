@@ -1,16 +1,6 @@
 ﻿using System.Data.Common;
-using FS.Data.Client.ClickHouse;
-using FS.Data.Client.MySql;
-using FS.Data.Client.PostgreSql;
-using FS.Data.Client.SqLite;
-using FS.Data.Client.SqlServer;
-using FS.Data.Infrastructure;
 using FS.Data.Internal;
 using FS.Data.Map;
-#if !CORE
-using FS.Data.Client.OleDb;
-using FS.Data.Client.Oracle;
-#endif
 
 namespace FS.Data.Client
 {
@@ -49,28 +39,6 @@ namespace FS.Data.Client
         /// </summary>
         /// <param name="fieldName"> 字符名称 </param>
         public virtual string KeywordAegis(string fieldName) => $"[{fieldName}]"; //if (Regex.IsMatch(fieldName, "[\\(\\)\\,\\[\\]\\+\\= ]+")) { return fieldName; }
-
-        /// <summary>
-        ///     返回数据库类型名称
-        /// </summary>
-        /// <param name="dbType"> 数据库类型 </param>
-        /// <param name="dataVer"> 数据库版本 </param>
-        public static AbsDbProvider CreateInstance(eumDbType dbType, string dataVer = null)
-        {
-            switch (dbType)
-            {
-#if !CORE
-                case eumDbType.OleDb: return new OleDbProvider();
-                case eumDbType.Oracle: return new OracleProvider();
-#endif
-                case eumDbType.MySql:      return new MySqlProvider();
-                case eumDbType.ClickHouse: return new ClickHouseProvider();
-                case eumDbType.SQLite:     return new SqLiteProvider();
-                case eumDbType.PostgreSql: return new PostgreSqlProvider();
-            }
-
-            return new SqlServerProvider();
-        }
 
         /// <summary>
         ///     创建SQL查询

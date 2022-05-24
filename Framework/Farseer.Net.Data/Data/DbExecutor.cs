@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FS.Core.LinkTrack;
 using FS.Data.Client;
 using FS.Data.Infrastructure;
+using FS.DI;
 
 namespace FS.Data.Data
 {
@@ -107,7 +108,7 @@ namespace FS.Data.Data
         {
             if (_comm == null || _comm.Connection == null)
             {
-                _factory = AbsDbProvider.CreateInstance(dbType: DataType).DbProviderFactory;
+                _factory = _dbProvider.DbProviderFactory;
                 _comm    = _factory.CreateCommand();
                 // ReSharper disable once PossibleNullReferenceException
                 _comm.Connection                  = _factory.CreateConnection();
@@ -135,7 +136,7 @@ namespace FS.Data.Data
         {
             if (_comm == null || _comm.Connection == null)
             {
-                _factory = AbsDbProvider.CreateInstance(dbType: DataType).DbProviderFactory;
+                _factory = _dbProvider.DbProviderFactory;
                 _comm    = _factory.CreateCommand();
                 // ReSharper disable once PossibleNullReferenceException
                 _comm.Connection                  = _factory.CreateConnection();

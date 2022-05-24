@@ -5,6 +5,7 @@ using FS.Data.Client;
 using FS.Data.Data;
 using FS.Data.Infrastructure;
 using FS.Data.Map;
+using FS.DI;
 
 namespace FS.Data.Internal
 {
@@ -49,7 +50,7 @@ namespace FS.Data.Internal
         /// <summary>
         ///     数据库提供者（不同数据库的特性）
         /// </summary>
-        public AbsDbProvider DbProvider { get; private set; }
+        public AbsDbProvider DbProvider => IocManager.GetService<AbsDbProvider>($"dbProvider_{ContextConnection.DbType}");
 
         /// <summary>
         ///     执行数据库操作
@@ -103,7 +104,7 @@ namespace FS.Data.Internal
             // 默认SQL执行者
             Executeor = masterContext.Executeor;
             // 数据库提供者
-            DbProvider = masterContext.DbProvider;
+            //DbProvider = masterContext.DbProvider;
             // 队列管理者
             QueueManger = new QueueManger(provider: masterContext); //masterContext.QueueManger;
 
@@ -122,7 +123,7 @@ namespace FS.Data.Internal
             if (IsInitializer) return;
 
             // 数据库提供者
-            DbProvider = AbsDbProvider.CreateInstance(dbType: ContextConnection.DbType, dataVer: ContextConnection.DataVer);
+            //DbProvider = IocManager.GetService<AbsDbProvider>($"dbProvider_{ContextConnection.DbType}");
 
             // 默认SQL执行者
             Executeor = new ExecuteSql(dataBase: new DbExecutor(connectionString: ContextConnection.ConnectionString, dbType: ContextConnection.DbType, commandTimeout: ContextConnection.CommandTimeout, tranLevel: !IsUnitOfWork && DbProvider.IsSupportTransaction ? IsolationLevel.RepeatableRead : IsolationLevel.Unspecified, dbProvider: DbProvider), contextProvider: this);

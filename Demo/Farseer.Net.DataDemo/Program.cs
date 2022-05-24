@@ -13,7 +13,24 @@ internal class Program
         FarseerApplication.Run<StartupModule>().Initialize();
 
         // 添加新用户
-        await MysqlContext.Data.User.InsertAsync(new UserPO
+        await AddUser();
+
+        using (var db = new MysqlContext())
+        {
+            await AddUser();
+            db.SaveChanges();
+        }
+
+        // 工作单元模式，非事务
+        var lst = await MysqlContext.Data.User.ToListAsync();
+        foreach (var taskGroupPO in lst)
+        {
+            Console.WriteLine(taskGroupPO.Name);
+        }
+    }
+    private static Task AddUser()
+    {
+        return MysqlContext.Data.User.InsertAsync(new UserPO
         {
             Name = $"farseer-{Rand.GetRandom(1000, 9999)}",
             Age  = Rand.GetRandom(1, 100),
@@ -30,12 +47,5 @@ internal class Program
             },
             Gender = GenderType.Man
         });
-
-        // 工作单元模式，非事务
-        var lst = await MysqlContext.Data.User.ToListAsync();
-        foreach (var taskGroupPO in lst)
-        {
-            Console.WriteLine(taskGroupPO.Name);
-        }
     }
 }
