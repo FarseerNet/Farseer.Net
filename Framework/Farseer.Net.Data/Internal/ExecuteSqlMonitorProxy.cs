@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using FS.Core.LinkTrack;
 using FS.Data.Client;
 using FS.Data.Data;
-using FS.Data.Infrastructure;
+using FS.Data.Inteface;
 
 namespace FS.Data.Internal
 {

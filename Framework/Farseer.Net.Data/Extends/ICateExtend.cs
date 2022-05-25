@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using FS.Data.Infrastructure;
+using FS.Data.Inteface;
 using FS.Utils.Common;
 
 // ReSharper disable once CheckNamespace

@@ -4,7 +4,7 @@ using System.Reflection;
 using FS.Data.Internal;
 using FS.Data.Map;
 
-namespace FS.Data.Infrastructure
+namespace FS.Data.Inteface
 {
     /// <summary>
     ///     Set基类

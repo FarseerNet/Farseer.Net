@@ -1,4 +1,5 @@
 ﻿using FS.Data;
+using FS.Data.Inteface;
 using FS.Data.Internal;
 using FS.DI;
 

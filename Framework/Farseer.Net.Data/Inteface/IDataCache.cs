@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FS.Data.Infrastructure
+namespace FS.Data.Inteface
 {
     /// <summary>
     ///     数据缓存操作接口

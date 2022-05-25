@@ -4,7 +4,7 @@ using System.Data.Common;
 using System.Text;
 using FS.Data.Map;
 
-namespace FS.Data.Infrastructure
+namespace FS.Data.Inteface
 {
     /// <summary>
     ///     SQL语句与参数

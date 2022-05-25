@@ -3,7 +3,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using FS.Data.Data;
-using FS.Data.Infrastructure;
+using FS.Data.Inteface;
 using FS.Extends;
 using FS.Utils.Common;
 

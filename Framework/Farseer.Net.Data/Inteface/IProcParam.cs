@@ -2,7 +2,7 @@
 using System.Data.Common;
 using FS.Data.Map;
 
-namespace FS.Data.Infrastructure
+namespace FS.Data.Inteface
 {
     /// <summary>
     ///     SQL参数

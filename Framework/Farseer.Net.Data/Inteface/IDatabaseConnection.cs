@@ -1,6 +1,4 @@
-using FS.Data.Infrastructure;
-
-namespace FS.Data.Internal
+namespace FS.Data.Inteface
 {
     public interface IDatabaseConnection
     {

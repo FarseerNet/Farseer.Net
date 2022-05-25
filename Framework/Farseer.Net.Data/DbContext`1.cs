@@ -1,5 +1,5 @@
 ﻿using FS.Core.Data;
-using FS.Data.Infrastructure;
+using FS.Data.Inteface;
 
 namespace FS.Data
 {

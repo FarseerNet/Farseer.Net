@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FS.Data.Infrastructure
+namespace FS.Data.Inteface
 {
     /// <summary> 数据库类型 </summary>
     public enum eumDbType

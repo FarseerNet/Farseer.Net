@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using FS.Core.LinkTrack;
 using FS.Data.Client;
-using FS.Data.Infrastructure;
+using FS.Data.Inteface;
 using FS.DI;
 
 namespace FS.Data.Data

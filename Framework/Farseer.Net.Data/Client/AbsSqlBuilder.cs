@@ -4,7 +4,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using FS.Data.ExpressionVisitor;
-using FS.Data.Infrastructure;
+using FS.Data.Inteface;
 using FS.Data.Internal;
 using FS.Data.Map;
 using FS.Utils.Common;

@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 using FS.Cache;
-using FS.Data.Infrastructure;
+using FS.Data.Inteface;
 using FS.Extends;
 using FS.Utils.Common;
 

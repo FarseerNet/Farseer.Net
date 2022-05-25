@@ -1,6 +1,6 @@
 ﻿using FS.Core;
 
-namespace FS.Data.Infrastructure
+namespace FS.Data.Inteface
 {
     /// <summary>
     ///     支持递归树节点的实体类

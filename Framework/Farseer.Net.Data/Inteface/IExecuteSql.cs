@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using FS.Data.Data;
 using FS.Data.Internal;
 
-namespace FS.Data.Infrastructure
+namespace FS.Data.Inteface
 {
     /// <summary> 将SQL发送到数据库 </summary>
     internal interface IExecuteSql

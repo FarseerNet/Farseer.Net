@@ -8,7 +8,7 @@ using FS.Data.Client.MySql;
 using FS.Data.Client.PostgreSql;
 using FS.Data.Client.SqLite;
 using FS.Data.Configuration;
-using FS.Data.Infrastructure;
+using FS.Data.Inteface;
 using FS.Data.Internal;
 using FS.DI;
 using FS.Extends;

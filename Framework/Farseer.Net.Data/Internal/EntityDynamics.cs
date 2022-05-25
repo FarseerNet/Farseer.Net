@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 using FS.Core;
 using FS.Core.Mapping.Attribute;
 using FS.Data.Cache;
-using FS.Data.Infrastructure;
+using FS.Data.Inteface;
 using FS.Data.Map;
 using FS.Extends;
 using FS.Utils.Common;

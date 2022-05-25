@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
-using FS.Data.Infrastructure;
+using FS.Data.Inteface;
 using FS.Data.Map;
 
 namespace FS.Data.Internal

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using FS.Data.Cache;
-using FS.Data.Infrastructure;
+using FS.Data.Inteface;
 
 namespace FS.Data.Internal
 {

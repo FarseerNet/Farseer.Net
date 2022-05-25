@@ -7,7 +7,7 @@ using System.Reflection;
 using FS.Core.Data;
 using FS.Data.Cache;
 using FS.Data.Client;
-using FS.Data.Infrastructure;
+using FS.Data.Inteface;
 using FS.Data.Internal;
 using FS.Data.Map;
 

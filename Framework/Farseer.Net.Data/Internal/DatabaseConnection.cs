@@ -1,5 +1,5 @@
 ﻿using FS.Data.Client;
-using FS.Data.Infrastructure;
+using FS.Data.Inteface;
 using FS.DI;
 
 namespace FS.Data.Internal

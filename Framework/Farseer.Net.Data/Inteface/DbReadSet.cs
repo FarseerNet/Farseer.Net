@@ -8,7 +8,7 @@ using FS.Core;
 using FS.Data.Features;
 using FS.Utils.Common;
 
-namespace FS.Data.Infrastructure
+namespace FS.Data.Inteface
 {
     /// <summary>
     ///     通用查询Set（表、视图）

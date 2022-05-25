@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using FS.Core.Mapping.Attribute;
-using FS.Data.Infrastructure;
+using FS.Data.Inteface;
 using FS.Data.Internal;
 using FS.DI;
 using FS.Modules;
