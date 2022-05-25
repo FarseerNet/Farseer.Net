@@ -30,10 +30,6 @@ namespace FS.Data.ExpressionVisitor
             var fieldNames = string.Join(separator: ",", ParamList.Select(selector: o => DbProvider.KeywordAegis(o.SourceColumn)));
             var paramNames      = string.Join(separator: ",", ParamList.Select(selector: o => o.ParameterName));
             return $"({fieldNames}) VALUES ({paramNames})";
-            
-            //var lst = SqlList.Reverse().ToList();
-            //return "(" + string.Join(separator: ",", values: lst) + ") VALUES (" + string.Join(separator: ",", values: ParamList.Select(selector: o => o.ParameterName)) + ")";
-            
         }
 
         /// <summary>

@@ -65,7 +65,7 @@ namespace FS.Data
                         foreach (var setType in lstPOType)
                         {
                             var beginIndex = sw.ElapsedMilliseconds;
-                            new EntityDynamics().BuildType(setType.GenericTypeArguments[0]);
+                            new DynamicCompilationEntity().BuildType(setType.GenericTypeArguments[0]);
                             lstLog.Add($"编译：{setType.GenericTypeArguments[0].FullName} \t耗时：{(sw.ElapsedMilliseconds - beginIndex):n} ms");
                         }
                         lstLog.Add($"耗时：{sw.ElapsedMilliseconds:n} ms");

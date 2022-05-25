@@ -24,7 +24,7 @@ namespace FS.Extends
         public static List<TEntity> ToList<TEntity>(this DbDataReader reader)
         {
             var mapData = DataReaderHelper.DataReaderToDictionary(reader: reader);
-            var type    = new EntityDynamics().BuildType(entityType: typeof(TEntity));
+            var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
             return (List<TEntity>)InstanceStaticCacheManger.Cache(type: type, methodName: "ToList", (object)mapData);
         }
 
@@ -36,7 +36,7 @@ namespace FS.Extends
         public static async Task<List<TEntity>> ToListAsync<TEntity>(this Task<DbDataReader> reader)
         {
             var mapData = DataReaderHelper.DataReaderToDictionary(reader: await reader);
-            var type    = new EntityDynamics().BuildType(entityType: typeof(TEntity));
+            var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
             return (List<TEntity>)InstanceStaticCacheManger.Cache(type: type, methodName: "ToList", (object)mapData);
         }
 
@@ -48,7 +48,7 @@ namespace FS.Extends
         public static TEntity ToEntity<TEntity>(this IDataReader reader)
         {
             var mapData = DataReaderHelper.DataReaderToDictionary(reader: reader);
-            var type    = new EntityDynamics().BuildType(entityType: typeof(TEntity));
+            var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
             return (TEntity)InstanceStaticCacheManger.Cache(type: type, methodName: "ToEntity", mapData, 0);
         }
 
@@ -60,7 +60,7 @@ namespace FS.Extends
         public static TEntity ToEntity<TEntity>(this DataTable reader)
         {
             var mapData = DataReaderHelper.DataTableToDictionary(dt: reader);
-            var type    = new EntityDynamics().BuildType(entityType: typeof(TEntity));
+            var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
             return (TEntity)InstanceStaticCacheManger.Cache(type: type, methodName: "ToEntity", mapData, 0);
         }
 
@@ -72,7 +72,7 @@ namespace FS.Extends
         public static async Task<TEntity> ToEntityAsync<TEntity>(this Task<DataTable> reader)
         {
             var mapData = DataReaderHelper.DataTableToDictionary(dt: await reader);
-            var type    = new EntityDynamics().BuildType(entityType: typeof(TEntity));
+            var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
             return (TEntity)InstanceStaticCacheManger.Cache(type: type, methodName: "ToEntity", mapData, 0);
         }
 
@@ -84,7 +84,7 @@ namespace FS.Extends
         public static List<TEntity> ToList<TEntity>(this DataTable dt)
         {
             var mapData = DataReaderHelper.DataTableToDictionary(dt: dt);
-            var type    = new EntityDynamics().BuildType(entityType: typeof(TEntity));
+            var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
             return (List<TEntity>)InstanceStaticCacheManger.Cache(type: type, methodName: "ToList", (object)mapData);
         }
 
@@ -96,7 +96,7 @@ namespace FS.Extends
         public static async Task<List<TEntity>> ToListAsync<TEntity>(this Task<DataTable> dt)
         {
             var mapData = DataReaderHelper.DataTableToDictionary(dt: await dt);
-            var type    = new EntityDynamics().BuildType(entityType: typeof(TEntity));
+            var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
             return (List<TEntity>)InstanceStaticCacheManger.Cache(type: type, methodName: "ToList", (object)mapData);
         }
 
@@ -108,7 +108,7 @@ namespace FS.Extends
         public static TEntity[] ToArray<TEntity>(this DataTable dt)
         {
             var mapData = DataReaderHelper.DataTableToDictionary(dt: dt);
-            var type    = new EntityDynamics().BuildType(entityType: typeof(TEntity));
+            var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
             return ((List<TEntity>)InstanceStaticCacheManger.Cache(type: type, methodName: "ToList", (object)mapData)).ToArray();
         }
 
