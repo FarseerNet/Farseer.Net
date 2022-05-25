@@ -12,24 +12,14 @@ namespace FS.Data.Infrastructure
     public abstract class AbsDbSet
     {
         /// <summary>
-        ///     数据库上下文
+        ///     保存字段映射的信息
         /// </summary>
-        private DbContext _dbContext;
-
-        /// <summary>
-        ///     当前在上下文中的属性
-        /// </summary>
-        private PropertyInfo _setPropertyInfo;
+        internal InternalContext Context { get; private set; }
 
         /// <summary>
         ///     保存字段映射的信息
         /// </summary>
-        internal InternalContext Context => _dbContext.InternalContext;
-
-        /// <summary>
-        ///     保存字段映射的信息
-        /// </summary>
-        public SetDataMap SetMap => _dbContext.ContextMap.GetEntityMap(setPropertyInfo: _setPropertyInfo);
+        public SetDataMap SetMap { get; private set; }
 
         /// <summary>
         ///     当前队列
@@ -48,8 +38,8 @@ namespace FS.Data.Infrastructure
         /// <param name="pInfo"> 当前在上下文中的属性 </param>
         internal void SetContext(DbContext context, PropertyInfo pInfo)
         {
-            _dbContext       = context;
-            _setPropertyInfo = pInfo;
+            Context    = context.InternalContext;
+            SetMap     = context.ContextMap.GetEntityMap(pInfo);
         }
 
         #region 禁用智能提示

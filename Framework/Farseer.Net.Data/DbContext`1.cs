@@ -6,14 +6,13 @@ namespace FS.Data
     /// <summary>
     ///     多张表带静态实例化的上下文
     /// </summary>
-    /// <typeparam name="TPo"> </typeparam>
-    public class DbContext<TPo> : DbContext where TPo : DbContext<TPo>, new()
+    /// <typeparam name="TDbContext"> </typeparam>
+    public class DbContext<TDbContext> : DbContext where TDbContext : DbContext<TDbContext>, new()
     {
         /// <summary>
         ///     动态分库方案，此时需要重写：SplitDatabase方法
         /// </summary>
-        /// <param name="isUnitOfWork"> 是否工作单元模式 </param>
-        protected DbContext(bool isUnitOfWork = false) : base(name: null, isUnitOfWork: isUnitOfWork)
+        protected DbContext() : base(null)
         {
         }
         
@@ -21,8 +20,7 @@ namespace FS.Data
         ///     通过数据库配置，连接数据库
         /// </summary>
         /// <param name="name"> 数据库配置名称 </param>
-        /// <param name="isUnitOfWork"> 是否工作单元模式 </param>
-        protected DbContext(string name, bool isUnitOfWork = false) : base(name: name, isUnitOfWork: isUnitOfWork)
+        protected DbContext(string name) : base(name)
         {
         }
 
@@ -39,20 +37,6 @@ namespace FS.Data
         /// <summary>
         ///     静态实例
         /// </summary>
-        public static TPo Data => Data<TPo>();
-
-        /// <summary>
-        ///     创建来自其它上下文的共享
-        /// </summary>
-        /// <param name="otherContext"> 其它上下文（主上下文） </param>
-        public static TPo TransactionInstance(IDbContext otherContext)
-        {
-            return otherContext switch
-            {
-                null        => Data,
-                TPo context => context,
-                _           => TransactionInstance<TPo>(masterContext: otherContext)
-            };
-        }
+        public static TDbContext Data => Data<TDbContext>();
     }
 }

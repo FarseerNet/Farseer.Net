@@ -12,6 +12,8 @@ namespace FS.ElasticSearch.Cache
     /// </summary>
     internal class ContextSetTypeCacheManger : AbsCacheManger<Type, SetTypesInitializersPair>
     {
+        private static readonly MethodInfo IndexSetMethod = typeof(EsContext).GetMethod(name: "IndexSet", types: new[] { typeof(PropertyInfo) });
+        
         /// <summary>
         ///     线程锁
         /// </summary>
@@ -59,7 +61,7 @@ namespace FS.ElasticSearch.Cache
                         switch (entityMap.Key.PropertyType.Name)
                         {
                             case "IndexSet`1":
-                                setMethod = SetInitializer.IndexSetMethod.MakeGenericMethod(entityType);
+                                setMethod = IndexSetMethod.MakeGenericMethod(entityType);
                                 break;
                         }
 

@@ -1,4 +1,6 @@
 using System.Text;
+using System.Text.RegularExpressions;
+using Castle.Core.Internal;
 
 namespace FS.Data.Client.MySql;
 
@@ -21,5 +23,14 @@ public class MySqlConnectionString : AbsConnectionString
 
         sb.Append(value: additional);
         return sb.ToString();
+    }
+    
+    
+    public override string GetDbName(string server)
+    {
+        var serverSplit = server.Replace("'","").ToLower().Split(';');
+        var database    = serverSplit.Find(o => o.StartsWith("database"));
+        var databaseSplit     = database.Split('=');
+        return databaseSplit.Length != 2 ? null : databaseSplit[1].Trim();
     }
 }

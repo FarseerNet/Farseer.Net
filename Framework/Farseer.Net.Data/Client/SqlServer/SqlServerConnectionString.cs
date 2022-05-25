@@ -1,4 +1,5 @@
 using System.Text;
+using Castle.Core.Internal;
 
 namespace FS.Data.Client.SqlServer;
 
@@ -21,5 +22,14 @@ public class SqlServerConnectionString : AbsConnectionString
         if (connectTimeout > 0) sb.Append(value: $"Connect Timeout='{connectTimeout}';");
         sb.Append(value: additional);
         return sb.ToString();
+    }
+    
+    
+    public override string GetDbName(string server)
+    {
+        var serverSplit   = server.Replace("'","").ToLower().Split(';');
+        var database      = serverSplit.Find(o => o.StartsWith("data source"));
+        var databaseSplit = database.Split('=');
+        return databaseSplit.Length != 2 ? null : databaseSplit[1].Trim();
     }
 }

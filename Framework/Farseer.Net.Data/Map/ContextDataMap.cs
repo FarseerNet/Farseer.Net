@@ -26,12 +26,13 @@ namespace FS.Data.Map
         {
             // 映射所有Set属性的结构
             PhysicsMap = ContextMapCacheManger.Cache(key: type);
+            var dbName = context.DbProvider.ConnectionString.GetDbName(context.DatabaseConnection.ConnectionString);
 
             // 初始化Set属性的数据
             foreach (var setPhysicsMap in PhysicsMap.EntityMapList)
             {
                 setPhysicsMap.Value.InternalContext = context;
-                SetDataList.Add(item: new SetDataMap(entityPhysicsMap: setPhysicsMap));
+                SetDataList.Add(item: new SetDataMap(entityPhysicsMap: setPhysicsMap, dbName));
             }
         }
 

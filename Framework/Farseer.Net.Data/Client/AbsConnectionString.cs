@@ -19,4 +19,10 @@ public abstract class AbsConnectionString
     /// <param name="poolMaxSize"> 连接池最大数量 </param>
     /// <param name="port"> 端口 </param>
     public abstract string Create(string server, string port, string userId, string passWord = null, string catalog = null, string dataVer = null, string additional = null, int connectTimeout = 60, int poolMinSize = 16, int poolMaxSize = 100);
+
+    /// <summary>
+    /// 通过连接字符串，提取dbName
+    /// </summary>
+    /// <param name="server">连接字符串</param>
+    public abstract string GetDbName(string server);
 }

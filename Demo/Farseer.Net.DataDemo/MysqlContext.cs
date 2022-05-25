@@ -1,4 +1,6 @@
 ﻿using FS.Data;
+using FS.Data.Internal;
+using FS.DI;
 
 namespace Farseer.Net.DataDemo
 {
@@ -7,7 +9,7 @@ namespace Farseer.Net.DataDemo
     /// </summary>
     public class MysqlContext : DbContext<MysqlContext>
     {
-        public MysqlContext() : base("test")
+        public MysqlContext() : base(null)
         {
         }
 
@@ -19,6 +21,11 @@ namespace Farseer.Net.DataDemo
         protected override void CreateModelInit()
         {
             User.SetName("user");
+        }
+
+        protected override IDatabaseConnection SplitDatabase()
+        {
+            return IocManager.GetService<IDatabaseConnection>(name: $"dbConnection_test");
         }
     }
 }

@@ -248,7 +248,10 @@ namespace FS.Data
             }
 
             // 不返回标识字段
-            return QueueManger.Commit(map: SetMap, act: queue => Context.Executeor.Execute(callMethod: $"{typeof(TEntity).Name}.Insert", sqlParam: queue.SqlBuilder.Insert()), joinSoftDeleteCondition: false);
+            return QueueManger.Commit(map: SetMap, act: queue =>
+            {
+                return Context.Executeor.Execute(callMethod: $"{typeof(TEntity).Name}.Insert", sqlParam: queue.SqlBuilder.Insert());
+            }, joinSoftDeleteCondition: false);
         }
 
         /// <summary>

@@ -12,22 +12,20 @@ internal class Program
     {
         FarseerApplication.Run<StartupModule>().Initialize();
 
-        // 添加新用户
+        // 添加新用户（非事务）
         await AddUser();
 
+        // 添加新用户（使用事务的方式）
         using (var db = new MysqlContext())
         {
-            await AddUser();
+            await db.User.AddUpAsync(o => o.Age, 1);
+            await AddUser(); // 由于属于new MysqlContext()内，此处则自动使用事务
             db.SaveChanges();
         }
 
-        // 工作单元模式，非事务
-        var lst = await MysqlContext.Data.User.ToListAsync();
-        foreach (var taskGroupPO in lst)
-        {
-            Console.WriteLine(taskGroupPO.Name);
-        }
+        Console.WriteLine($"当前用户数：{await MysqlContext.Data.User.CountAsync()}");
     }
+    
     private static Task AddUser()
     {
         return MysqlContext.Data.User.InsertAsync(new UserPO

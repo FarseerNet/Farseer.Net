@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using FS.Cache;
@@ -12,6 +13,15 @@ namespace FS.Data.Cache
     /// </summary>
     internal class ContextSetTypeCacheManger : AbsCacheManger<Type, SetTypesInitializersPair>
     {
+        // DbContext下的方法
+        private static readonly MethodInfo TableSetMethod         = typeof(DbContext).GetMethod(name: "TableSet", types: new[] { typeof(PropertyInfo) });
+        private static readonly MethodInfo TableSetCacheMethod    = typeof(DbContext).GetMethod(name: "TableSetCache", types: new[] { typeof(PropertyInfo) });
+        private static readonly MethodInfo ViewSetMethod          = typeof(DbContext).GetMethod(name: "ViewSet", types: new[] { typeof(PropertyInfo) });
+        private static readonly MethodInfo ViewSetCacheMethod     = typeof(DbContext).GetMethod(name: "ViewSetCache", types: new[] { typeof(PropertyInfo) });
+        private static readonly MethodInfo ProcSetMethod          = typeof(DbContext).GetMethod(name: "ProcSet", types: new[] { typeof(PropertyInfo) });
+        private static readonly MethodInfo SqlSetMethod           = typeof(DbContext).GetMethods().Single(predicate: o => o.Name == "SqlSet" && o.GetParameters()[0].ParameterType == typeof(PropertyInfo) && o.IsGenericMethod);
+        private static readonly MethodInfo SqlSetNonGenericMethod = typeof(DbContext).GetMethods().Single(predicate: o => o.Name == "SqlSet" && o.GetParameters()[0].ParameterType == typeof(PropertyInfo) && !o.IsGenericMethod);
+
         /// <summary>
         ///     线程锁
         /// </summary>
@@ -59,25 +69,26 @@ namespace FS.Data.Cache
                         switch (entityMap.Key.PropertyType.Name)
                         {
                             case "TableSet`1":
-                                setMethod = SetInitializer.TableSetMethod.MakeGenericMethod(entityType);
+                                // 找到DbContext.TableSet方法
+                                setMethod = TableSetMethod.MakeGenericMethod(entityType);
                                 break;
                             case "TableSetCache`1":
-                                setMethod = SetInitializer.TableSetCacheMethod.MakeGenericMethod(entityType);
+                                setMethod = TableSetCacheMethod.MakeGenericMethod(entityType);
                                 break;
                             case "ViewSet`1":
-                                setMethod = SetInitializer.ViewSetMethod.MakeGenericMethod(entityType);
+                                setMethod = ViewSetMethod.MakeGenericMethod(entityType);
                                 break;
                             case "ViewSetCache`1":
-                                setMethod = SetInitializer.ViewSetCacheMethod.MakeGenericMethod(entityType);
+                                setMethod = ViewSetCacheMethod.MakeGenericMethod(entityType);
                                 break;
                             case "ProcSet`1":
-                                setMethod = SetInitializer.ProcSetMethod.MakeGenericMethod(entityType);
+                                setMethod = ProcSetMethod.MakeGenericMethod(entityType);
                                 break;
                             case "SqlSet`1":
-                                setMethod = SetInitializer.SqlSetMethod.MakeGenericMethod(entityType);
+                                setMethod = SqlSetMethod.MakeGenericMethod(entityType);
                                 break;
                             case "SqlSet":
-                                setMethod = SetInitializer.SqlSetNonGenericMethod;
+                                setMethod = SqlSetNonGenericMethod;
                                 break;
                         }
 
@@ -95,7 +106,7 @@ namespace FS.Data.Cache
                 {
                     foreach (var initer in initDelegates) initer(obj: context);
                 };
-                var setInfo = new SetTypesInitializersPair(entityTypeToPropertyNameMap: setTypeList, setsInitializer: initializer);
+                var setInfo = new SetTypesInitializersPair(setTypeList, initializer);
                 CacheList.Add(key: Key, value: setInfo);
                 return setInfo;
             }

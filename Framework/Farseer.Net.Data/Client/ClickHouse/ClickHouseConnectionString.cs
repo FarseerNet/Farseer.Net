@@ -1,4 +1,5 @@
 using System.Text;
+using Castle.Core.Internal;
 
 namespace FS.Data.Client.ClickHouse;
 
@@ -21,5 +22,13 @@ public class ClickHouseConnectionString : AbsConnectionString
 
         sb.Append(value: additional);
         return sb.ToString();
+    }
+    
+    public override string GetDbName(string server)
+    {
+        var serverSplit   = server.Replace("'","").ToLower().Split(';');
+        var database      = serverSplit.Find(o => o.StartsWith("database"));
+        var databaseSplit = database.Split('=');
+        return databaseSplit.Length != 2 ? null : databaseSplit[1].Trim();
     }
 }

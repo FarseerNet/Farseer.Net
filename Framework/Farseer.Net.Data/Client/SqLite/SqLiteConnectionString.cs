@@ -35,4 +35,7 @@ public class SqLiteConnectionString : AbsConnectionString
         fileName = SysPath.AppData + fileName;
         return fileName;
     }
+    
+    
+    public override string GetDbName(string server) => null;
 }

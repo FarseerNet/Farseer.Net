@@ -10,14 +10,13 @@ using FS.Data.Client;
 using FS.Data.Infrastructure;
 using FS.Data.Internal;
 using FS.Data.Map;
-using FS.DI;
 
 namespace FS.Data
 {
     /// <summary>
     ///     数据库上下文（使用实例化方式时，必须末尾，执行Commit()方法，否则会产生事务死锁）
     /// </summary>
-    public class DbContext : IDbContext, IDisposable
+    public class DbContext : IDbContext, ITransaction
     {
         /// <summary>
         ///     当事务提交后，会调用该委托
@@ -33,12 +32,17 @@ namespace FS.Data
         ///     通过数据库配置，连接数据库
         /// </summary>
         /// <param name="name"> 数据库配置名称 </param>
-        /// <param name="isUnitOfWork"> 是否工作单元模式 </param>
-        public DbContext(string name, bool isUnitOfWork = false)
+        protected DbContext(string name)
         {
-            InitializerSet(isUnitOfWork);
+            _internalContext = new InternalContext(GetType());
+
             // 如果name=null,说明需要动态分库
             if (!string.IsNullOrWhiteSpace(name)) _internalContext.SetDatabaseConnection(name);
+            // ReSharper disable once VirtualMemberCallInConstructor
+            else _internalContext.SetDatabaseConnection(SplitDatabase());
+            
+            InitializerInternalContext();
+            InitializerSet();
         }
 
         /// <summary>
@@ -48,27 +52,19 @@ namespace FS.Data
         /// <param name="db"> 数据库类型 </param>
         /// <param name="commandTimeout"> SQL执行超时时间 </param>
         /// <param name="dataVer"> 数据库版本（针对不同的数据库版本的优化） </param>
-        /// <param name="isUnitOfWork"> 是否工作单元模式 </param>
-        public DbContext(string connectionString, eumDbType db, int commandTimeout = 30, string dataVer = null, bool isUnitOfWork = false)
+        protected DbContext(string connectionString, eumDbType db, int commandTimeout = 30, string dataVer = null)
         {
-            InitializerSet(isUnitOfWork);
+            _internalContext = new InternalContext(GetType());
             _internalContext.SetDatabaseConnection(connectionString: connectionString, db, commandTimeout: commandTimeout, dataVer: dataVer);
+
+            InitializerInternalContext();
+            InitializerSet();
         }
 
         /// <summary>
-        ///     不初始化ContextConnection（用于动态改变数据库连接方式）
+        ///     映射结构关系
         /// </summary>
-        /// <param name="isUnitOfWork"> 是否工作单元模式 </param>
-        private void InitializerSet(bool isUnitOfWork)
-        {
-            _internalContext = new InternalContext(contextType: GetType(), isUnitOfWork: isUnitOfWork);
-
-            // 实例化子类中，所有Set属性
-            ContextSetTypeCacheManger.Cache(contextKey: GetType()).Item2(obj: this);
-
-            // 上下文映射关系
-            ContextMap = new ContextDataMap(type: this.GetType(), context: _internalContext);
-        }
+        internal ContextDataMap ContextMap { get; private set; }
 
         /// <summary>
         ///     数据库提供者（不同数据库的特性）
@@ -81,32 +77,47 @@ namespace FS.Data
         public ManualSql ManualSql => InternalContext.ManualSql;
 
         /// <summary>
-        ///     实现动态链接数据库（比如：分库）
+        ///     初始化内部InternalContext
         /// </summary>
-        protected virtual IDatabaseConnection SplitDatabase() => throw new FarseerConfigException("未对上下文设置连接字符串信息时，需要实现SplitDatabase方法，返回数据库连接信息，通常这里为了动态分库目的");
+        private void InitializerInternalContext()
+        {
+            _internalContext.Initializer();
+        }
 
         /// <summary>
-        ///     创建来自其它上下文的共享
+        ///     不初始化ContextConnection（用于动态改变数据库连接方式）
         /// </summary>
-        /// <param name="masterContext"> 其它上下文（主上下文） </param>
-        internal static TNewDbContext TransactionInstance<TNewDbContext>(IDbContext masterContext) where TNewDbContext : DbContext, new()
+        private void InitializerSet()
         {
-            var newInstance = new TNewDbContext();
-            newInstance._internalContext.TransactionInstance(currentContextType: typeof(TNewDbContext), masterContext: ((DbContext)masterContext).InternalContext);
-            newInstance._masterContext = (DbContext)masterContext;
-            return newInstance;
+            // 上下文映射关系
+            ContextMap = new ContextDataMap(type: this.GetType(), context: _internalContext);
+
+            // 实例化子类中，所有Set属性
+            var setTypesInitializersPair = ContextSetTypeCacheManger.Cache(contextKey: GetType());
+            setTypesInitializersPair.Item2(obj: this);
+
+            // 设置表名称
+            CreateModelInit();
+        }
+
+        /// <summary>
+        ///     实现动态链接数据库（比如：分库）
+        /// </summary>
+        protected virtual IDatabaseConnection SplitDatabase()
+        {
+            throw new FarseerConfigException("未对上下文设置连接字符串信息时，需要实现SplitDatabase方法，返回数据库连接信息，通常这里为了动态分库目的");
         }
 
         /// <summary>
         ///     静态实例
         /// </summary>
-        internal static TPo Data<TPo>() where TPo : DbContext, new()
+        internal static TDbContext Data<TDbContext>() where TDbContext : DbContext, new()
         {
             // 2016年1月8日
             // 感谢：QQ462492293 疯狂的蜗牛 同学，发现了BUG
             // 场景：在For迭代操作数据库时，提示：【数据库连接池连接均在使用,并且达到了最大值】的错误。
             // 解决：由于此处进行了_internalContext的二次初始化（在SqlSet进行了初始化）。需保证当前_internalContext未被初始化。
-            var newInstance = new TPo();
+            var newInstance = new TDbContext();
             // 上下文初始化器
             newInstance._internalContext.UseUnitOfWork();
             return newInstance;
@@ -129,14 +140,13 @@ namespace FS.Data
         /// </summary>
         public void SaveChanges()
         {
-            // 如果开启了事务，则关闭
+            // 如果开启了事务，则提交
             if (InternalContext.Executeor.DataBase.IsTransaction)
             {
                 InternalContext.Executeor.DataBase.Commit();
-                InternalContext.Executeor.DataBase.CloseTran();
             }
 
-            InternalContext.Executeor.DataBase.Close(dispose: true);
+            InternalContext.FinishTransaction();
 
             foreach (var action in CommitCallback) action();
         }
@@ -146,14 +156,13 @@ namespace FS.Data
         /// </summary>
         public void Rollback()
         {
-            // 如果开启了事务，则关闭
+            // 如果开启了事务，则回滚
             if (InternalContext.Executeor.DataBase.IsTransaction)
             {
                 InternalContext.Executeor.DataBase.Rollback();
-                InternalContext.Executeor.DataBase.CloseTran();
             }
 
-            InternalContext.Executeor.DataBase.Close(dispose: true);
+            InternalContext.FinishTransaction();
         }
 
         /// <summary>
@@ -165,10 +174,7 @@ namespace FS.Data
         /// <summary>
         ///     设置表名称
         /// </summary>
-        protected virtual void CreateModelInit()
-        {
-
-        }
+        protected virtual void CreateModelInit() { }
 
         #region DbContextInitializer上下文初始化器
 
@@ -180,34 +186,28 @@ namespace FS.Data
         /// <summary>
         ///     上下文初始化器
         /// </summary>
-        internal InternalContext InternalContext
-        {
-            get
-            {
-                if (!_internalContext.IsInitializer)
-                {
-                    // 分库方案
-                    if (_internalContext.DatabaseConnection == null) _internalContext.SetDatabaseConnection(SplitDatabase());
-
-                    _internalContext.Initializer();
-                }
-
-                if (!_internalContext.IsInitModelName)
-                {
-                    _internalContext.UseUnitOfWork();
-                    
-                    // 设置表名称
-                    CreateModelInit();
-                }
-
-                return _internalContext;
-            }
-        }
-
-        /// <summary>
-        ///     映射结构关系
-        /// </summary>
-        internal ContextDataMap ContextMap { get; private set; }
+        internal InternalContext InternalContext => _internalContext;
+        // {
+        //     get
+        //     {
+        //         if (!_internalContext.IsInitializer)
+        //         {
+        //             // 分库方案
+        //             if (_internalContext.DatabaseConnection == null) _internalContext.SetDatabaseConnection(SplitDatabase());
+        //
+        //             _internalContext.Initializer();
+        //         }
+        //
+        //         if (!_internalContext.IsInitModelName)
+        //         {
+        //             //_internalContext.UseUnitOfWork();
+        //             // 设置表名称
+        //             CreateModelInit();
+        //         }
+        //
+        //         return _internalContext;
+        //     }
+        // }
 
         #endregion
 
@@ -215,6 +215,7 @@ namespace FS.Data
 
         /// <summary>
         ///     动态返回Set类型
+        /// （InitializerSet方法调用）
         /// </summary>
         /// <param name="propertyName"> 当有多个相同类型TEntity时，须使用propertyName来寻找唯一 </param>
         /// <typeparam name="TEntity"> </typeparam>

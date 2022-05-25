@@ -53,7 +53,7 @@ namespace FS.Data.Internal
             finally
             {
                 Clear();
-                if (ContextProvider.IsUnitOfWork) ContextProvider.Executeor.DataBase.Close(dispose: true);
+                if (!ContextProvider.Executeor.DataBase.IsTransaction) ContextProvider.Executeor.DataBase.Close(dispose: true);
             }
         }
 
@@ -75,7 +75,7 @@ namespace FS.Data.Internal
             finally
             {
                 Clear();
-                if (ContextProvider.IsUnitOfWork) ContextProvider.Executeor.DataBase.Close(dispose: true);
+                if (!ContextProvider.Executeor.DataBase.IsTransaction) ContextProvider.Executeor.DataBase.Close(dispose: true);
             }
         }
 

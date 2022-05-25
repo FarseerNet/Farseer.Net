@@ -10,11 +10,12 @@ namespace FS.Data.Map
     /// </summary>
     public class SetDataMap
     {
-        internal SetDataMap(KeyValuePair<PropertyInfo, SetPhysicsMap> entityPhysicsMap)
+        internal SetDataMap(KeyValuePair<PropertyInfo, SetPhysicsMap> entityPhysicsMap, string dbName)
         {
             ClassProperty = entityPhysicsMap.Key;
             PhysicsMap    = entityPhysicsMap.Value;
             TableName     = ClassProperty.Name; // 默认使用属性名称作为表名，一般此处会被SetName覆盖
+            DbName        = dbName;
             TableProperty = new Dictionary<string, object>();
         }
 
