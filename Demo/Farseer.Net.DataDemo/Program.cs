@@ -11,13 +11,18 @@ internal class Program
     private static async Task Main(string[] args)
     {
         FarseerApplication.Run<StartupModule>().Initialize();
-
         // 添加新用户（非事务）
+        Console.WriteLine($"测试非事务：");
         await AddUser();
 
+        Console.WriteLine($"测试事务：");
         // 添加新用户（使用事务的方式）
         using (var db = new MysqlContext())
         {
+            db.AddCallback(() =>
+            {
+                Console.WriteLine(DateTime.Now);
+            });
             await db.User.AddUpAsync(o => o.Age, 1);
             await AddUser(); // 由于属于new MysqlContext()内，此处则自动使用事务
             db.SaveChanges();
@@ -25,7 +30,7 @@ internal class Program
 
         Console.WriteLine($"当前用户数：{await MysqlContext.Data.User.CountAsync()}");
     }
-    
+
     private static Task AddUser()
     {
         return MysqlContext.Data.User.InsertAsync(new UserPO

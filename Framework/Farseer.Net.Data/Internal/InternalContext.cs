@@ -17,8 +17,6 @@ namespace FS.Data.Internal
     {
         // 用于实现事务的作用域，在同一个作用域、连接字符串下，共享事务。
         private static readonly Dictionary<string, AsyncLocal<InternalContext>> scopeContext = new();
-        //private static readonly AsyncLocal<InternalContext> scopeContext = new();
-
         /// <summary>
         ///     上下文初始化器（只赋值，不初始化，有可能被重复创建两次）
         /// </summary>
@@ -29,8 +27,8 @@ namespace FS.Data.Internal
             ScopeID     = Guid.NewGuid().ToString("N");
         }
 
-        private AsyncLocal<InternalContext> CurrentScope => scopeContext[DatabaseConnection.ConnectionString];
-        
+        internal AsyncLocal<InternalContext> CurrentScope => scopeContext[DatabaseConnection.ConnectionString];
+
         /// <summary>
         ///     上下文数据库连接信息
         /// </summary>
@@ -50,6 +48,11 @@ namespace FS.Data.Internal
         ///     数据库提供者（不同数据库的特性）
         /// </summary>
         public AbsDbProvider DbProvider => IocManager.GetService<AbsDbProvider>($"dbProvider_{DatabaseConnection.DbType}");
+
+        /// <summary>
+        ///     当事务提交后，会调用该委托
+        /// </summary>
+        private List<Action> _commitCallback = new();
 
         /// <summary>
         ///     执行数据库操作
@@ -75,9 +78,8 @@ namespace FS.Data.Internal
             {
                 scopeContext[DatabaseConnection.ConnectionString] = new();
             }
-
             CurrentScope.Value ??= this;
-            
+
             // 说明调用前已开启了事务
             if (CurrentScope.Value.ScopeID != ScopeID)
             {
@@ -89,6 +91,8 @@ namespace FS.Data.Internal
                 Executeor = CurrentScope.Value.Executeor;
                 // 队列管理者
                 QueueManger = new QueueManger(CurrentScope.Value);
+
+                //Console.WriteLine($"我使用主域的事务：当前：{ScopeID}，主域：{CurrentScope.Value.ScopeID}");
             }
             else
             {
@@ -105,6 +109,8 @@ namespace FS.Data.Internal
                 QueueManger = new QueueManger(provider: this);
                 // 手动编写SQL
                 ManualSql = new ManualSql(context: this);
+
+                //Console.WriteLine($"我使用自己的事务：当前：{ScopeID}");
             }
         }
 
@@ -126,11 +132,16 @@ namespace FS.Data.Internal
         /// </summary>
         public void FinishTransaction()
         {
-            CurrentScope.Value = null;
+            // 重置作用域，并将回调列表复制到本地
+            if (CurrentScope.Value != null)
+            {
+                _commitCallback    = CurrentScope.Value._commitCallback;
+                CurrentScope.Value = null;
+            }
             Executeor.DataBase.CloseTran();
             Executeor.DataBase.Close(dispose: true);
         }
-        
+
         /// <summary>
         /// 设置数据库连接信息
         /// </summary>
@@ -159,6 +170,24 @@ namespace FS.Data.Internal
         }
 
         /// <summary>
+        ///     当事务提交后，会调用该委托
+        /// </summary>
+        public void AddCallback(Action act)
+        {
+            // 添加到主事务中
+            CurrentScope.Value._commitCallback.Add(item: act);
+        }
+
+        /// <summary>
+        ///     当事务提交后，执行回调
+        /// </summary>
+        public void ExecuteCallback()
+        {
+            // 这里不用CurrentScope.Value._commitCallback，因为前面重置作用域时，已复制到本地变量中
+            foreach (var action in _commitCallback) action();
+        }
+
+        /// <summary>
         ///     释放资源
         /// </summary>
         [EditorBrowsable(state: EditorBrowsableState.Never)]
@@ -178,6 +207,7 @@ namespace FS.Data.Internal
             //释放托管资源
             if (disposing)
             {
+                FinishTransaction();
                 QueueManger.Dispose();
                 Executeor.DataBase.Dispose();
             }

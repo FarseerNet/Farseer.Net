@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
@@ -19,28 +18,17 @@ namespace FS.Data
     public class DbContext : IDbContext, ITransaction
     {
         /// <summary>
-        ///     当事务提交后，会调用该委托
-        /// </summary>
-        private readonly List<Action> CommitCallback = new();
-
-        /// <summary>
-        ///     跨事务时，主上下文
-        /// </summary>
-        private DbContext _masterContext;
-
-        /// <summary>
         ///     通过数据库配置，连接数据库
         /// </summary>
         /// <param name="name"> 数据库配置名称 </param>
         protected DbContext(string name)
         {
-            _internalContext = new InternalContext(GetType());
-
+            InternalContext = new InternalContext(GetType());
             // 如果name=null,说明需要动态分库
-            if (!string.IsNullOrWhiteSpace(name)) _internalContext.SetDatabaseConnection(name);
+            if (!string.IsNullOrWhiteSpace(name)) InternalContext.SetDatabaseConnection(name);
             // ReSharper disable once VirtualMemberCallInConstructor
-            else _internalContext.SetDatabaseConnection(SplitDatabase());
-            
+            else InternalContext.SetDatabaseConnection(SplitDatabase());
+
             InitializerInternalContext();
             InitializerSet();
         }
@@ -54,8 +42,8 @@ namespace FS.Data
         /// <param name="dataVer"> 数据库版本（针对不同的数据库版本的优化） </param>
         protected DbContext(string connectionString, eumDbType db, int commandTimeout = 30, string dataVer = null)
         {
-            _internalContext = new InternalContext(GetType());
-            _internalContext.SetDatabaseConnection(connectionString: connectionString, db, commandTimeout: commandTimeout, dataVer: dataVer);
+            InternalContext = new InternalContext(GetType());
+            InternalContext.SetDatabaseConnection(connectionString: connectionString, db, commandTimeout: commandTimeout, dataVer: dataVer);
 
             InitializerInternalContext();
             InitializerSet();
@@ -65,6 +53,11 @@ namespace FS.Data
         ///     映射结构关系
         /// </summary>
         internal ContextDataMap ContextMap { get; private set; }
+
+        /// <summary>
+        ///     上下文初始化器
+        /// </summary>
+        internal InternalContext InternalContext { get; }
 
         /// <summary>
         ///     数据库提供者（不同数据库的特性）
@@ -81,7 +74,7 @@ namespace FS.Data
         /// </summary>
         private void InitializerInternalContext()
         {
-            _internalContext.Initializer();
+            InternalContext.Initializer();
         }
 
         /// <summary>
@@ -90,7 +83,7 @@ namespace FS.Data
         private void InitializerSet()
         {
             // 上下文映射关系
-            ContextMap = new ContextDataMap(type: this.GetType(), context: _internalContext);
+            ContextMap = new ContextDataMap(type: this.GetType(), context: InternalContext);
 
             // 实例化子类中，所有Set属性
             var setTypesInitializersPair = ContextSetTypeCacheManger.Cache(contextKey: GetType());
@@ -116,10 +109,10 @@ namespace FS.Data
             // 2016年1月8日
             // 感谢：QQ462492293 疯狂的蜗牛 同学，发现了BUG
             // 场景：在For迭代操作数据库时，提示：【数据库连接池连接均在使用,并且达到了最大值】的错误。
-            // 解决：由于此处进行了_internalContext的二次初始化（在SqlSet进行了初始化）。需保证当前_internalContext未被初始化。
+            // 解决：由于此处进行了InternalContext的二次初始化（在SqlSet进行了初始化）。需保证当前InternalContext未被初始化。
             var newInstance = new TDbContext();
             // 上下文初始化器
-            newInstance._internalContext.UseUnitOfWork();
+            newInstance.InternalContext.UseUnitOfWork();
             return newInstance;
         }
 
@@ -128,11 +121,7 @@ namespace FS.Data
         /// </summary>
         public void AddCallback(Action act)
         {
-            // 如果是来自其它事务，则用主上下文来添加
-            if (_masterContext != null)
-                _masterContext.CommitCallback.Add(item: act);
-            else
-                CommitCallback.Add(item: act);
+            InternalContext.AddCallback(act);
         }
 
         /// <summary>
@@ -146,9 +135,11 @@ namespace FS.Data
                 InternalContext.Executeor.DataBase.Commit();
             }
 
+            // 完成事务后，需清空当前事务作用域、关闭事务
             InternalContext.FinishTransaction();
 
-            foreach (var action in CommitCallback) action();
+            // 执行回调
+            InternalContext.ExecuteCallback();
         }
 
         /// <summary>
@@ -162,6 +153,7 @@ namespace FS.Data
                 InternalContext.Executeor.DataBase.Rollback();
             }
 
+            // 完成事务后，需清空当前事务作用域、关闭事务
             InternalContext.FinishTransaction();
         }
 
@@ -175,41 +167,6 @@ namespace FS.Data
         ///     设置表名称
         /// </summary>
         protected virtual void CreateModelInit() { }
-
-        #region DbContextInitializer上下文初始化器
-
-        /// <summary>
-        ///     上下文初始化器
-        /// </summary>
-        private InternalContext _internalContext;
-
-        /// <summary>
-        ///     上下文初始化器
-        /// </summary>
-        internal InternalContext InternalContext => _internalContext;
-        // {
-        //     get
-        //     {
-        //         if (!_internalContext.IsInitializer)
-        //         {
-        //             // 分库方案
-        //             if (_internalContext.DatabaseConnection == null) _internalContext.SetDatabaseConnection(SplitDatabase());
-        //
-        //             _internalContext.Initializer();
-        //         }
-        //
-        //         if (!_internalContext.IsInitModelName)
-        //         {
-        //             //_internalContext.UseUnitOfWork();
-        //             // 设置表名称
-        //             CreateModelInit();
-        //         }
-        //
-        //         return _internalContext;
-        //     }
-        // }
-
-        #endregion
 
         #region 动态查找Set类型
 
