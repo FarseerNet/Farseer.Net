@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
-using FS.Core.EventBus;
 
-namespace FS.EventBus
+namespace FS.Core.EventBus
 {
     /// <summary>
     ///     事件总线监听消费

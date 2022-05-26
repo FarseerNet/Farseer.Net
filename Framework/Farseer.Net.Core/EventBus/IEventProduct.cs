@@ -1,4 +1,4 @@
-namespace FS.EventBus
+namespace FS.Core.EventBus
 {
     public interface IEventProduct
     {

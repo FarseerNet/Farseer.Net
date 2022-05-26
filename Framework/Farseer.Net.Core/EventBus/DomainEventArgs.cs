@@ -1,7 +1,7 @@
 using System;
 using FS.Extends;
 
-namespace FS.EventBus
+namespace FS.Core.EventBus
 {
     public class DomainEventArgs : EventArgs
     {
