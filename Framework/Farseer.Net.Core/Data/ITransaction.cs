@@ -1,7 +1,7 @@
 using System;
 using System.Data;
 
-namespace FS.Data;
+namespace FS.Core.Data;
 
 public interface ITransaction : IDisposable
 {

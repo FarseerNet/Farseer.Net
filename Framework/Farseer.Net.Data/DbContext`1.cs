@@ -38,5 +38,10 @@ namespace FS.Data
         ///     静态实例
         /// </summary>
         public static TDbContext Data => Data<TDbContext>();
+
+        /// <summary>
+        ///     静态实例
+        /// </summary>
+        public static ITransaction BeginTransaction() => new TDbContext();
     }
 }
