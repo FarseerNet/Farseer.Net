@@ -5,7 +5,7 @@ using FS.DI;
 using FS.Extends;
 using Microsoft.Extensions.Logging;
 
-namespace FS.Tasks.Entity;
+namespace FS.Core.Tasks;
 
 /// <summary>
 ///     任务接收的上下文
@@ -20,7 +20,7 @@ public class TaskContext : ITaskContext
         _jobType = jobType;
         _sw      = sw;
     }
-    internal long NextTimespan { get; private set; }
+    public long NextTimespan { get; private set; }
 
     /// <summary>
     ///     本次执行完后，下一次执行的间隔时间

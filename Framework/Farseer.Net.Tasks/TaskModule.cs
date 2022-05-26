@@ -4,11 +4,11 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using FS.Core.LinkTrack;
+using FS.Core.Tasks;
 using FS.DI;
 using FS.Extends;
 using FS.Modules;
 using FS.Reflection;
-using FS.Tasks.Entity;
 using Microsoft.Extensions.Logging;
 
 namespace FS.Tasks;

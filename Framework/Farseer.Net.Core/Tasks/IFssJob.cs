@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using FS.Core.Job;
 
-namespace FS.Tasks;
+namespace FS.Core.Tasks;
 
 public interface IJob
 {
