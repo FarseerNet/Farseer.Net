@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using FS.Core.Job;
+using FS.Core.Abstract.Fss;
 
 namespace FS.Fss.Entity
 {

@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using FS.Core.Job;
+using FS.Core.Abstract.Fss;
 using FS.Fss;
 using Microsoft.Extensions.Logging;
 

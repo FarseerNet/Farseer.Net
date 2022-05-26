@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Threading;
 using FS;
+using FS.Core.Abstract.EventBus;
 using FS.DI;
-using FS.EventBus;
-using FS.Utils.Common;
 
 namespace Farseer.Net.EventBusDemo
 {

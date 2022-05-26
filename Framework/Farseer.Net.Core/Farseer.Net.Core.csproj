@@ -26,4 +26,10 @@
         <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />
     </ItemGroup>
 
+
+    <ItemGroup>
+      <Folder Include="Abstract" />
+      <Folder Include="DomainDriven" />
+    </ItemGroup>
+
 </Project>  

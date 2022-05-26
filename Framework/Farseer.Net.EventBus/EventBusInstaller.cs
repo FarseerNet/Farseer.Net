@@ -3,9 +3,9 @@ using System.Reflection;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
+using FS.Core.Abstract.EventBus;
 using FS.DI;
 using FS.EventBus.Attr;
-using FS.EventBus.Configuration;
 using FS.Reflection;
 using Microsoft.Extensions.Logging;
 

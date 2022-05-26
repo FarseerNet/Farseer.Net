@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FS.Core.Abstract.MQ.Queue;
 using FS.MQ.Queue;
 using FS.MQ.Queue.Attr;
 

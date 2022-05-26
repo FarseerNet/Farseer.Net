@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Castle.Core.Internal;
 using FS.Core;
+using FS.Core.Abstract.Data;
 using FS.Core.LinkTrack;
 using FS.DI;
 using FS.ElasticSearch.ExpressionVisitor;

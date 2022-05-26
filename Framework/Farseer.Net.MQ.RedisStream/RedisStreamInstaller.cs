@@ -6,6 +6,7 @@ using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using FS.Cache.Redis;
+using FS.Core.Abstract.MQ.RedisStream;
 using FS.DI;
 using FS.MQ.RedisStream.Attr;
 using FS.MQ.RedisStream.Configuration;

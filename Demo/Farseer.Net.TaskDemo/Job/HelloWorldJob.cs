@@ -1,5 +1,5 @@
-using FS.Core.Job;
-using FS.Core.Tasks;
+using FS.Core.Abstract.Fss;
+using FS.Core.Abstract.Tasks;
 using FS.Tasks;
 using Microsoft.Extensions.Logging;
 

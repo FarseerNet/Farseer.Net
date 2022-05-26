@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FS.Core.EventBus;
+using FS.Core.Abstract.EventBus;
 
 namespace FS.EventBus
 {

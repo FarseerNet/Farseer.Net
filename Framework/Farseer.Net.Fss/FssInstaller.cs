@@ -4,6 +4,7 @@ using System.Reflection;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
+using FS.Core.Abstract.Fss;
 using FS.Reflection;
 
 namespace FS.Fss

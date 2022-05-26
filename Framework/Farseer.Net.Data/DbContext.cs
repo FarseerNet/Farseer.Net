@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Reflection;
-using FS.Core.Data;
+using FS.Core.Abstract.Data;
 using FS.Data.Cache;
 using FS.Data.Client;
 using FS.Data.Inteface;

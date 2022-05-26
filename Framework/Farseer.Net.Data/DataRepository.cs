@@ -1,5 +1,5 @@
-using FS.Core.Data;
-using FS.Core.Repository;
+using FS.Core.Abstract.Data;
+using FS.Core.DomainDriven.Repository;
 
 namespace FS.Data;
 

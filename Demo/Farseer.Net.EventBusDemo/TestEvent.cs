@@ -1,8 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using FS.Core.EventBus;
+using FS.Core.Abstract.EventBus;
 using FS.EventBus.Attr;
-using IListenerMessage = FS.EventBus.IListenerMessage;
 
 namespace Farseer.Net.EventBusDemo
 {

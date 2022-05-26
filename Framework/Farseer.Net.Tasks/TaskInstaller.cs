@@ -4,7 +4,7 @@ using System.Reflection;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using FS.Core.Tasks;
+using FS.Core.Abstract.Tasks;
 using FS.Reflection;
 
 namespace FS.Tasks;

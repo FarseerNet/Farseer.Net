@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using FS.Core.Abstract.MQ.Queue;
 using FS.DI;
 using FS.MQ.Queue.Configuration;
 

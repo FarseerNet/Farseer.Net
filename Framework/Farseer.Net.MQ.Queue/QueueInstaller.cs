@@ -6,6 +6,7 @@ using System.Reflection;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
+using FS.Core.Abstract.MQ.Queue;
 using FS.DI;
 using FS.MQ.Queue.Attr;
 using FS.MQ.Queue.Configuration;

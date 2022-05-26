@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Threading;
 using FS;
+using FS.Core.Abstract.MQ.RedisStream;
 using FS.DI;
 using FS.MQ.RedisStream;
 using FS.MQ.RedisStream.Attr;

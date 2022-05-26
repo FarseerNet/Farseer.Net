@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using FS.Core;
+using FS.Core.Abstract.Fss;
 using FS.DI;
 using FS.Fss.Configuration;
 using FS.Fss.Entity;

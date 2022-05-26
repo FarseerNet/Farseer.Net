@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FS.Core.Abstract.MQ.Queue;
 using FS.Core.LinkTrack;
 using FS.LinkTrack.Dal;
 using FS.MQ.Queue;

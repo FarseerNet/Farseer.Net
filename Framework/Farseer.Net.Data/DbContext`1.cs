@@ -1,4 +1,4 @@
-﻿using FS.Core.Data;
+﻿using FS.Core.Abstract.Data;
 using FS.Data.Inteface;
 
 namespace FS.Data

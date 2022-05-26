@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using FS.Cache.Redis;
+using FS.Core.Abstract.MQ.RedisStream;
 using FS.Core.LinkTrack;
 using FS.MQ.RedisStream.Configuration;
 using Newtonsoft.Json;

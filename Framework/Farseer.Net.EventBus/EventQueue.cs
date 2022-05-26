@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using FS.Core.EventBus;
+using FS.Core.Abstract.EventBus;
 using FS.DI;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;

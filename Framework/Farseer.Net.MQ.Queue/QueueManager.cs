@@ -4,6 +4,7 @@
 // ********************************************
 
 using System.Collections.Generic;
+using FS.Core.Abstract.MQ.Queue;
 using FS.MQ.Queue.Configuration;
 
 namespace FS.MQ.Queue

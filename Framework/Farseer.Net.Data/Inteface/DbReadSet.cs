@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FS.Core;
+using FS.Core.Abstract.Data;
 using FS.Data.Features;
 using FS.Utils.Common;
 

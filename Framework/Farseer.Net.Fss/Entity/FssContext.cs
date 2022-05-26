@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using FS.Core.Job;
+using FS.Core.Abstract.Fss;
 using FS.DI;
 using FS.Extends;
 using Microsoft.Extensions.Logging;

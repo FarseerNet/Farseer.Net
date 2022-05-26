@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FS.Core.Abstract.Fss;
 using FS.Core.Http;
-using FS.Core.Job;
 using FS.Core.Net;
 using FS.DI;
 using FS.Fss.Configuration;

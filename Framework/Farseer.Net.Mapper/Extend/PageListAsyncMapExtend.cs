@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using FS.Core;
+using FS.Core.Abstract.Data;
 
 // ReSharper disable once CheckNamespace
 namespace FS.Extends;

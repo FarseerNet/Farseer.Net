@@ -1,12 +1,6 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FS.Core.Async;
+using FS.Core.Abstract.MQ.Queue;
 using FS.Core.LinkTrack;
 using FS.DI;
-using FS.EC.Dal;
-using FS.Extends;
-using FS.MQ.Queue;
 
 namespace FS.EC
 {

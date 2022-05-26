@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using FS.Core.Job;
+using FS.Core.Abstract.Fss;
 using FS.Core.LinkTrack;
 using FS.DI;
 using FS.Fss.Configuration;
