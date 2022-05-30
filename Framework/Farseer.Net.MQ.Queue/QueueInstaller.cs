@@ -30,7 +30,6 @@ namespace FS.MQ.Queue
         /// <inheritdoc />
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
-            var sw         = Stopwatch.StartNew();
             var iocManager = container.Resolve<IIocManager>();
 
             // 读取配置
@@ -49,6 +48,7 @@ namespace FS.MQ.Queue
                         SleepTime = consumerAtt.SleepTime
                     });
             }
+            
             // 注册生产者
             foreach (var queueConfig in queueConfigs)
             {
@@ -57,11 +57,10 @@ namespace FS.MQ.Queue
                                             .Named(name: $"queue_list_{queueConfig.Name}")
                                             .ImplementedBy<QueueList>()
                                             .DependsOn(Dependency.OnValue<QueueConfig>(value: queueConfig)).LifestyleSingleton());
-
                 // 注册生产者
-                container.Register(Component.For<IQueueManager>()
+                container.Register(Component.For<IQueueProduct>()
                                             .Named(name: queueConfig.Name)
-                                            .ImplementedBy<QueueManager>()
+                                            .ImplementedBy<QueueProduct>()
                                             .DependsOn(Dependency.OnValue<QueueConfig>(value: queueConfig)).LifestyleSingleton());
             }
 

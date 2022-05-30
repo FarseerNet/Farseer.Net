@@ -135,7 +135,7 @@ namespace FS.MQ.Queue
                 IocManager.Instance.Release(consumerService);
                 if (!result && !autoAck && lst.Count > 0)
                 {
-                    _iocManager.Resolve<IQueueManager>(_queueConfig.Name).Product.Send(lst);
+                    _iocManager.Resolve<IQueueProduct>(_queueConfig.Name).Send(lst);
                 }
             }
 

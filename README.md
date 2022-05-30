@@ -118,7 +118,7 @@ public class TestEvent : IListenerMessage
 #### 发送
 ```c#
   // 取出实例
-  var queueProduct = IocManager.GetService<IQueueManager>(name: "test").Product;
+  var queueProduct = IocManager.GetService<IQueueProduct>(name: "test");
   // 发送
   queueProduct.Send("测试发送消息内容");
 ```
