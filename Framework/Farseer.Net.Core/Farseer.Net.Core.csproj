@@ -29,7 +29,6 @@
 
     <ItemGroup>
       <Folder Include="Abstract" />
-      <Folder Include="DomainDriven" />
     </ItemGroup>
 
 </Project>  
