@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using FS.Extends;
 
@@ -23,10 +24,11 @@ namespace FS.Utils.Common
         /// <returns> </returns>
         public static string GetDomain(string url)
         {
-            var newUrl = url.Replace(oldValue: "\\", newValue: "/");
-            newUrl = Regex.Replace(input: newUrl, pattern: "http://", replacement: "", options: RegexOptions.IgnoreCase);
+            url = url.Replace(oldValue: "\\", newValue: "/");
+            
+            url = Regex.Replace(input: url, pattern: "http://", replacement: "", options: RegexOptions.IgnoreCase);
 
-            return "http://" + newUrl.Substring(startIndex: 0, length: newUrl.IndexOf(value: '/'));
+            return "http://" + url.Substring(startIndex: 0, length: url.IndexOf(value: '/'));
         }
 
         /// <summary>

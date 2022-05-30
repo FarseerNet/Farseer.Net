@@ -41,7 +41,7 @@ namespace FS.Utils.Common
                 var split = str.AsSpan().Split(splitString);
                 foreach (var item in split)
                 {
-                    var val = ConvertHelper.ConvertSimple(sourceValue: item, objString: item, returnType: returnType, returnTypeCode: returnTypeCode);
+                    var val = ConvertHelper.ConvertSimple(sourceValue: item.ToString(), objString: item, returnType: returnType, returnTypeCode: returnTypeCode);
                     yield return val == null ? defValue : (T)val;
                 }
             }

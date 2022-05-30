@@ -2,15 +2,9 @@
 
 //BenchmarkDotNet.Running.BenchmarkRunner.Run(typeof(Program).Assembly);
 
-using Farseer.Net.Benchmark;
-using FS.Data.Client.SqLite;
-using FS.Extends;
+using Farseer.Net.Benchmark.Farseer.Net;
 using Microsoft.Diagnostics.Tracing.Parsers.MicrosoftWindowsTCPIP;
 
-
-var readOnlySpan1 = "aaa".AsMemory();
-var readOnlySpan2 = "bbb".AsSpan();
-var a=$"{readOnlySpan1}-{readOnlySpan2}";
-Console.WriteLine(readOnlySpan1);
-
-BenchmarkDotNet.Running.BenchmarkRunner.Run<TypeConvert>();
+Console.WriteLine(new Span_Interpolation_Extend().String_Interpolation());
+Console.WriteLine(new Span_Interpolation_Extend().Span_Interpolation());
+//BenchmarkDotNet.Running.BenchmarkRunner.Run<Span_Interpolation_Extend>();
