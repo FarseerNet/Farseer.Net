@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using Collections.Pooled;
 
 namespace FS.EventBus.Configuration
 {
@@ -8,6 +8,6 @@ namespace FS.EventBus.Configuration
     public class EventBusConfig
     {
         /// <summary> 事件配置 </summary>
-        public List<EventConfig> Events { get; set; }
+        public PooledList<EventConfig> Events { get; set; }
     }
 }

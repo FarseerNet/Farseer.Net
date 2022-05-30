@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Collections.Pooled;
 
 namespace FS.MQ.Rabbit.Configuration
 {
@@ -11,6 +12,6 @@ namespace FS.MQ.Rabbit.Configuration
         public RabbitServerConfig Server { get; set; }
         
         /// <summary> 生产者配置 </summary>
-        public List<ProductConfig> Product { get; set; }
+        public PooledList<ProductConfig> Product { get; set; }
     }
 }

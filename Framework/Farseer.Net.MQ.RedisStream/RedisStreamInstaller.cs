@@ -49,6 +49,7 @@ namespace FS.MQ.RedisStream
                                                                Dependency.OnValue<ProductItemConfig>(value: productConfig))
                                                     .LifestyleSingleton());
                     }
+                    redisStreamConfig.Product.Dispose();
                 }
             }
 

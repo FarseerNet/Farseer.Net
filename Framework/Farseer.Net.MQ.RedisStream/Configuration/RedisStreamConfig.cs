@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Collections.Pooled;
 using FS.Cache.Redis.Configuration;
 
 namespace FS.MQ.RedisStream.Configuration
@@ -16,6 +17,6 @@ namespace FS.MQ.RedisStream.Configuration
         /// <summary>
         ///     生产者配置
         /// </summary>
-        public List<ProductItemConfig> Product { get; set; }
+        public PooledList<ProductItemConfig> Product { get; set; }
     }
 }

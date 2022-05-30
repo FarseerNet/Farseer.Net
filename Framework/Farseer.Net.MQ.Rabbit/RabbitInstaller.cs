@@ -47,6 +47,7 @@ namespace FS.MQ.Rabbit
                         // 自动创建交换器
                         if (productConfig.AutoCreateExchange) container.Resolve<IRabbitManager>(key: productConfig.Name).CreateExchange();
                     }
+                    rabbitItemConfig.Product.Dispose();
                 }
             }
 
