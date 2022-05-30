@@ -9,7 +9,7 @@ namespace FS.EC
         readonly IQueueProduct _queueProduct;
         internal EnvCollectQueue()
         {
-            _queueProduct = IocManager.GetService<IQueueManager>(name: "EnvCollect").Product;
+            _queueProduct = IocManager.GetService<IQueueProduct>(name: "EnvCollect");
         }
 
         /// <summary>

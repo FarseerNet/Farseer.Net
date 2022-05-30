@@ -1,7 +1,6 @@
 using FS.Core.Abstract.MQ.Queue;
 using FS.Core.LinkTrack;
 using FS.DI;
-using FS.MQ.Queue;
 
 namespace FS.LinkTrack
 {
@@ -10,7 +9,7 @@ namespace FS.LinkTrack
         readonly IQueueProduct _queueProduct;
         public LinkTrackQueue()
         {
-            _queueProduct = IocManager.GetService<IQueueManager>(name: "LinkTrackQueue").Product;
+            _queueProduct = IocManager.GetService<IQueueProduct>(name: "LinkTrackQueue");
         }
 
         /// <summary>

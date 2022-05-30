@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using FS.Core.Abstract.MQ.Queue;
 using FS.Core.LinkTrack;
 using FS.LinkTrack.Dal;
-using FS.MQ.Queue;
 using FS.MQ.Queue.Attr;
 using Mapster;
 
