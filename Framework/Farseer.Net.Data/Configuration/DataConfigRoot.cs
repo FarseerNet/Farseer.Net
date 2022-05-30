@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Collections.Pooled;
 using FS.Core.Configuration;
 using FS.DI;
 using Microsoft.Extensions.Configuration;
@@ -15,7 +16,7 @@ namespace FS.Data.Configuration
         /// </summary>
         public static IEnumerable<DbItemConfig> Get()
         {
-            var configs         = IocManager.GetService<IConfigurationRoot>().GetSection(key: "Database").GetChildren();
+            using var configs = IocManager.GetService<IConfigurationRoot>().GetSection(key: "Database").GetChildren().ToPooledList();
             foreach (var configurationSection in configs)
             {
                 var config = ConfigConvert.ToEntity<DbItemConfig>(configurationSection.Value);

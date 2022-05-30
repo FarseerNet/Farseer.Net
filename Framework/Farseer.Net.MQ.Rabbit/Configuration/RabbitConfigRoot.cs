@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Collections.Pooled;
 using FS.Core.Configuration;
 using FS.DI;
 using FS.Extends;
@@ -17,7 +18,7 @@ namespace FS.MQ.Rabbit.Configuration
         /// </summary>
         public static IEnumerable<RabbitItemConfig> Get()
         {
-            var configs   = IocManager.GetService<IConfigurationRoot>().GetSection(key: "Rabbit").GetChildren();
+            using var configs   = IocManager.GetService<IConfigurationRoot>().GetSection(key: "Rabbit").GetChildren().ToPooledList();
             foreach (var configurationSection in configs)
             {
                 var config = new RabbitItemConfig
@@ -35,7 +36,7 @@ namespace FS.MQ.Rabbit.Configuration
                 }
                 
                 // 生产者配置
-                var products = configurationSection.GetSection("Product").GetChildren();
+                using var products = configurationSection.GetSection("Product").GetChildren().ToPooledList();
                 foreach (var product in products)
                 {
                     var productItemConfig = ConfigConvert.ToEntity<ProductConfig>(product.Value);

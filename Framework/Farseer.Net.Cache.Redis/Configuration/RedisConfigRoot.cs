@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using Collections.Pooled;
 using FS.Core.Configuration;
 using FS.DI;
 using Microsoft.Extensions.Configuration;
@@ -13,15 +13,18 @@ public class RedisConfigRoot
     /// <summary>
     ///     读取配置
     /// </summary>
-    public static IEnumerable<RedisItemConfig> Get()
+    public static PooledList<RedisItemConfig> Get()
     {
-        var configs   = IocManager.GetService<IConfigurationRoot>().GetSection(key: "Redis").GetChildren();
+        var lst = new PooledList<RedisItemConfig>();
+
+        using var configs = IocManager.GetService<IConfigurationRoot>().GetSection(key: "Redis").GetChildren().ToPooledList();
         foreach (var configurationSection in configs)
         {
             var config = ConfigConvert.ToEntity<RedisItemConfig>(configValue: configurationSection.Value);
             if (config == null) continue;
             config.Name = configurationSection.Key;
-            yield return config;
+            lst.Add(config);
         }
+        return lst;
     }
 }

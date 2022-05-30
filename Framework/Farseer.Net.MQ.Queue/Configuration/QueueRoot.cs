@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Collections.Pooled;
 using FS.Core.Configuration;
 using FS.DI;
 using Microsoft.Extensions.Configuration;
@@ -15,7 +16,7 @@ namespace FS.MQ.Queue.Configuration
         /// </summary>
         public static IEnumerable<QueueConfig> Get()
         {
-            var configs = IocManager.GetService<IConfigurationRoot>().GetSection(key: "Queue").GetChildren();
+            using var configs = IocManager.GetService<IConfigurationRoot>().GetSection(key: "Queue").GetChildren().ToPooledList();
             foreach (var configurationSection in configs)
             {
                 var config = ConfigConvert.ToEntity<QueueConfig>(configurationSection.Value);

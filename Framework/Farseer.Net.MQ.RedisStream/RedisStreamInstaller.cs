@@ -5,6 +5,7 @@ using System.Reflection;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
+using Collections.Pooled;
 using FS.Cache.Redis;
 using FS.Core.Abstract.MQ.RedisStream;
 using FS.DI;
@@ -26,7 +27,7 @@ namespace FS.MQ.RedisStream
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             // 读取配置
-            var redisStreamConfigs = RedisStreamConfigRoot.Get();
+            using var redisStreamConfigs = RedisStreamConfigRoot.Get().ToPooledList();
 
             // 注册生产者
             foreach (var redisStreamConfig in redisStreamConfigs)

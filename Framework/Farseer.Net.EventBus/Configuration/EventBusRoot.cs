@@ -1,3 +1,4 @@
+using Collections.Pooled;
 using FS.DI;
 using Microsoft.Extensions.Configuration;
 
@@ -13,7 +14,7 @@ namespace FS.EventBus.Configuration
         /// </summary>
         public static EventBusConfig Get()
         {
-            var configs = IocManager.GetService<IConfigurationRoot>().GetSection(key: "EventBus").GetChildren();
+            using var configs = IocManager.GetService<IConfigurationRoot>().GetSection(key: "EventBus").GetChildren().ToPooledList();
             var config  = new EventBusConfig() { Events = new() };
             foreach (var configurationSection in configs)
             {

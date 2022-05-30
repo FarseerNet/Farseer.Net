@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Collections.Pooled;
 using FS.Cache.Redis.Configuration;
 using FS.Core.Configuration;
 using FS.DI;
@@ -17,7 +18,7 @@ namespace FS.MQ.RedisStream.Configuration
         /// </summary>
         public static IEnumerable<RedisStreamConfig> Get()
         {
-            var configs   = IocManager.GetService<IConfigurationRoot>().GetSection(key: "RedisStream").GetChildren();
+            using var configs   = IocManager.GetService<IConfigurationRoot>().GetSection(key: "RedisStream").GetChildren().ToPooledList();
             foreach (var configurationSection in configs)
             {
                 var config = new RedisStreamConfig

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Collections.Pooled;
 using FS.DI;
 using FS.ElasticSearch.Cache;
 using FS.ElasticSearch.Configuration;
@@ -69,7 +70,8 @@ namespace FS.ElasticSearch
                 if (!_internalContext.IsInitModelName)
                 {
                     // 设置默认的副本、分片、刷新数量
-                    var esConfig = ElasticSearchConfigRoot.Get().FirstOrDefault(o => o.Name == _configName);
+                    using var elasticSearchItemConfigs = ElasticSearchConfigRoot.Get().ToPooledList();
+                    var       esConfig                 = elasticSearchItemConfigs.FirstOrDefault(o => o.Name == _configName);
                     foreach (var setDataMap in _internalContext.ContextMap.SetDataList)
                     {
                         setDataMap.SetName(esConfig.ShardsCount, esConfig.ReplicasCount, esConfig.RefreshInterval, esConfig.IndexFormat);

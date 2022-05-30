@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Collections.Pooled;
 using FS.Core.Configuration;
 using FS.DI;
 using Microsoft.Extensions.Configuration;
@@ -15,7 +16,7 @@ namespace FS.ElasticSearch.Configuration
         /// </summary>
         public static IEnumerable<ElasticSearchItemConfig> Get()
         {
-            var configs = IocManager.GetService<IConfigurationRoot>().GetSection(key: "ElasticSearch").GetChildren();
+            using var configs = IocManager.GetService<IConfigurationRoot>().GetSection(key: "ElasticSearch").GetChildren().ToPooledList();
             foreach (var configurationSection in configs)
             {
                 var config = ConfigConvert.ToEntity<ElasticSearchItemConfig>(configurationSection.Value);

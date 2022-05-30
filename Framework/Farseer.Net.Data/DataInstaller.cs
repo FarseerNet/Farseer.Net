@@ -2,6 +2,7 @@
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
+using Collections.Pooled;
 using FS.Data.Client;
 using FS.Data.Client.ClickHouse;
 using FS.Data.Client.MySql;
@@ -32,9 +33,9 @@ namespace FS.Data
             container.Register(Component.For<AbsDbProvider>().Named(name: $"dbProvider_{eumDbType.ClickHouse}").ImplementedBy<ClickHouseProvider>().LifestyleSingleton());
             container.Register(Component.For<AbsDbProvider>().Named(name: $"dbProvider_{eumDbType.SQLite}").ImplementedBy<SqLiteProvider>().LifestyleSingleton());
             container.Register(Component.For<AbsDbProvider>().Named(name: $"dbProvider_{eumDbType.PostgreSql}").ImplementedBy<PostgreSqlProvider>().LifestyleSingleton());
-            
+
             // 读取配置
-            var dbConfigs = DataConfigRoot.Get().ToList();
+            using var dbConfigs = DataConfigRoot.Get().ToPooledList();
             dbConfigs.ForEach(action: m =>
             {
                 // 注册Db连接

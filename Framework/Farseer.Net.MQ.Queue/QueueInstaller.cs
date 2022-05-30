@@ -6,6 +6,7 @@ using System.Reflection;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
+using Collections.Pooled;
 using FS.Core.Abstract.MQ.Queue;
 using FS.DI;
 using FS.MQ.Queue.Attr;
@@ -33,7 +34,7 @@ namespace FS.MQ.Queue
             var iocManager = container.Resolve<IIocManager>();
 
             // 读取配置
-            var queueConfigs = QueueRoot.Get().ToList();
+            using var queueConfigs = QueueRoot.Get().ToPooledList();
 
             // 从消费中找到未包含配置文件的。并生成到配置中 耗时：31 ms
             var consumerAttributes = _typeFinder.Find<IListenerMessage>().Select(o => o.GetCustomAttribute<ConsumerAttribute>()).Where(o => o != null);

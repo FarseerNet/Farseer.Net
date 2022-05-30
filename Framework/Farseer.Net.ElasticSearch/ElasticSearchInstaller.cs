@@ -3,6 +3,7 @@ using System.Linq;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
+using Collections.Pooled;
 using Elasticsearch.Net;
 using FS.DI;
 using FS.ElasticSearch.Configuration;
@@ -34,7 +35,7 @@ namespace FS.ElasticSearch
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             // 读取配置
-            var elasticSearchItemConfigs = ElasticSearchConfigRoot.Get();
+            using var elasticSearchItemConfigs = ElasticSearchConfigRoot.Get().ToPooledList();
             
             if (elasticSearchItemConfigs == null) return;
             foreach (var elasticSearchItemConfig in elasticSearchItemConfigs)

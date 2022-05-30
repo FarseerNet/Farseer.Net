@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
+using Collections.Pooled;
 using FS.DI;
 using FS.MQ.Rabbit.Attr;
 using FS.MQ.Rabbit.Configuration;
@@ -28,7 +29,7 @@ namespace FS.MQ.Rabbit
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             // 读取配置
-            var rabbitItemConfigs = RabbitConfigRoot.Get();
+            using var rabbitItemConfigs = RabbitConfigRoot.Get().ToPooledList();
 
             // 注册生产者
             foreach (var rabbitItemConfig in rabbitItemConfigs)
