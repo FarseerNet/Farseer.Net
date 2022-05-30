@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Collections.Pooled;
 
 namespace FS.Reflection
 {
@@ -33,9 +34,9 @@ namespace FS.Reflection
         /// </summary>
         /// <typeparam name="TAttribute"> Type of the attribute </typeparam>
         /// <param name="memberInfo"> MemberInfo </param>
-        public static List<TAttribute> GetAttributesOfMemberAndDeclaringType<TAttribute>(MemberInfo memberInfo) where TAttribute : Attribute
+        public static PooledList<TAttribute> GetAttributesOfMemberAndDeclaringType<TAttribute>(MemberInfo memberInfo) where TAttribute : Attribute
         {
-            var attributeList = new List<TAttribute>();
+            var attributeList = new PooledList<TAttribute>();
 
             //Add attributes on the member
             if (memberInfo.IsDefined(attributeType: typeof(TAttribute), inherit: true)) attributeList.AddRange(collection: memberInfo.GetCustomAttributes(attributeType: typeof(TAttribute), inherit: true).Cast<TAttribute>());

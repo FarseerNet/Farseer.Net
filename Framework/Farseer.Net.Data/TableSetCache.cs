@@ -61,13 +61,14 @@ namespace FS.Data
             if (!lstUpdate.Any()) return 0;
 
             // 获取赋值表达式树中的每一项操作赋值符号树
-            var lstLambda = new GetBinaryVisitor().Visit(exp: assign);
+            using var lstLambda = new GetBinaryVisitor().Visit(exp: assign);
             foreach (var ex in lstLambda)
             {
                 // 转换成Lambda表达式（用于下面的传入执行）
                 // 获取实体类的表达式参数
-                var entityParamter = new GetParamVisitor().Visit(exp: ex).FirstOrDefault();
-                var lambda         = Expression.Lambda<Action<TEntity>>(body: ex, entityParamter).Compile();
+                using var parameterExpressions = new GetParamVisitor().Visit(exp: ex);
+                var       entityParamter       = parameterExpressions.FirstOrDefault();
+                var       lambda               = Expression.Lambda<Action<TEntity>>(body: ex, entityParamter).Compile();
                 foreach (var updateEntity in lstUpdate) lambda(obj: updateEntity);
             }
 
@@ -157,8 +158,9 @@ namespace FS.Data
             _set.Update(entity: entity);
 
             // 由于Update时，有可能会产生条件（主键赋值被转成条件），故在Update之后，进行获取条件及赋值
-            var assign   = updateQueue.ExpBuilder.ExpAssign;
-            var whereExp = new GetBlockExpressionVisitor().Visit(exp: updateQueue.ExpBuilder.ExpWhere).OfType<Expression<Func<TEntity, bool>>>();
+            var       assign     = updateQueue.ExpBuilder.ExpAssign;
+            using var pooledList = new GetBlockExpressionVisitor().Visit(exp: updateQueue.ExpBuilder.ExpWhere);
+            var       whereExp   = pooledList.OfType<Expression<Func<TEntity, bool>>>();
 
             // 更新本地缓存
             return UpdateCache(assign: assign, whereExp: whereExp.ToArray());
@@ -175,8 +177,9 @@ namespace FS.Data
             await _set.UpdateAsync(entity: entity);
 
             // 由于Update时，有可能会产生条件（主键赋值被转成条件），故在Update之后，进行获取条件及赋值
-            var assign   = updateQueue.ExpBuilder.ExpAssign;
-            var whereExp = new GetBlockExpressionVisitor().Visit(exp: updateQueue.ExpBuilder.ExpWhere).OfType<Expression<Func<TEntity, bool>>>();
+            var       assign     = updateQueue.ExpBuilder.ExpAssign;
+            using var pooledList = new GetBlockExpressionVisitor().Visit(exp: updateQueue.ExpBuilder.ExpWhere);
+            var       whereExp   = pooledList.OfType<Expression<Func<TEntity, bool>>>();
 
             // 更新本地缓存
             return UpdateCache(assign: assign, whereExp: whereExp.ToArray());

@@ -4,6 +4,7 @@
 // ********************************************
 
 using System.Collections.Generic;
+using Collections.Pooled;
 
 namespace FS.Core
 {
@@ -20,6 +21,6 @@ namespace FS.Core
         /// <summary>
         ///     该列的下的数据集合
         /// </summary>
-        public List<object> DataList { get; set; }
+        public PooledList<object> DataList { get; set; }
     }
 }

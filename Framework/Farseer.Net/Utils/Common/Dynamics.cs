@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
+using Collections.Pooled;
 
 namespace FS.Utils.Common
 {
@@ -32,7 +33,7 @@ namespace FS.Utils.Common
         /// <param name="addPropertys"> Key：属性名称；Value：属性类型 </param>
         /// <param name="constructors"> 构造函数参数 </param>
         /// <param name="baseType"> 继承的父类类型 </param>
-        public static Type CreateClassType(List<PropertyInfo> addPropertys, Type[] constructors = null, Type baseType = null)
+        public static Type CreateClassType(PooledList<PropertyInfo> addPropertys, Type[] constructors = null, Type baseType = null)
         {
             //Check.IsTure(propertys == null || propertys.Count == 0, "propertys参数不能为空或为0");
 
@@ -66,7 +67,7 @@ namespace FS.Utils.Common
         /// </summary>
         /// <param name="addPropertys"> Key：属性名称；Value：属性类型 </param>
         /// <param name="baseType"> 继承的父类类型 </param>
-        public static Type CreateClassType(Dictionary<string, Type> addPropertys, Type baseType = null)
+        public static Type CreateClassType(PooledDictionary<string, Type> addPropertys, Type baseType = null)
         {
             Check.IsTure(isTrue: addPropertys == null || addPropertys.Count == 0, parameterName: $"{nameof(addPropertys)}参数不能为空或为0");
 

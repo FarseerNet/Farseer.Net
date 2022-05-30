@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Collections.Pooled;
 
 namespace FS.Utils.Common.ExpressionVisitor
 {
@@ -213,22 +214,22 @@ namespace FS.Utils.Common.ExpressionVisitor
         /// <returns> </returns>
         protected virtual ReadOnlyCollection<Expression> VisitExpressionList(ReadOnlyCollection<Expression> original)
         {
-            List<Expression> list = null;
-            for (int i = 0,
-                     n = original.Count; i < n; i++)
+            PooledList<Expression> list = new();
+            for (int i = 0, n = original.Count; i < n; i++)
             {
                 var p = Visit(exp: original[index: i]);
-                if (list != null)
+                if (list.Count > 0)
                     list.Add(item: p);
                 else if (p != original[index: i])
                 {
-                    list = new List<Expression>(capacity: n);
                     for (var j = 0; j < i; j++) list.Add(item: original[index: j]);
                     list.Add(item: p);
                 }
             }
 
-            if (list != null) return list.AsReadOnly();
+            if (list.Count > 0) return list.AsReadOnly();
+            
+            list.Dispose();
             return original;
         }
 
@@ -238,9 +239,9 @@ namespace FS.Utils.Common.ExpressionVisitor
         protected virtual Expression VisitConvertExp(Expression exp)
         {
             if (exp is UnaryExpression
-            {
-                Operand: ConstantExpression
-            } u)
+                {
+                    Operand: ConstantExpression
+                } u)
                 return u.Operand;
             if (exp is BinaryExpression || !IsFieldValue(exp: exp)) return exp;
             try
@@ -341,22 +342,23 @@ namespace FS.Utils.Common.ExpressionVisitor
         /// </summary>
         protected IEnumerable<MemberBinding> VisitBindingList(ReadOnlyCollection<MemberBinding> original)
         {
-            List<MemberBinding> list = null;
+            using PooledList<MemberBinding> list = new();
             for (int i = 0,
                      n = original.Count; i < n; i++)
             {
                 var b = VisitBinding(binding: original[index: i]);
-                if (list != null)
+                if (list.Count > 0)
                     list.Add(item: b);
                 else if (b != original[index: i])
                 {
-                    list = new List<MemberBinding>(capacity: n);
                     for (var j = 0; j < i; j++) list.Add(item: original[index: j]);
                     list.Add(item: b);
                 }
             }
 
-            if (list != null) return list;
+            if (list.Count > 0) return list;
+            
+            list.Dispose();
             return original;
         }
 
@@ -375,22 +377,23 @@ namespace FS.Utils.Common.ExpressionVisitor
         /// </summary>
         protected virtual IEnumerable<ElementInit> VisitElementInitializerList(ReadOnlyCollection<ElementInit> original)
         {
-            List<ElementInit> list = null;
+            using PooledList<ElementInit> list = new();
             for (int i = 0,
                      n = original.Count; i < n; i++)
             {
                 var init = VisitElementInitializer(initializer: original[index: i]);
-                if (list != null)
+                if (list.Count > 0)
                     list.Add(item: init);
                 else if (init != original[index: i])
                 {
-                    list = new List<ElementInit>(capacity: n);
                     for (var j = 0; j < i; j++) list.Add(item: original[index: j]);
                     list.Add(item: init);
                 }
             }
 
-            if (list != null) return list;
+            if (list.Count > 0) return list;
+            
+            list.Dispose();
             return original;
         }
 

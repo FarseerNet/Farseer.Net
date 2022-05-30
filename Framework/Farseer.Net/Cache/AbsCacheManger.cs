@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using Collections.Pooled;
 
 namespace FS.Cache
 {
@@ -10,7 +10,7 @@ namespace FS.Cache
         /// <summary>
         ///     缓存类
         /// </summary>
-        protected static readonly Dictionary<TKey, TValue> CacheList = new();
+        protected static readonly PooledDictionary<TKey, TValue> CacheList = new();
 
         /// <summary>
         ///     缓存Key

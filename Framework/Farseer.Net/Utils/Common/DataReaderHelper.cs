@@ -5,6 +5,7 @@
 
 using System.Collections.Generic;
 using System.Data;
+using Collections.Pooled;
 using FS.Core;
 
 namespace FS.Utils.Common
@@ -25,7 +26,7 @@ namespace FS.Utils.Common
             {
                 var mapData = dicColumns[i] = new MapingData();
                 mapData.ColumnName = reader.GetName(i: i);
-                mapData.DataList   = new List<object>();
+                mapData.DataList   = new PooledList<object>();
             }
 
             // 遍历行
@@ -54,7 +55,7 @@ namespace FS.Utils.Common
             {
                 var mapData = dicColumns[i] = new MapingData();
                 mapData.ColumnName = cols[index: i].ColumnName;
-                mapData.DataList   = new List<object>(capacity: dt.Rows.Count);
+                mapData.DataList   = new PooledList<object>(capacity: dt.Rows.Count);
             }
 
             // DataRowCollection转成DataRow[]

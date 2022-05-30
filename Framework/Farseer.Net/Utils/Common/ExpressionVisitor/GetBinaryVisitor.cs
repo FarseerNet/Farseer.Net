@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
+using Collections.Pooled;
 
 namespace FS.Utils.Common.ExpressionVisitor
 {
@@ -8,12 +10,12 @@ namespace FS.Utils.Common.ExpressionVisitor
     /// </summary>
     public class GetBinaryVisitor : AbsExpressionVisitor
     {
-        private readonly List<Expression> _lst = new();
+        private readonly PooledList<Expression> _lst = new();
 
         /// <summary>
         ///     获取表达式中的变量
         /// </summary>
-        public new IEnumerable<Expression> Visit(Expression exp)
+        public new PooledList<Expression> Visit(Expression exp)
         {
             base.Visit(exp: exp);
             return _lst;

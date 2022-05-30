@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using Collections.Pooled;
 
 namespace FS.Reflection
 {
@@ -13,13 +14,13 @@ namespace FS.Reflection
         ///     获取所有的程序集
         /// </summary>
         /// <returns> 程序集列表 </returns>
-        List<Assembly> GetAllAssemblies();
+        PooledList<Assembly> GetAllAssemblies();
 
         /// <summary>
         ///     从文件夹中获取所有的程序集
         /// </summary>
         /// <param name="folderPath"> </param>
         /// <param name="searchOption"> </param>
-        List<Assembly> GetAssembliesFromFolder(string folderPath, SearchOption searchOption);
+        PooledList<Assembly> GetAssembliesFromFolder(string folderPath, SearchOption searchOption);
     }
 }

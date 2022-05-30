@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Castle.Core.Internal;
+using Collections.Pooled;
 using FS.DI;
 using Microsoft.Extensions.Logging;
 
@@ -67,25 +68,28 @@ namespace FS.Reflection
         /// <summary>
         /// 忽略微软及常用的程序集
         /// </summary>
-        public IEnumerable<Assembly> IgnoreAssembly(List<Assembly> assemblies)
+        public PooledList<Assembly> IgnoreAssembly(PooledList<Assembly> assemblies)
         {
+            var lst = new PooledList<Assembly>();
             foreach (var assembly in assemblies)
             {
                 if (_IgnorePrefixAssembly.Any(o => assembly.ManifestModule.Name.StartsWith(o))) continue;
                 if (_IgnoreAssembly.Contains(assembly.ManifestModule.Name)) continue;
-                yield return assembly;
+                lst.Add(assembly);
             }
+            return lst;
         }
 
         /// <summary>
         ///     创建类型列表
         /// </summary>
         /// <returns> </returns>
-        private List<Type> CreateTypeList()
+        private PooledList<Type> CreateTypeList()
         {
-            var allTypes = new List<Type>();
+            var allTypes = new PooledList<Type>();
 
-            var assemblies = IgnoreAssembly(_assemblyFinder.GetAllAssemblies());
+            using var allAssemblies = _assemblyFinder.GetAllAssemblies();
+            using var assemblies    = IgnoreAssembly(allAssemblies);
 
             foreach (var assembly in assemblies)
             {

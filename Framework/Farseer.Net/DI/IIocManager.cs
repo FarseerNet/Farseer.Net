@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Castle.Core;
 using Castle.Windsor;
+using Collections.Pooled;
 using Microsoft.Extensions.Logging;
 
 namespace FS.DI
@@ -39,7 +40,7 @@ namespace FS.DI
         /// <summary>
         ///     根据约定注册程序集
         /// </summary>
-        void RegisterAssemblyByConvention(IEnumerable<Assembly> assemblys);
+        void RegisterAssemblyByConvention(PooledList<Assembly> assemblys);
 
         /// <summary>
         ///     注册
@@ -52,7 +53,7 @@ namespace FS.DI
         ///     获取当前业务注册的IOC
         /// </summary>
         /// <returns> </returns>
-        List<ComponentModel> GetCustomComponent();
+        PooledList<ComponentModel> GetCustomComponent();
         /// <summary>
         ///     注册
         /// </summary>

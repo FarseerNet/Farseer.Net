@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Collections.Pooled;
 
 namespace FS.Modules
 {
@@ -16,7 +17,7 @@ namespace FS.Modules
         /// <summary>
         ///     模块列表
         /// </summary>
-        IList<FarseerModuleInfo> Modules { get; }
+        PooledList<FarseerModuleInfo> Modules { get; }
 
         /// <summary>
         ///     初始化

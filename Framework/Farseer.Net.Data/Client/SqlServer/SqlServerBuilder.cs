@@ -56,7 +56,8 @@ namespace FS.Data.Client.SqlServer
             if (ExpBuilder.SetMap.PhysicsMap.DbGeneratedFields.Key != null)
             {
                 // 是否赋值了标识列的值
-                if (new GetMemberVisitor().Visit(ExpBuilder.ExpAssign).Any(predicate: o => o.Member as PropertyInfo == ExpBuilder.SetMap.PhysicsMap.DbGeneratedFields.Key))
+                using var memberExpressions = new GetMemberVisitor().Visit(ExpBuilder.ExpAssign);
+                if (memberExpressions.Any(predicate: o => o.Member as PropertyInfo == ExpBuilder.SetMap.PhysicsMap.DbGeneratedFields.Key))
                 {
                     var sql = Sql.ToString();
                     Sql.Clear();

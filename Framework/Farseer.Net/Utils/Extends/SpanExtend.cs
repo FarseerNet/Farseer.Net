@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using Collections.Pooled;
 
 namespace FS.Extends;
 
@@ -37,10 +37,10 @@ public static class SpanExtend
         return span;
     }
 
-    public static List<string> Split(this ReadOnlySpan<char> source, string separator)
+    public static PooledList<string> Split(this ReadOnlySpan<char> source, string separator)
     {
-        var lst           = new List<string>();
-        var spanSeparator = separator.AsSpan();
+        var lst           = new PooledList<string>();
+        var       spanSeparator = separator.AsSpan();
         while (true)
         {
             var index = source.IndexOf(spanSeparator);

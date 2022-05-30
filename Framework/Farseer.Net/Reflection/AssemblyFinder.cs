@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
+using Collections.Pooled;
 using FS.Modules;
 
 namespace FS.Reflection
@@ -28,9 +29,9 @@ namespace FS.Reflection
         ///     获取所有的程序集
         /// </summary>
         /// <returns> </returns>
-        public List<Assembly> GetAllAssemblies()
+        public PooledList<Assembly> GetAllAssemblies()
         {
-            var assemblies = new List<Assembly>(200);
+            var assemblies = new PooledList<Assembly>(200);
 
             foreach (var module in _moduleManager.Modules)
             {
@@ -40,7 +41,7 @@ namespace FS.Reflection
 
             assemblies.AddRange(collection: GetAssembliesFromFolder());
 
-            return assemblies.Distinct().ToList();
+            return assemblies.Distinct().ToPooledList();
         }
 
 
@@ -49,13 +50,13 @@ namespace FS.Reflection
         /// </summary>
         /// <param name="folderPath"> </param>
         /// <param name="searchOption"> </param>
-        public List<Assembly> GetAssembliesFromFolder(string folderPath, SearchOption searchOption)
+        public PooledList<Assembly> GetAssembliesFromFolder(string folderPath, SearchOption searchOption)
         {
             var assemblyFiles = Directory
                                 .EnumerateFiles(path: folderPath, searchPattern: "*.*", searchOption: searchOption)
                                 .Where(predicate: s => s.EndsWith(value: ".dll") || s.EndsWith(value: ".exe"));
 
-            return assemblyFiles.Select(selector: o => Assembly.Load(assemblyRef: AssemblyLoadContext.GetAssemblyName(assemblyPath: o))).ToList();
+            return assemblyFiles.Select(selector: o => Assembly.Load(assemblyRef: AssemblyLoadContext.GetAssemblyName(assemblyPath: o))).ToPooledList();
         }
 
         /// <summary>

@@ -37,7 +37,8 @@ namespace FS.DI
             services.AddSingleton<IConfigurationRoot>(ioc.Resolve<IConfigurationRoot>());
 
             // 获取业务实现类
-            foreach (var model in ioc.GetCustomComponent())
+            using var customComponent = ioc.GetCustomComponent();
+            foreach (var model in customComponent)
             {
                 var serviceType = model.Services.FirstOrDefault(predicate: o => o.IsInterface) ?? model.Services.FirstOrDefault();
                 // 没有注册到接口

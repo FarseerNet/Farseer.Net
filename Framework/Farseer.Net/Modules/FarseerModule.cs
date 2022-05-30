@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Collections.Pooled;
 using FS.DI;
 
 namespace FS.Modules
@@ -75,9 +76,9 @@ namespace FS.Modules
         /// <summary>
         ///     递归获取所有依赖模块
         /// </summary>
-        public static List<Type> FindDependedModuleTypesRecursively(Type moduleType)
+        public static PooledList<Type> FindDependedModuleTypesRecursively(Type moduleType)
         {
-            var list = new List<Type>();
+            var list = new PooledList<Type>();
             AddModuleAndDependenciesResursively(modules: list, module: moduleType);
             
             var farseerKernelModuleType = typeof(FarseerKernelModule);
@@ -88,7 +89,7 @@ namespace FS.Modules
         /// <summary>
         ///     递归所有依赖模块
         /// </summary>
-        private static void AddModuleAndDependenciesResursively(List<Type> modules, Type module)
+        private static void AddModuleAndDependenciesResursively(PooledList<Type> modules, Type module)
         {
             //if (!IsFarseerModule(type: module)) throw new FarseerInitException(message: "此类型不是一个有效的模块: " + module.AssemblyQualifiedName);
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Collections.Pooled;
 
 namespace FS.Modules
 {
@@ -23,7 +24,7 @@ namespace FS.Modules
         /// <summary>
         ///     根据依赖关系排序模块
         /// </summary>
-        public List<FarseerModuleInfo> GetListSortDependency()
+        public PooledList<FarseerModuleInfo> GetListSortDependency()
         {
             var sortedModules = SortByDependencies();
             EnsureKernelModuleToBeFirst(modules: sortedModules);
@@ -34,7 +35,7 @@ namespace FS.Modules
         ///     确认FarseerKernelModule模块在模块集合中第一位置
         /// </summary>
         /// <param name="modules"> </param>
-        public static void EnsureKernelModuleToBeFirst(List<FarseerModuleInfo> modules)
+        public static void EnsureKernelModuleToBeFirst(PooledList<FarseerModuleInfo> modules)
         {
             var kernelModuleIndex = modules.FindIndex(match: m => m.Type == typeof(FarseerKernelModule));
             if (kernelModuleIndex > 0)
@@ -48,10 +49,10 @@ namespace FS.Modules
         /// <summary>
         ///     列表排序
         /// </summary>
-        private List<FarseerModuleInfo> SortByDependencies()
+        private PooledList<FarseerModuleInfo> SortByDependencies()
         {
-            var sorted  = new List<FarseerModuleInfo>();
-            var visited = new Dictionary<FarseerModuleInfo, bool>();
+            var sorted  = new PooledList<FarseerModuleInfo>();
+            using var visited = new PooledDictionary<FarseerModuleInfo, bool>();
 
             foreach (var item in this) SortByDependenciesVisit(item: item, sorted: sorted, visited: visited);
 
@@ -64,7 +65,7 @@ namespace FS.Modules
         /// <param name="item"> 元素 </param>
         /// <param name="sorted"> 排序后的列表 </param>
         /// <param name="visited"> 已经访问过的元素字典 </param>
-        private static void SortByDependenciesVisit(FarseerModuleInfo item, ICollection<FarseerModuleInfo> sorted, Dictionary<FarseerModuleInfo, bool> visited)
+        private static void SortByDependenciesVisit(FarseerModuleInfo item, ICollection<FarseerModuleInfo> sorted, PooledDictionary<FarseerModuleInfo, bool> visited)
         {
             bool inProcess;
             var  alreadyVisited = visited.TryGetValue(key: item, value: out inProcess);

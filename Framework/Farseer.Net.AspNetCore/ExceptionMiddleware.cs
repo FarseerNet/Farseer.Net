@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.Core.Exception;
 using FS.Core.Net;
 using FS.DI;
@@ -41,7 +42,7 @@ public class ExceptionMiddleware
         catch (Exception e)
         {
             var http = httpContext.Request.IsHttps ? "s" : "";
-            var lst = new List<string>
+            using var lst = new PooledList<string>
             {
                 $"Path：http{http}://{httpContext.Request.Host}{httpContext.Request.Path}",
                 $"Method：{httpContext.Request.Method}",

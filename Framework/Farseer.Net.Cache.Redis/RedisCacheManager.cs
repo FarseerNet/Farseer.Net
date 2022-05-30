@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.Cache.Redis.Configuration;
 using FS.DI;
 using Newtonsoft.Json;
@@ -91,8 +92,8 @@ namespace FS.Cache.Redis
             if (lst == null || lst.Count == 0) return;
             if (funcData == null) funcData = po => JsonConvert.SerializeObject(value: po);
 
-            var transaction = Db.CreateTransaction();
-            var tasks       = new List<Task>();
+            var       transaction = Db.CreateTransaction();
+            using var tasks       = new PooledList<Task>();
             foreach (var po in lst)
             {
                 var dataKey = funcDataKey(arg: po).ToString();

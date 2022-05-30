@@ -164,7 +164,8 @@ namespace FS.Data.Internal
                 if (kic.Value.Field.UpdateStatusType == StatusType.ReadCondition || kic.Value.Field.IsPrimaryKey)
                 {
                     // 当前条件已存在该值时，跳过
-                    if (new GetMemberVisitor().Visit(ExpWhere).Any(predicate: o => o.Member == kic.Key)) continue;
+                    using var memberExpressions = new GetMemberVisitor().Visit(ExpWhere);
+                    if (memberExpressions.Any(predicate: o => o.Member == kic.Key)) continue;
                     var expCondiction = ExpressionHelper.CreateBinaryExpression<TEntity>(val: obj, memberName: member);
                     ExpWhere = ExpressionHelper.MergeAndAlsoExpression(left: (Expression<Func<TEntity, bool>>)ExpWhere, right: expCondiction);
                 }

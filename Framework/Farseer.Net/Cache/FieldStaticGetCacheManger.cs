@@ -36,7 +36,6 @@ namespace FS.Cache
         ///     赋值
         /// </summary>
         /// <param name="key"> 缓存Key </param>
-        /// <param name="instance"> 对象 </param>
         public static object Cache(FieldInfo key) => new FieldStaticGetCacheManger(key: key).GetValue()(arg: null);
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
+using Collections.Pooled;
 
 namespace FS.Utils.Common.ExpressionVisitor
 {
@@ -8,15 +10,27 @@ namespace FS.Utils.Common.ExpressionVisitor
     /// </summary>
     public class GetParamVisitor : AbsExpressionVisitor
     {
-        private readonly List<ParameterExpression> _lst = new();
+        private readonly PooledList<ParameterExpression> _lst = new();
 
         /// <summary>
         ///     获取表达式中的变量
         /// </summary>
-        public new IEnumerable<ParameterExpression> Visit(Expression exp)
+        public new PooledList<ParameterExpression> Visit(Expression exp)
         {
             base.Visit(exp: exp);
             return _lst;
+        }
+        
+        /// <summary>
+        ///     获取表达式中的变量
+        /// </summary>
+        public ParameterExpression VisitAndReturnFirst(Expression exp)
+        {
+            base.Visit(exp: exp);
+            using (_lst)
+            {
+                return _lst.FirstOrDefault();
+            }
         }
 
         /// <summary>

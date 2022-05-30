@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Collections.Pooled;
 using FS.Utils.Component;
 
 // ReSharper disable once CheckNamespace
@@ -20,9 +21,9 @@ namespace FS.Extends
         /// <summary>
         ///     获取枚举列表
         /// </summary>
-        public static Dictionary<int, string> ToDictionary(this Type enumType)
+        public static PooledDictionary<int, string> ToDictionary(this Type enumType)
         {
-            var dic = new Dictionary<int, string>();
+            var dic = new PooledDictionary<int, string>();
             foreach (int value in Enum.GetValues(enumType: enumType)) dic.Add(key: value, value: new Enums(eum: (Enum)Enum.ToObject(enumType: enumType, value: value)).GetName());
             return dic;
         }
@@ -30,11 +31,11 @@ namespace FS.Extends
         /// <summary>
         ///     获取枚举列表
         /// </summary>
-        public static List<int> ToList(this Type enumType) => Enum.GetValues(enumType: enumType).Cast<int>().ToList();
+        public static PooledList<int> ToList(this Type enumType) => Enum.GetValues(enumType: enumType).Cast<int>().ToPooledList();
 
         /// <summary>
         ///     获取枚举列表
         /// </summary>
-        public static List<TEnum> ToList<TEnum>(this Type enumType) => Enum.GetValues(enumType: enumType).Cast<TEnum>().ToList();
+        public static PooledList<TEnum> ToList<TEnum>(this Type enumType) => Enum.GetValues(enumType: enumType).Cast<TEnum>().ToPooledList();
     }
 }

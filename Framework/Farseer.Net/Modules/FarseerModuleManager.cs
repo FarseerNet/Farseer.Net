@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Collections.Pooled;
 using FS.DI;
 using Microsoft.Extensions.Logging;
 
@@ -45,7 +46,7 @@ namespace FS.Modules
         /// <summary>
         ///     模块列表
         /// </summary>
-        public IList<FarseerModuleInfo> Modules => _moduleCollection.ToList();
+        public PooledList<FarseerModuleInfo> Modules => _moduleCollection.ToPooledList();
 
         /// <summary>
         ///     初始化
@@ -62,10 +63,10 @@ namespace FS.Modules
         /// </summary>
         public virtual void StartModules()
         {
-            var sw            = Stopwatch.StartNew();
-            var sortedModules = _moduleCollection.GetListSortDependency();
+            var       sw            = Stopwatch.StartNew();
+            using var sortedModules = _moduleCollection.GetListSortDependency();
 
-            var lstLog = new List<string>(100) { $"Modules模块初始化..." };
+            using var lstLog = new PooledList<string>(100) { $"Modules模块初始化..." };
             foreach (var module in sortedModules)
             {
                 sw.Restart();
@@ -97,7 +98,7 @@ namespace FS.Modules
         {
             _iocManager.Logger<FarseerModuleManager>().LogInformation(message: "开始关闭模块...");
 
-            var sortedModules = _moduleCollection.GetListSortDependency();
+            using var sortedModules = _moduleCollection.GetListSortDependency();
             sortedModules.Reverse();
             sortedModules.ForEach(action: sm => sm.Instance.Shutdown());
 
@@ -109,9 +110,9 @@ namespace FS.Modules
         /// </summary>
         private void LoadAllModules()
         {
-            var moduleTypes = FindAllModules();
+            using var moduleTypes = FindAllModules();
 
-            var lstLog = new List<string>() { $"开始加载 {moduleTypes.Count} 个模块：" };
+            using var lstLog = new PooledList<string>() { $"开始加载 {moduleTypes.Count} 个模块：" };
             lstLog.AddRange(moduleTypes.Select(moduleType => $"加载模块: {moduleType.AssemblyQualifiedName}"));
 
             RegisterModules(moduleTypes: moduleTypes);
@@ -120,7 +121,8 @@ namespace FS.Modules
 
             _iocManager.Logger<FarseerModuleManager>().LogInformation(string.Join("\r\n", lstLog));
 
-            FarseerModuleCollection.EnsureKernelModuleToBeFirst(modules: _moduleCollection);
+            using var farseerModuleInfos = _moduleCollection.ToPooledList();
+            FarseerModuleCollection.EnsureKernelModuleToBeFirst(modules: farseerModuleInfos);
 
             SetDependencies();
         }
@@ -129,7 +131,7 @@ namespace FS.Modules
         ///     查找所有模块
         /// </summary>
         /// <returns> </returns>
-        private List<Type> FindAllModules()
+        private PooledList<Type> FindAllModules()
         {
             var modules = FarseerModule.FindDependedModuleTypesRecursively(moduleType: _startupModuleType);
 

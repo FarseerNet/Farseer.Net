@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Collections.Pooled;
 using FS.Cache;
 using FS.Utils.Common.ExpressionVisitor;
 
@@ -22,16 +23,17 @@ namespace FS.Utils.Common
         public static Expression MergeNewExpression(params Expression[] exps)
         {
             // 获取表达式树中实体类型
-            var parentType = new GetParamVisitor().Visit(exp: exps[0]).Select(selector: o => o.Type).First();
+            var parentType = new GetParamVisitor().VisitAndReturnFirst(exp: exps[0]).Type;
 
             // 取得所有PropertyInfo
-            var lst = new GetMemberVisitor().Visit(exps: exps).Select(selector: o => (PropertyInfo)o.Member);
+            using var memberExpressions = new GetMemberVisitor().Visit(exps: exps);
+            using var lst               = memberExpressions.Select(selector: o => (PropertyInfo)o.Member).ToPooledList();
 
             // 构造函数参数类型
             var lstPropertyType = lst.Select(selector: o => o.PropertyType).ToArray();
 
             // 根据取得的PropertyInfo列表，创建新类型
-            var classType = DynamicsClassTypeCacheManger.Cache(addPropertys: null, constructors: lstPropertyType, baseType: parentType);
+            var classType = DynamicsClassTypeCacheManger.Cache(addProperty: null, constructors: lstPropertyType, baseType: parentType);
             // 获取新类型的构造函数
             var constructor = classType.GetConstructor(types: lstPropertyType);
 
@@ -59,9 +61,10 @@ namespace FS.Utils.Common
         /// <param name="val"> 赋值 </param>
         public static Expression MergeAssignExpression(Expression exp, object val)
         {
-            var v         = Expression.Constant(value: val);
-            var lstAssign = new List<Expression>();
-            foreach (var propertyInfo in new GetMemberVisitor().Visit(exp))
+            var       v                 = Expression.Constant(value: val);
+            using var lstAssign         = new PooledList<Expression>();
+            using var memberExpressions = new GetMemberVisitor().Visit(exp);
+            foreach (var propertyInfo in memberExpressions)
             {
                 var u = Expression.AddAssign(left: propertyInfo, right: Expression.Convert(expression: v, type: propertyInfo.Type));
                 lstAssign.Add(item: u);
@@ -76,11 +79,12 @@ namespace FS.Utils.Common
         /// <param name="exps"> 要合并的NewExpression </param>
         public static Expression MergeBlockExpression(params Expression[] exps)
         {
-            var lstExp = new List<Expression>();
+            using var lstExp = new PooledList<Expression>();
             foreach (var item in exps)
             {
                 if (item == null) continue;
-                lstExp.AddRange(collection: new GetBlockExpressionVisitor().Visit(exp: item));
+                using var pooledList = new GetBlockExpressionVisitor().Visit(exp: item);
+                lstExp.AddRange(collection: pooledList);
             }
 
             if (lstExp.Count == 0) return null;
@@ -161,7 +165,7 @@ namespace FS.Utils.Common
         /// <param name="memberName"> 左边ID成员名称 </param>
         public static Expression<Func<TEntity, bool>> CreateBinaryExpression<TEntity>(object val, MemberExpression memberName, ExpressionType expType = ExpressionType.Equal) where TEntity : class, new()
         {
-            var              oParam = new GetParamVisitor().Visit(exp: memberName).FirstOrDefault();
+            var              oParam = new GetParamVisitor().VisitAndReturnFirst(exp: memberName);
             var              right  = Expression.Convert(expression: Expression.Constant(value: val), type: memberName.Type);
             BinaryExpression where  = null;
             switch (expType)
@@ -228,7 +232,7 @@ namespace FS.Utils.Common
         /// <param name="memberName"> 左边ID成员名称 </param>
         public static Expression<Func<TEntity, bool>> CreateContainsBinaryExpression<TEntity>(object val, MemberExpression memberName) where TEntity : class, new()
         {
-            var oParam = new GetParamVisitor().Visit(exp: memberName).FirstOrDefault();
+            var oParam = new GetParamVisitor().VisitAndReturnFirst(exp: memberName);
             // 值类型
             var valType                                                                                                  = val.GetType();
             if (valType.GetTypeInfo().IsGenericType && valType.GetGenericTypeDefinition() != typeof(Nullable<>)) valType = valType.GetGenericArguments()[0];

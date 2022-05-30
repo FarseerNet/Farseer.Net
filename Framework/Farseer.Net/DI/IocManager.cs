@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Castle.Core;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Castle.Windsor.Installer;
+using Collections.Pooled;
 using FS.Modules;
 using FS.Reflection;
 using Microsoft.Extensions.Logging;
@@ -23,12 +23,12 @@ namespace FS.DI
         /// <summary>
         ///     约定注册器列表（目前有：普用、MVC控制器）
         /// </summary>
-        private readonly List<IConventionalDependencyRegistrar> _conventionalRegistrars = new();
+        private readonly PooledList<IConventionalDependencyRegistrar> _conventionalRegistrars = new();
 
         /// <summary>
         ///     是否已注册过WindsorInstaller
         /// </summary>
-        private readonly Dictionary<Assembly, IWindsorInstaller> _isRegistrarWindsorInstaller = new();
+        private readonly PooledDictionary<Assembly, IWindsorInstaller> _isRegistrarWindsorInstaller = new();
 
         /// <summary>
         ///     构造函数
@@ -76,7 +76,7 @@ namespace FS.DI
         /// </summary>
         public void RegisterAssemblyByConvention(Type type)
         {
-            var assemblyNames = type.Assembly.GetReferencedAssemblies().Select(Assembly.Load).ToList();
+            using var assemblyNames = type.Assembly.GetReferencedAssemblies().Select(Assembly.Load).ToPooledList();
             assemblyNames.Add(type.Assembly);
             RegisterAssemblyByConvention(GetService<ITypeFinder>().IgnoreAssembly(assemblyNames));
         }
@@ -84,7 +84,7 @@ namespace FS.DI
         /// <summary>
         ///     根据约定注册程序集
         /// </summary>
-        public void RegisterAssemblyByConvention(IEnumerable<Assembly> assemblys)
+        public void RegisterAssemblyByConvention(PooledList<Assembly> assemblys)
         {
             foreach (var assembly in assemblys.Where(assembly => !_isRegistrarWindsorInstaller.ContainsKey(key: assembly)))
             {
@@ -195,13 +195,13 @@ namespace FS.DI
         /// <summary>
         ///     获取当前业务注册的IOC
         /// </summary>
-        public List<ComponentModel> GetCustomComponent() => Container.Kernel.GraphNodes.Cast<ComponentModel>()
-                                                                     .Where(predicate: model => !model.Implementation.Assembly.FullName.StartsWith(value: "Farseer.Net") &&
-                                                                                                !model.Implementation.Assembly.FullName.StartsWith(value: "Castle.")     &&
-                                                                                                !model.Implementation.Assembly.FullName.StartsWith(value: "Microsoft.")  &&
-                                                                                                !model.Implementation.Assembly.FullName.StartsWith(value: "System.")     &&
-                                                                                                model.Implementation.BaseType != typeof(FarseerModule))
-                                                                     .ToList();
+        public PooledList<ComponentModel> GetCustomComponent() => Container.Kernel.GraphNodes.Cast<ComponentModel>()
+                                                                           .Where(predicate: model => !model.Implementation.Assembly.FullName.StartsWith(value: "Farseer.Net") &&
+                                                                                                      !model.Implementation.Assembly.FullName.StartsWith(value: "Castle.")     &&
+                                                                                                      !model.Implementation.Assembly.FullName.StartsWith(value: "Microsoft.")  &&
+                                                                                                      !model.Implementation.Assembly.FullName.StartsWith(value: "System.")     &&
+                                                                                                      model.Implementation.BaseType != typeof(FarseerModule))
+                                                                           .ToPooledList();
 
         /// <summary>
         ///     注册自己

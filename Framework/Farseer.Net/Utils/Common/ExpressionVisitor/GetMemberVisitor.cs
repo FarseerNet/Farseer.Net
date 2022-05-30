@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq.Expressions;
+using Collections.Pooled;
 
 namespace FS.Utils.Common.ExpressionVisitor
 {
@@ -8,12 +9,12 @@ namespace FS.Utils.Common.ExpressionVisitor
     /// </summary>
     public class GetMemberVisitor : AbsExpressionVisitor
     {
-        private readonly List<MemberExpression> _lst = new();
+        private readonly PooledList<MemberExpression> _lst = new();
 
         /// <summary>
         ///     获取表达式中的变量
         /// </summary>
-        public IEnumerable<MemberExpression> Visit(params Expression[] exps)
+        public PooledList<MemberExpression> Visit(params Expression[] exps)
         {
             foreach (var exp in exps) base.Visit(exp: exp);
             return _lst;

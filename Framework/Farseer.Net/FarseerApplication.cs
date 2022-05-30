@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Castle.MicroKernel.Registration;
+using Collections.Pooled;
 using FS.DI;
 using FS.DI.Installers;
 using FS.Extends;
@@ -80,7 +81,7 @@ namespace FS
         /// </summary>
         public static string[] AppIp { get; set; }
 
-        private static List<Action> InitCallback { get; } = new();
+        private static PooledList<Action> InitCallback { get; } = new();
 
         /// <summary>
         ///     清理系统
@@ -169,7 +170,8 @@ namespace FS
 
                 IocManager.Logger<FarseerApplication>().LogInformation(message: "启动初始化回调");
                 foreach (var action in InitCallback) action();
-
+                InitCallback.Dispose();
+                
                 // 优化前：1.3s，优化后：700ms
                 IocManager.Logger<FarseerApplication>().LogInformation(message: $"初始化完毕，共耗时{(DateTime.Now - StartupAt).TotalMilliseconds:n}ms");
             }
@@ -186,10 +188,10 @@ namespace FS
         private void ShowIocInstance()
         {
             // 获取业务实现类
-            var lstModel = IocManager.GetCustomComponent();
-            var lstLog   = new List<string>() { $"共有{lstModel.Count}个业务实例注册到容器" };
+            using var lstModel = IocManager.GetCustomComponent();
+            using var lstLog   = new PooledList<string>() { $"共有{lstModel.Count}个业务实例注册到容器" };
 
-            Dictionary<string, List<string>> dicImplName = new();
+            using PooledDictionary<string, PooledList<string>> dicImplName = new();
 
             for (var index = 0; index < lstModel.Count; index++)
             {

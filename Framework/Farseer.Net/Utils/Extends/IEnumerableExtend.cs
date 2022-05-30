@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using Collections.Pooled;
 using FS.Utils.Common;
 using Newtonsoft.Json;
 
@@ -79,9 +80,9 @@ namespace FS.Extends
         /// <param name="lst"> List列表 </param>
         /// <param name="pageSize"> 每页大小 </param>
         /// <param name="pageIndex"> 索引 </param>
-        public static List<TEntity> ToList<TEntity>(this IEnumerable<TEntity> lst, int pageSize, int pageIndex = 1)
+        public static PooledList<TEntity> ToList<TEntity>(this IEnumerable<TEntity> lst, int pageSize, int pageIndex = 1)
         {
-            if (pageSize == 0) return lst.ToList();
+            if (pageSize == 0) return lst.ToPooledList();
 
             #region 计算总页数
 
@@ -89,8 +90,7 @@ namespace FS.Extends
             var recordCount    = lst.Count();
             if (pageIndex < 1)
             {
-                pageIndex = 1;
-                return lst.Take(count: pageSize).ToList();
+                return lst.Take(count: pageSize).ToPooledList();
             }
 
             if (pageSize < 1) pageSize = 10;
@@ -106,7 +106,7 @@ namespace FS.Extends
 
             #endregion
 
-            return lst.Skip(count: pageSize * (pageIndex - 1)).Take(count: pageSize).ToList();
+            return lst.Skip(count: pageSize * (pageIndex - 1)).Take(count: pageSize).ToPooledList();
         }
 
         /// <summary>
@@ -117,11 +117,10 @@ namespace FS.Extends
         /// <param name="pageSize"> 每页大小 </param>
         /// <param name="pageIndex"> 索引 </param>
         /// <param name="recordCount"> 总数量 </param>
-        public static List<TEntity> ToList<TEntity>(this IEnumerable<TEntity> lst, int pageSize, int pageIndex, out int recordCount)
+        public static PooledList<TEntity> ToList<TEntity>(this IEnumerable<TEntity> lst, int pageSize, int pageIndex, out int recordCount)
         {
-            var enumerable = lst as IList<TEntity> ?? lst.ToList();
-            recordCount = enumerable.Count;
-            return ToList(lst: enumerable, pageSize: pageSize, pageIndex: pageIndex);
+            recordCount = lst.Count();
+            return ToList(lst: lst, pageSize: pageSize, pageIndex: pageIndex);
         }
 
         /// <summary>

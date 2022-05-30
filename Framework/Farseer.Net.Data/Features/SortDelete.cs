@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Collections.Pooled;
 using FS.Cache;
 
 namespace FS.Data.Features
@@ -56,10 +57,10 @@ namespace FS.Data.Features
                     break;
             }
 
-            var dic = new Dictionary<string, Type> { [key: Name] = fieldType };
+            using var dic = new PooledDictionary<string, Type> { [key: Name] = fieldType };
 
             // 如果当前类已包含该字段，则不创新派生类
-            var sortDeleteClassType = entityType.GetProperty(name: Name) != null ? entityType : DynamicsClassTypeCacheManger.Cache(addPropertys: dic, baseType: entityType);
+            var sortDeleteClassType = entityType.GetProperty(name: Name) != null ? entityType : DynamicsClassTypeCacheManger.Cache(addProperty: dic, baseType: entityType);
             var param               = Expression.Parameter(type: sortDeleteClassType, name: "o");
             var member              = Expression.MakeMemberAccess(expression: param, member: sortDeleteClassType.GetMember(name: Name)[0]);
 

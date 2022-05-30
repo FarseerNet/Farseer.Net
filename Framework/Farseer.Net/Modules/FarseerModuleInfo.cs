@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Collections.Pooled;
 
 namespace FS.Modules
 {
@@ -22,8 +23,6 @@ namespace FS.Modules
             Type     = type;
             Instance = instance;
             Assembly = Type.GetTypeInfo().Assembly;
-
-            Dependencies = new List<FarseerModuleInfo>();
         }
 
         /// <summary>
@@ -44,7 +43,7 @@ namespace FS.Modules
         /// <summary>
         ///     依赖的其他模块
         /// </summary>
-        public List<FarseerModuleInfo> Dependencies { get; }
+        public PooledList<FarseerModuleInfo> Dependencies { get; } = new();
 
         /// <summary>
         ///     重写，获取Type名称

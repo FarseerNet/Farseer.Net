@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Collections.Pooled;
 using FS.Core;
 
 // ReSharper disable once CheckNamespace
@@ -16,7 +17,7 @@ namespace FS.Extends
         /// <param name="lstIDs"> 条件，等同于：o=> IDs.Contains(o.ID) 的操作 </param>
         /// <param name="pageSize"> 每页大小 </param>
         /// <param name="pageIndex"> 索引 </param>
-        public static List<TEntity> ToList<TEntity>(this IEnumerable<TEntity> lst, List<int> lstIDs, int pageSize, int pageIndex = 1) where TEntity : IEntity
+        public static PooledList<TEntity> ToList<TEntity>(this IEnumerable<TEntity> lst, List<int> lstIDs, int pageSize, int pageIndex = 1) where TEntity : IEntity
         {
             return lst.Where(predicate: o => lstIDs.Contains(item: o.ID.GetValueOrDefault())).ToList(pageSize: pageSize, pageIndex: pageIndex);
         }
@@ -29,7 +30,7 @@ namespace FS.Extends
         /// <param name="lstIDs"> 条件，等同于：o=> IDs.Contains(o.ID) 的操作 </param>
         /// <param name="pageSize"> 每页大小 </param>
         /// <param name="pageIndex"> 索引 </param>
-        public static List<TEntity> ToList<TEntity>(this IEnumerable<TEntity> lst, List<int> lstIDs, int pageSize, int pageIndex, out int recordCount) where TEntity : IEntity
+        public static PooledList<TEntity> ToList<TEntity>(this IEnumerable<TEntity> lst, List<int> lstIDs, int pageSize, int pageIndex, out int recordCount) where TEntity : IEntity
         {
             return lst.Where(predicate: o => lstIDs.Contains(item: o.ID.GetValueOrDefault())).ToList(pageSize: pageSize, pageIndex: pageIndex, recordCount: out recordCount);
         }

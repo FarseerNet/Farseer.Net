@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Collections.Pooled;
 
 namespace FS.Reflection
 {
@@ -28,6 +29,6 @@ namespace FS.Reflection
         /// <summary>
         /// 忽略微软及常用的程序集
         /// </summary>
-        IEnumerable<Assembly> IgnoreAssembly(List<Assembly> assemblies);
+        PooledList<Assembly> IgnoreAssembly(PooledList<Assembly> assemblies);
     }
 }
