@@ -196,23 +196,23 @@ namespace FS.Data.ExpressionVisitor
                 switch (CurrentField.Value.Field.StorageType)
                 {
                     case EumStorageType.Json:
-                        CurrentDbParameter = DbProvider.DbParam.Create(CurrentField.Value.Field.Name, parameterName: $"p{ParamList.Count}_{CurrentField.Value.Field.Name}", value: JsonConvert.SerializeObject(cexp.Value), type: DbType.String, output: false, len: CurrentField.Value.Field.FieldLength);
+                        CurrentDbParameter = DbProvider.DbParam.Create(CurrentField.Value.Field.Name, ParamList.Count, value: JsonConvert.SerializeObject(cexp.Value), type: DbType.String, output: false, len: CurrentField.Value.Field.FieldLength);
                         break;
                     case EumStorageType.Array:
                         if (cexp.Value is not IEnumerable lst) throw new DataException($"数据库字段设为EumStorageType.Array类型，但当前字段的类型不是有效的IEnumerable类型");
-                        CurrentDbParameter = DbProvider.DbParam.Create(CurrentField.Value.Field.Name, parameterName: $"p{ParamList.Count}_{CurrentField.Value.Field.Name}", value: lst.ToString(","), type: DbType.String, output: false, len: CurrentField.Value.Field.FieldLength);
+                        CurrentDbParameter = DbProvider.DbParam.Create(CurrentField.Value.Field.Name, ParamList.Count, value: lst.ToString(","), type: DbType.String, output: false, len: CurrentField.Value.Field.FieldLength);
                         break;
                     default:
                         if (CurrentField.Value.Field.DbType != DbType.Object)
                         {
-                            CurrentDbParameter = DbProvider.DbParam.Create(CurrentField.Value.Field.Name, parameterName: $"p{ParamList.Count}_{CurrentField.Value.Field.Name}", value: cexp.Value, type: CurrentField.Value.Field.DbType, output: false, len: CurrentField.Value.Field.FieldLength);
+                            CurrentDbParameter = DbProvider.DbParam.Create(CurrentField.Value.Field.Name, ParamList.Count, value: cexp.Value, type: CurrentField.Value.Field.DbType, output: false, len: CurrentField.Value.Field.FieldLength);
                         }
                         break;
                 }
             }
             
             // 手动指定类型
-            CurrentDbParameter ??= DbProvider.DbParam.Create(CurrentFieldName, parameterName: $"p{ParamList.Count}_{CurrentFieldName}", value: cexp.Value, valType: cexp.Type, output: false, len: CurrentField.Value?.Field.FieldLength ?? 0);
+            CurrentDbParameter ??= DbProvider.DbParam.Create(CurrentFieldName, ParamList.Count, value: cexp.Value, valType: cexp.Type, output: false, len: CurrentField.Value?.Field.FieldLength ?? 0);
 
             ParamList.Add(item: CurrentDbParameter);
             PushParamName(CurrentDbParameter.ParameterName);

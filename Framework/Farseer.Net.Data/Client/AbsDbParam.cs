@@ -182,10 +182,39 @@ public abstract class AbsDbParam
     /// <param name="len"> 参数长度，不指定时自动判断 </param>
     public DbParameter Create(string columnName, string parameterName, object value, Type valType, bool output = false, int len = 0)
     {
-        var dbType = GetDbType(type: valType, len: out var dblen);
-        return Create(columnName, parameterName: parameterName, value: value, type: dbType, output: output, len: len > 0 ? len : dblen);
+        var dbType = GetDbType(type: valType, len: out var dbLength);
+        return Create(columnName, parameterName: parameterName, value: value, type: dbType, output: output, len: len > 0 ? len : dbLength);
     }
-
+    
+    /// <summary>
+    ///     创建一个数据库参数对象
+    /// </summary>
+    /// <param name="columnName">字段名称 </param>
+    /// <param name="paramIndex"> 参数索引 </param>
+    /// <param name="value"> 参数值 </param>
+    /// <param name="valType"> 值类型 </param>
+    /// <param name="output"> 是否是输出值 </param>
+    /// <param name="len"> 参数长度，不指定时自动判断 </param>
+    public DbParameter Create(string columnName, int paramIndex, object value, Type valType, bool output = false, int len = 0)
+    {
+        var dbType = GetDbType(type: valType, len: out var dbLength);
+        return Create(columnName, parameterName: $"p{paramIndex}_{columnName}", value: value, type: dbType, output: output, len: len > 0 ? len : dbLength);
+    }
+    
+    /// <summary>
+    ///     创建一个数据库参数对象
+    /// </summary>
+    /// <param name="columnName">字段名称 </param>
+    /// <param name="paramIndex"> 参数索引 </param>
+    /// <param name="value"> 参数值 </param>
+    /// <param name="type"> 参数类型 </param>
+    /// <param name="len"> 参数长度 </param>
+    /// <param name="output"> 是否是输出值 </param>
+    public DbParameter Create(string columnName, int paramIndex, object value, DbType type, bool output = false, int len = 0)
+    {
+        return Create(columnName, $"p{paramIndex}_{columnName}", value, type, output, len);
+    }
+    
     /// <summary>
     ///     创建一个数据库参数对象
     /// </summary>
