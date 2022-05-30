@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
+        <TargetFramework>netstandard2.1</TargetFramework>
         <Company>steden</Company>
         <Copyright>http://www.fsgit.com</Copyright>
         <Product>ORM组件</Product>
@@ -22,6 +22,9 @@
         <DefineConstants>net461</DefineConstants>
     </PropertyGroup>
     <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+        <DefineConstants>CORE</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
         <DefineConstants>CORE</DefineConstants>
     </PropertyGroup>
 
@@ -45,6 +48,12 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+        <PackageReference Include="System.Data.Common" Version="4.3.0" />
+        <Compile Remove="Client\OleDb\**" />
+        <Compile Remove="Client\Oracle\**" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
         <PackageReference Include="System.Data.Common" Version="4.3.0" />
         <Compile Remove="Client\OleDb\**" />
         <Compile Remove="Client\Oracle\**" />

@@ -1,5 +1,8 @@
+using System;
 using System.Text;
 using FS.Configuration;
+using FS.Extends;
+using Microsoft.Extensions.Primitives;
 
 namespace FS.Data.Client.SqLite;
 
@@ -7,7 +10,7 @@ public class SqLiteConnectionString : AbsConnectionString
 {
     public override string Create(string server, string port, string userId, string passWord = null, string catalog = null, string dataVer = null, string additional = null, int connectTimeout = 60, int poolMinSize = 16, int poolMaxSize = 100)
     {
-        var sb = new StringBuilder(value: $"Data Source='{GetFilePath(filePath: server)}';");
+        var sb = new StringBuilder(value: $"Data Source='{GetFilePath(filePath: server).ToString()}';");
         if (!string.IsNullOrWhiteSpace(value: port)) sb.Append(value: $"Port='{port}';");
 
         if (!string.IsNullOrWhiteSpace(value: userId)) sb.Append(value: $"User ID='{userId}';");
@@ -20,22 +23,21 @@ public class SqLiteConnectionString : AbsConnectionString
         sb.Append(value: additional);
         return sb.ToString();
     }
-    
+
     /// <summary>
     ///     获取数据库文件的路径
     /// </summary>
     /// <param name="filePath"> 数据库路径 </param>
-    private string GetFilePath(string filePath)
+    public ReadOnlySpan<char> GetFilePath(string filePath)
     {
-        if (filePath.IndexOf(value: ':') > -1) return filePath;
+        var spanFilePath = filePath.AsSpan();
+        if (spanFilePath.IndexOf(':') > -1) return spanFilePath;
 
-        var fileName                                  = filePath.Replace(oldValue: "/", newValue: "\\");
-        if (fileName.StartsWith(value: "/")) fileName = fileName.Substring(startIndex: 1);
+        //spanFilePath = spanFilePath.Replace('/', '\\');
+        if (spanFilePath[0] == '\\') spanFilePath = spanFilePath.Slice(1);
 
-        fileName = SysPath.AppData + fileName;
-        return fileName;
+        return SysPath.AppData.AsSpan().Concat(spanFilePath);
     }
-    
-    
+
     public override string GetDbName(string server) => null;
 }
