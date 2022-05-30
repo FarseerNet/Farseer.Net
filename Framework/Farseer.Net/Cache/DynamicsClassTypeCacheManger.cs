@@ -72,6 +72,7 @@ namespace FS.Cache
                 var val = _isListProperty ? Dynamics.CreateClassType(addPropertys: _lstAddProperty, constructors: _constructors, baseType: _baseType) : Dynamics.CreateClassType(addPropertys: _dicAddProperty, baseType: _baseType);
                 
                 _dicAddProperty.Dispose();
+                _lstAddProperty.Dispose();
                 return CacheList[key: Key] = val;
             }
         }

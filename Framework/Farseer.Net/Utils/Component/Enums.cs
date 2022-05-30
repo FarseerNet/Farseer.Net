@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Collections.Pooled;
 
 namespace FS.Utils.Component
 {
@@ -17,7 +18,7 @@ namespace FS.Utils.Component
         /// <summary>
         ///     缓存类
         /// </summary>
-        private static readonly Dictionary<string, string> CacheList = new();
+        private static readonly PooledDictionary<string, string> CacheList = new();
 
         private readonly string _enumName;
         private readonly Enum   _eum;

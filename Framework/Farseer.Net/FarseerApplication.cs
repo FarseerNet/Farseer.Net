@@ -206,6 +206,10 @@ namespace FS
 
             lstLog.AddRange(dicImplName.Select(impl => $"{impl.Key}\t---->\t{string.Join("|", impl.Value)}"));
 
+            foreach (var keyValuePair in dicImplName)
+            {
+                keyValuePair.Value.Dispose();
+            }
             IocManager.Logger<FarseerApplication>().LogInformation(string.Join("\r\n", lstLog));
         }
 
