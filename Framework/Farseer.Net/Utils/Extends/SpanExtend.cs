@@ -41,7 +41,7 @@ public static class SpanExtend
 
     public static ReadOnlySpan<T> Concat<T>(this ReadOnlySpan<T> first, ReadOnlySpan<T> second)
     {
-        Span<T> span = new T[first.Length + second.Length];
+        Span<T> span = new T[first.Length + second.Length];//stackalloc
         first.CopyTo(span);
         for (var i = 0; i < second.Length; i++)
         {

@@ -5,6 +5,8 @@
 
 using System;
 using System.Collections.Generic;
+using Collections.Pooled;
+using FS.Extends;
 
 namespace FS.Utils.Common
 {
@@ -20,22 +22,28 @@ namespace FS.Utils.Common
         public static IEnumerable<T> ToList<T>(string str, T defValue = default, string splitString = ",")
         {
             if (string.IsNullOrWhiteSpace(value: str)) yield break;
-            var      returnType     = typeof(T);
-            var      returnTypeCode = Type.GetTypeCode(type: returnType);
-            string[] strArray;
-            //判断是否带分隔符，如果没有。则直接拆份单个Char
+            var       returnType     = typeof(T);
+            var       returnTypeCode = Type.GetTypeCode(type: returnType);
+            using var lst            = new PooledList<string>();
+
+            // 判断是否带分隔符，如果没有。则直接拆份单个Char
             if (string.IsNullOrWhiteSpace(value: splitString))
             {
-                strArray = new string[str.Length];
-                for (var i = 0; i < str.Length; i++) strArray[i] = str.Substring(startIndex: i, length: 1);
+                var chars = str.AsSpan();
+                foreach (var item in chars.ToArray())
+                {
+                    var val = ConvertHelper.ConvertSimple(sourceValue: item, objChar: item, returnType: returnType, returnTypeCode: returnTypeCode);
+                    yield return val == null ? defValue : (T)val;
+                }
             }
             else
-                strArray = splitString.Length == 1 ? str.Split(splitString[index: 0]) : str.Split(separator: new[] { splitString }, options: StringSplitOptions.None);
-
-            foreach (var item in strArray)
             {
-                var val = ConvertHelper.ConvertSimple(sourceValue: item, objString: item, returnType: returnType, returnTypeCode: returnTypeCode);
-                yield return val == null ? defValue : (T)val;
+                var split = str.AsSpan().Split(splitString);
+                foreach (var item in split)
+                {
+                    var val = ConvertHelper.ConvertSimple(sourceValue: item, objString: item, returnType: returnType, returnTypeCode: returnTypeCode);
+                    yield return val == null ? defValue : (T)val;
+                }
             }
         }
 

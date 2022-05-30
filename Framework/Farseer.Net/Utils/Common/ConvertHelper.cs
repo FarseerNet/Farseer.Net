@@ -208,5 +208,61 @@ namespace FS.Utils.Common
 
             return null;
         }
+
+        /// <summary>
+        ///     只做基础类型的转换
+        /// </summary>
+        internal static object ConvertSimple(object sourceValue, char objChar, Type returnType, TypeCode returnTypeCode)
+        {
+            if (objChar == char.MinValue) return null;
+
+            //  bool转数字
+            if (sourceValue is bool value)
+            {
+                switch (returnTypeCode)
+                {
+                    case TypeCode.Byte:
+                    case TypeCode.Decimal:
+                    case TypeCode.Double:
+                    case TypeCode.Int16:
+                    case TypeCode.Int32:
+                    case TypeCode.Int64:
+                    case TypeCode.SByte:
+                    case TypeCode.UInt16:
+                    case TypeCode.UInt32:
+                    case TypeCode.UInt64: return value ? 1 : 0;
+                }
+            }
+
+            switch (returnTypeCode)
+            {
+                case TypeCode.Boolean:  return objChar == '1';
+                case TypeCode.Char:     return objChar;
+                case TypeCode.SByte:    return Convert.ToSByte(objChar);
+                case TypeCode.Byte:     return Convert.ToByte(objChar);
+                case TypeCode.Int16:    return Convert.ToInt16(objChar);
+                case TypeCode.UInt16:   return Convert.ToUInt16(objChar);
+                case TypeCode.Int32:    return Convert.ToInt32(objChar);
+                case TypeCode.UInt32:   return Convert.ToUInt32(objChar);
+                case TypeCode.Int64:    return Convert.ToInt64(objChar);
+                case TypeCode.UInt64:   return Convert.ToUInt64(objChar);
+                case TypeCode.Single:   return Convert.ToSingle(objChar);
+                case TypeCode.Double:   return Convert.ToDouble(objChar);
+                case TypeCode.Decimal:  return Convert.ToDecimal(objChar);
+                case TypeCode.DateTime: return Convert.ToDateTime(objChar);
+                case TypeCode.Empty:
+                case TypeCode.String: return objChar.ToString();
+                case TypeCode.Object:
+                {
+                    if (returnType == typeof(Guid))
+                    {
+                        if (Guid.TryParse(input: objChar.ToString(), result: out var guid)) return guid;
+                    }
+
+                    break;
+                }
+            }
+            return null;
+        }
     }
 }

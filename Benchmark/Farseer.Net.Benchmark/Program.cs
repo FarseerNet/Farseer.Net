@@ -7,6 +7,10 @@ using FS.Data.Client.SqLite;
 using FS.Extends;
 using Microsoft.Diagnostics.Tracing.Parsers.MicrosoftWindowsTCPIP;
 
-//"aaaaaa,bbbbbbb,ccccccc".AsSpan().Split(",");
-//new SqLiteConnectionString().GetFilePath2("/aaaf/bccc\\deeef//aaaa");
+
+var readOnlySpan1 = "aaa".AsMemory();
+var readOnlySpan2 = "bbb".AsSpan();
+var a=$"{readOnlySpan1}-{readOnlySpan2}";
+Console.WriteLine(readOnlySpan1);
+
 BenchmarkDotNet.Running.BenchmarkRunner.Run<TypeConvert>();

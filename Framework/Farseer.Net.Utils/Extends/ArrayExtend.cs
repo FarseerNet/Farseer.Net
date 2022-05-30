@@ -38,7 +38,7 @@ namespace FS.Extends
                 else
                     str.Append(value: sign + func(arg: t));
 
-            return str.ToString().Substring(startIndex: sign.Length);
+            return str.Remove(0, sign.Length).ToString();
         }
     }
 }
