@@ -1,20 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Collections.Pooled;
 
 namespace FS.Cache
 {
     public interface IGetCache
     {
-
         /// <summary>
         ///     从缓存中读取LIST
         /// </summary>
-        List<TEntity> GetList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey);
+        PooledList<TEntity> GetList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey);
         /// <summary>
         ///     从缓存中读取LIST
         /// </summary>
-        Task<List<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey);
+        Task<PooledList<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey);
         /// <summary>
         ///     从缓存中读取实体
         /// </summary>
@@ -22,7 +22,7 @@ namespace FS.Cache
         /// <summary>
         ///     将LIST保存到缓存中
         /// </summary>
-        void SaveList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, List<TEntity> lst);
+        void SaveList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, PooledList<TEntity> lst);
         /// <summary>
         ///     将实体保存到缓存中
         /// </summary>
@@ -70,7 +70,7 @@ namespace FS.Cache
         /// <summary>
         ///     将LIST保存到缓存中
         /// </summary>
-        Task SaveListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, List<TEntity> lst);
+        Task SaveListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, PooledList<TEntity> lst);
         /// <summary>
         ///     删除整个缓存
         /// </summary>

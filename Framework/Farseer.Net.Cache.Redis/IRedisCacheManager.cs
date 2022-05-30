@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using StackExchange.Redis;
 
 namespace FS.Cache.Redis;
@@ -33,12 +34,12 @@ public interface IRedisCacheManager : IDisposable
     /// <summary>
     ///     事务，批量写入HASH
     /// </summary>
-    void HashSetTransaction<TEntity, TEntityId>(string key, List<TEntity> lst, Func<TEntity, TEntityId> funcDataKey, Func<TEntity, string> funcData = null, TimeSpan? expiry = null);
+    void HashSetTransaction<TEntity, TEntityId>(string key, PooledList<TEntity> lst, Func<TEntity, TEntityId> funcDataKey, Func<TEntity, string> funcData = null, TimeSpan? expiry = null);
 
     /// <summary>
     ///     事务，批量写入HASH
     /// </summary>
-    Task HashSetTransactionAsync<TEntity, TEntityId>(string key, List<TEntity> lst, Func<TEntity, TEntityId> funcDataKey, Func<TEntity, string> funcData = null, TimeSpan? expiry = null);
+    Task HashSetTransactionAsync<TEntity, TEntityId>(string key, PooledList<TEntity> lst, Func<TEntity, TEntityId> funcDataKey, Func<TEntity, string> funcData = null, TimeSpan? expiry = null);
     
     /// <summary>
     /// 事务锁

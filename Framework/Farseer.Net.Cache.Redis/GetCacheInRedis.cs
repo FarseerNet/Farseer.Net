@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.Core;
 using FS.DI;
 using Newtonsoft.Json;
@@ -19,19 +20,19 @@ public class GetCacheInRedis : IGetCache
     /// <summary>
     ///     从缓存中读取LIST
     /// </summary>
-    public List<TEntity> GetList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey)
+    public PooledList<TEntity> GetList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey)
     {
         var hashGetAll = _redisCacheManager.Db.HashGetAll(key: cacheKey.Key);
-        return hashGetAll.Select(selector: o => JsonConvert.DeserializeObject<TEntity>(value: o.Value)).ToList();
+        return hashGetAll.Select(selector: o => JsonConvert.DeserializeObject<TEntity>(value: o.Value)).ToPooledList();
     }
 
     /// <summary>
     ///     从缓存中读取LIST
     /// </summary>
-    public async Task<List<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey)
+    public async Task<PooledList<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey)
     {
         var hashGetAll = await _redisCacheManager.Db.HashGetAllAsync(key: cacheKey.Key);
-        return hashGetAll.Select(selector: o => JsonConvert.DeserializeObject<TEntity>(value: o.Value)).ToList();
+        return hashGetAll.Select(selector: o => JsonConvert.DeserializeObject<TEntity>(value: o.Value)).ToPooledList();
     }
 
     /// <summary>
@@ -121,7 +122,7 @@ public class GetCacheInRedis : IGetCache
     /// <summary>
     ///     将LIST保存到缓存中
     /// </summary>
-    public void SaveList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, List<TEntity> lst)
+    public void SaveList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, PooledList<TEntity> lst)
     {
         _redisCacheManager.HashSetTransaction(key: cacheKey.Key, lst: lst, funcDataKey: cacheKey.GetField, funcData: null, expiry: cacheKey.RedisExpiry);
     }
@@ -129,9 +130,8 @@ public class GetCacheInRedis : IGetCache
     /// <summary>
     ///     将LIST保存到缓存中
     /// </summary>
-    public Task SaveListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, List<TEntity> lst) => _redisCacheManager.HashSetTransactionAsync(key: cacheKey.Key, lst: lst, funcDataKey: cacheKey.GetField, funcData: null, expiry: cacheKey.RedisExpiry);
-
-
+    public Task SaveListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, PooledList<TEntity> lst) => _redisCacheManager.HashSetTransactionAsync(key: cacheKey.Key, lst: lst, funcDataKey: cacheKey.GetField, funcData: null, expiry: cacheKey.RedisExpiry);
+    
     /// <summary>
     ///     删除整个缓存
     /// </summary>

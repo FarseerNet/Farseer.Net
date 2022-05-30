@@ -4,7 +4,7 @@ using FS.Extends;
 
 namespace Farseer.Net.Benchmark.Farseer.Net;
 
-public class Span_Replace_Extend : AbsBenchmark
+public class Span_Replace_Extend : BaseBenchmark
 {
     [Benchmark(Baseline = true)]
     public string String_Replace()

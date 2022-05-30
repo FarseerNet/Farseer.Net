@@ -20,7 +20,8 @@ public static class WebAgent
     ///     IP库的路径
     /// </summary>
     private const string IPDATA_PATH = "ipipfree.ipdb";
-
+    private static readonly string[] keys = { "Ali-CDN-Real-IP", "X-Real-IP", "X-Forwarded-IP", "X-Forwarded-For", "X-Original-Forwarded-For" };
+    
     /// <summary>
     ///     IPv4的正则验证
     /// </summary>
@@ -29,8 +30,7 @@ public static class WebAgent
     public static string GetIP(this HttpContext context)
     {
         if (context == null) return NO_IP;
-        var      ip   = string.Empty;
-        string[] keys = { "Ali-CDN-Real-IP", "X-Real-IP", "X-Forwarded-IP", "X-Forwarded-For", "X-Original-Forwarded-For" };
+        var ip = string.Empty;
 
         foreach (var key in keys)
         {

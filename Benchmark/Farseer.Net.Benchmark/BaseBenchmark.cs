@@ -5,7 +5,7 @@ using FS.Data;
 namespace Farseer.Net.Benchmark;
 
 [MemoryDiagnoser]
-public class AbsBenchmark
+public class BaseBenchmark
 {
     [GlobalSetup]
     public void Setup()

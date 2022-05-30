@@ -1,9 +1,8 @@
-using System;
 using System.Collections;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.Extends;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -19,12 +18,12 @@ namespace FS.Cache
         /// <summary>
         ///     从缓存中读取LIST
         /// </summary>
-        public List<TEntity> GetList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey)
+        public PooledList<TEntity> GetList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey)
         {
             if (MyCache.TryGetValue(cacheKey.Key, result: out var result))
             {
                 var dic = (ConcurrentDictionary<TEntityId, TEntity>)result;
-                return dic.Select(selector: o => o.Value).ToList().Clone();
+                return dic.Select(selector: o => o.Value).ToPooledList().Clone();
             }
 
             return null;
@@ -33,7 +32,7 @@ namespace FS.Cache
         /// <summary>
         ///     从缓存中读取LIST
         /// </summary>
-        public Task<List<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey) => Task.FromResult(result: GetList(cacheKey));
+        public Task<PooledList<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey) => Task.FromResult(result: GetList(cacheKey));
 
         /// <summary>
         ///     从缓存中读取实体
@@ -123,7 +122,7 @@ namespace FS.Cache
                 return;
             }
 
-            SaveList(cacheKey, new List<TEntity>() { entity });
+            SaveList(cacheKey, new PooledList<TEntity>() { entity });
         }
 
         /// <summary>
@@ -138,7 +137,7 @@ namespace FS.Cache
         /// <summary>
         ///     将LIST保存到缓存中
         /// </summary>
-        public void SaveList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, List<TEntity> lst)
+        public void SaveList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, PooledList<TEntity> lst)
         {
             var dic = new ConcurrentDictionary<TEntityId, TEntity>();
             foreach (var entity in lst)
@@ -158,7 +157,7 @@ namespace FS.Cache
         /// <summary>
         ///     将LIST保存到缓存中
         /// </summary>
-        public Task SaveListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, List<TEntity> lst)
+        public Task SaveListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, PooledList<TEntity> lst)
         {
             SaveList(cacheKey, lst: lst);
             return Task.FromResult(result: 0);

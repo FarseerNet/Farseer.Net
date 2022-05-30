@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.DI;
 
 namespace FS.Cache
@@ -14,9 +16,7 @@ namespace FS.Cache
     {
         private string _redisItemConfigName;
 
-        private CacheManager()
-        {
-        }
+        private CacheManager() { }
 
         /// <param name="redisItemConfigName"> Redis配置 </param>
         public CacheManager(string redisItemConfigName)
@@ -29,7 +29,7 @@ namespace FS.Cache
         /// </summary>
         /// <param name="get"> 数据源获取 </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public List<TEntity> GetList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, Func<List<TEntity>> get)
+        public PooledList<TEntity> GetList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, Func<PooledList<TEntity>> get)
         {
             var getCache = SetCache(cacheKey);
 
@@ -58,8 +58,18 @@ namespace FS.Cache
         /// <summary>
         ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
+        /// <param name="get"> 数据源获取 </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public List<TEntity> GetList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey)
+        public PooledList<TEntity> GetList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, Func<IEnumerable<TEntity>> get)
+        {
+            return GetList(cacheKey, () => get().ToPooledList());
+        }
+
+        /// <summary>
+        ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
+        /// </summary>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        public PooledList<TEntity> GetList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey)
         {
             var getCache = SetCache(cacheKey);
             return getCache.GetList(cacheKey);
@@ -69,7 +79,7 @@ namespace FS.Cache
         ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public Task<List<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey)
+        public Task<PooledList<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey)
         {
             var getCache = SetCache(cacheKey);
             return getCache.GetListAsync(cacheKey);
@@ -80,7 +90,7 @@ namespace FS.Cache
         /// </summary>
         /// <param name="get"> 数据源获取 </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public async Task<List<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, Func<List<TEntity>> get)
+        public async Task<PooledList<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, Func<PooledList<TEntity>> get)
         {
             var getCache = SetCache(cacheKey);
 
@@ -111,7 +121,17 @@ namespace FS.Cache
         /// </summary>
         /// <param name="get"> 数据源获取 </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public async Task<List<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, Func<Task<List<TEntity>>> get)
+        public Task<PooledList<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, Func<IEnumerable<TEntity>> get)
+        {
+            return GetListAsync(cacheKey, () => get().ToPooledList());
+        }
+
+        /// <summary>
+        ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
+        /// </summary>
+        /// <param name="get"> 数据源获取 </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        public async Task<PooledList<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, Func<Task<PooledList<TEntity>>> get)
         {
             var getCache = SetCache(cacheKey);
             var lst      = await getCache.GetListAsync(cacheKey);
@@ -137,12 +157,22 @@ namespace FS.Cache
         }
 
         /// <summary>
+        ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
+        /// </summary>
+        /// <param name="get"> 数据源获取 </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        public Task<PooledList<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, Func<Task<IEnumerable<TEntity>>> get)
+        {
+            return GetListAsync(cacheKey, async () => (await get()).ToPooledList());
+        }
+
+        /// <summary>
         ///     从集合中获取其中一项数据，如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
         /// <param name="fieldKey"> hash里的field值 </param>
         /// <param name="get"> 数据源获取 </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public TEntity GetItem<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<List<TEntity>> get)
+        public TEntity GetItem<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<PooledList<TEntity>> get)
         {
             var getCache = SetCache(cacheKey);
 
@@ -160,12 +190,12 @@ namespace FS.Cache
 
                 var lst = get();
                 if (lst is
-                {
-                    Count: > 0
-                })
+                    {
+                        Count: > 0
+                    })
                 {
                     getCache.SaveList(cacheKey, lst: lst);
-                    return lst.Find(match: o => cacheKey.GetField(o).ToString() == fieldKey.ToString());
+                    return lst.FirstOrDefault(o => cacheKey.GetField(o).ToString() == fieldKey.ToString());
                 }
 
                 return default;
@@ -174,6 +204,17 @@ namespace FS.Cache
             {
                 slimLock.Release();
             }
+        }
+
+        /// <summary>
+        ///     从集合中获取其中一项数据，如果不存在则通过get委托获取，并保存到缓存中
+        /// </summary>
+        /// <param name="fieldKey"> hash里的field值 </param>
+        /// <param name="get"> 数据源获取 </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        public TEntity GetItem<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<IEnumerable<TEntity>> get)
+        {
+            return GetItem(cacheKey, fieldKey, () => get().ToPooledList());
         }
 
         /// <summary>
@@ -227,7 +268,7 @@ namespace FS.Cache
         /// <param name="get"> 数据源获取 </param>
         /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public async Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<Task<List<TEntity>>> get)
+        public async Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<Task<PooledList<TEntity>>> get)
         {
             var getCache = SetCache(cacheKey);
             var entity   = await getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
@@ -244,12 +285,12 @@ namespace FS.Cache
 
                 var lst = await get();
                 if (lst is
-                {
-                    Count: > 0
-                })
+                    {
+                        Count: > 0
+                    })
                 {
                     await getCache.SaveListAsync(cacheKey, lst: lst);
-                    return lst.Find(match: o => cacheKey.GetField(arg: o).ToString() == fieldKey.ToString());
+                    return lst.FirstOrDefault(o => cacheKey.GetField(arg: o).ToString() == fieldKey.ToString());
                 }
 
                 return default;
@@ -267,7 +308,19 @@ namespace FS.Cache
         /// <param name="get"> 数据源获取 </param>
         /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public async Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<List<TEntity>> get)
+        public Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<Task<IEnumerable<TEntity>>> get)
+        {
+            return GetItemAsync(cacheKey, fieldKey, async () => (await get()).ToPooledList());
+        }
+
+        /// <summary>
+        ///     从集合中获取其中一项数据，如果不存在则通过get委托获取，并保存到缓存中
+        /// </summary>
+        /// <param name="fieldKey"> hash里的field值 </param>
+        /// <param name="get"> 数据源获取 </param>
+        /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        public async Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<PooledList<TEntity>> get)
         {
             var getCache = SetCache(cacheKey);
             var entity   = await getCache.GetItemAsync(cacheKey, fieldKey: fieldKey);
@@ -284,12 +337,12 @@ namespace FS.Cache
 
                 var lst = get();
                 if (lst is
-                {
-                    Count: > 0
-                })
+                    {
+                        Count: > 0
+                    })
                 {
                     await getCache.SaveListAsync(cacheKey, lst: lst);
-                    return lst.Find(match: o => cacheKey.GetField(arg: o).ToString() == fieldKey.ToString());
+                    return lst.FirstOrDefault(o => cacheKey.GetField(arg: o).ToString() == fieldKey.ToString());
                 }
 
                 return default;
@@ -298,6 +351,18 @@ namespace FS.Cache
             {
                 slimLock.Release();
             }
+        }
+
+        /// <summary>
+        ///     从集合中获取其中一项数据，如果不存在则通过get委托获取，并保存到缓存中
+        /// </summary>
+        /// <param name="fieldKey"> hash里的field值 </param>
+        /// <param name="get"> 数据源获取 </param>
+        /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        public Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<IEnumerable<TEntity>> get)
+        {
+            return GetItemAsync(cacheKey, fieldKey, () => get().ToPooledList());
         }
 
         /// <summary>
@@ -440,10 +505,22 @@ namespace FS.Cache
         /// <param name="lst"> 数据源获取 </param>
         /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public void SaveList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, List<TEntity> lst)
+        public void SaveList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, PooledList<TEntity> lst)
         {
             var getCache = SetCache(cacheKey);
             getCache.SaveList(cacheKey, lst: lst);
+        }
+
+        /// <summary>
+        ///     保存列表到缓存中
+        /// </summary>
+        /// <param name="lst"> 数据源获取 </param>
+        /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        public void SaveList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, IEnumerable<TEntity> lst)
+        {
+            var getCache = SetCache(cacheKey);
+            getCache.SaveList(cacheKey, lst: lst.ToPooledList());
         }
 
         /// <summary>
@@ -452,10 +529,22 @@ namespace FS.Cache
         /// <param name="lst"> 数据源获取 </param>
         /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
         /// <param name="cacheKey"> 缓存策略 </param>
-        public Task SaveListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, List<TEntity> lst)
+        public Task SaveListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, PooledList<TEntity> lst)
         {
             var getCache = SetCache(cacheKey);
             return getCache.SaveListAsync(cacheKey, lst: lst);
+        }
+
+        /// <summary>
+        ///     保存集合到集合列表中
+        /// </summary>
+        /// <param name="lst"> 数据源获取 </param>
+        /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
+        /// <param name="cacheKey"> 缓存策略 </param>
+        public Task SaveListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, IEnumerable<TEntity> lst)
+        {
+            var getCache = SetCache(cacheKey);
+            return getCache.SaveListAsync(cacheKey, lst: lst.ToPooledList());
         }
 
         /// <summary>

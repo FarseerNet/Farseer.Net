@@ -9,7 +9,7 @@ namespace Farseer.Net.Benchmark.Farseer.Net;
 | String_Interpolation | 32.94 ns | 0.752 ns | 2.120 ns |  1.00 |    0.00 | 0.0395 |     248 B |
 |   Span_Interpolation | 80.23 ns | 2.527 ns | 7.252 ns |  2.44 |    0.26 | 0.0393 |     248 B |
 */
-public class Span_Interpolation_Extend : AbsBenchmark
+public class Span_Interpolation_Extend : BaseBenchmark
 {
     [Benchmark(Baseline = true)]
     public string String_Interpolation()

@@ -3,7 +3,7 @@ using FS.Data;
 
 namespace Farseer.Net.Benchmark.Data;
 
-public class DbContext : AbsBenchmark
+public class DbContext : BaseBenchmark
 {
     public static string Name = "abcdefghijk";
     // [Benchmark]

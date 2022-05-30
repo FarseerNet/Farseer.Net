@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.DI;
 
 namespace FS.Cache.Redis;
@@ -18,7 +20,7 @@ public class GetCacheInMemoryAndRedis : IGetCache
     /// <summary>
     ///     从缓存中读取LIST
     /// </summary>
-    public List<TEntity> GetList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey)
+    public PooledList<TEntity> GetList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey)
     {
         // 读取memory
         var lst = _memoryCache.GetList(cacheKey: cacheKey);
@@ -42,7 +44,7 @@ public class GetCacheInMemoryAndRedis : IGetCache
     /// <summary>
     ///     从缓存中读取LIST
     /// </summary>
-    public async Task<List<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey)
+    public async Task<PooledList<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey)
     {
         // 读取memory
         var lst = _memoryCache.GetList(cacheKey: cacheKey);
@@ -76,7 +78,7 @@ public class GetCacheInMemoryAndRedis : IGetCache
         if (entity != null) return entity;
 
         // 没读到memory，则读redis list
-        var lst = _redisCache.GetList(cacheKey: cacheKey);
+        using var lst = _redisCache.GetList(cacheKey: cacheKey);
         if (lst is
             {
                 Count: > 0
@@ -84,7 +86,7 @@ public class GetCacheInMemoryAndRedis : IGetCache
         {
             // 保存到memory
             _memoryCache.SaveList(cacheKey: cacheKey, lst: lst);
-            return lst.Find(match: o => cacheKey.GetField(arg: o).ToString() == fieldKey.ToString());
+            return lst.FirstOrDefault(o => cacheKey.GetField(arg: o).ToString() == fieldKey.ToString());
         }
 
         return default;
@@ -100,7 +102,7 @@ public class GetCacheInMemoryAndRedis : IGetCache
         if (entity != null) return entity;
 
         // 没读到memory，则读redis list
-        var lst = await _redisCache.GetListAsync(cacheKey: cacheKey);
+        using var lst = await _redisCache.GetListAsync(cacheKey: cacheKey);
         if (lst is
             {
                 Count: > 0
@@ -109,7 +111,7 @@ public class GetCacheInMemoryAndRedis : IGetCache
             // 保存到memory
             // ReSharper disable once MethodHasAsyncOverload
             _memoryCache.SaveList(cacheKey: cacheKey, lst: lst);
-            return lst.Find(match: o => cacheKey.GetField(arg: o).ToString() == fieldKey.ToString());
+            return lst.FirstOrDefault(o => cacheKey.GetField(arg: o).ToString() == fieldKey.ToString());
         }
 
         return default;
@@ -199,7 +201,7 @@ public class GetCacheInMemoryAndRedis : IGetCache
     /// <summary>
     ///     将LIST保存到缓存中
     /// </summary>
-    public void SaveList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, List<TEntity> lst)
+    public void SaveList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, PooledList<TEntity> lst)
     {
         _redisCache.SaveList(cacheKey: cacheKey, lst: lst);
         // ReSharper disable once MethodHasAsyncOverload
@@ -209,7 +211,7 @@ public class GetCacheInMemoryAndRedis : IGetCache
     /// <summary>
     ///     将LIST保存到缓存中
     /// </summary>
-    public async Task SaveListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, List<TEntity> lst)
+    public async Task SaveListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, PooledList<TEntity> lst)
     {
         await _redisCache.SaveListAsync(cacheKey: cacheKey, lst: lst);
         // ReSharper disable once MethodHasAsyncOverload

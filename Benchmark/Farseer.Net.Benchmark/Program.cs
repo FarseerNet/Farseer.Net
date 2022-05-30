@@ -4,13 +4,13 @@
 
 using Farseer.Net.Benchmark;
 using Farseer.Net.Benchmark.Farseer.Net;
+using Farseer.Net.Benchmark.Other;
 using Microsoft.Diagnostics.Tracing.Parsers.MicrosoftWindowsTCPIP;
 
-var testUsingPooled = new TestUsingPooled();
-var lst             = testUsingPooled.Test();
-// Console.WriteLine(lst.Count);
+// var testUsingPooled = new TestUsingPooled();
+// testUsingPooled.Test();
 // Console.WriteLine(testUsingPooled.User.Name);
 // lst.Dispose();
 // Console.WriteLine(testUsingPooled.User.Name);
 // Console.WriteLine(lst.Count);
-//BenchmarkDotNet.Running.BenchmarkRunner.Run<Span_Interpolation_Extend>();
+BenchmarkDotNet.Running.BenchmarkRunner.Run<PooledListBenchmark>();
