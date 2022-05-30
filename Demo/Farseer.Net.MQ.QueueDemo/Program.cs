@@ -16,7 +16,7 @@ namespace Farseer.Net.MQ.QueueDemo
             FarseerApplication.Run<StartupModule>().Initialize();
 
             // ******************** 以下演示消息发送 *********************
-            var queueProduct = IocManager.GetService<IQueueManager>(name: "test").Product;
+            var queueProduct = IocManager.GetService<IQueueProduct>(name: "test");
             // 先执行jit
             queueProduct.Send("测试发送消息内容");
             // 开启时间测试
