@@ -69,8 +69,8 @@ namespace FS.Cache.Redis
         {
             foreach (var ep in _connectionWrapper.GetEndpoints())
             {
-                var server = _connectionWrapper.Server(endPoint: ep);
-                var keys   = server.Keys();
+                var       server = _connectionWrapper.Server(endPoint: ep);
+                using var keys   = server.Keys().ToPooledList();
                 foreach (var key in keys) Db.KeyDelete(key: key);
             }
         }

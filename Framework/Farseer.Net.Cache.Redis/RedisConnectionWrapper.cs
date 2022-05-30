@@ -52,7 +52,6 @@ namespace FS.Cache.Redis
         public void FlushDb(int? db = null)
         {
             var endPoints = GetEndpoints();
-
             foreach (var endPoint in endPoints) Server(endPoint: endPoint).FlushDatabase(database: db ?? _dbIndex);
         }
 
