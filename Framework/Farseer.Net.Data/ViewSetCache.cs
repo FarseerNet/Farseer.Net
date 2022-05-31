@@ -30,6 +30,6 @@ namespace FS.Data
         /// <summary>
         ///     当前缓存
         /// </summary>
-        public IEnumerable<TEntity> Cache => _dataCache.Get();
+        public List<TEntity> Cache => _dataCache.Get();
     }
 }

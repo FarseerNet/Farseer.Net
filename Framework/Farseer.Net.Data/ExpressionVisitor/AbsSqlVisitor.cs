@@ -6,6 +6,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Collections.Pooled;
 using FS.Core.Mapping;
 using FS.Core.Mapping.Attribute;
 using FS.Data.Client;
@@ -19,12 +20,12 @@ namespace FS.Data.ExpressionVisitor
     /// <summary>
     ///     提供ExpressionBinary表达式树的解析
     /// </summary>
-    public abstract class AbsSqlVisitor : AbsExpressionVisitor
+    public abstract class AbsSqlVisitor : AbsExpressionVisitor, IDisposable
     {
         /// <summary>
         ///     条件堆栈
         /// </summary>
-        protected readonly Stack<string> SqlList = new();
+        protected readonly PooledStack<string> SqlList = new();
 
         /// <summary>
         ///     当前值参数
@@ -53,7 +54,7 @@ namespace FS.Data.ExpressionVisitor
         /// <param name="dbProvider"> 数据库提供者（不同数据库的特性） </param>
         /// <param name="map"> 字段映射 </param>
         /// <param name="paramList"> SQL参数列表 </param>
-        protected AbsSqlVisitor(AbsDbProvider dbProvider, SetDataMap map, List<DbParameter> paramList)
+        protected AbsSqlVisitor(AbsDbProvider dbProvider, SetDataMap map, PooledList<DbParameter> paramList)
         {
             DbProvider = dbProvider;
             SetMap     = map;
@@ -63,7 +64,7 @@ namespace FS.Data.ExpressionVisitor
         /// <summary>
         ///     SQL参数列表
         /// </summary>
-        protected List<DbParameter> ParamList { get; }
+        protected PooledList<DbParameter> ParamList { get; }
 
         /// <summary>
         ///     数据库提供者（不同数据库的特性）
@@ -79,18 +80,6 @@ namespace FS.Data.ExpressionVisitor
         ///     字段映射
         /// </summary>
         private SetDataMap SetMap { get; }
-
-        /// <summary>
-        ///     清除当前所有数据
-        /// </summary>
-        public void Clear()
-        {
-            SqlList.Clear();
-            CurrentFieldName   = null;
-            CurrentDbParameter = null;
-            ParamList.Clear();
-            IsNot = false;
-        }
 
         /// <summary>
         ///     将二元符号转换成T-SQL可识别的操作符
@@ -210,7 +199,7 @@ namespace FS.Data.ExpressionVisitor
                         break;
                 }
             }
-            
+
             // 手动指定类型
             CurrentDbParameter ??= DbProvider.DbParam.Create(CurrentFieldName, ParamList.Count, value: cexp.Value, valType: cexp.Type, output: false, len: CurrentField.Value?.Field.FieldLength ?? 0);
 
@@ -283,8 +272,8 @@ namespace FS.Data.ExpressionVisitor
         {
             if (IsIgnoreMethod(m: m)) return m;
 
-            var methodObject = m.Object;
-            var arguments    = m.Arguments.ToList();
+            var       methodObject = m.Object;
+            using var arguments    = m.Arguments.ToPooledList();
             if (methodObject == null)
             {
                 methodObject = arguments[index: 0];
@@ -338,7 +327,7 @@ namespace FS.Data.ExpressionVisitor
                 default:           return false;
             }
         }
-        
+
         /// <summary>
         /// 将字段名称加入到列表
         /// </summary>
@@ -346,13 +335,21 @@ namespace FS.Data.ExpressionVisitor
         {
             SqlList.Push(fieldName);
         }
-        
+
         /// <summary>
         /// 将参数名称加入到列表
         /// </summary>
         protected void PushParamName(string paramName)
         {
             SqlList.Push(paramName);
+        }
+        
+        /// <summary>
+        /// 释放Pooled池化集合
+        /// </summary>
+        public void Dispose()
+        {
+            SqlList.Dispose();
         }
     }
 }

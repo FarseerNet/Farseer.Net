@@ -41,7 +41,7 @@ namespace FS.Data
         /// <summary>
         ///     当前缓存
         /// </summary>
-        public IEnumerable<TEntity> Cache => _dataCache.Get();
+        public List<TEntity> Cache => _dataCache.Get();
 
         /// <summary>
         ///     更新缓存
@@ -250,14 +250,12 @@ namespace FS.Data
             Check.NotNull(value: entity, parameterName: "插入操作时，参数不能为空！");
 
             // 更新本地缓存
-            var lst = Cache.ToList();
-
             // 标识字段是否有值
             var indexHaveValue = _set.SetMap.PhysicsMap.DbGeneratedFields.Key != null && PropertyGetCacheManger.Cache(key: _set.SetMap.PhysicsMap.DbGeneratedFields.Key, instance: entity) != null;
             _set.Insert(entity: entity, isReturnLastId: !indexHaveValue);
 
-            lst.Add(item: entity);
-            _dataCache.Update(lst: lst);
+            Cache.Add(item: entity);
+            _dataCache.Update(lst: Cache);
             return 1;
         }
 
@@ -270,14 +268,13 @@ namespace FS.Data
             Check.NotNull(value: entity, parameterName: "插入操作时，参数不能为空！");
 
             // 更新本地缓存
-            var lst = Cache.ToList();
 
             // 标识字段是否有值
             var indexHaveValue = _set.SetMap.PhysicsMap.DbGeneratedFields.Key != null && PropertyGetCacheManger.Cache(key: _set.SetMap.PhysicsMap.DbGeneratedFields.Key, instance: entity) != null;
             await _set.InsertAsync(entity: entity, isReturnLastId: !indexHaveValue);
 
-            lst.Add(item: entity);
-            _dataCache.Update(lst: lst);
+            Cache.Add(item: entity);
+            _dataCache.Update(lst: Cache);
             return 1;
         }
 
@@ -314,9 +311,8 @@ namespace FS.Data
             _set.Delete();
 
             // 更新本地缓存
-            var lst         = Cache.ToList();
-            var deleteCount = lst.RemoveAll(match: new Predicate<TEntity>(exp.Compile()));
-            _dataCache.Update(lst: lst);
+            var deleteCount = Cache.RemoveAll(match: new Predicate<TEntity>(exp.Compile()));
+            _dataCache.Update(lst: Cache);
 
             return deleteCount;
         }
@@ -330,9 +326,8 @@ namespace FS.Data
             await _set.DeleteAsync();
 
             // 更新本地缓存
-            var lst         = Cache.ToList();
-            var deleteCount = lst.RemoveAll(match: new Predicate<TEntity>(exp.Compile()));
-            _dataCache.Update(lst: lst);
+            var deleteCount = Cache.RemoveAll(match: new Predicate<TEntity>(exp.Compile()));
+            _dataCache.Update(lst: Cache);
 
             return deleteCount;
         }

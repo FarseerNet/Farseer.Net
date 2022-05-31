@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Runtime.Serialization;
+using Collections.Pooled;
 using FS.Configuration;
 using FS.Data.Log.Default.Entity;
 using FS.DI;
@@ -12,7 +14,7 @@ namespace FS.Data.Log.Default
 {
     /// <summary> SQL执行记录 </summary>
     [DataContract]
-    public class SqlRunLog : CommonLog
+    public class SqlRunLog : CommonLog, IDisposable
     {
         /// <summary>
         ///     日志写入器
@@ -33,7 +35,7 @@ namespace FS.Data.Log.Default
             CmdType      = cmdType;
             Sql          = sql ?? "";
             UserTime     = elapsedMilliseconds;
-            SqlParamList = new List<SqlParam>();
+            SqlParamList = new PooledList<SqlParam>();
             foreach (var dbParameter in param) SqlParamList.Add(item: new SqlParam { Name = dbParameter.ParameterName, Value = dbParameter.Value.ToString() });
             RecordExecuteMethod();
         }
@@ -50,6 +52,11 @@ namespace FS.Data.Log.Default
         public void Print()
         {
             IocManager.Instance.Logger<SqlRunLog>().LogInformation(message: $"db={DbName},table={TableName},耗时={UserTime},cmd={CmdType.ToString()},sql={Sql},sqlParam={string.Join(separator: "|", values: SqlParamList.Select(selector: o => $"{o.Name}={o.Value}"))}");
+        }
+
+        public void Dispose()
+        {
+            SqlParamList.Dispose();
         }
     }
 }

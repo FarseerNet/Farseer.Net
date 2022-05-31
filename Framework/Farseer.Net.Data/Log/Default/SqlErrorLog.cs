@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Runtime.Serialization;
+using Collections.Pooled;
 using FS.Configuration;
 using FS.Data.Log.Default.Entity;
 using FS.DI;
@@ -13,7 +14,7 @@ namespace FS.Data.Log.Default
 {
     /// <summary> SQL异常记录 </summary>
     [DataContract]
-    public class SqlErrorLog : CommonLog
+    public class SqlErrorLog : CommonLog, IDisposable
     {
         /// <summary>
         ///     日志写入器
@@ -37,7 +38,7 @@ namespace FS.Data.Log.Default
             Sql       = sql;
             if (param != null && param.Count > 0)
             {
-                SqlParamList = new List<SqlParam>();
+                SqlParamList = new PooledList<SqlParam>();
                 foreach (var t in param) SqlParamList.Add(item: new SqlParam { Name = t.ParameterName, Value = (t.Value ?? "null").ToString() });
             }
 
@@ -55,6 +56,10 @@ namespace FS.Data.Log.Default
         public void Print()
         {
             IocManager.Instance.Logger<SqlRunLog>().LogError(message: $"db={DbName},table={TableName},cmd={CmdType.ToString()},sql={Sql},sqlParam={string.Join(separator: "|", values: SqlParamList.Select(selector: o => $"{o.Name}={o.Value}"))}");
+        }
+        public void Dispose()
+        {
+            SqlParamList.Dispose();
         }
     }
 }

@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
+using Collections.Pooled;
 using FS.Data.Cache;
 using FS.Data.Features;
 
@@ -8,7 +10,7 @@ namespace FS.Data.Map
     /// <summary>
     ///     实体类结构映射
     /// </summary>
-    public class SetDataMap
+    public class SetDataMap : IDisposable
     {
         internal SetDataMap(KeyValuePair<PropertyInfo, SetPhysicsMap> entityPhysicsMap, string dbName)
         {
@@ -16,7 +18,7 @@ namespace FS.Data.Map
             PhysicsMap    = entityPhysicsMap.Value;
             TableName     = ClassProperty.Name; // 默认使用属性名称作为表名，一般此处会被SetName覆盖
             DbName        = dbName;
-            TableProperty = new Dictionary<string, object>();
+            TableProperty = new PooledDictionary<string, object>();
         }
 
         /// <summary>
@@ -37,7 +39,7 @@ namespace FS.Data.Map
         /// <summary>
         /// 定义的表属性
         /// </summary>
-        public Dictionary<string, object> TableProperty { get; set; }
+        public PooledDictionary<string, object> TableProperty { get; set; }
 
         /// <summary>
         ///     类属性
@@ -71,19 +73,19 @@ namespace FS.Data.Map
             return this;
         }
 
-        /// <summary>
-        ///     设置表/视图/存储过程名称
-        /// </summary>
-        /// <param name="dbName"> 库名称 </param>
-        /// <param name="tableName"> 表/视图/存储过程名称 </param>
-        /// <param name="tableProperty">定义的表属性</param>
-        public SetDataMap SetName(string dbName, string tableName, Dictionary<string, object> tableProperty)
-        {
-            DbName        = dbName;
-            TableName     = tableName;
-            TableProperty = tableProperty;
-            return this;
-        }
+        // /// <summary>
+        // ///     设置表/视图/存储过程名称
+        // /// </summary>
+        // /// <param name="dbName"> 库名称 </param>
+        // /// <param name="tableName"> 表/视图/存储过程名称 </param>
+        // /// <param name="tableProperty">定义的表属性</param>
+        // public SetDataMap SetName(string dbName, string tableName, PooledDictionary<string, object> tableProperty)
+        // {
+        //     DbName        = dbName;
+        //     TableName     = tableName;
+        //     TableProperty = tableProperty;
+        //     return this;
+        // }
 
         /// <summary>
         ///     设置表/视图/存储过程名称
@@ -95,7 +97,7 @@ namespace FS.Data.Map
         {
             DbName        = dbName;
             TableName     = tableName;
-            TableProperty = new Dictionary<string, object> { { "TableEnginesType", eumTableEnginesType } };
+            TableProperty = new PooledDictionary<string, object> { { "TableEnginesType", eumTableEnginesType } };
             return this;
         }
 
@@ -112,6 +114,11 @@ namespace FS.Data.Map
 
             SortDelete = SortDeleteCacheManger.Cache(name: name, field: sortDeleteType, value: value, entityType: ClassProperty.PropertyType.GetGenericArguments()[0]);
             return this;
+        }
+
+        public void Dispose()
+        {
+            TableProperty.Dispose();
         }
     }
 }

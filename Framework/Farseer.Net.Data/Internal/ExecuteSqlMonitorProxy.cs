@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Linq;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.Core.LinkTrack;
 using FS.Data.Client;
-using FS.Data.Data;
 using FS.Data.Inteface;
 
 namespace FS.Data.Internal
@@ -27,8 +26,6 @@ namespace FS.Data.Internal
             _dbExecutor = db;
             _dbProvider = dbProvider;
         }
-
-        public DbExecutor DataBase => _dbExecutor.DataBase;
 
         public int Execute(string callMethod, ISqlParam sqlParam)
         {
@@ -71,22 +68,22 @@ namespace FS.Data.Internal
             return SpeedTestAsync(callMethod: callMethod, dbName: procBuilder.SetMap.DbName, tableName: procBuilder.ProcName, cmdType: CommandType.StoredProcedure, sql: null, param: procBuilder.Param, func: () => _dbExecutor.ToTableAsync(callMethod: callMethod, procBuilder: procBuilder, entity: entity));
         }
 
-        public List<TEntity> ToList<TEntity>(string callMethod, ISqlParam sqlParam) where TEntity : class, new()
+        public PooledList<TEntity> ToList<TEntity>(string callMethod, ISqlParam sqlParam) where TEntity : class, new()
         {
             return SpeedTest(callMethod: callMethod, dbName: sqlParam.SetMap?.DbName, tableName: sqlParam.SetMap?.TableName, cmdType: CommandType.Text, sql: sqlParam.Sql.ToString(), param: sqlParam.Param, func: () => _dbExecutor.ToList<TEntity>(callMethod: callMethod, sqlParam: sqlParam));
         }
 
-        public Task<List<TEntity>> ToListAsync<TEntity>(string callMethod, ISqlParam sqlParam) where TEntity : class, new()
+        public Task<PooledList<TEntity>> ToListAsync<TEntity>(string callMethod, ISqlParam sqlParam) where TEntity : class, new()
         {
             return SpeedTestAsync(callMethod: callMethod, dbName: sqlParam.SetMap?.DbName, tableName: sqlParam.SetMap?.TableName, cmdType: CommandType.Text, sql: sqlParam.Sql.ToString(), param: sqlParam.Param, func: () => _dbExecutor.ToListAsync<TEntity>(callMethod: callMethod, sqlParam: sqlParam));
         }
 
-        public List<TEntity> ToList<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new()
+        public PooledList<TEntity> ToList<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new()
         {
             return SpeedTest(callMethod: callMethod, dbName: procBuilder.SetMap.DbName, tableName: procBuilder.ProcName, cmdType: CommandType.StoredProcedure, sql: null, param: procBuilder.Param, func: () => _dbExecutor.ToList(callMethod: callMethod, procBuilder: procBuilder, entity: entity));
         }
 
-        public Task<List<TEntity>> ToListAsync<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity)
+        public Task<PooledList<TEntity>> ToListAsync<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity)
         where TEntity : class, new()
         {
             return SpeedTestAsync(callMethod: callMethod, dbName: procBuilder.SetMap.DbName, tableName: procBuilder.ProcName, cmdType: CommandType.StoredProcedure, sql: null, param: procBuilder.Param, func: () => _dbExecutor.ToListAsync(callMethod: callMethod, procBuilder: procBuilder, entity: entity));
@@ -154,6 +151,10 @@ namespace FS.Data.Internal
             {
                 return await func();
             }
+        }
+        
+        public void Dispose()
+        {
         }
     }
 }

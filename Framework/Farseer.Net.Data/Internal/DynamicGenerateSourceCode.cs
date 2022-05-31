@@ -48,9 +48,9 @@ public class DynamicGenerateSourceCode
     private string GenerateToList()
     {
         return @$"
-            public static List<{ParentClassName}> ToList(MapingData[] mapData)
+            public static PooledList<{ParentClassName}> ToList(MapingData[] mapData)
             {{
-                var lst = new List<{ParentClassName} >(mapData[0].DataList.Count);
+                var lst = new PooledList<{ParentClassName} >(mapData[0].DataList.Count);
                 for (int i = 0; i < mapData[0].DataList.Count; i++)
                 {{
                     lst.Add(ToEntity(mapData, i));

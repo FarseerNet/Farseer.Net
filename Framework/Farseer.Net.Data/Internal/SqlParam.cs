@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
+using Collections.Pooled;
 using FS.Data.Inteface;
 using FS.Data.Map;
 
@@ -13,21 +14,21 @@ namespace FS.Data.Internal
     /// </summary>
     public class SqlParam : ISqlParam
     {
-        public SqlParam(string sql, params DbParameter[] parameters)
+        public SqlParam(string sql, IEnumerable<DbParameter> parameters)
         {
             Sql = new StringBuilder(value: sql);
-            if (parameters != null) Param = parameters.ToList();
+            if (parameters != null) Param = parameters.ToPooledList();
         }
 
         public SqlParam(IProcParam procParam)
         {
-            Param  = procParam.Param?.ToList();
+            Param  = procParam.Param;
             SetMap = procParam.SetMap;
         }
 
-        public StringBuilder     Sql    { get; private set; }
-        public List<DbParameter> Param  { get; }
-        public SetDataMap        SetMap { get; }
+        public StringBuilder           Sql    { get; private set; }
+        public PooledList<DbParameter> Param  { get; }
+        public SetDataMap              SetMap { get; }
 
         #region 释放
 
@@ -42,7 +43,7 @@ namespace FS.Data.Internal
             {
                 Sql.Clear();
                 Sql = null;
-                Param?.Clear();
+                Param?.Dispose();
             }
         }
 

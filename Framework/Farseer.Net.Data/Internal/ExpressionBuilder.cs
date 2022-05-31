@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using Collections.Pooled;
 using FS.Cache;
 using FS.Core.Mapping.Attribute;
 using FS.Data.Map;
@@ -11,7 +12,7 @@ using FS.Utils.Common.ExpressionVisitor;
 namespace FS.Data.Internal
 {
     /// <summary> 表达式创建者 </summary>
-    internal class ExpressionBuilder
+    internal class ExpressionBuilder : IDisposable
     {
         internal ExpressionBuilder(SetDataMap map)
         {
@@ -21,7 +22,7 @@ namespace FS.Data.Internal
         /// <summary>
         ///     排序表达式树
         /// </summary>
-        internal Dictionary<Expression, bool> ExpOrderBy { get; private set; }
+        internal PooledDictionary<Expression, bool> ExpOrderBy { get; private set; }
 
         /// <summary>
         ///     字段筛选表达式树
@@ -90,7 +91,7 @@ namespace FS.Data.Internal
         /// <param name="isAsc"> </param>
         internal void AddOrderBy(Expression exp, bool isAsc)
         {
-            if (ExpOrderBy == null) ExpOrderBy = new Dictionary<Expression, bool>();
+            if (ExpOrderBy == null) ExpOrderBy = new PooledDictionary<Expression, bool>();
             if (exp        != null) ExpOrderBy.Add(key: exp, value: isAsc);
         }
 
@@ -185,6 +186,11 @@ namespace FS.Data.Internal
         internal void DeleteSortCondition()
         {
             if (SetMap.SortDelete != null) AddWhere(where: SetMap.SortDelete.CondictionExpression);
+        }
+        
+        public void Dispose()
+        {
+            ExpOrderBy.Dispose();
         }
     }
 }

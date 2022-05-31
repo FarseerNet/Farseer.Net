@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using Collections.Pooled;
 using FS.Data.Cache;
 
 namespace FS.Data.Map
@@ -8,13 +10,12 @@ namespace FS.Data.Map
     /// <summary>
     ///     上下文结构映射
     /// </summary>
-    public class ContextPhysicsMap
+    public class ContextPhysicsMap : IDisposable
     {
         /// <summary>
         ///     关系映射
         /// </summary>
         /// <param name="type"> 实体类Type </param>
-        /// <param name="context"> 上下文 </param>
         public ContextPhysicsMap(Type type)
         {
             Type = type;
@@ -38,7 +39,7 @@ namespace FS.Data.Map
         /// <summary>
         ///     获取所有Set属性
         /// </summary>
-        public Dictionary<PropertyInfo, SetPhysicsMap> EntityMapList { get; } = new();
+        public PooledDictionary<PropertyInfo, SetPhysicsMap> EntityMapList { get; } = new();
 
         /// <summary>
         ///     类型
@@ -49,5 +50,10 @@ namespace FS.Data.Map
         ///     通过实体类型，返回Mapping
         /// </summary>
         public static implicit operator ContextPhysicsMap(Type type) => ContextMapCacheManger.Cache(key: type);
+
+        public void Dispose()
+        {
+            EntityMapList.Dispose();
+        }
     }
 }

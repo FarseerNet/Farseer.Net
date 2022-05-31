@@ -10,7 +10,7 @@ namespace FS.Data.Inteface
         /// <summary>
         ///     从缓存中读取，并返回数据
         /// </summary>
-        IEnumerable<TEntity> Get();
+        List<TEntity> Get();
 
         /// <summary>
         ///     将数据更新到缓存中

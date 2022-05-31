@@ -155,9 +155,19 @@ namespace FS.Utils.Common.ExpressionVisitor
         /// </summary>
         protected virtual Expression VisitMethodCall(MethodCallExpression m)
         {
-            var                     obj  = Visit(exp: m.Object);
-            IEnumerable<Expression> args = VisitExpressionList(original: m.Arguments);
-            if (obj != m.Object || args != m.Arguments) return Expression.Call(instance: obj, method: m.Method, arguments: args);
+            var obj  = Visit(exp: m.Object);
+            var args = VisitExpressionList(original: m.Arguments);
+
+            // 如果是Pooled池化集合，则使用using自动释放
+            if (args is PooledList<Expression> list)
+            {
+                using var lst = list;
+            }
+
+            if (obj != m.Object || args != m.Arguments)
+            {
+                return Expression.Call(instance: obj, method: m.Method, arguments: args);
+            }
             return m;
         }
 
@@ -201,8 +211,14 @@ namespace FS.Utils.Common.ExpressionVisitor
         /// </summary>
         protected virtual Expression VisitInvocation(InvocationExpression iv)
         {
-            IEnumerable<Expression> args = VisitExpressionList(original: iv.Arguments);
-            var                     expr = Visit(exp: iv.Expression);
+            var args = VisitExpressionList(original: iv.Arguments);
+            // 如果是Pooled池化集合，则使用using自动释放
+            if (args is PooledList<Expression> list)
+            {
+                using var lst = list;
+            }
+
+            var expr = Visit(exp: iv.Expression);
             if (args != iv.Arguments || expr != iv.Expression) return Expression.Invoke(expression: expr, arguments: args);
             return iv;
         }
@@ -212,9 +228,9 @@ namespace FS.Utils.Common.ExpressionVisitor
         /// </summary>
         /// <param name="original"> </param>
         /// <returns> </returns>
-        protected virtual ReadOnlyCollection<Expression> VisitExpressionList(ReadOnlyCollection<Expression> original)
+        protected virtual IEnumerable<Expression> VisitExpressionList(ReadOnlyCollection<Expression> original)
         {
-            PooledList<Expression> list = new();
+            using PooledList<Expression> list = new();
             for (int i = 0, n = original.Count; i < n; i++)
             {
                 var p = Visit(exp: original[index: i]);
@@ -227,9 +243,7 @@ namespace FS.Utils.Common.ExpressionVisitor
                 }
             }
 
-            if (list.Count > 0) return list.AsReadOnly();
-            
-            list.Dispose();
+            if (list.Count > 0) return list;
             return original;
         }
 
@@ -303,7 +317,13 @@ namespace FS.Utils.Common.ExpressionVisitor
         /// </summary>
         protected virtual NewExpression VisitNew(NewExpression nex)
         {
-            IEnumerable<Expression> args = VisitExpressionList(original: nex.Arguments);
+            var args = VisitExpressionList(original: nex.Arguments);
+            // 如果是Pooled池化集合，则使用using自动释放
+            if (args is PooledList<Expression> list)
+            {
+                using var lst = list;
+            }
+
             if (args != nex.Arguments) return Expression.New(constructor: nex.Constructor, arguments: args, members: nex.Members);
             return nex;
         }
@@ -313,11 +333,17 @@ namespace FS.Utils.Common.ExpressionVisitor
         /// </summary>
         protected virtual Expression VisitNewArray(NewArrayExpression na)
         {
-            IEnumerable<Expression> exprs = VisitExpressionList(original: na.Expressions);
-            if (exprs != na.Expressions)
+            var args = VisitExpressionList(original: na.Expressions);
+            // 如果是Pooled池化集合，则使用using自动释放
+            if (args is PooledList<Expression> list)
             {
-                if (na.NodeType == ExpressionType.NewArrayInit) return Expression.NewArrayInit(type: na.Type.GetElementType(), initializers: exprs);
-                return Expression.NewArrayBounds(type: na.Type.GetElementType(), bounds: exprs);
+                using var lst = list;
+            }
+
+            if (args != na.Expressions)
+            {
+                if (na.NodeType == ExpressionType.NewArrayInit) return Expression.NewArrayInit(type: na.Type.GetElementType(), initializers: args);
+                return Expression.NewArrayBounds(type: na.Type.GetElementType(), bounds: args);
             }
 
             return na;
@@ -342,7 +368,7 @@ namespace FS.Utils.Common.ExpressionVisitor
         /// </summary>
         protected IEnumerable<MemberBinding> VisitBindingList(ReadOnlyCollection<MemberBinding> original)
         {
-            using PooledList<MemberBinding> list = new();
+            PooledList<MemberBinding> list = new();
             for (int i = 0,
                      n = original.Count; i < n; i++)
             {
@@ -357,8 +383,6 @@ namespace FS.Utils.Common.ExpressionVisitor
             }
 
             if (list.Count > 0) return list;
-            
-            list.Dispose();
             return original;
         }
 
@@ -367,8 +391,14 @@ namespace FS.Utils.Common.ExpressionVisitor
         /// </summary>
         protected virtual ElementInit VisitElementInitializer(ElementInit initializer)
         {
-            var arguments = VisitExpressionList(original: initializer.Arguments);
-            if (arguments != initializer.Arguments) return Expression.ElementInit(addMethod: initializer.AddMethod, arguments: arguments);
+            var args = VisitExpressionList(original: initializer.Arguments);
+            // 如果是Pooled池化集合，则使用using自动释放
+            if (args is PooledList<Expression> list)
+            {
+                using var lst = list;
+            }
+
+            if (args != initializer.Arguments) return Expression.ElementInit(addMethod: initializer.AddMethod, arguments: args);
             return initializer;
         }
 
@@ -377,7 +407,7 @@ namespace FS.Utils.Common.ExpressionVisitor
         /// </summary>
         protected virtual IEnumerable<ElementInit> VisitElementInitializerList(ReadOnlyCollection<ElementInit> original)
         {
-            using PooledList<ElementInit> list = new();
+            PooledList<ElementInit> list = new();
             for (int i = 0,
                      n = original.Count; i < n; i++)
             {
@@ -392,8 +422,6 @@ namespace FS.Utils.Common.ExpressionVisitor
             }
 
             if (list.Count > 0) return list;
-            
-            list.Dispose();
             return original;
         }
 
@@ -413,6 +441,11 @@ namespace FS.Utils.Common.ExpressionVisitor
         protected virtual MemberListBinding VisitMemberListBinding(MemberListBinding binding)
         {
             var initializers = VisitElementInitializerList(original: binding.Initializers);
+            // 如果是Pooled池化集合，则使用using自动释放
+            if (initializers is PooledList<ElementInit> list)
+            {
+                using var lst = list;
+            }
             if (initializers != binding.Initializers) return Expression.ListBind(member: binding.Member, initializers: initializers);
             return binding;
         }
@@ -422,7 +455,11 @@ namespace FS.Utils.Common.ExpressionVisitor
         /// </summary>
         protected virtual MemberMemberBinding VisitMemberMemberBinding(MemberMemberBinding binding)
         {
-            var bindings = VisitBindingList(original: binding.Bindings);
+            var bindings = VisitBindingList(original: binding.Bindings); // 如果是Pooled池化集合，则使用using自动释放
+            if (bindings is PooledList<MemberBinding> list)
+            {
+                using var lst = list;
+            }
             if (bindings != binding.Bindings) return Expression.MemberBind(member: binding.Member, bindings: bindings);
             return binding;
         }
@@ -456,6 +493,11 @@ namespace FS.Utils.Common.ExpressionVisitor
         {
             var n        = VisitNew(nex: init.NewExpression);
             var bindings = VisitBindingList(original: init.Bindings);
+            // 如果是Pooled池化集合，则使用using自动释放
+            if (bindings is PooledList<MemberBinding> list)
+            {
+                using var lst = list;
+            }
             if (n != init.NewExpression || bindings != init.Bindings) return Expression.MemberInit(newExpression: n, bindings: bindings);
             return init;
         }
@@ -467,6 +509,12 @@ namespace FS.Utils.Common.ExpressionVisitor
         {
             var n            = VisitNew(nex: init.NewExpression);
             var initializers = VisitElementInitializerList(original: init.Initializers);
+            // 如果是Pooled池化集合，则使用using自动释放
+            if (initializers is PooledList<ElementInit> list)
+            {
+                using var lst = list;
+            }
+
             if (n != init.NewExpression || initializers != init.Initializers) return Expression.ListInit(newExpression: n, initializers: initializers);
             return init;
         }

@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.Data.Data;
 using FS.Data.Inteface;
 using FS.Extends;
@@ -20,18 +20,11 @@ namespace FS.Data.Internal
         /// <summary>
         ///     将SQL发送到数据库
         /// </summary>
-        /// <param name="dataBase"> 数据库操作 </param>
         /// <param name="contextProvider"> 数据库上下文 </param>
-        internal ExecuteSql(DbExecutor dataBase, InternalContext contextProvider)
+        internal ExecuteSql(InternalContext contextProvider)
         {
-            DataBase         = dataBase;
             _contextProvider = contextProvider;
         }
-
-        /// <summary>
-        ///     数据库操作
-        /// </summary>
-        public DbExecutor DataBase { get; }
 
         /// <summary>
         ///     本次执行的SQL
@@ -47,7 +40,7 @@ namespace FS.Data.Internal
         {
             SqlParam = sqlParam;
             var param = sqlParam.Param?.ToArray();
-            return sqlParam.Sql.Length < 1 ? 0 : DataBase.ExecuteNonQuery(cmdType: CommandType.Text, cmdText: sqlParam.Sql.ToString(), parameters: param);
+            return sqlParam.Sql.Length < 1 ? 0 : _contextProvider.DbExecutor.ExecuteNonQuery(cmdType: CommandType.Text, cmdText: sqlParam.Sql.ToString(), parameters: param);
         }
 
         /// <summary>
@@ -59,7 +52,7 @@ namespace FS.Data.Internal
         {
             SqlParam = sqlParam;
             var param = sqlParam.Param?.ToArray();
-            return sqlParam.Sql.Length < 1 ? 0 : await DataBase.ExecuteNonQueryAsync(cmdType: CommandType.Text, cmdText: sqlParam.Sql.ToString(), parameters: param);
+            return sqlParam.Sql.Length < 1 ? 0 : await _contextProvider.DbExecutor.ExecuteNonQueryAsync(cmdType: CommandType.Text, cmdText: sqlParam.Sql.ToString(), parameters: param);
         }
 
         /// <summary>
@@ -76,7 +69,7 @@ namespace FS.Data.Internal
             SqlParam = new SqlParam(procParam: sqlParam);
 
             var param = sqlParam.Param?.ToArray();
-            var value = DataBase.ExecuteNonQuery(cmdType: CommandType.StoredProcedure, cmdText: sqlParam.ProcName, parameters: param);
+            var value = _contextProvider.DbExecutor.ExecuteNonQuery(cmdType: CommandType.StoredProcedure, cmdText: sqlParam.ProcName, parameters: param);
             procBuilder.SetParamToEntity(entity: entity);
             return value;
         }
@@ -95,7 +88,7 @@ namespace FS.Data.Internal
             SqlParam = new SqlParam(procParam: sqlParam);
 
             var param = sqlParam.Param?.ToArray();
-            var value = await DataBase.ExecuteNonQueryAsync(cmdType: CommandType.StoredProcedure, cmdText: sqlParam.ProcName, parameters: param);
+            var value = await _contextProvider.DbExecutor.ExecuteNonQueryAsync(cmdType: CommandType.StoredProcedure, cmdText: sqlParam.ProcName, parameters: param);
             procBuilder.SetParamToEntity(entity: entity);
             return value;
         }
@@ -109,7 +102,7 @@ namespace FS.Data.Internal
         {
             SqlParam = sqlParam;
             var param = sqlParam.Param?.ToArray();
-            return DataBase.GetDataTable(cmdType: CommandType.Text, cmdText: sqlParam.Sql.ToString(), parameters: param);
+            return _contextProvider.DbExecutor.GetDataTable(cmdType: CommandType.Text, cmdText: sqlParam.Sql.ToString(), parameters: param);
         }
 
         /// <summary>
@@ -121,7 +114,7 @@ namespace FS.Data.Internal
         {
             SqlParam = sqlParam;
             var param = sqlParam.Param?.ToArray();
-            return await DataBase.GetDataTableAsync(cmdType: CommandType.Text, cmdText: sqlParam.Sql.ToString(), parameters: param);
+            return await _contextProvider.DbExecutor.GetDataTableAsync(cmdType: CommandType.Text, cmdText: sqlParam.Sql.ToString(), parameters: param);
         }
 
         /// <summary>
@@ -138,7 +131,7 @@ namespace FS.Data.Internal
             SqlParam = new SqlParam(procParam: sqlParam);
 
             var param = sqlParam.Param?.ToArray();
-            var value = DataBase.GetDataTable(cmdType: CommandType.StoredProcedure, cmdText: sqlParam.ProcName, parameters: param);
+            var value = _contextProvider.DbExecutor.GetDataTable(cmdType: CommandType.StoredProcedure, cmdText: sqlParam.ProcName, parameters: param);
             procBuilder.SetParamToEntity(entity: entity);
             return value;
         }
@@ -157,7 +150,7 @@ namespace FS.Data.Internal
             SqlParam = new SqlParam(procParam: sqlParam);
 
             var param = sqlParam.Param?.ToArray();
-            var value = await DataBase.GetDataTableAsync(cmdType: CommandType.StoredProcedure, cmdText: sqlParam.ProcName, parameters: param);
+            var value = await _contextProvider.DbExecutor.GetDataTableAsync(cmdType: CommandType.StoredProcedure, cmdText: sqlParam.ProcName, parameters: param);
             procBuilder.SetParamToEntity(entity: entity);
             return value;
         }
@@ -167,11 +160,11 @@ namespace FS.Data.Internal
         /// </summary>
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="sqlParam"> SQL语句与参数 </param>
-        public List<TEntity> ToList<TEntity>(string callMethod, ISqlParam sqlParam) where TEntity : class, new()
+        public PooledList<TEntity> ToList<TEntity>(string callMethod, ISqlParam sqlParam) where TEntity : class, new()
         {
             SqlParam = sqlParam;
             var param = sqlParam.Param?.ToArray();
-            return DataBase.GetReader(cmdType: CommandType.Text, cmdText: sqlParam.Sql.ToString(), parameters: param).ToList<TEntity>();
+            return _contextProvider.DbExecutor.GetReader(cmdType: CommandType.Text, cmdText: sqlParam.Sql.ToString(), parameters: param).ToList<TEntity>();
         }
 
         /// <summary>
@@ -179,33 +172,33 @@ namespace FS.Data.Internal
         /// </summary>
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="sqlParam"> SQL语句与参数 </param>
-        public Task<List<TEntity>> ToListAsync<TEntity>(string callMethod, ISqlParam sqlParam) where TEntity : class, new()
+        public Task<PooledList<TEntity>> ToListAsync<TEntity>(string callMethod, ISqlParam sqlParam) where TEntity : class, new()
         {
             SqlParam = sqlParam;
             var param = sqlParam.Param?.ToArray();
-            return DataBase.GetReaderAsync(cmdType: CommandType.Text, cmdText: sqlParam.Sql.ToString(), parameters: param).ToListAsync<TEntity>();
+            return _contextProvider.DbExecutor.GetReaderAsync(cmdType: CommandType.Text, cmdText: sqlParam.Sql.ToString(), parameters: param).ToListAsync<TEntity>();
         }
 
-        public List<TEntity> ToList<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new()
+        public PooledList<TEntity> ToList<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new()
         {
             // 生成SQL 输入、输出参数化
             var sqlParam = procBuilder.InitParam(entity: entity);
             SqlParam = new SqlParam(procParam: sqlParam);
 
             var param = sqlParam.Param?.ToArray();
-            var value = DataBase.GetReader(cmdType: CommandType.StoredProcedure, cmdText: sqlParam.ProcName, parameters: param).ToList<TEntity>();
+            var value = _contextProvider.DbExecutor.GetReader(cmdType: CommandType.StoredProcedure, cmdText: sqlParam.ProcName, parameters: param).ToList<TEntity>();
             procBuilder.SetParamToEntity(entity: entity);
             return value;
         }
 
-        public async Task<List<TEntity>> ToListAsync<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new()
+        public async Task<PooledList<TEntity>> ToListAsync<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new()
         {
             // 生成SQL 输入、输出参数化
             var sqlParam = procBuilder.InitParam(entity: entity);
             SqlParam = new SqlParam(procParam: sqlParam);
 
             var param = sqlParam.Param?.ToArray();
-            var value = (await DataBase.GetReaderAsync(cmdType: CommandType.StoredProcedure, cmdText: sqlParam.ProcName, parameters: param)).ToList<TEntity>();
+            var value = (await _contextProvider.DbExecutor.GetReaderAsync(cmdType: CommandType.StoredProcedure, cmdText: sqlParam.ProcName, parameters: param)).ToList<TEntity>();
             procBuilder.SetParamToEntity(entity: entity);
             return value;
         }
@@ -221,12 +214,12 @@ namespace FS.Data.Internal
             SqlParam = sqlParam;
             var     param = sqlParam.Param?.ToArray();
             TEntity t;
-            using (var reader = DataBase.GetReader(cmdType: CommandType.Text, cmdText: sqlParam.Sql.ToString(), parameters: param))
+            using (var reader = _contextProvider.DbExecutor.GetReader(cmdType: CommandType.Text, cmdText: sqlParam.Sql.ToString(), parameters: param))
             {
                 t = reader.ToEntity<TEntity>();
             }
 
-            DataBase.Close(dispose: false);
+            _contextProvider.DbExecutor.Close(dispose: false);
             return t;
         }
 
@@ -241,12 +234,12 @@ namespace FS.Data.Internal
             SqlParam = sqlParam;
             var     param = sqlParam.Param?.ToArray();
             TEntity t;
-            using (var reader = await DataBase.GetReaderAsync(cmdType: CommandType.Text, cmdText: sqlParam.Sql.ToString(), parameters: param))
+            using (var reader = await _contextProvider.DbExecutor.GetReaderAsync(cmdType: CommandType.Text, cmdText: sqlParam.Sql.ToString(), parameters: param))
             {
                 t = reader.ToEntity<TEntity>();
             }
 
-            DataBase.Close(dispose: false);
+            _contextProvider.DbExecutor.Close(dispose: false);
             return t;
         }
 
@@ -265,12 +258,12 @@ namespace FS.Data.Internal
 
             var     param = sqlParam.Param?.ToArray();
             TEntity t;
-            using (var reader = DataBase.GetReader(cmdType: CommandType.StoredProcedure, cmdText: sqlParam.ProcName, parameters: param))
+            using (var reader = _contextProvider.DbExecutor.GetReader(cmdType: CommandType.StoredProcedure, cmdText: sqlParam.ProcName, parameters: param))
             {
                 t = reader.ToEntity<TEntity>();
             }
 
-            DataBase.Close(dispose: false);
+            _contextProvider.DbExecutor.Close(dispose: false);
             procBuilder.SetParamToEntity(entity: entity);
             return t;
         }
@@ -290,12 +283,12 @@ namespace FS.Data.Internal
 
             var     param = sqlParam.Param?.ToArray();
             TEntity t;
-            using (var reader = await DataBase.GetReaderAsync(cmdType: CommandType.StoredProcedure, cmdText: sqlParam.ProcName, parameters: param))
+            using (var reader = await _contextProvider.DbExecutor.GetReaderAsync(cmdType: CommandType.StoredProcedure, cmdText: sqlParam.ProcName, parameters: param))
             {
                 t = reader.ToEntity<TEntity>();
             }
 
-            DataBase.Close(dispose: false);
+            _contextProvider.DbExecutor.Close(dispose: false);
             procBuilder.SetParamToEntity(entity: entity);
             return t;
         }
@@ -311,7 +304,7 @@ namespace FS.Data.Internal
         {
             SqlParam = sqlParam;
             var param = sqlParam.Param?.ToArray();
-            var value = DataBase.ExecuteScalar(cmdType: CommandType.Text, cmdText: sqlParam.Sql.ToString(), parameters: param);
+            var value = _contextProvider.DbExecutor.ExecuteScalar(cmdType: CommandType.Text, cmdText: sqlParam.Sql.ToString(), parameters: param);
             return ConvertHelper.ConvertType(sourceValue: value, defValue: defValue);
         }
 
@@ -326,7 +319,7 @@ namespace FS.Data.Internal
         {
             SqlParam = sqlParam;
             var param = sqlParam.Param?.ToArray();
-            var value = await DataBase.ExecuteScalarAsync(cmdType: CommandType.Text, cmdText: sqlParam.Sql.ToString(), parameters: param);
+            var value = await _contextProvider.DbExecutor.ExecuteScalarAsync(cmdType: CommandType.Text, cmdText: sqlParam.Sql.ToString(), parameters: param);
             return ConvertHelper.ConvertType(sourceValue: value, defValue: defValue);
         }
 
@@ -346,7 +339,7 @@ namespace FS.Data.Internal
             SqlParam = new SqlParam(procParam: sqlParam);
 
             var param = sqlParam.Param?.ToArray();
-            var value = DataBase.ExecuteScalar(cmdType: CommandType.StoredProcedure, cmdText: sqlParam.ProcName, parameters: param);
+            var value = _contextProvider.DbExecutor.ExecuteScalar(cmdType: CommandType.StoredProcedure, cmdText: sqlParam.ProcName, parameters: param);
             procBuilder.SetParamToEntity(entity: entity);
             return ConvertHelper.ConvertType(sourceValue: value, defValue: defValue);
         }
@@ -367,9 +360,14 @@ namespace FS.Data.Internal
             SqlParam = new SqlParam(procParam: sqlParam);
 
             var param = sqlParam.Param?.ToArray();
-            var value = await DataBase.ExecuteScalarAsync(cmdType: CommandType.StoredProcedure, cmdText: sqlParam.ProcName, parameters: param);
+            var value = await _contextProvider.DbExecutor.ExecuteScalarAsync(cmdType: CommandType.StoredProcedure, cmdText: sqlParam.ProcName, parameters: param);
             procBuilder.SetParamToEntity(entity: entity);
             return ConvertHelper.ConvertType(sourceValue: value, defValue: defValue);
+        }
+
+        public void Dispose()
+        {
+            SqlParam?.Dispose();
         }
     }
 }

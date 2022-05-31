@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.Core.Mapping.Attribute;
 using FS.Data.Inteface;
 using FS.Data.Internal;
@@ -49,7 +50,7 @@ namespace FS.Data
                 // 找到Context
                 var lstContext = _typeFinder.Find(o => !o.IsGenericType && o.IsClass && o.BaseType != null && o.BaseType.BaseType != null && o.BaseType.BaseType == typeof(DbContext));
 
-                var lstLog = new List<string>();
+                using var lstLog = new PooledList<string>();
                 foreach (var context in lstContext)
                 {
                     // 需要做实例化，才能初始化上下文

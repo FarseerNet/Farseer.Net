@@ -73,11 +73,23 @@ namespace FS.Data.Internal
             //释放托管资源
             if (disposing)
             {
-                Context      = null;
-                Map          = null;
-                _expBuilder  = null;
-                _sqlBuilder  = null;
-                _procBuilder = null;
+                if (_sqlBuilder != null)
+                {
+                    _sqlBuilder.Dispose();
+                    _sqlBuilder = null;
+                }
+                if (_procBuilder != null)
+                {
+                    _procBuilder.Dispose();
+                    _procBuilder = null;
+                }
+                if (_expBuilder != null)
+                {
+                    _expBuilder.Dispose();
+                    _expBuilder = null;
+                }
+                Context = null;
+                Map     = null;
             }
         }
 

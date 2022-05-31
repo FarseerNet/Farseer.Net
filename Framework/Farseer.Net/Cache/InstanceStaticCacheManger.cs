@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using Collections.Pooled;
 
 namespace FS.Cache
 {
@@ -27,11 +28,9 @@ namespace FS.Cache
             //根据参数列表返回参数类型数组
             if (args != null && args.Length > 0)
             {
-                var parameterTypes = new Type[args.Length];
-                for (var i = 0; i < args.Length; i++)
+                foreach (var t in args)
                 {
-                    parameterTypes[i] =  args[i].GetType();
-                    Key               += parameterTypes[i].GetHashCode();
+                    Key += t.GetType().GetHashCode();
                 }
             }
         }

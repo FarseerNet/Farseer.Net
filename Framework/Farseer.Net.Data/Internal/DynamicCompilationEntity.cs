@@ -47,8 +47,9 @@ namespace FS.Data.Internal
         {
             var generateEntityCode = new DynamicGenerateSourceCode(entityType);
             var scriptOptions = ScriptOptions.Default
-                                             .AddReferences(typeof(List<>).Assembly, typeof(ConvertHelper).Assembly, typeof(MapingData).Assembly, entityType.Assembly)
+                                             .AddReferences(typeof(List<>).Assembly, typeof(ConvertHelper).Assembly, typeof(MapingData).Assembly, entityType.Assembly,typeof(Collections.Pooled.PooledList<>).Assembly)
                                              .AddImports("System.Collections.Generic")
+                                             .AddImports("Collections.Pooled")
                                              .AddImports("System.Linq")
                                              .AddImports("Newtonsoft.Json")
                                              .AddImports("FS.Core")

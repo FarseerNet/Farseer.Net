@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using Collections.Pooled;
 
 namespace FS.Core.Abstract.Data
 {
@@ -25,7 +26,7 @@ namespace FS.Core.Abstract.Data
         /// <summary>
         ///     数据分页列表及总数
         /// </summary>
-        public PageList(List<TEntity> list, long recordCount)
+        public PageList(PooledList<TEntity> list, long recordCount)
         {
             List       = list;
             RecordCount = recordCount;
@@ -36,7 +37,7 @@ namespace FS.Core.Abstract.Data
         /// </summary>
         public PageList(IEnumerable<TEntity> list, long recordCount)
         {
-            List       = list.ToList();
+            List       = list.ToPooledList();
             RecordCount = recordCount;
         }
 
@@ -50,7 +51,7 @@ namespace FS.Core.Abstract.Data
         ///     数据列表
         /// </summary>
         [DataMember]
-        public List<TEntity> List { get; set; }
+        public PooledList<TEntity> List { get; set; }
         
         public IEnumerable GetList() => List;
     }

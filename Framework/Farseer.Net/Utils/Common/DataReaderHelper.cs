@@ -18,10 +18,10 @@ namespace FS.Utils.Common
         /// <summary>
         ///     IDataReader转换字典
         /// </summary>
-        public static MapingData[] DataReaderToDictionary(IDataReader reader)
+        public static PooledList<MapingData> DataReaderToDictionary(IDataReader reader)
         {
             // 获取数据的列并转成字典
-            var dicColumns = new MapingData[reader.FieldCount];
+            var dicColumns = new PooledList<MapingData>(reader.FieldCount);
             for (var i = 0; i < reader.FieldCount; i++)
             {
                 var mapData = dicColumns[i] = new MapingData();
@@ -36,7 +36,7 @@ namespace FS.Utils.Common
                 var arrVals = new object[reader.FieldCount];
                 reader.GetValues(values: arrVals);
                 // 遍历列
-                for (var i = 0; i < dicColumns.Length; i++) dicColumns[i].DataList.Add(item: arrVals[i]);
+                for (var i = 0; i < dicColumns.Count; i++) dicColumns[i].DataList.Add(item: arrVals[i]);
             }
 
             reader.Close();
@@ -46,11 +46,11 @@ namespace FS.Utils.Common
         /// <summary>
         ///     DataTable转字典
         /// </summary>
-        public static MapingData[] DataTableToDictionary(DataTable dt)
+        public static PooledList<MapingData> DataTableToDictionary(DataTable dt)
         {
             // 获取数据的列并转成字典
             var cols       = dt.Columns;
-            var dicColumns = new MapingData[cols.Count];
+            var dicColumns = new PooledList<MapingData>(cols.Count);
             for (var i = 0; i < cols.Count; i++)
             {
                 var mapData = dicColumns[i] = new MapingData();
@@ -67,7 +67,7 @@ namespace FS.Utils.Common
             {
                 var arrVals = dr.ItemArray;
                 // 遍历列
-                for (var i = 0; i < dicColumns.Length; i++) dicColumns[i].DataList.Add(item: arrVals[i]);
+                for (var i = 0; i < dicColumns.Count; i++) dicColumns[i].DataList.Add(item: arrVals[i]);
             }
 
             return dicColumns;

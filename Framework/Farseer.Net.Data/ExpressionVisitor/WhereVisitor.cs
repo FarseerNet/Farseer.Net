@@ -5,9 +5,9 @@ using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
+using Collections.Pooled;
 using FS.Data.Client;
 using FS.Data.Map;
-using FS.Utils.Common;
 
 namespace FS.Data.ExpressionVisitor
 {
@@ -22,7 +22,7 @@ namespace FS.Data.ExpressionVisitor
         /// <param name="dbProvider"> 数据库提供者（不同数据库的特性） </param>
         /// <param name="map"> 字段映射 </param>
         /// <param name="paramList"> SQL参数列表 </param>
-        public WhereVisitor(AbsDbProvider dbProvider, SetDataMap map, List<DbParameter> paramList) : base(dbProvider: dbProvider, map: map, paramList: paramList)
+        public WhereVisitor(AbsDbProvider dbProvider, SetDataMap map, PooledList<DbParameter> paramList) : base(dbProvider: dbProvider, map: map, paramList: paramList)
         {
         }
 
@@ -30,13 +30,16 @@ namespace FS.Data.ExpressionVisitor
         {
             base.Visit(exp: exp);
             return string.Join(" AND ", SqlList.Reverse());
-            //return IEnumerableHelper.ToString(lst: SqlList.Reverse(), sign: " AND ");
         }
 
         protected override NewExpression VisitNew(NewExpression nex)
         {
             if (nex.Arguments.Count == 0 && nex.Type.IsGenericType) VisitConstant(cexp: Expression.Constant(value: null));
-            VisitExpressionList(original: nex.Arguments);
+            var visitExpressionList = VisitExpressionList(original: nex.Arguments);
+            if (visitExpressionList is PooledList<Expression> lst)
+            {
+                lst.Dispose();
+            }
             return nex;
         }
 
@@ -59,8 +62,8 @@ namespace FS.Data.ExpressionVisitor
 
             if (m.Arguments.Count > 0)
             {
-                var methodObject = m.Object;
-                var arguments    = m.Arguments.ToList();
+                var       methodObject = m.Object;
+                using var arguments    = m.Arguments.ToPooledList();
                 if (methodObject == null)
                 {
                     methodObject = arguments[index: 0];
@@ -153,7 +156,7 @@ namespace FS.Data.ExpressionVisitor
             {
                 #region 搜索值串的处理
 
-                var param = ParamList.Find(match: o => o.ParameterName == paramName);
+                var param = ParamList.FirstOrDefault(o => o.ParameterName == paramName);
                 if (param != null && Regex.IsMatch(input: param.Value.ToString(), pattern: @"[\d]+") && (Type.GetTypeCode(type: fieldType) == TypeCode.Int16 || Type.GetTypeCode(type: fieldType) == TypeCode.Int32 || Type.GetTypeCode(type: fieldType) == TypeCode.Decimal || Type.GetTypeCode(type: fieldType) == TypeCode.Double || Type.GetTypeCode(type: fieldType) == TypeCode.Int64 || Type.GetTypeCode(type: fieldType) == TypeCode.UInt16 || Type.GetTypeCode(type: fieldType) == TypeCode.UInt32 || Type.GetTypeCode(type: fieldType) == TypeCode.UInt64))
                 {
                     param.Value  = "," + param.Value + ",";

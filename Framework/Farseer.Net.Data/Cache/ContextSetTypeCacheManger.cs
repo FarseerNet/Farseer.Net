@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Castle.Core;
+using Collections.Pooled;
 using FS.Cache;
 using FS.Data.Internal;
 
@@ -40,10 +42,10 @@ namespace FS.Data.Cache
 
                 var dbContextParam = Expression.Parameter(type: typeof(DbContext), name: "_context");
 
-                var initDelegates = new List<Action<DbContext>>();
+                var initDelegates = new PooledList<Action<DbContext>>();
 
                 // 一个DbContext对象下的所有Set实体类型
-                var setTypeList = new Dictionary<Type, List<string>>();
+                var setTypeList = new PooledDictionary<Type, PooledList<string>>();
 
                 // 取得所有Set属性
                 foreach (var entityMap in ContextMapCacheManger.Cache(key: Key).EntityMapList)
@@ -54,7 +56,7 @@ namespace FS.Data.Cache
                     // 查找这个Set类在当前DbContext中，出现过几次，并记录属性。
                     if (!setTypeList.TryGetValue(key: entityMap.Key.PropertyType, value: out var propertyName))
                     {
-                        propertyName                                 = new List<string>();
+                        propertyName                                 = new PooledList<string>();
                         setTypeList[key: entityMap.Key.PropertyType] = propertyName;
                     }
 
@@ -105,6 +107,7 @@ namespace FS.Data.Cache
                 Action<DbContext> initializer = context =>
                 {
                     foreach (var initer in initDelegates) initer(obj: context);
+                    initDelegates.Dispose();
                 };
                 var setInfo = new SetTypesInitializersPair(setTypeList, initializer);
                 CacheList.Add(key: Key, value: setInfo);

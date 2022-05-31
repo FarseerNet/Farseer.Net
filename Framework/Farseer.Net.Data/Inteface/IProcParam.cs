@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data.Common;
+using Collections.Pooled;
 using FS.Data.Map;
 
 namespace FS.Data.Inteface
@@ -22,6 +23,6 @@ namespace FS.Data.Inteface
         /// <summary>
         ///     当前生成的参数
         /// </summary>
-        IEnumerable<DbParameter> Param { get; }
+        PooledList<DbParameter> Param { get; }
     }
 }

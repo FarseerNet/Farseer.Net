@@ -28,11 +28,4 @@ namespace FS.Data.Client.SqlServer
             return new string[0];
         }
     }
-
-    public class TableStructure
-    {
-        public string FieldName   { get; set; }
-        public string FieldType   { get; set; }
-        public string FieldLength { get; set; }
-    }
 }

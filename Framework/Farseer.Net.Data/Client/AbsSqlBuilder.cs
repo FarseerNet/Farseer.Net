@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
+using Collections.Pooled;
 using FS.Data.ExpressionVisitor;
 using FS.Data.Inteface;
 using FS.Data.Internal;
@@ -27,7 +28,7 @@ namespace FS.Data.Client
             DbProvider = dbProvider;
             ExpBuilder = expBuilder;
             SetMap     = setMap;
-            Param      = new List<DbParameter>();
+            Param      = new PooledList<DbParameter>();
             Sql        = new StringBuilder();
         }
 
@@ -84,7 +85,7 @@ namespace FS.Data.Client
         /// <summary>
         ///     当前生成的参数
         /// </summary>
-        public List<DbParameter> Param { get; }
+        public PooledList<DbParameter> Param { get; }
 
         /// <summary>
         ///     查询单条记录
@@ -336,7 +337,12 @@ namespace FS.Data.Client
             {
                 Sql.Clear();
                 Sql = null;
-                Param?.Clear();
+                Param?.Dispose();
+                WhereVisitor.Dispose();
+                AssignVisitor.Dispose();
+                OrderByVisitor.Dispose();
+                SelectVisitor.Dispose();
+                InsertVisitor.Dispose();
             }
         }
 

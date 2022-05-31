@@ -9,6 +9,7 @@ using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading;
+using Collections.Pooled;
 using FS.Data.Log.Default.Entity;
 
 namespace FS.Data.Log.Default
@@ -28,7 +29,7 @@ namespace FS.Data.Log.Default
         private readonly EumLogType _logType;
 
         /// <summary> SQL执行记录列表 </summary>
-        private readonly List<object> _sqlLogList = new();
+        private readonly PooledList<object> _sqlLogList = new();
 
         /// <summary>
         ///     时间定时器

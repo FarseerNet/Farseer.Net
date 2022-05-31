@@ -1,19 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.Data.Data;
 using FS.Data.Internal;
 
 namespace FS.Data.Inteface
 {
     /// <summary> 将SQL发送到数据库 </summary>
-    internal interface IExecuteSql
+    internal interface IExecuteSql : IDisposable
     {
-        /// <summary>
-        ///     数据库操作
-        /// </summary>
-        DbExecutor DataBase { get; }
-
         /// <summary>
         ///     返回影响行数
         /// </summary>
@@ -83,14 +80,14 @@ namespace FS.Data.Inteface
         /// </summary>
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="sqlParam"> SQL语句与参数 </param>
-        List<TEntity> ToList<TEntity>(string callMethod, ISqlParam sqlParam) where TEntity : class, new();
+        PooledList<TEntity> ToList<TEntity>(string callMethod, ISqlParam sqlParam) where TEntity : class, new();
 
         /// <summary>
         ///     返回返回泛型集合
         /// </summary>
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="sqlParam"> SQL语句与参数 </param>
-        Task<List<TEntity>> ToListAsync<TEntity>(string callMethod, ISqlParam sqlParam) where TEntity : class, new();
+        Task<PooledList<TEntity>> ToListAsync<TEntity>(string callMethod, ISqlParam sqlParam) where TEntity : class, new();
 
         /// <summary>
         ///     返回返回泛型集合
@@ -99,7 +96,7 @@ namespace FS.Data.Inteface
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="procBuilder"> SQL语句与参数 </param>
         /// <param name="entity"> 实体类 </param>
-        List<TEntity> ToList<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new();
+        PooledList<TEntity> ToList<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new();
 
         /// <summary>
         ///     返回返回泛型集合
@@ -108,7 +105,7 @@ namespace FS.Data.Inteface
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="procBuilder"> SQL语句与参数 </param>
         /// <param name="entity"> 实体类 </param>
-        Task<List<TEntity>> ToListAsync<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new();
+        Task<PooledList<TEntity>> ToListAsync<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new();
 
         /// <summary>
         ///     返回单条数据

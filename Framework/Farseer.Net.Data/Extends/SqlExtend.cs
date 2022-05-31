@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Collections.Pooled;
 using FS.Data.Inteface;
 using FS.Utils.Common;
 
@@ -15,10 +16,10 @@ namespace FS.Extends
         /// <param name="ID"> 上级ID </param>
         /// <param name="isAddMySelf"> 是否添加自己 </param>
         /// <param name="lstCate"> 分类列表 </param>
-        public static List<int> GetSubIDList<TEntity>(this IEnumerable<TEntity> lstCate, int? ID, bool isContainsSub = true, bool isAddMySelf = false) where TEntity : class, ICate, new()
+        public static PooledList<int> GetSubIDList<TEntity>(this IEnumerable<TEntity> lstCate, int? ID, bool isContainsSub = true, bool isAddMySelf = false) where TEntity : class, ICate, new()
         {
-            var lst = lstCate.GetSubList(ID, isContainsSub, isAddMySelf);
-            return lst?.Select(o => o.ID.GetValueOrDefault()).ToList() ?? new List<int>();
+            using var lst = lstCate.GetSubList(ID, isContainsSub, isAddMySelf);
+            return lst?.Select(o => o.ID.GetValueOrDefault()).ToPooledList() ?? new PooledList<int>();
         }
 
         /// <summary>
@@ -28,10 +29,10 @@ namespace FS.Extends
         /// <param name="isContainsSub"> 是否获取子节点 </param>
         /// <param name="isAddMySelf"> 是否添加自己 </param>
         /// <param name="lstCate"> 分类列表 </param>
-        public static List<int> GetSubIDList<TEntity>(this IEnumerable<TEntity> lstCate, string caption, bool isContainsSub = true, bool isAddMySelf = false) where TEntity : class, ICate, new()
+        public static PooledList<int> GetSubIDList<TEntity>(this IEnumerable<TEntity> lstCate, string caption, bool isContainsSub = true, bool isAddMySelf = false) where TEntity : class, ICate, new()
         {
-            var lst = lstCate.GetSubList(caption, isContainsSub, isAddMySelf);
-            return lst?.Select(o => o.ID.GetValueOrDefault()).ToList() ?? new List<int>();
+            using var lst = lstCate.GetSubList(caption, isContainsSub, isAddMySelf);
+            return lst?.Select(o => o.ID.GetValueOrDefault()).ToPooledList() ?? new PooledList<int>();
         }
 
         /// <summary>
@@ -41,9 +42,9 @@ namespace FS.Extends
         /// <param name="isContainsSub"> 是否获取子节点 </param>
         /// <param name="isAddMySelf"> 是否添加自己 </param>
         /// <param name="lstCate"> 分类列表 </param>
-        public static List<TEntity> GetSubList<TEntity>(this IEnumerable<TEntity> lstCate, int? ID, bool isContainsSub = true, bool isAddMySelf = false) where TEntity : class, ICate, new()
+        public static PooledList<TEntity> GetSubList<TEntity>(this IEnumerable<TEntity> lstCate, int? ID, bool isContainsSub = true, bool isAddMySelf = false) where TEntity : class, ICate, new()
         {
-            var lst = new List<TEntity>();
+            var lst = new PooledList<TEntity>();
             if (isAddMySelf)
             {
                 var info = lstCate.FirstOrDefault(o => o.ID == ID);
@@ -74,10 +75,10 @@ namespace FS.Extends
         /// <param name="isContainsSub"> 是否获取子节点 </param>
         /// <param name="isAddMySelf"> 是否添加自己 </param>
         /// <param name="lstCate"> 分类列表 </param>
-        public static List<TEntity> GetSubList<TEntity>(this IEnumerable<TEntity> lstCate, string caption, bool isContainsSub = true, bool isAddMySelf = false) where TEntity : class, ICate, new()
+        public static PooledList<TEntity> GetSubList<TEntity>(this IEnumerable<TEntity> lstCate, string caption, bool isContainsSub = true, bool isAddMySelf = false) where TEntity : class, ICate, new()
         {
             var info = lstCate.GetInfo(caption);
-            return info == null ? new List<TEntity>() : lstCate.GetSubList(info.ID, isContainsSub, isAddMySelf);
+            return info == null ? new PooledList<TEntity>() : lstCate.GetSubList(info.ID, isContainsSub, isAddMySelf);
         }
 
         /// <summary>
@@ -211,10 +212,10 @@ namespace FS.Extends
         /// <param name="ID"> 当前分类数据ID </param>
         /// <param name="isAddMySelf"> 是否添加自己 </param>
         /// <param name="lstCate"> 分类列表 </param>
-        public static List<int> GetParentIDList<TEntity>(this IEnumerable<TEntity> lstCate, int? ID, bool isAddMySelf = false) where TEntity : class, ICate, new()
+        public static PooledList<int> GetParentIDList<TEntity>(this IEnumerable<TEntity> lstCate, int? ID, bool isAddMySelf = false) where TEntity : class, ICate, new()
         {
-            var lst = lstCate.GetParentList(ID, isAddMySelf);
-            return lst?.Select(o => o.ID.GetValueOrDefault()).ToList() ?? new List<int>();
+            using var lst = lstCate.GetParentList(ID, isAddMySelf);
+            return lst?.Select(o => o.ID.GetValueOrDefault()).ToPooledList() ?? new PooledList<int>();
         }
 
         /// <summary>
@@ -223,9 +224,9 @@ namespace FS.Extends
         /// <param name="ID"> 当前分类数据ID </param>
         /// <param name="isAddMySelf"> 是否添加自己 </param>
         /// <param name="lstCate"> 分类列表 </param>
-        public static List<TEntity> GetParentList<TEntity>(this IEnumerable<TEntity> lstCate, int? ID, bool isAddMySelf = false) where TEntity : class, ICate, new()
+        public static PooledList<TEntity> GetParentList<TEntity>(this IEnumerable<TEntity> lstCate, int? ID, bool isAddMySelf = false) where TEntity : class, ICate, new()
         {
-            var lst  = new List<TEntity>();
+            var lst  = new PooledList<TEntity>();
             var info = lstCate.FirstOrDefault(o => o.ID == ID);
             if (info == null)
             {
@@ -247,10 +248,10 @@ namespace FS.Extends
         /// <param name="caption"> 分类标题 </param>
         /// <param name="isAddMySelf"> 是否添加自己 </param>
         /// <param name="lstCate"> 分类列表 </param>
-        public static List<int> GetParentIDList<TEntity>(this IEnumerable<TEntity> lstCate, string caption, bool isAddMySelf = false) where TEntity : class, ICate, new()
+        public static PooledList<int> GetParentIDList<TEntity>(this IEnumerable<TEntity> lstCate, string caption, bool isAddMySelf = false) where TEntity : class, ICate, new()
         {
-            var lst = lstCate.GetParentList(caption, isAddMySelf);
-            return lst?.Select(o => o.ID.GetValueOrDefault()).ToList() ?? new List<int>();
+            using var lst = lstCate.GetParentList(caption, isAddMySelf);
+            return lst?.Select(o => o.ID.GetValueOrDefault()).ToPooledList() ?? new PooledList<int>();
         }
 
         /// <summary>
@@ -259,10 +260,10 @@ namespace FS.Extends
         /// <param name="caption"> 分类标题 </param>
         /// <param name="isAddMySelf"> 是否添加自己 </param>
         /// <param name="lstCate"> 分类列表 </param>
-        public static List<TEntity> GetParentList<TEntity>(this IEnumerable<TEntity> lstCate, string caption, bool isAddMySelf = false) where TEntity : class, ICate, new()
+        public static PooledList<TEntity> GetParentList<TEntity>(this IEnumerable<TEntity> lstCate, string caption, bool isAddMySelf = false) where TEntity : class, ICate, new()
         {
             var info = lstCate.GetInfo(caption);
-            return info == null ? new List<TEntity>() : lstCate.GetParentList(info.ID, isAddMySelf);
+            return info == null ? new PooledList<TEntity>() : lstCate.GetParentList(info.ID, isAddMySelf);
         }
     }
 }

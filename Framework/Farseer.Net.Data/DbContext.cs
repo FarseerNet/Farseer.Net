@@ -130,9 +130,9 @@ namespace FS.Data
         public void SaveChanges()
         {
             // 如果开启了事务，则提交
-            if (InternalContext.Executeor.DataBase.IsTransaction)
+            if (InternalContext.DbExecutor.IsTransaction)
             {
-                InternalContext.Executeor.DataBase.Commit();
+                InternalContext.DbExecutor.Commit();
             }
 
             // 完成事务后，需清空当前事务作用域、关闭事务
@@ -148,9 +148,9 @@ namespace FS.Data
         public void Rollback()
         {
             // 如果开启了事务，则回滚
-            if (InternalContext.Executeor.DataBase.IsTransaction)
+            if (InternalContext.DbExecutor.IsTransaction)
             {
-                InternalContext.Executeor.DataBase.Rollback();
+                InternalContext.DbExecutor.Rollback();
             }
 
             // 完成事务后，需清空当前事务作用域、关闭事务
@@ -161,7 +161,7 @@ namespace FS.Data
         ///     改变事务级别
         /// </summary>
         /// <param name="tranLevel"> 事务方式 </param>
-        public void ChangeTransaction(IsolationLevel tranLevel) => InternalContext.Executeor.DataBase.OpenTran(tranLevel: tranLevel);
+        public void ChangeTransaction(IsolationLevel tranLevel) => InternalContext.DbExecutor.OpenTran(tranLevel: tranLevel);
 
         /// <summary>
         ///     设置表名称
@@ -335,7 +335,11 @@ namespace FS.Data
         protected virtual void Dispose(bool disposing)
         {
             //释放托管资源
-            if (disposing) InternalContext.Dispose();
+            if (disposing)
+            {
+                ContextMap.Dispose();
+                InternalContext.Dispose();
+            }
         }
 
         /// <summary>

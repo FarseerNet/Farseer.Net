@@ -3,6 +3,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Collections.Pooled;
 using FS.Core.Mapping;
 using FS.Data.Client;
 using FS.Data.Map;
@@ -21,7 +22,7 @@ namespace FS.Data.ExpressionVisitor
         /// <param name="dbProvider"> 数据库提供者（不同数据库的特性） </param>
         /// <param name="map"> 字段映射 </param>
         /// <param name="paramList"> SQL参数列表 </param>
-        public SelectVisitor(AbsDbProvider dbProvider, SetDataMap map, List<DbParameter> paramList) : base(dbProvider: dbProvider, map: map, paramList: paramList)
+        public SelectVisitor(AbsDbProvider dbProvider, SetDataMap map, PooledList<DbParameter> paramList) : base(dbProvider: dbProvider, map: map, paramList: paramList)
         {
         }
 

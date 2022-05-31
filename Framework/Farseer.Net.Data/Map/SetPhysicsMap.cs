@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
+using Collections.Pooled;
 using FS.Core.Mapping;
 using FS.Core.Mapping.Attribute;
 using FS.Data.Cache;
@@ -13,12 +14,12 @@ namespace FS.Data.Map
     /// <summary>
     ///     字段 映射关系
     /// </summary>
-    public class SetPhysicsMap
+    public class SetPhysicsMap : IDisposable
     {
         /// <summary>
         ///     获取所有Set属性
         /// </summary>
-        public readonly Dictionary<PropertyInfo, DbFieldMapState> MapList;
+        public readonly PooledDictionary<PropertyInfo, DbFieldMapState> MapList;
 
         /// <summary>
         ///     关系映射
@@ -27,8 +28,8 @@ namespace FS.Data.Map
         internal SetPhysicsMap(Type type)
         {
             Type          = type;
-            MapList       = new Dictionary<PropertyInfo, DbFieldMapState>();
-            PrimaryFields = new Dictionary<PropertyInfo, FieldAttribute>();
+            MapList       = new PooledDictionary<PropertyInfo, DbFieldMapState>();
+            PrimaryFields = new PooledDictionary<PropertyInfo, FieldAttribute>();
             // 循环Set的字段
             foreach (var propertyInfo in Type.GetProperties())
             {
@@ -123,10 +124,8 @@ namespace FS.Data.Map
                 // 值的长度
                 if (modelAtt.Range != null && string.IsNullOrEmpty(value: modelAtt.Range.ErrorMessage))
                 {
-                    decimal minnum;
-                    decimal.TryParse(s: modelAtt.Range.Minimum.ToString(), result: out minnum);
-                    decimal maximum;
-                    decimal.TryParse(s: modelAtt.Range.Minimum.ToString(), result: out maximum);
+                    decimal.TryParse(s: modelAtt.Range.Minimum.ToString(), result: out var minnum);
+                    decimal.TryParse(s: modelAtt.Range.Minimum.ToString(), result: out var maximum);
 
                     if (minnum > 0 && maximum > 0)
                         modelAtt.Range.ErrorMessage = $"{modelAtt.Display.Name}，的值范围必须为：{minnum} - {maximum} 之间！";
@@ -150,7 +149,7 @@ namespace FS.Data.Map
         /// <summary>
         ///     设置了主键的字段列表
         /// </summary>
-        public Dictionary<PropertyInfo, FieldAttribute> PrimaryFields { get; }
+        public PooledDictionary<PropertyInfo, FieldAttribute> PrimaryFields { get; }
 
         /// <summary>
         ///     设置了标识的字段
@@ -178,5 +177,11 @@ namespace FS.Data.Map
         /// </summary>
         /// <param name="fieldName"> 属性名称 </param>
         public KeyValuePair<PropertyInfo, DbFieldMapState> GetStateByFieldName(string fieldName) => MapList.FirstOrDefault(predicate: o => o.Value.Field.Name == fieldName);
+        
+        public void Dispose()
+        {
+            MapList.Dispose();
+            PrimaryFields.Dispose();
+        }
     }
 }

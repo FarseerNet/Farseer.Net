@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Collections.Pooled;
 using FS.Cache;
 using FS.Core.Mapping.Attribute;
 using FS.Data.Cache;
@@ -21,11 +22,21 @@ namespace FS.Extends
         /// </summary>
         /// <param name="reader"> 源IDataReader </param>
         /// <typeparam name="TEntity"> 实体类 </typeparam>
-        public static List<TEntity> ToList<TEntity>(this DbDataReader reader)
+        public static PooledList<TEntity> ToList<TEntity>(this DbDataReader reader)
         {
-            var mapData = DataReaderHelper.DataReaderToDictionary(reader: reader);
-            var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
-            return (List<TEntity>)InstanceStaticCacheManger.Cache(type: type, methodName: "ToList", (object)mapData);
+            using var mapData = DataReaderHelper.DataReaderToDictionary(reader: reader);
+            var       type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
+            try
+            {
+                return (PooledList<TEntity>)InstanceStaticCacheManger.Cache(type: type, methodName: "ToList", mapData);
+            }
+            finally
+            {
+                foreach (var data in mapData)
+                {
+                    data.DataList.Dispose();
+                }
+            }
         }
 
         /// <summary>
@@ -33,11 +44,21 @@ namespace FS.Extends
         /// </summary>
         /// <param name="reader"> 源IDataReader </param>
         /// <typeparam name="TEntity"> 实体类 </typeparam>
-        public static async Task<List<TEntity>> ToListAsync<TEntity>(this Task<DbDataReader> reader)
+        public static async Task<PooledList<TEntity>> ToListAsync<TEntity>(this Task<DbDataReader> reader)
         {
             var mapData = DataReaderHelper.DataReaderToDictionary(reader: await reader);
             var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
-            return (List<TEntity>)InstanceStaticCacheManger.Cache(type: type, methodName: "ToList", (object)mapData);
+            try
+            {
+                return (PooledList<TEntity>)InstanceStaticCacheManger.Cache(type: type, methodName: "ToList", mapData);
+            }
+            finally
+            {
+                foreach (var data in mapData)
+                {
+                    data.DataList.Dispose();
+                }
+            }
         }
 
         /// <summary>
@@ -49,7 +70,17 @@ namespace FS.Extends
         {
             var mapData = DataReaderHelper.DataReaderToDictionary(reader: reader);
             var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
-            return (TEntity)InstanceStaticCacheManger.Cache(type: type, methodName: "ToEntity", mapData, 0);
+            try
+            {
+                return (TEntity)InstanceStaticCacheManger.Cache(type: type, methodName: "ToEntity", mapData, 0);
+            }
+            finally
+            {
+                foreach (var data in mapData)
+                {
+                    data.DataList.Dispose();
+                }
+            }
         }
 
         /// <summary>
@@ -61,7 +92,17 @@ namespace FS.Extends
         {
             var mapData = DataReaderHelper.DataTableToDictionary(dt: reader);
             var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
-            return (TEntity)InstanceStaticCacheManger.Cache(type: type, methodName: "ToEntity", mapData, 0);
+            try
+            {
+                return (TEntity)InstanceStaticCacheManger.Cache(type: type, methodName: "ToEntity", mapData, 0);
+            }
+            finally
+            {
+                foreach (var data in mapData)
+                {
+                    data.DataList.Dispose();
+                }
+            }
         }
 
         /// <summary>
@@ -73,7 +114,17 @@ namespace FS.Extends
         {
             var mapData = DataReaderHelper.DataTableToDictionary(dt: await reader);
             var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
-            return (TEntity)InstanceStaticCacheManger.Cache(type: type, methodName: "ToEntity", mapData, 0);
+            try
+            {
+                return (TEntity)InstanceStaticCacheManger.Cache(type: type, methodName: "ToEntity", mapData, 0);
+            }
+            finally
+            {
+                foreach (var data in mapData)
+                {
+                    data.DataList.Dispose();
+                }
+            }
         }
 
         /// <summary>
@@ -81,11 +132,21 @@ namespace FS.Extends
         /// </summary>
         /// <param name="dt"> 源DataTable </param>
         /// <typeparam name="TEntity"> 实体类 </typeparam>
-        public static List<TEntity> ToList<TEntity>(this DataTable dt)
+        public static PooledList<TEntity> ToList<TEntity>(this DataTable dt)
         {
             var mapData = DataReaderHelper.DataTableToDictionary(dt: dt);
             var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
-            return (List<TEntity>)InstanceStaticCacheManger.Cache(type: type, methodName: "ToList", (object)mapData);
+            try
+            {
+                return (PooledList<TEntity>)InstanceStaticCacheManger.Cache(type: type, methodName: "ToList", mapData);
+            }
+            finally
+            {
+                foreach (var data in mapData)
+                {
+                    data.DataList.Dispose();
+                }
+            }
         }
 
         /// <summary>
@@ -93,11 +154,21 @@ namespace FS.Extends
         /// </summary>
         /// <param name="dt"> 源DataTable </param>
         /// <typeparam name="TEntity"> 实体类 </typeparam>
-        public static async Task<List<TEntity>> ToListAsync<TEntity>(this Task<DataTable> dt)
+        public static async Task<PooledList<TEntity>> ToListAsync<TEntity>(this Task<DataTable> dt)
         {
             var mapData = DataReaderHelper.DataTableToDictionary(dt: await dt);
             var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
-            return (List<TEntity>)InstanceStaticCacheManger.Cache(type: type, methodName: "ToList", (object)mapData);
+            try
+            {
+                return (PooledList<TEntity>)InstanceStaticCacheManger.Cache(type: type, methodName: "ToList", mapData);
+            }
+            finally
+            {
+                foreach (var data in mapData)
+                {
+                    data.DataList.Dispose();
+                }
+            }
         }
 
         /// <summary>
@@ -109,7 +180,17 @@ namespace FS.Extends
         {
             var mapData = DataReaderHelper.DataTableToDictionary(dt: dt);
             var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
-            return ((List<TEntity>)InstanceStaticCacheManger.Cache(type: type, methodName: "ToList", (object)mapData)).ToArray();
+            try
+            {
+                return ((PooledList<TEntity>)InstanceStaticCacheManger.Cache(type: type, methodName: "ToList", mapData)).ToArray();
+            }
+            finally
+            {
+                foreach (var data in mapData)
+                {
+                    data.DataList.Dispose();
+                }
+            }
         }
 
         /// <summary>
@@ -117,14 +198,14 @@ namespace FS.Extends
         /// </summary>
         /// <param name="ds"> 源DataSet </param>
         /// <typeparam name="T"> 实体类 </typeparam>
-        public static List<T> ToList<T>(this DataSet ds) where T : class, new() => ds.Tables.Count == 0 ? null : ds.Tables[index: 0].ToList<T>();
+        public static PooledList<T> ToList<T>(this DataSet ds) where T : class, new() => ds.Tables.Count == 0 ? null : ds.Tables[index: 0].ToList<T>();
 
         /// <summary>
         ///     将XML转成实体
         /// </summary>
         public static IEnumerable<TEntity> ToList<TEntity>(this XElement element) where TEntity : class
         {
-            var orm  = SetMapCacheManger.Cache(key: typeof(TEntity));
+            var orm = SetMapCacheManger.Cache(key: typeof(TEntity));
 
             foreach (var el in element.Elements())
             {

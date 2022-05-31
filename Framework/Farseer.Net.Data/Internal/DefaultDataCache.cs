@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using FS.Data.Cache;
 using FS.Data.Inteface;
 
@@ -17,13 +18,13 @@ namespace FS.Data.Internal
             _set = set;
         }
 
-        public IEnumerable<TEntity> Get()
+        public List<TEntity> Get()
         {
             return EntityCacheManger.Cache<TEntity>(key: _set.SetMap.PhysicsMap, initCache: () =>
             {
-                var expBuilder = new ExpressionBuilder(map: _set.SetMap);
+                using var expBuilder = new ExpressionBuilder(map: _set.SetMap);
                 expBuilder.DeleteSortCondition();
-                return _set.Context.Executeor.ToList<TEntity>(callMethod: $"{typeof(TEntity).Name}.Get", sqlParam: _set.Context.DbProvider.CreateSqlBuilder(expBuilder: expBuilder, _set.SetMap).ToList());
+                return _set.Context.ExecuteSql.ToList<TEntity>(callMethod: $"{typeof(TEntity).Name}.Get", sqlParam: _set.Context.DbProvider.CreateSqlBuilder(expBuilder: expBuilder, _set.SetMap).ToList()).ToList();
             });
         }
 

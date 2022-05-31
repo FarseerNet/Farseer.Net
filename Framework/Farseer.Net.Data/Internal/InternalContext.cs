@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Threading;
+using Collections.Pooled;
 using FS.Data.Client;
 using FS.Data.Data;
 using FS.Data.Inteface;
@@ -16,7 +16,8 @@ namespace FS.Data.Internal
     internal class InternalContext : IDisposable
     {
         // 用于实现事务的作用域，在同一个作用域、连接字符串下，共享事务。
-        private static readonly Dictionary<string, AsyncLocal<InternalContext>> scopeContext = new();
+        private static readonly PooledDictionary<string, AsyncLocal<InternalContext>> scopeContext = new();
+
         /// <summary>
         ///     上下文初始化器（只赋值，不初始化，有可能被重复创建两次）
         /// </summary>
@@ -27,6 +28,9 @@ namespace FS.Data.Internal
             ScopeID     = Guid.NewGuid().ToString("N");
         }
 
+        /// <summary>
+        /// 当前作用域的上下文
+        /// </summary>
         internal AsyncLocal<InternalContext> CurrentScope => scopeContext[DatabaseConnection.ConnectionString];
 
         /// <summary>
@@ -42,7 +46,7 @@ namespace FS.Data.Internal
         /// <summary>
         ///     外部上下文类型
         /// </summary>
-        public Type ContextType { get; private set; }
+        public Type ContextType { get; }
 
         /// <summary>
         ///     数据库提供者（不同数据库的特性）
@@ -52,12 +56,12 @@ namespace FS.Data.Internal
         /// <summary>
         ///     当事务提交后，会调用该委托
         /// </summary>
-        private List<Action> _commitCallback = new();
+        private PooledList<Action> _commitCallback = new();
 
         /// <summary>
         ///     执行数据库操作
         /// </summary>
-        public IExecuteSql Executeor { get; private set; }
+        public IExecuteSql ExecuteSql { get; private set; }
 
         /// <summary>
         ///     队列管理
@@ -68,6 +72,10 @@ namespace FS.Data.Internal
         ///     手动编写SQL
         /// </summary>
         public ManualSql ManualSql { get; private set; }
+        /// <summary>
+        /// 数据库执行者
+        /// </summary>
+        public DbExecutor DbExecutor { get; private set; }
 
         /// <summary>
         ///     初始化数据库环境、实例化子类中，所有Set属性
@@ -88,7 +96,8 @@ namespace FS.Data.Internal
                 // 手动编写SQL
                 ManualSql = CurrentScope.Value.ManualSql;
                 // 默认SQL执行者
-                Executeor = CurrentScope.Value.Executeor;
+                ExecuteSql  = CurrentScope.Value.ExecuteSql;
+                DbExecutor = CurrentScope.Value.DbExecutor;
                 // 队列管理者
                 QueueManger = new QueueManger(CurrentScope.Value);
 
@@ -100,10 +109,11 @@ namespace FS.Data.Internal
                 var tranLevel = DbProvider.IsSupportTransaction ? IsolationLevel.RepeatableRead : IsolationLevel.Unspecified;
 
                 // 默认SQL执行者
-                Executeor = new ExecuteSql(dataBase: new DbExecutor(connectionString: DatabaseConnection.ConnectionString, dbType: DatabaseConnection.DbType, commandTimeout: DatabaseConnection.CommandTimeout, tranLevel: tranLevel, dbProvider: DbProvider), contextProvider: this);
+                DbExecutor = new DbExecutor(connectionString: DatabaseConnection.ConnectionString, dbType: DatabaseConnection.DbType, commandTimeout: DatabaseConnection.CommandTimeout, tranLevel: tranLevel, dbProvider: DbProvider);
+                ExecuteSql  = new ExecuteSql(contextProvider: this);
 
                 // 记录执行链路（通过代理模式实现）
-                Executeor = new ExecuteSqlMonitorProxy(db: Executeor, dbProvider: DbProvider);
+                ExecuteSql = new ExecuteSqlMonitorProxy(db: ExecuteSql, dbProvider: DbProvider);
 
                 // 队列管理者
                 QueueManger = new QueueManger(provider: this);
@@ -123,7 +133,7 @@ namespace FS.Data.Internal
             if (CurrentScope.Value.ScopeID == ScopeID)
             {
                 CurrentScope.Value = null;
-                Executeor.DataBase.CloseTran();
+                DbExecutor.CloseTran();
             }
         }
 
@@ -138,8 +148,8 @@ namespace FS.Data.Internal
                 _commitCallback    = CurrentScope.Value._commitCallback;
                 CurrentScope.Value = null;
             }
-            Executeor.DataBase.CloseTran();
-            Executeor.DataBase.Close(dispose: true);
+            DbExecutor.CloseTran();
+            DbExecutor.Close(dispose: true);
         }
 
         /// <summary>
@@ -185,6 +195,8 @@ namespace FS.Data.Internal
         {
             // 这里不用CurrentScope.Value._commitCallback，因为前面重置作用域时，已复制到本地变量中
             foreach (var action in _commitCallback) action();
+
+            _commitCallback.Dispose();
         }
 
         /// <summary>
@@ -209,7 +221,9 @@ namespace FS.Data.Internal
             {
                 FinishTransaction();
                 QueueManger.Dispose();
-                Executeor.DataBase.Dispose();
+                ExecuteSql.Dispose();
+                DbExecutor.Dispose();
+                _commitCallback.Dispose();
             }
         }
     }

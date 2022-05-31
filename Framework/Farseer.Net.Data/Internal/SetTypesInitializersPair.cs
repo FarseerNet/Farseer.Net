@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using Collections.Pooled;
 
 namespace FS.Data.Internal
 {
     /// <summary>
     /// 保存一个DbContext对象下的所有Set实体类型
     /// </summary>
-    internal class SetTypesInitializersPair : Tuple<Dictionary<Type, List<string>>, Action<DbContext>>
+    internal class SetTypesInitializersPair : Tuple<PooledDictionary<Type, PooledList<string>>, Action<DbContext>>
     {
         /// <summary>
         /// 保存一个DbContext对象下的所有Set实体类型
         /// </summary>
-        public SetTypesInitializersPair(Dictionary<Type, List<string>> entityTypeToPropertyNameMap, Action<DbContext> setsInitializer) : base(item1: entityTypeToPropertyNameMap, item2: setsInitializer)
+        public SetTypesInitializersPair(PooledDictionary<Type, PooledList<string>> entityTypeToPropertyNameMap, Action<DbContext> setsInitializer) : base(item1: entityTypeToPropertyNameMap, item2: setsInitializer)
         {
         }
 
@@ -20,7 +21,7 @@ namespace FS.Data.Internal
         /// Key：Set类型
         /// Value：PropertyName：一个Set<Entity>被多个类属性调用
         /// </summary>
-        public Dictionary<Type, List<string>> SetTypeList => Item1;
+        public PooledDictionary<Type, PooledList<string>> SetTypeList => Item1;
 
         /// <summary>
         /// 实体化所有Set属性

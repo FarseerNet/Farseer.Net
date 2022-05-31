@@ -4,6 +4,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
+using Collections.Pooled;
 using FS.Utils.Common;
 
 namespace FS.Data.Log.Default.Entity
@@ -55,7 +56,7 @@ namespace FS.Data.Log.Default.Entity
 
         /// <summary> 执行参数 </summary>
         [DataMember]
-        public List<SqlParam> SqlParamList { get; set; }
+        public PooledList<SqlParam> SqlParamList { get; set; }
 
         /// <summary>
         ///     记录执行时的方法及文件

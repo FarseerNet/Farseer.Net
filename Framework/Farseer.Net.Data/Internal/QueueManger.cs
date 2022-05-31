@@ -53,7 +53,7 @@ namespace FS.Data.Internal
             finally
             {
                 Clear();
-                if (!ContextProvider.Executeor.DataBase.IsTransaction) ContextProvider.Executeor.DataBase.Close(dispose: true);
+                if (!ContextProvider.DbExecutor.IsTransaction) ContextProvider.DbExecutor.Close(dispose: true);
             }
         }
 
@@ -75,7 +75,7 @@ namespace FS.Data.Internal
             finally
             {
                 Clear();
-                if (!ContextProvider.Executeor.DataBase.IsTransaction) ContextProvider.Executeor.DataBase.Close(dispose: true);
+                if (!ContextProvider.DbExecutor.IsTransaction) ContextProvider.DbExecutor.Close(dispose: true);
             }
         }
 
@@ -84,6 +84,7 @@ namespace FS.Data.Internal
         /// </summary>
         private void Clear()
         {
+            _queue.Dispose();
             _queue = null;
         }
 
@@ -98,6 +99,7 @@ namespace FS.Data.Internal
             //释放托管资源
             if (disposing)
             {
+                if (_queue != null) Clear();
             }
         }
 

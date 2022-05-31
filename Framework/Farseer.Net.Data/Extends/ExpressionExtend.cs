@@ -19,8 +19,7 @@ namespace FS.Extends
         {
             MemberExpression memberExpression;
 
-            var unary = select.Body as UnaryExpression;
-            if (unary != null)
+            if (select.Body is UnaryExpression unary)
                 memberExpression = unary.Operand as MemberExpression;
             else if (select.Body.NodeType == ExpressionType.Call)
                 memberExpression = (MemberExpression)((MethodCallExpression)select.Body).Object;

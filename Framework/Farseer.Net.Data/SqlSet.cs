@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.Data.Configuration;
 using FS.Data.Inteface;
 using FS.DI;
@@ -31,10 +32,9 @@ namespace FS.Data
             get
             {
                 if (_map != null) return _map;
-                var name                 = Context.ContextType.FullName + "." + SetMap.TableName;
-                var configurationSection = IocManager.GetService<IConfigurationRoot>().GetSection(key: "SqlMap");
-                var sqlMapItemConfigs    = configurationSection.GetChildren().Select(selector: o => o.Get<SqlMapItemConfig>()).ToList();
-                return _map = sqlMapItemConfigs.Find(match: o => o.Name == name);
+                var       name              = Context.ContextType.FullName + "." + SetMap.TableName;
+                using var sqlMapItemConfigs = SqlMapRoot.Get().ToPooledList();
+                return _map = sqlMapItemConfigs.FirstOrDefault(o => o.Name == name);
             }
         }
 
