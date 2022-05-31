@@ -80,7 +80,7 @@ namespace FS.MQ.Queue
         /// <param name="autoAck"> 是否自动确认，默认false </param>
         public async Task<int> Start(bool autoAck = false)
         {
-            var lst = _queueList.Pull();
+            using var lst = _queueList.Pull();
             if (lst == null) return 0;
 
             var consumerService = _iocManager.Resolve<IListenerMessage>(name: _consumerTypeName);

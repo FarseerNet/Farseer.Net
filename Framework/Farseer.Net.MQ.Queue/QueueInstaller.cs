@@ -73,7 +73,7 @@ namespace FS.MQ.Queue
                 }) return;
 
 
-            Dictionary<string, Type> dicConsumerName = new();
+            using PooledDictionary<string, Type> dicConsumerName = new();
             // 启动单次消费程序
             foreach (var consumerType in _typeFinder.Find<IListenerMessage>())
             {

@@ -7,18 +7,28 @@ namespace FS.MQ.Queue;
 
 public class QueueList : IQueueList
 {
-    private readonly QueueConfig          _queueConfig;
-    private readonly PooledList<object>[] Queues;
-    private readonly object               objLock = new();
-    private          PooledList<object>   CurQueue;
-    private          int                  QueueEmptyIndex = 0;
+    private readonly object      _objLock = new();
+    private readonly QueueConfig _queueConfig;
+    /// <summary>
+    /// _curQueue在_queues的逻辑位置
+    /// </summary>
+    private int _queueEmptyIndex;
+    /// <summary>
+    /// 如果_curQueue数量==设置的每次拉取数量，则会将_curQueue添加到_queues中。
+    /// 在_queues数组中，每个数组的PooledList数量<= queueConfig.PullCount
+    /// </summary>
+    private readonly PooledList<object>[] _queues;
+    /// <summary>
+    /// 当前正在发送的数据，如果数量==queueConfig.PullCount，则会把当前的队列的数据，全部移到_queues
+    /// </summary>
+    private PooledList<object> _curQueue;
 
     public QueueList(QueueConfig queueConfig)
     {
         if (queueConfig.MaxCount == 0) queueConfig.MaxCount = 100000000;
         _queueConfig = queueConfig;
-        Queues       = new PooledList<object>[(queueConfig.MaxCount / queueConfig.PullCount) + 1];
-        CurQueue     = new(queueConfig.PullCount);
+        _queues      = new PooledList<object>[(queueConfig.MaxCount / queueConfig.PullCount) + 1];
+        _curQueue    = new(queueConfig.PullCount);
     }
 
     /// <summary>
@@ -26,29 +36,29 @@ public class QueueList : IQueueList
     /// </summary>
     public void CheckAndMoveQueue()
     {
-        if (CurQueue.Count >= _queueConfig.PullCount)
+        if (_curQueue.Count >= _queueConfig.PullCount)
         {
-            lock (objLock)
+            lock (_objLock)
             {
                 // 正好相等，则直接将当前集合，添加到列表中
-                if (CurQueue.Count == _queueConfig.PullCount)
+                if (_curQueue.Count == _queueConfig.PullCount)
                 {
-                    Queues[QueueEmptyIndex] = CurQueue;
-                    CurQueue                = new(_queueConfig.PullCount);
-                    QueueEmptyIndex++;
+                    _queues[_queueEmptyIndex] = _curQueue;
+                    _curQueue                 = new(_queueConfig.PullCount);
+                    _queueEmptyIndex++;
                 }
                 else
                 {
                     // 超出_productConfig.PullCount值，则通过截取的方式，保证每个集合不能超过_productConfig.PullCount
-                    while (CurQueue.Count > _queueConfig.PullCount)
+                    while (_curQueue.Count > _queueConfig.PullCount)
                     {
-                        Queues[QueueEmptyIndex] = CurQueue.Take(_queueConfig.PullCount).ToPooledList();
+                        _queues[_queueEmptyIndex] = _curQueue.Take(_queueConfig.PullCount).ToPooledList();
                         // for (int i = 0; i < _queueConfig.PullCount; i++)
                         // {
                         //     CurQueue.RemoveAt(0);
                         // }
-                        CurQueue.RemoveRange(0, _queueConfig.PullCount);
-                        QueueEmptyIndex++;
+                        _curQueue.RemoveRange(0, _queueConfig.PullCount);
+                        _queueEmptyIndex++;
                     }
                 }
             }
@@ -62,7 +72,7 @@ public class QueueList : IQueueList
     {
         // 当前所有队列的总数 大于 允许的最大数量时，则丢弃最新的数据
         if (TotalCount >= _queueConfig.MaxCount) return;
-        CurQueue.Add(data);
+        _curQueue.Add(data);
         TotalCount++;
     }
 
@@ -78,20 +88,20 @@ public class QueueList : IQueueList
         if (TotalCount + datalist.Count >= _queueConfig.MaxCount)
         {
             var surplusCount = _queueConfig.MaxCount - TotalCount;
-            var take         = datalist.Take(surplusCount);
-            CurQueue.AddRange(take);
-            TotalCount += take.Count();
+            using var take         = datalist.Take(surplusCount).ToPooledQueue();
+            _curQueue.AddRange(take);
+            TotalCount += take.Count;
             return;
         }
 
-        CurQueue.AddRange(datalist);
+        _curQueue.AddRange(datalist);
         TotalCount += datalist.Count;
     }
 
     /// <summary>
     /// 获取当前队列大小
     /// </summary>
-    public int GetCurCount => CurQueue.Count;
+    public int GetCurCount => _curQueue.Count;
 
     /// <summary>
     /// 获取总的队列大小
@@ -104,30 +114,30 @@ public class QueueList : IQueueList
     public PooledList<object> Pull()
     {
         // 如果已经有满载的数据，则直接取出返回
-        if (Queues[0] != null)
+        if (_queues[0] != null)
         {
-            var queue = Queues[0];
+            var queue = _queues[0];
 
             // 移动空元素
-            for (int index = 0; index < QueueEmptyIndex; index++)
+            for (int index = 0; index < _queueEmptyIndex; index++)
             {
-                Queues[index] = Queues[index + 1];
+                _queues[index] = _queues[index + 1];
             }
 
-            QueueEmptyIndex--;
+            _queueEmptyIndex--;
             return queue;
         }
 
         // 并没，则从当前队列中截取并返回
-        var curCount = CurQueue.Count;
+        var curCount = _curQueue.Count;
         if (curCount > 0)
         {
-            var objects = CurQueue.Take(curCount).ToPooledList();
+            var objects = _curQueue.Take(curCount).ToPooledList();
             // for (int i = 0; i < objects.Count; i++)
             // {
             //     CurQueue.RemoveAt(0);
             // }
-            CurQueue.RemoveRange(0, objects.Count);
+            _curQueue.RemoveRange(0, objects.Count);
             TotalCount -= objects.Count;
             return objects;
         }
