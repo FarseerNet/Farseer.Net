@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.Core.LinkTrack;
 using FS.Extends;
 
@@ -33,7 +34,7 @@ namespace FS.Core.Http
         /// <param name="requestTimeout"> 超时时间 </param>
         /// <param name="encoding"> 编码格式 </param>
         /// <param name="cookie"> 是否需要cookie </param>
-        public static Task<string> GetAsync(string url, Dictionary<string, string> postData, int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null) => GetAsync(url: url, postData: postData.Select(selector: keyVal => $"{keyVal.Key}={keyVal.Value}").ToString(sign: "&"), headerData: null, requestTimeout: requestTimeout, encoding: encoding, cookie: cookie);
+        public static Task<string> GetAsync(string url, PooledDictionary<string, string> postData, int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null) => GetAsync(url: url, postData: postData.Select(selector: keyVal => $"{keyVal.Key}={keyVal.Value}").ToString(sign: "&"), headerData: null, requestTimeout: requestTimeout, encoding: encoding, cookie: cookie);
 
         /// <summary>
         ///     http request请求
@@ -43,7 +44,7 @@ namespace FS.Core.Http
         /// <param name="requestTimeout"> 超时时间 </param>
         /// <param name="encoding"> 编码格式 </param>
         /// <param name="cookie"> 是否需要cookie </param>
-        public static async Task<TResult> GetAsync<TResult>(string url, Dictionary<string, string> postData, int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
+        public static async Task<TResult> GetAsync<TResult>(string url, PooledDictionary<string, string> postData, int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
         {
             var result = await GetAsync(url: url, postData: postData.Select(selector: keyVal => $"{keyVal.Key}={keyVal.Value}").ToString(sign: "&"), headerData: null, requestTimeout: requestTimeout, encoding: encoding, cookie: cookie);
             return Jsons.ToObject<TResult>(result);
@@ -58,7 +59,7 @@ namespace FS.Core.Http
         /// <param name="headerData"> 添加头部信息 </param>
         /// <param name="encoding"> 编码格式 </param>
         /// <param name="cookie"> 是否需要cookie </param>
-        public static async Task<string> GetAsync(string url, string postData = null, Dictionary<string, string> headerData = null, int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
+        public static async Task<string> GetAsync(string url, string postData = null, PooledDictionary<string, string> headerData = null, int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
         {
             using (var trackEnd = FsLinkTrack.TrackHttp(url: url, method: "GET", headerData: headerData, requestBody: postData))
             {
@@ -101,7 +102,7 @@ namespace FS.Core.Http
         /// <param name="headerData"> 添加头部信息 </param>
         /// <param name="encoding"> 编码格式 </param>
         /// <param name="cookie"> 是否需要cookie </param>
-        public static async Task<TResult> GetAsync<TResult>(string url, string postData = null, Dictionary<string, string> headerData = null, int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
+        public static async Task<TResult> GetAsync<TResult>(string url, string postData = null, PooledDictionary<string, string> headerData = null, int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
         {
             var result = await GetAsync(url, postData, headerData, requestTimeout, encoding, cookie);
             return Jsons.ToObject<TResult>(result);

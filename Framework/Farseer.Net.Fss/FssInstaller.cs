@@ -4,6 +4,7 @@ using System.Reflection;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
+using Collections.Pooled;
 using FS.Core.Abstract.Fss;
 using FS.Reflection;
 
@@ -11,7 +12,7 @@ namespace FS.Fss
 {
     public class FssInstaller : IWindsorInstaller
     {
-        public static readonly Dictionary<string, Type> JobImpList = new();
+        public static readonly PooledDictionary<string, Type> JobImpList = new();
 
         private readonly ITypeFinder _typeFinder;
 

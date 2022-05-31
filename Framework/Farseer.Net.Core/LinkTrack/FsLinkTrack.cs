@@ -306,7 +306,7 @@ namespace FS.Core.LinkTrack
         /// <summary>
         ///     追踪Http
         /// </summary>
-        public static TrackEnd TrackHttp(string url, string method, Dictionary<string, string> headerData, string requestBody)
+        public static TrackEnd TrackHttp(string url, string method, PooledDictionary<string, string> headerData, string requestBody)
         {
             var linkTrackDetail = new LinkTrackDetail
             {

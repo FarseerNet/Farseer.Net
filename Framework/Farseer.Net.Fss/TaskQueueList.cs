@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.Core.Abstract.Fss;
 using FS.Core.LinkTrack;
 using FS.DI;
@@ -22,21 +23,12 @@ namespace FS.Fss
         /// <summary>
         ///     任务列表
         /// </summary>
-        private static readonly Queue<TaskVO> _queue = new();
+        private static readonly PooledQueue<TaskVO> _queue = new();
 
         /// <summary>
         /// 当前正在执行任务的数量
         /// </summary>
         private static int Working;
-
-        /// <summary>
-        ///     将任务添加到队列中
-        /// </summary>
-        public static void Enqueue(List<TaskVO> lstTask)
-        {
-            if (lstTask == null || lstTask.Count == 0) return;
-            foreach (var task in lstTask.OrderBy(o => o.StartAt)) _queue.Enqueue(item: task);
-        }
 
         /// <summary>
         /// 自动拉取任务
@@ -75,6 +67,15 @@ namespace FS.Fss
                     await Task.Delay(pullCount == 0 ? 1000 : 500);
                 }
             }, creationOptions: TaskCreationOptions.LongRunning);
+        }
+
+        /// <summary>
+        ///     将任务添加到队列中
+        /// </summary>
+        public static void Enqueue(PooledList<TaskVO> lstTask)
+        {
+            if (lstTask == null || lstTask.Count == 0) return;
+            foreach (var task in lstTask.OrderBy(o => o.StartAt)) _queue.Enqueue(item: task);
         }
         
         /// <summary>

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.Core.Abstract.Fss;
 using FS.Core.Http;
 using FS.Core.Net;
@@ -17,12 +18,12 @@ namespace FS.Fss
     /// </summary>
     public class TaskManager
     {
-        private static readonly Dictionary<string, string> _header = new() { { "ClientIp", FssModule.Client.ClientIp }, { "ClientId", FssModule.Client.Id.ToString() }, { "ClientName", FssModule.Client.ClientName }, { "ClientJobs", string.Join(separator: ",", value: FssModule.Client.Jobs) } };
+        private static readonly PooledDictionary<string, string> _header = new() { { "ClientIp", FssModule.Client.ClientIp }, { "ClientId", FssModule.Client.Id.ToString() }, { "ClientName", FssModule.Client.ClientName }, { "ClientJobs", string.Join(separator: ",", value: FssModule.Client.Jobs) } };
 
         /// <summary>
         ///     到FSS平台拉取任务
         /// </summary>
-        public static async Task<List<TaskVO>> PullAsync(int pullCount)
+        public static async Task<PooledList<TaskVO>> PullAsync(int pullCount)
         {
             // 当前客户端支持的job
             var jobItemConfig = JobConfigRoot.Get();
@@ -34,9 +35,10 @@ namespace FS.Fss
                 var url = server.StartsWith(value: "http") ? $"{server}/task/pull" : $"http://{server}/task/pull";
                 try
                 {
-                    var api = await HttpPostJson.PostAsync<ApiResponseJson<List<TaskVO>>>(url: url, postData: new Dictionary<string, string> { { "TaskCount", pullCount.ToString() } }, headerData: _header);
+                    using var postData = new PooledDictionary<string, string> { { "TaskCount", pullCount.ToString() } };
+                    var       api      = await HttpPostJson.PostAsync<ApiResponseJson<PooledList<TaskVO>>>(url: url, postData: postData, headerData: _header);
                     if (!api.Status) continue;
-                    
+
                     IocManager.Instance.Logger<TaskQueueList>().LogDebug(message: $"本次拉取{api.Data.Count}条任务");
                     return api.Data;
                 }
@@ -45,7 +47,7 @@ namespace FS.Fss
                     IocManager.Instance.Logger<TaskManager>().LogError(message: e.Message);
                 }
             }
-            return new List<TaskVO>();
+            return new PooledList<TaskVO>();
         }
 
         /// <summary>
