@@ -12,7 +12,7 @@ namespace FS.Reflection
     /// <summary>
     ///     类型查找器
     /// </summary>
-    public class TypeFinder : ITypeFinder
+    public class TypeFinder : ITypeFinder, IDisposable
     {
         private readonly IAssemblyFinder  _assemblyFinder;
         private readonly object           _syncObj = new();
@@ -57,7 +57,7 @@ namespace FS.Reflection
             {
                 lock (_syncObj)
                 {
-                    if (_types == null) _types = CreateTypeList();
+                    _types ??= CreateTypeList();
                 }
             }
 
@@ -70,7 +70,7 @@ namespace FS.Reflection
         /// <summary>
         /// 忽略微软及常用的程序集
         /// </summary>
-        public PooledList<Assembly> IgnoreAssembly(PooledList<Assembly> assemblies)
+        public PooledList<Assembly> IgnoreAssembly(IEnumerable<Assembly> assemblies)
         {
             var lst = new PooledList<Assembly>();
             foreach (var assembly in assemblies)
@@ -85,7 +85,6 @@ namespace FS.Reflection
         /// <summary>
         ///     创建类型列表
         /// </summary>
-        /// <returns> </returns>
         private PooledList<Type> CreateTypeList()
         {
             var allTypes = new PooledList<Type>();
@@ -120,6 +119,11 @@ namespace FS.Reflection
                 }
             }
             return allTypes;
+        }
+        
+        public void Dispose()
+        {
+            _types?.Dispose();
         }
     }
 }

@@ -51,7 +51,6 @@ namespace FS.Modules
         /// <summary>
         ///     初始化
         /// </summary>
-        /// <param name="startupModule"> </param>
         public virtual void Initialize(Type startupModule)
         {
             _startupModuleType = startupModule;
@@ -130,12 +129,9 @@ namespace FS.Modules
         /// <summary>
         ///     查找所有模块
         /// </summary>
-        /// <returns> </returns>
         private PooledList<Type> FindAllModules()
         {
-            var modules = FarseerModule.FindDependedModuleTypesRecursively(moduleType: _startupModuleType);
-
-            return modules;
+            return FarseerModule.FindDependedModuleTypesRecursively(moduleType: _startupModuleType);
         }
 
         /// <summary>

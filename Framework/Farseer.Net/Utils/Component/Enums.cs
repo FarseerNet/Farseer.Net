@@ -52,8 +52,7 @@ namespace FS.Utils.Component
                     foreach (Attribute attr in fieldInfo.GetCustomAttributes(inherit: true))
                     {
                         //类型转换找到一个Description，用Description作为成员名称
-                        var dscript = attr as DisplayAttribute;
-                        if (dscript == null) continue;
+                        if (attr is not DisplayAttribute dscript) continue;
                         if (!CacheList.ContainsKey(key: key)) CacheList.Add(key: key, value: dscript.Name);
                         return dscript.Name;
                     }

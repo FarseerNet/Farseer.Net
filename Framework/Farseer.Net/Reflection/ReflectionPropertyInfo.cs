@@ -32,8 +32,7 @@ namespace FS.Reflection
         /// <returns> 强类型委托 </returns>
         public static Action<object, object> SetValue(PropertyInfo propertyInfo)
         {
-            Action<object, object> val;
-            if (!SetCacheList.TryGetValue(key: propertyInfo, value: out val))
+            if (!SetCacheList.TryGetValue(key: propertyInfo, value: out var val))
             {
                 // 实体类
                 var instanceParam = Expression.Parameter(type: typeof(object), name: "instance");
@@ -65,8 +64,7 @@ namespace FS.Reflection
         /// <returns> 强类型委托 </returns>
         public static Func<object, object> GetValue(PropertyInfo propertyInfo)
         {
-            Func<object, object> val;
-            if (!GetCacheList.TryGetValue(key: propertyInfo, value: out val))
+            if (!GetCacheList.TryGetValue(key: propertyInfo, value: out var val))
             {
                 // 实体类
                 var instanceParam = Expression.Parameter(type: typeof(object), name: "instance");

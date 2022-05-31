@@ -22,14 +22,12 @@ namespace FS.Utils.Common
         /// <param name="type"> 可空类型的Type </param>
         public static Type GetGenericType(Type type)
         {
-            Type resultType;
-            if (!DicGenericType.TryGetValue(key: type, value: out resultType))
+            if (!DicGenericType.TryGetValue(key: type, value: out var resultType))
             {
                 var genericArguments = type.GetGenericArguments();
                 resultType = type.IsGenericType && genericArguments.Length > 0 ? genericArguments[0] : type;
                 DicGenericType.TryAdd(key: type, value: resultType);
             }
-
             return resultType;
         }
 
@@ -39,13 +37,11 @@ namespace FS.Utils.Common
         /// <param name="type"> 可空类型的Type </param>
         public static Type GetNullableArguments(Type type)
         {
-            Type resultType;
-            if (!DicNullableArguments.TryGetValue(key: type, value: out resultType))
+            if (!DicNullableArguments.TryGetValue(key: type, value: out var resultType))
             {
                 resultType = type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>) ? Nullable.GetUnderlyingType(nullableType: type) : type;
                 DicNullableArguments.TryAdd(key: type, value: resultType);
             }
-
             return resultType;
         }
 

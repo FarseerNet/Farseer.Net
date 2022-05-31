@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Castle.Core;
@@ -78,15 +79,15 @@ namespace FS.DI
         {
             using var assemblyNames = type.Assembly.GetReferencedAssemblies().Select(Assembly.Load).ToPooledList();
             assemblyNames.Add(type.Assembly);
-            
+
             using var ignoreAssembly = GetService<ITypeFinder>().IgnoreAssembly(assemblyNames);
             RegisterAssemblyByConvention(ignoreAssembly);
         }
-        
+
         /// <summary>
         ///     根据约定注册程序集
         /// </summary>
-        public void RegisterAssemblyByConvention(PooledList<Assembly> assemblys)
+        public void RegisterAssemblyByConvention(IEnumerable<Assembly> assemblys)
         {
             foreach (var assembly in assemblys.Where(assembly => !_isRegistrarWindsorInstaller.ContainsKey(key: assembly)))
             {

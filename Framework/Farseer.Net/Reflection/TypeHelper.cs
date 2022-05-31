@@ -11,8 +11,6 @@ namespace FS.Reflection
         /// <summary>
         ///     是否Func类型
         /// </summary>
-        /// <param name="obj"> </param>
-        /// <returns> </returns>
         public static bool IsFunc(object obj)
         {
             if (obj == null) return false;
@@ -26,9 +24,6 @@ namespace FS.Reflection
         /// <summary>
         ///     是否Func类型
         /// </summary>
-        /// <typeparam name="TReturn"> </typeparam>
-        /// <param name="obj"> </param>
-        /// <returns> </returns>
         public static bool IsFunc<TReturn>(object obj) => obj != null && obj.GetType() == typeof(Func<TReturn>);
 
         /// <summary>

@@ -19,8 +19,6 @@ namespace FS.Reflection
         /// <summary>
         ///     从文件夹中获取所有的程序集
         /// </summary>
-        /// <param name="folderPath"> </param>
-        /// <param name="searchOption"> </param>
         PooledList<Assembly> GetAssembliesFromFolder(string folderPath, SearchOption searchOption);
     }
 }

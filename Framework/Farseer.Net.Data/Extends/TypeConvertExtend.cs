@@ -34,7 +34,7 @@ namespace FS.Extends
             {
                 foreach (var data in mapData)
                 {
-                    data.DataList.Dispose();
+                    data.Dispose();
                 }
             }
         }
@@ -46,7 +46,7 @@ namespace FS.Extends
         /// <typeparam name="TEntity"> 实体类 </typeparam>
         public static async Task<PooledList<TEntity>> ToListAsync<TEntity>(this Task<DbDataReader> reader)
         {
-            var mapData = DataReaderHelper.DataReaderToDictionary(reader: await reader);
+            using var mapData = DataReaderHelper.DataReaderToDictionary(reader: await reader);
             var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
             try
             {
@@ -56,7 +56,7 @@ namespace FS.Extends
             {
                 foreach (var data in mapData)
                 {
-                    data.DataList.Dispose();
+                    data.Dispose();
                 }
             }
         }
@@ -68,7 +68,7 @@ namespace FS.Extends
         /// <typeparam name="TEntity"> 实体类 </typeparam>
         public static TEntity ToEntity<TEntity>(this IDataReader reader)
         {
-            var mapData = DataReaderHelper.DataReaderToDictionary(reader: reader);
+            using var mapData = DataReaderHelper.DataReaderToDictionary(reader: reader);
             var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
             try
             {
@@ -78,7 +78,7 @@ namespace FS.Extends
             {
                 foreach (var data in mapData)
                 {
-                    data.DataList.Dispose();
+                    data.Dispose();
                 }
             }
         }
@@ -90,7 +90,7 @@ namespace FS.Extends
         /// <typeparam name="TEntity"> 实体类 </typeparam>
         public static TEntity ToEntity<TEntity>(this DataTable reader)
         {
-            var mapData = DataReaderHelper.DataTableToDictionary(dt: reader);
+            using var mapData = DataReaderHelper.DataTableToDictionary(dt: reader);
             var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
             try
             {
@@ -100,7 +100,7 @@ namespace FS.Extends
             {
                 foreach (var data in mapData)
                 {
-                    data.DataList.Dispose();
+                    data.Dispose();
                 }
             }
         }
@@ -112,7 +112,7 @@ namespace FS.Extends
         /// <typeparam name="TEntity"> 实体类 </typeparam>
         public static async Task<TEntity> ToEntityAsync<TEntity>(this Task<DataTable> reader)
         {
-            var mapData = DataReaderHelper.DataTableToDictionary(dt: await reader);
+            using var mapData = DataReaderHelper.DataTableToDictionary(dt: await reader);
             var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
             try
             {
@@ -122,7 +122,7 @@ namespace FS.Extends
             {
                 foreach (var data in mapData)
                 {
-                    data.DataList.Dispose();
+                    data.Dispose();
                 }
             }
         }
@@ -134,7 +134,7 @@ namespace FS.Extends
         /// <typeparam name="TEntity"> 实体类 </typeparam>
         public static PooledList<TEntity> ToList<TEntity>(this DataTable dt)
         {
-            var mapData = DataReaderHelper.DataTableToDictionary(dt: dt);
+            using var mapData = DataReaderHelper.DataTableToDictionary(dt: dt);
             var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
             try
             {
@@ -144,7 +144,7 @@ namespace FS.Extends
             {
                 foreach (var data in mapData)
                 {
-                    data.DataList.Dispose();
+                    data.Dispose();
                 }
             }
         }
@@ -156,7 +156,7 @@ namespace FS.Extends
         /// <typeparam name="TEntity"> 实体类 </typeparam>
         public static async Task<PooledList<TEntity>> ToListAsync<TEntity>(this Task<DataTable> dt)
         {
-            var mapData = DataReaderHelper.DataTableToDictionary(dt: await dt);
+            using var mapData = DataReaderHelper.DataTableToDictionary(dt: await dt);
             var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
             try
             {
@@ -166,7 +166,7 @@ namespace FS.Extends
             {
                 foreach (var data in mapData)
                 {
-                    data.DataList.Dispose();
+                    data.Dispose();
                 }
             }
         }
@@ -178,7 +178,7 @@ namespace FS.Extends
         /// <typeparam name="TEntity"> 实体类 </typeparam>
         public static TEntity[] ToArray<TEntity>(this DataTable dt)
         {
-            var mapData = DataReaderHelper.DataTableToDictionary(dt: dt);
+            using var mapData = DataReaderHelper.DataTableToDictionary(dt: dt);
             var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
             try
             {
@@ -188,7 +188,7 @@ namespace FS.Extends
             {
                 foreach (var data in mapData)
                 {
-                    data.DataList.Dispose();
+                    data.Dispose();
                 }
             }
         }

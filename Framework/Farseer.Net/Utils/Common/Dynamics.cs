@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using Collections.Pooled;
@@ -33,7 +34,7 @@ namespace FS.Utils.Common
         /// <param name="addPropertys"> Key：属性名称；Value：属性类型 </param>
         /// <param name="constructors"> 构造函数参数 </param>
         /// <param name="baseType"> 继承的父类类型 </param>
-        public static Type CreateClassType(PooledList<PropertyInfo> addPropertys, Type[] constructors = null, Type baseType = null)
+        public static Type CreateClassType(IEnumerable<PropertyInfo> addPropertys, Type[] constructors = null, Type baseType = null)
         {
             //Check.IsTure(propertys == null || propertys.Count == 0, "propertys参数不能为空或为0");
 
@@ -43,7 +44,7 @@ namespace FS.Utils.Common
             var typeBuilder = ModuleBuilder.DefineType(name: className, attr: TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Serializable, parent: baseType);
 
             // 添加属性
-            if (addPropertys != null && addPropertys.Count > 0)
+            if (addPropertys != null && addPropertys.Any())
             {
                 foreach (var property in addPropertys)
                 {
@@ -52,7 +53,7 @@ namespace FS.Utils.Common
             }
 
             // 添加默认构造函数
-            if (constructors != null && constructors.Length > 0)
+            if (constructors != null && constructors.Any())
             {
                 IlGenerator(ctor: typeBuilder.DefineConstructor(attributes: MethodAttributes.Public, callingConvention: CallingConventions.Any, parameterTypes: null));
                 IlGenerator(ctor: typeBuilder.DefineConstructor(attributes: MethodAttributes.Public, callingConvention: CallingConventions.Any, parameterTypes: constructors));
@@ -67,7 +68,7 @@ namespace FS.Utils.Common
         /// </summary>
         /// <param name="addPropertys"> Key：属性名称；Value：属性类型 </param>
         /// <param name="baseType"> 继承的父类类型 </param>
-        public static Type CreateClassType(PooledDictionary<string, Type> addPropertys, Type baseType = null)
+        public static Type CreateClassType(IDictionary<string, Type> addPropertys, Type baseType = null)
         {
             Check.IsTure(isTrue: addPropertys == null || addPropertys.Count == 0, parameterName: $"{nameof(addPropertys)}参数不能为空或为0");
 

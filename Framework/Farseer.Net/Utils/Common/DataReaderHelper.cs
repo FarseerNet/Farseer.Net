@@ -24,9 +24,10 @@ namespace FS.Utils.Common
             var dicColumns = new PooledList<MapingData>(reader.FieldCount);
             for (var i = 0; i < reader.FieldCount; i++)
             {
-                var mapData = dicColumns[i] = new MapingData();
+                var mapData = new MapingData();
                 mapData.ColumnName = reader.GetName(i: i);
                 mapData.DataList   = new PooledList<object>();
+                dicColumns.Add(mapData);
             }
 
             // 遍历行
@@ -53,9 +54,10 @@ namespace FS.Utils.Common
             var dicColumns = new PooledList<MapingData>(cols.Count);
             for (var i = 0; i < cols.Count; i++)
             {
-                var mapData = dicColumns[i] = new MapingData();
+                var mapData = new MapingData();
                 mapData.ColumnName = cols[index: i].ColumnName;
                 mapData.DataList   = new PooledList<object>(capacity: dt.Rows.Count);
+                dicColumns.Add(mapData);
             }
 
             // DataRowCollection转成DataRow[]

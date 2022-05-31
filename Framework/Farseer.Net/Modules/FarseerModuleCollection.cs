@@ -34,14 +34,12 @@ namespace FS.Modules
         /// <summary>
         ///     确认FarseerKernelModule模块在模块集合中第一位置
         /// </summary>
-        /// <param name="modules"> </param>
-        public static void EnsureKernelModuleToBeFirst(PooledList<FarseerModuleInfo> modules)
+        public static void EnsureKernelModuleToBeFirst(IList<FarseerModuleInfo> modules)
         {
-            var kernelModuleIndex = modules.FindIndex(match: m => m.Type == typeof(FarseerKernelModule));
-            if (kernelModuleIndex > 0)
+            var kernelModule = modules.FirstOrDefault(m => m.Type == typeof(FarseerKernelModule));
+            if (kernelModule != null)
             {
-                var kernelModule = modules[index: kernelModuleIndex];
-                modules.RemoveAt(index: kernelModuleIndex);
+                modules.Remove(kernelModule);
                 modules.Insert(index: 0, item: kernelModule);
             }
         }
@@ -51,7 +49,7 @@ namespace FS.Modules
         /// </summary>
         private PooledList<FarseerModuleInfo> SortByDependencies()
         {
-            var sorted  = new PooledList<FarseerModuleInfo>();
+            var       sorted  = new PooledList<FarseerModuleInfo>();
             using var visited = new PooledDictionary<FarseerModuleInfo, bool>();
 
             foreach (var item in this) SortByDependenciesVisit(item: item, sorted: sorted, visited: visited);
@@ -65,13 +63,11 @@ namespace FS.Modules
         /// <param name="item"> 元素 </param>
         /// <param name="sorted"> 排序后的列表 </param>
         /// <param name="visited"> 已经访问过的元素字典 </param>
-        private static void SortByDependenciesVisit(FarseerModuleInfo item, ICollection<FarseerModuleInfo> sorted, PooledDictionary<FarseerModuleInfo, bool> visited)
+        private static void SortByDependenciesVisit(FarseerModuleInfo item, ICollection<FarseerModuleInfo> sorted, IDictionary<FarseerModuleInfo, bool> visited)
         {
-            bool inProcess;
-            var  alreadyVisited = visited.TryGetValue(key: item, value: out inProcess);
+            var  alreadyVisited = visited.TryGetValue(key: item, value: out var inProcess);
 
-            if (alreadyVisited)
-                Check.IsTure(isTrue: inProcess, parameterName: "发现循环依赖！");
+            if (alreadyVisited) Check.IsTure(isTrue: inProcess, parameterName: "发现循环依赖！");
             else
             {
                 visited[key: item] = true;

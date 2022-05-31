@@ -31,9 +31,10 @@ namespace FS.Reflection
         /// <returns> </returns>
         public PooledList<Assembly> GetAllAssemblies()
         {
-            var assemblies = new PooledList<Assembly>(200);
-
-            foreach (var module in _moduleManager.Modules)
+            using var assemblies = new PooledList<Assembly>(200);
+            using var moduleManagerModules = _moduleManager.Modules;
+            
+            foreach (var module in moduleManagerModules)
             {
                 assemblies.Add(item: module.Assembly);
                 assemblies.AddRange(collection: module.Instance.GetAdditionalAssemblies());
@@ -77,7 +78,7 @@ namespace FS.Reflection
                 {
                     // ignored 失败的原因是非托管程序
                 }
-                
+
                 if (assembly != null) yield return assembly;
             }
         }

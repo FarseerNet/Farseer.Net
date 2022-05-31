@@ -26,33 +26,26 @@ namespace FS.DI
         /// <summary>
         ///     是否注册
         /// </summary>
-        /// <param name="type"> </param>
-        /// <returns> </returns>
         new bool IsRegistered(Type type);
 
         /// <summary>
         ///     是否注册
         /// </summary>
-        /// <typeparam name="T"> </typeparam>
-        /// <returns> </returns>
         new bool IsRegistered<T>();
 
         /// <summary>
         ///     根据约定注册程序集
         /// </summary>
-        void RegisterAssemblyByConvention(PooledList<Assembly> assemblys);
+        void RegisterAssemblyByConvention(IEnumerable<Assembly> assemblys);
 
         /// <summary>
         ///     注册
         /// </summary>
-        /// <param name="name"> </param>
-        /// <returns> </returns>
         bool IsRegistered(string name);
 
         /// <summary>
         ///     获取当前业务注册的IOC
         /// </summary>
-        /// <returns> </returns>
         PooledList<ComponentModel> GetCustomComponent();
         /// <summary>
         ///     注册

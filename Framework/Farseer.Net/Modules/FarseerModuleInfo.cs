@@ -8,7 +8,7 @@ namespace FS.Modules
     /// <summary>
     ///     模块信息类
     /// </summary>
-    public class FarseerModuleInfo
+    public class FarseerModuleInfo : IDisposable
     {
         /// <summary>
         ///     构造函数
@@ -50,5 +50,10 @@ namespace FS.Modules
         /// </summary>
         /// <returns> </returns>
         public override string ToString() => Type.AssemblyQualifiedName ?? Type.FullName;
+        
+        public void Dispose()
+        {
+            Dependencies.Dispose();
+        }
     }
 }

@@ -12,7 +12,6 @@ namespace FS.DI
         /// <summary>
         ///     注册所有接口到.net core IOC中
         /// </summary>
-        /// <param name="services"> </param>
         public static IServiceCollection AddFarseerIoc(this IServiceCollection services)
         {
             var ioc = IocManager.Instance;

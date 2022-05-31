@@ -57,12 +57,12 @@ namespace FS.Extends
         /// <summary>
         /// 克隆对象
         /// </summary>
-        public static List<TEntity> Clone<TEntity>(this IEnumerable<TEntity> source)
+        public static PooledList<TEntity> Clone<TEntity>(this IEnumerable<TEntity> source)
         {
             if (source == null) return null;
-            if (!source.Any()) return new List<TEntity>();
+            if (!source.Any()) return new PooledList<TEntity>();
 
-            return JsonConvert.DeserializeObject<List<TEntity>>(JsonConvert.SerializeObject(source), new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
+            return JsonConvert.DeserializeObject<PooledList<TEntity>>(JsonConvert.SerializeObject(source), new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
             // IFormatter formatter = new BinaryFormatter();
             // Stream     stream    = new MemoryStream();
             // using (stream)
@@ -128,6 +128,6 @@ namespace FS.Extends
         /// </summary>
         /// <param name="select"> 字段选择器 </param>
         /// <param name="lst"> 列表 </param>
-        public static List<T> ToSelectList<TEntity, T>(this IEnumerable<TEntity> lst, Func<TEntity, T> select) => lst?.Select(selector: select).ToList();
+        public static PooledList<T> ToSelectList<TEntity, T>(this IEnumerable<TEntity> lst, Func<TEntity, T> select) => lst?.Select(selector: select).ToPooledList();
     }
 }

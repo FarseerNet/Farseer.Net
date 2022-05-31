@@ -125,7 +125,7 @@ namespace FS.Extends
         /// <param name="select"> 字段选择器 </param>
         /// <param name="lstIDs"> 条件，等同于：o=> IDs.Contains(o.ID) 的操作 </param>
         /// <param name="lst"> 列表 </param>
-        public static List<T> ToSelectList<TEntity, T>(this IEnumerable<TEntity> lst, IEnumerable<int> lstIDs, Func<TEntity, T> select) where TEntity : IEntity
+        public static PooledList<T> ToSelectList<TEntity, T>(this IEnumerable<TEntity> lst, IEnumerable<int> lstIDs, Func<TEntity, T> select) where TEntity : IEntity
         {
             return lst.Where(predicate: o => lstIDs.Contains(value: o.ID)).ToSelectList(select: select);
         }
@@ -137,7 +137,7 @@ namespace FS.Extends
         /// <param name="select"> 字段选择器 </param>
         /// <param name="lstIDs"> 条件，等同于：o=> IDs.Contains(o.ID) 的操作 </param>
         /// <param name="lst"> 列表 </param>
-        public static List<T> ToSelectList<TEntity, T>(this IEnumerable<TEntity> lst, IEnumerable<int> lstIDs, int top, Func<TEntity, T> select) where TEntity : IEntity
+        public static PooledList<T> ToSelectList<TEntity, T>(this IEnumerable<TEntity> lst, IEnumerable<int> lstIDs, int top, Func<TEntity, T> select) where TEntity : IEntity
         {
             return lst.Where(predicate: o => lstIDs.Contains(value: o.ID)).Take(count: top).ToSelectList(select: select);
         }

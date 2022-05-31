@@ -89,11 +89,11 @@ namespace FS.Modules
         /// <summary>
         ///     递归所有依赖模块
         /// </summary>
-        private static void AddModuleAndDependenciesResursively(PooledList<Type> modules, Type module)
+        private static void AddModuleAndDependenciesResursively(IList<Type> modules, Type module)
         {
             //if (!IsFarseerModule(type: module)) throw new FarseerInitException(message: "此类型不是一个有效的模块: " + module.AssemblyQualifiedName);
 
-            if (modules.Contains(item: module)) return;
+            if (modules.Contains(module)) return;
             modules.Add(item: module);
 
             var dependedModules = FindDependedModuleTypes(moduleType: module);

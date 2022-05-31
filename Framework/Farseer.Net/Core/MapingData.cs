@@ -3,7 +3,7 @@
 // 时间：2016-09-01 16:15
 // ********************************************
 
-using System.Collections.Generic;
+using System;
 using Collections.Pooled;
 
 namespace FS.Core
@@ -11,7 +11,7 @@ namespace FS.Core
     /// <summary>
     ///     数据映射
     /// </summary>
-    public class MapingData
+    public class MapingData : IDisposable
     {
         /// <summary>
         ///     列名
@@ -22,5 +22,10 @@ namespace FS.Core
         ///     该列的下的数据集合
         /// </summary>
         public PooledList<object> DataList { get; set; }
+
+        public void Dispose()
+        {
+            DataList.Dispose();
+        }
     }
 }
