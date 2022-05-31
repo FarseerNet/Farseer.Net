@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Collections.Pooled;
 using FS.Extends;
 using FS.Utils.Common.ExpressionVisitor;
 using Nest;
@@ -12,12 +13,11 @@ namespace FS.ElasticSearch.ExpressionVisitor
     /// <summary>
     ///     提供ExpressionBinary表达式树的解析
     /// </summary>
-    public class WhereVisitor<TDocument> : AbsExpressionVisitor where TDocument : class, new()
+    public class WhereVisitor<TDocument> : AbsExpressionVisitor, IDisposable where TDocument : class, new()
     {
-        private readonly Stack<Expression> _curField = new();
-        private readonly Stack<object>     _curValue = new();
-
-        private readonly Stack<QueryContainer> _queryList = new();
+        private readonly PooledStack<Expression>     _curField  = new();
+        private readonly PooledStack<object>         _curValue  = new();
+        private readonly PooledStack<QueryContainer> _queryList = new();
         public new QueryContainer Visit(Expression exp)
         {
             base.Visit(exp: exp);
@@ -124,8 +124,8 @@ namespace FS.ElasticSearch.ExpressionVisitor
         {
             if (IsIgnoreMethod(m: m)) return m;
 
-            var methodObject = m.Object;
-            var arguments    = m.Arguments.ToList();
+            var       methodObject = m.Object;
+            using var arguments    = m.Arguments.ToPooledList();
             if (methodObject == null)
             {
                 methodObject = arguments[index: 0];
@@ -261,6 +261,12 @@ namespace FS.ElasticSearch.ExpressionVisitor
                 case "ToDateTime": return true;
                 default:           return false;
             }
+        }
+        public void Dispose()
+        {
+            _curField.Dispose();
+            _curValue.Dispose();
+            _queryList.Dispose();
         }
     }
 }

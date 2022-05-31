@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 using Castle.Core.Internal;
+using Collections.Pooled;
 using FS.Core;
 using FS.Core.Abstract.Data;
 using FS.Core.LinkTrack;
@@ -27,7 +28,7 @@ namespace FS.ElasticSearch
         /// <summary>
         ///     缓存是否包含索引
         /// </summary>
-        private static readonly Dictionary<string, bool> IndexCache = new();
+        private static readonly PooledDictionary<string, bool> IndexCache = new();
 
         private static readonly object objLock = new();
 
@@ -95,8 +96,6 @@ namespace FS.ElasticSearch
             SetMap.SetName(indexName: indexName, shardsCount: shardsCount, replicasCount: replicasCount, refreshInterval, aliasNames: aliasNames);
             return this;
         }
-
-
 
         /// <summary>
         ///     动态设置索引名称、别名
@@ -256,7 +255,7 @@ namespace FS.ElasticSearch
         /// <summary>
         ///     获取全部数据列表（支持获取全部数据）
         /// </summary>
-        public List<TDocument> ToScrollList()
+        public PooledList<TDocument> ToScrollList()
         {
             using (FsLinkTrack.TrackElasticsearch(method: "ToScrollList"))
             {
@@ -264,7 +263,7 @@ namespace FS.ElasticSearch
                 var scrollTime = new Time(timeSpan: TimeSpan.FromSeconds(value: 30));
                 var searchResponse = Client.Search<TDocument>(selector: s =>
                 {
-                    var searchDescriptor                        = s.Index(index: SetMap.AliasNames).Size(size: size).Scroll(scroll: scrollTime);
+                    var searchDescriptor                        = s.Index(SetMap.AliasNames.ToArray()).Size(size: size).Scroll(scroll: scrollTime);
                     if (_query        != null) searchDescriptor = searchDescriptor.Query(query: q => _query);
                     if (_sort         != null) searchDescriptor = searchDescriptor.Sort(selector: _sort);
                     if (_selectFields != null) searchDescriptor = searchDescriptor.Source(selector: s => s.Includes(fields: i => i.Fields(fields: _selectFields)));
@@ -273,28 +272,28 @@ namespace FS.ElasticSearch
 
                 if (!searchResponse.IsValid)
                 {
-                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return new List<TDocument>();
+                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return new PooledList<TDocument>();
                     throw searchResponse.OriginalException;
                 }
 
 
                 // 查询超过1万条记录时，使用滚动（类似游标）方式实现
-                List<TDocument> Scroll()
+                PooledList<TDocument> Scroll()
                 {
-                    var lst = new List<TDocument>();
+                    var lst = new PooledList<TDocument>();
                     if (!searchResponse.IsValid)
                     {
-                        if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return new List<TDocument>();
+                        if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return new PooledList<TDocument>();
                         throw searchResponse.OriginalException;
                     }
 
-                    lst.AddRange(collection: searchResponse.Documents.ToList());
+                    lst.AddRange(collection: searchResponse.Documents.ToPooledList());
 
                     // 数量相等，说明还没有读完全部数据
                     while (searchResponse.Documents.Count == size)
                     {
                         searchResponse = Client.Scroll<TDocument>(scroll: scrollTime, scrollId: searchResponse.ScrollId);
-                        if (searchResponse.Documents.Count > 0) lst.AddRange(collection: searchResponse.Documents.ToList());
+                        if (searchResponse.Documents.Count > 0) lst.AddRange(collection: searchResponse.Documents.ToPooledList());
                     }
 
                     Client.ClearScroll(selector: s => s.ScrollId(searchResponse.ScrollId));
@@ -308,7 +307,7 @@ namespace FS.ElasticSearch
         /// <summary>
         ///     获取全部数据列表（支持获取全部数据）
         /// </summary>
-        public async Task<List<TDocument>> ToScrollListAsync()
+        public async Task<PooledList<TDocument>> ToScrollListAsync()
         {
             using (FsLinkTrack.TrackElasticsearch(method: "ToScrollListAsync"))
             {
@@ -316,7 +315,7 @@ namespace FS.ElasticSearch
                 var scrollTime = new Time(timeSpan: TimeSpan.FromSeconds(value: 30));
                 var searchResponse = await Client.SearchAsync<TDocument>(selector: s =>
                 {
-                    var searchDescriptor = s.Index(index: SetMap.AliasNames).Size(size: size).Scroll(scroll: scrollTime);
+                    var searchDescriptor = s.Index(index: SetMap.AliasNames.ToArray()).Size(size: size).Scroll(scroll: scrollTime);
                     //if (_query.Count  > 0) searchDescriptor     = searchDescriptor.Query(query: q => q.Bool(selector: b => b.Must(queries: _query)));
                     if (_query        != null) searchDescriptor = searchDescriptor.Query(query: q => _query);
                     if (_sort         != null) searchDescriptor = searchDescriptor.Sort(selector: _sort);
@@ -324,22 +323,22 @@ namespace FS.ElasticSearch
                     return searchDescriptor;
                 });
 
-                async Task<List<TDocument>> ScrollAsync()
+                async Task<PooledList<TDocument>> ScrollAsync()
                 {
-                    var lst = new List<TDocument>();
+                    var lst = new PooledList<TDocument>();
                     if (!searchResponse.IsValid)
                     {
-                        if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return new List<TDocument>();
+                        if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return new PooledList<TDocument>();
                         throw searchResponse.OriginalException;
                     }
 
-                    lst.AddRange(collection: searchResponse.Documents.ToList());
+                    lst.AddRange(collection: searchResponse.Documents.ToPooledList());
 
                     // 数量相等，说明还没有读完全部数据
                     while (searchResponse.Documents.Count == size)
                     {
                         searchResponse = await Client.ScrollAsync<TDocument>(scroll: scrollTime, scrollId: searchResponse.ScrollId);
-                        if (searchResponse.Documents.Count > 0) lst.AddRange(collection: searchResponse.Documents.ToList());
+                        if (searchResponse.Documents.Count > 0) lst.AddRange(collection: searchResponse.Documents.ToPooledList());
                     }
 
                     await Client.ClearScrollAsync(selector: s => s.ScrollId(searchResponse.ScrollId));
@@ -353,24 +352,24 @@ namespace FS.ElasticSearch
         /// <summary>
         ///     获取全部数据列表（支持取10000条以内）
         /// </summary>
-        public List<TDocument> ToList() => ToList(top: 10000);
+        public PooledList<TDocument> ToList() => ToList(top: 10000);
 
         /// <summary>
         ///     获取全部数据列表（支持取10000条以内）
         /// </summary>
-        public Task<List<TDocument>> ToListAsync() => ToListAsync(top: 10000);
+        public Task<PooledList<TDocument>> ToListAsync() => ToListAsync(top: 10000);
 
         /// <summary>
         ///     获取数据列表
         /// </summary>
         /// <param name="top"> 显示前多少条数据 </param>
-        public List<TDocument> ToList(int top)
+        public PooledList<TDocument> ToList(int top)
         {
             using (FsLinkTrack.TrackElasticsearch(method: "ToList"))
             {
                 var searchResponse = Client.Search<TDocument>(selector: s =>
                 {
-                    var searchDescriptor                        = s.Index(index: SetMap.AliasNames);
+                    var searchDescriptor                        = s.Index(index: SetMap.AliasNames.ToArray());
                     if (_query        != null) searchDescriptor = searchDescriptor.Query(query: q => _query);
                     if (top           > 0) searchDescriptor     = searchDescriptor.Size(size: top);
                     if (_sort         != null) searchDescriptor = searchDescriptor.Sort(selector: _sort);
@@ -380,11 +379,11 @@ namespace FS.ElasticSearch
 
                 if (!searchResponse.IsValid)
                 {
-                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return new List<TDocument>();
+                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return new PooledList<TDocument>();
                     throw searchResponse.OriginalException;
                 }
 
-                return searchResponse.Documents.ToList();
+                return searchResponse.Documents.ToPooledList();
             }
         }
 
@@ -392,13 +391,13 @@ namespace FS.ElasticSearch
         ///     获取数据列表
         /// </summary>
         /// <param name="top"> 显示前多少条数据 </param>
-        public async Task<List<TDocument>> ToListAsync(int top)
+        public async Task<PooledList<TDocument>> ToListAsync(int top)
         {
             using (FsLinkTrack.TrackElasticsearch(method: "ToListAsync"))
             {
                 var searchResponse = await Client.SearchAsync<TDocument>(selector: s =>
                 {
-                    var searchDescriptor                        = s.Index(index: SetMap.AliasNames);
+                    var searchDescriptor                        = s.Index(index: SetMap.AliasNames.ToArray());
                     if (_query        != null) searchDescriptor = searchDescriptor.Query(query: q => _query);
                     if (top           > 0) searchDescriptor     = searchDescriptor.Size(size: top);
                     if (_sort         != null) searchDescriptor = searchDescriptor.Sort(selector: _sort);
@@ -408,11 +407,11 @@ namespace FS.ElasticSearch
 
                 if (!searchResponse.IsValid)
                 {
-                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return new List<TDocument>();
+                    if (searchResponse.ServerError.Error.Type == "index_not_found_exception") return new PooledList<TDocument>();
                     throw searchResponse.OriginalException;
                 }
 
-                return searchResponse.Documents.ToList();
+                return searchResponse.Documents.ToPooledList();
             }
         }
 
@@ -443,7 +442,7 @@ namespace FS.ElasticSearch
                     throw searchResponse.OriginalException;
                 }
 
-                return new PageList<TDocument>(searchResponse.Documents.ToList(), searchResponse.Total);
+                return new PageList<TDocument>(searchResponse.Documents.ToPooledList(), searchResponse.Total);
             }
         }
 
@@ -474,7 +473,7 @@ namespace FS.ElasticSearch
                     throw searchResponse.OriginalException;
                 }
 
-                return new PageList<TDocument>(searchResponse.Documents.ToList(), searchResponse.Total);
+                return new PageList<TDocument>(searchResponse.Documents.ToPooledList(), searchResponse.Total);
             }
         }
 
@@ -751,7 +750,7 @@ namespace FS.ElasticSearch
         /// <param name="firstCharToLower"> 是否首字母小写（默认小写） </param>
         private UpdateByQueryDescriptor<TDocument> Script(UpdateByQueryDescriptor<TDocument> desc, object entity, bool firstCharToLower)
         {
-            var lstScript = new List<string>();
+            using var lstScript = new PooledList<string>();
             var dicValue  = new Dictionary<string, object>();
 
             foreach (var property in entity.GetType().GetProperties())
@@ -771,7 +770,7 @@ namespace FS.ElasticSearch
                 dicValue.Add(key: field, value: property.GetValue(obj: entity));
             }
 
-            return desc.Script(scriptSelector: s => s.Source(script: string.Join(separator: ";", values: lstScript)).Params(scriptParams: dicValue));
+            return desc.Script(scriptSelector: s => s.Source(script: string.Join(separator: ";", values: lstScript)).Params(dicValue));
         }
 
         /// <summary>

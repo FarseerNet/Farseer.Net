@@ -1,13 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Collections.Pooled;
 using FS.DI;
 using FS.ElasticSearch.Cache;
-using FS.ElasticSearch.Configuration;
 using FS.ElasticSearch.Internal;
-using FS.ElasticSearch.Map;
 using Nest;
 
 namespace FS.ElasticSearch
@@ -25,18 +21,34 @@ namespace FS.ElasticSearch
         /// <param name="configName"> 配置名称 </param>
         protected EsContext(string configName)
         {
-            _configName      = configName;
-            Client           = IocManager.GetService<IElasticClient>(name: configName);
-            _internalContext = new InternalContext(contextType: GetType());
+            InternalContext = new InternalContext(contextType: GetType());
+            _configName     = configName;
+            Client          = IocManager.GetService<IElasticClient>(name: configName);
 
-            // 实例化子类中，所有Set属性
-            ContextSetTypeCacheManger.Cache(contextKey: GetType()).Item2(obj: this);
+            InitializerInternalContext();
+            InitializerSet();
         }
 
         public IElasticClient Client { get; }
 
-        public void Dispose()
+        /// <summary>
+        ///     初始化内部InternalContext
+        /// </summary>
+        private void InitializerInternalContext()
         {
+            InternalContext.Initializer(_configName);
+        }
+
+        /// <summary>
+        ///     不初始化ContextConnection（用于动态改变数据库连接方式）
+        /// </summary>
+        private void InitializerSet()
+        {
+            // 实例化子类中，所有Set属性
+            ContextSetTypeCacheManger.Cache(contextKey: GetType()).Item2(obj: this);
+
+            // 设置表名称
+            CreateModelInit();
         }
 
         /// <summary>
@@ -56,35 +68,7 @@ namespace FS.ElasticSearch
         /// <summary>
         ///     上下文初始化器
         /// </summary>
-        private readonly InternalContext _internalContext;
-
-        /// <summary>
-        ///     上下文初始化器
-        /// </summary>
-        internal InternalContext InternalContext
-        {
-            get
-            {
-                if (!_internalContext.IsInitializer) _internalContext.Initializer();
-
-                if (!_internalContext.IsInitModelName)
-                {
-                    // 设置默认的副本、分片、刷新数量
-                    using var elasticSearchItemConfigs = ElasticSearchConfigRoot.Get().ToPooledList();
-                    var       esConfig                 = elasticSearchItemConfigs.FirstOrDefault(o => o.Name == _configName);
-                    foreach (var setDataMap in _internalContext.ContextMap.SetDataList)
-                    {
-                        setDataMap.SetName(esConfig.ShardsCount, esConfig.ReplicasCount, esConfig.RefreshInterval, esConfig.IndexFormat);
-                    }
-
-                    _internalContext.IsInitModelName = true;
-                    // 初始化模型映射
-                    CreateModelInit();
-                }
-
-                return _internalContext;
-            }
-        }
+        internal InternalContext InternalContext { get; }
 
         #endregion
 
@@ -108,7 +92,6 @@ namespace FS.ElasticSearch
         /// <typeparam name="TEntity"> </typeparam>
         public IndexSet<TEntity> IndexSet<TEntity>(PropertyInfo propertyInfo) where TEntity : class, new() => new(context: this, pInfo: propertyInfo);
 
-
         /// <summary>
         ///     动态返回Set类型的属性数据
         /// </summary>
@@ -124,5 +107,10 @@ namespace FS.ElasticSearch
         }
 
         #endregion
+
+        public void Dispose()
+        {
+            InternalContext.Dispose();
+        }
     }
 }

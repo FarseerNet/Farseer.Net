@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Collections.Pooled;
 using FS.ElasticSearch.Cache;
 
 namespace FS.ElasticSearch.Map
@@ -9,7 +9,7 @@ namespace FS.ElasticSearch.Map
     /// <summary>
     ///     上下文数据映射
     /// </summary>
-    public class ContextDataMap
+    public class ContextDataMap : IDisposable
     {
         /// <summary>
         ///     物理结构
@@ -32,7 +32,7 @@ namespace FS.ElasticSearch.Map
         /// <summary>
         ///     获取所有Set属性
         /// </summary>
-        public List<SetDataMap> SetDataList { get; } = new();
+        public PooledList<SetDataMap> SetDataList { get; } = new();
 
         /// <summary>
         ///     获取标注的名称
@@ -46,5 +46,14 @@ namespace FS.ElasticSearch.Map
         /// <param name="setType"> 属性变量 </param>
         /// <param name="propertyName"> 属性名称 </param>
         public SetDataMap GetEntityMap(Type setType, string propertyName) => SetDataList.FirstOrDefault(predicate: o => o.ClassProperty.PropertyType == setType && o.ClassProperty.Name == propertyName);
+
+        public void Dispose()
+        {
+            foreach (var setDataMap in SetDataList)
+            {
+                setDataMap.Dispose();
+            }
+            SetDataList.Dispose();
+        }
     }
 }

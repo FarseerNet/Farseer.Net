@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using Collections.Pooled;
 using FS.Core.Mapping;
 using FS.ElasticSearch.Cache;
 
@@ -10,12 +11,12 @@ namespace FS.ElasticSearch.Map
     /// <summary>
     ///     字段 映射关系
     /// </summary>
-    public class SetPhysicsMap
+    public class SetPhysicsMap : IDisposable
     {
         /// <summary>
         ///     获取所有Set属性
         /// </summary>
-        public readonly Dictionary<PropertyInfo, FieldMapState> MapList;
+        public readonly PooledDictionary<PropertyInfo, FieldMapState> MapList;
 
         /// <summary>
         ///     关系映射
@@ -24,7 +25,7 @@ namespace FS.ElasticSearch.Map
         internal SetPhysicsMap(Type type)
         {
             Type    = type;
-            MapList = new Dictionary<PropertyInfo, FieldMapState>();
+            MapList = new PooledDictionary<PropertyInfo, FieldMapState>();
 
             // 循环Set的字段
             foreach (var propertyInfo in Type.GetProperties())
@@ -121,5 +122,10 @@ namespace FS.ElasticSearch.Map
         ///     通过实体类型，返回Mapping
         /// </summary>
         public static implicit operator SetPhysicsMap(Type type) => SetMapCacheManger.Cache(key: type);
+        
+        public void Dispose()
+        {
+            MapList.Dispose();
+        }
     }
 }

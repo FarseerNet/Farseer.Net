@@ -1,5 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
+using Collections.Pooled;
+using FS.ElasticSearch.Configuration;
 using FS.ElasticSearch.Map;
 
 namespace FS.ElasticSearch.Internal
@@ -31,14 +34,24 @@ namespace FS.ElasticSearch.Internal
         public ContextDataMap ContextMap { get; set; }
 
         /// <summary>
-        ///     是否初始化
-        /// </summary>
-        public bool IsInitializer { get; private set; }
-
-        /// <summary>
         ///     是否初始化实体类名
         /// </summary>
         public bool IsInitModelName { get; internal set; }
+
+        /// <summary>
+        ///     初始化数据库环境、实例化子类中，所有Set属性
+        /// </summary>
+        /// <param name="configName"> </param>
+        public void Initializer(string configName)
+        {
+            // 设置默认的副本、分片、刷新数量
+            using var elasticSearchItemConfigs = ElasticSearchConfigRoot.Get().ToPooledList();
+            var       esConfig                 = elasticSearchItemConfigs.FirstOrDefault(o => o.Name == configName);
+            foreach (var setDataMap in ContextMap.SetDataList)
+            {
+                setDataMap.SetName(esConfig.ShardsCount, esConfig.ReplicasCount, esConfig.RefreshInterval, esConfig.IndexFormat);
+            }
+        }
 
         /// <summary>
         ///     释放资源
@@ -60,20 +73,12 @@ namespace FS.ElasticSearch.Internal
             //释放托管资源
             if (disposing)
             {
+                foreach (var setDataMap in ContextMap.SetDataList)
+                {
+                    setDataMap.Dispose();
+                }
+                ContextMap.Dispose();
             }
-        }
-
-        /// <summary>
-        ///     初始化数据库环境、实例化子类中，所有Set属性
-        /// </summary>
-        public void Initializer()
-        {
-            if (IsInitializer) return;
-
-            // 上下文映射关系
-            ContextMap = new ContextDataMap(type: ContextType);
-
-            IsInitializer = true;
         }
     }
 }

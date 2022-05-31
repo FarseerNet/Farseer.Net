@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Collections.Pooled;
 
 namespace FS.ElasticSearch.Map
 {
     /// <summary>
     ///     实体类结构映射
     /// </summary>
-    public class SetDataMap
+    public class SetDataMap : IDisposable
     {
         /// <summary>
         ///     设置索引、别名、分片数量、副本数量
@@ -39,6 +40,9 @@ namespace FS.ElasticSearch.Map
         /// </summary>
         public int RefreshInterval { get; private set; }
 
+        /// <summary>
+        /// 别名
+        /// </summary>
         public string[] AliasNames { get; private set; }
 
         /// <summary>
@@ -114,6 +118,10 @@ namespace FS.ElasticSearch.Map
             SetName(indexName, aliasNames);
             SetName(shardsCount, replicasCount, refreshInterval);
             return this;
+        }
+        
+        public void Dispose()
+        {
         }
     }
 }

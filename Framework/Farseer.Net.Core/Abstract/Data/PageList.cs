@@ -3,6 +3,7 @@
 // 时间：2017-05-30 20:53
 // ********************************************
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,28 +17,28 @@ namespace FS.Core.Abstract.Data
     /// </summary>
     /// <typeparam name="TEntity"> </typeparam>
     [DataContract]
-    public class PageList<TEntity> : IPageList
+    public class PageList<TEntity> : IPageList, IDisposable
     {
         public PageList()
         {
             List = new();
         }
-        
+
         /// <summary>
         ///     数据分页列表及总数
         /// </summary>
         public PageList(PooledList<TEntity> list, long recordCount)
         {
-            List       = list;
+            List        = list;
             RecordCount = recordCount;
         }
-        
+
         /// <summary>
         ///     数据分页列表及总数
         /// </summary>
         public PageList(IEnumerable<TEntity> list, long recordCount)
         {
-            List       = list.ToPooledList();
+            List        = list.ToPooledList();
             RecordCount = recordCount;
         }
 
@@ -52,7 +53,12 @@ namespace FS.Core.Abstract.Data
         /// </summary>
         [DataMember]
         public PooledList<TEntity> List { get; set; }
-        
+
         public IEnumerable GetList() => List;
+        
+        public void Dispose()
+        {
+            List.Dispose();
+        }
     }
 }

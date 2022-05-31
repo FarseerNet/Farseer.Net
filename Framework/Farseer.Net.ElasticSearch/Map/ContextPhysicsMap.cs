@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Collections.Pooled;
 using FS.ElasticSearch.Cache;
 
 namespace FS.ElasticSearch.Map
@@ -34,7 +35,7 @@ namespace FS.ElasticSearch.Map
         /// <summary>
         ///     获取所有Set属性
         /// </summary>
-        public Dictionary<PropertyInfo, SetPhysicsMap> EntityMapList { get; } = new();
+        public PooledDictionary<PropertyInfo, SetPhysicsMap> EntityMapList { get; } = new();
 
         /// <summary>
         ///     类型
