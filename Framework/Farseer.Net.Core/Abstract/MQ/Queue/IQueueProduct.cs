@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Collections.Pooled;
 
 namespace FS.Core.Abstract.MQ.Queue
 {
@@ -13,6 +14,6 @@ namespace FS.Core.Abstract.MQ.Queue
         ///     发送数据
         /// </summary>
         /// <param name="datalist"> 数据 </param>
-        void Send(List<object> datalist);
+        void Send(PooledList<object> datalist);
     }
 }

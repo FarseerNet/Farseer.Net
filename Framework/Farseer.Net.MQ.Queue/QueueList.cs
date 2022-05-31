@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using System.Linq;
+using Collections.Pooled;
 using FS.Core.Abstract.MQ.Queue;
 using FS.MQ.Queue.Configuration;
 
@@ -7,17 +7,17 @@ namespace FS.MQ.Queue;
 
 public class QueueList : IQueueList
 {
-    private readonly QueueConfig    _queueConfig;
-    private readonly List<object>[] Queues;
-    private readonly object         objLock = new();
-    private          List<object>   CurQueue;
-    private          int            QueueEmptyIndex = 0;
+    private readonly QueueConfig          _queueConfig;
+    private readonly PooledList<object>[] Queues;
+    private readonly object               objLock = new();
+    private          PooledList<object>   CurQueue;
+    private          int                  QueueEmptyIndex = 0;
 
     public QueueList(QueueConfig queueConfig)
     {
         if (queueConfig.MaxCount == 0) queueConfig.MaxCount = 100000000;
         _queueConfig = queueConfig;
-        Queues       = new List<object>[(queueConfig.MaxCount / queueConfig.PullCount) + 1];
+        Queues       = new PooledList<object>[(queueConfig.MaxCount / queueConfig.PullCount) + 1];
         CurQueue     = new(queueConfig.PullCount);
     }
 
@@ -42,7 +42,7 @@ public class QueueList : IQueueList
                     // 超出_productConfig.PullCount值，则通过截取的方式，保证每个集合不能超过_productConfig.PullCount
                     while (CurQueue.Count > _queueConfig.PullCount)
                     {
-                        Queues[QueueEmptyIndex] = CurQueue.Take(_queueConfig.PullCount).ToList();
+                        Queues[QueueEmptyIndex] = CurQueue.Take(_queueConfig.PullCount).ToPooledList();
                         // for (int i = 0; i < _queueConfig.PullCount; i++)
                         // {
                         //     CurQueue.RemoveAt(0);
@@ -69,7 +69,7 @@ public class QueueList : IQueueList
     /// <summary>
     /// 添加数据
     /// </summary>
-    public void Add(List<object> datalist)
+    public void Add(PooledList<object> datalist)
     {
         // 当前所有队列的总数 大于 允许的最大数量时，则丢弃最新的数据
         if (_queueConfig.MaxCount > 0 && TotalCount >= _queueConfig.MaxCount) return;
@@ -101,7 +101,7 @@ public class QueueList : IQueueList
     /// <summary>
     /// 拉取数据
     /// </summary>
-    public List<object> Pull()
+    public PooledList<object> Pull()
     {
         // 如果已经有满载的数据，则直接取出返回
         if (Queues[0] != null)
@@ -122,7 +122,7 @@ public class QueueList : IQueueList
         var curCount = CurQueue.Count;
         if (curCount > 0)
         {
-            var objects = CurQueue.Take(curCount).ToList();
+            var objects = CurQueue.Take(curCount).ToPooledList();
             // for (int i = 0; i < objects.Count; i++)
             // {
             //     CurQueue.RemoveAt(0);

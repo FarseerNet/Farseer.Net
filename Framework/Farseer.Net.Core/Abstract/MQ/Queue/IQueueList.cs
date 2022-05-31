@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Collections.Pooled;
 
 namespace FS.Core.Abstract.MQ.Queue;
 
@@ -18,7 +19,7 @@ public interface IQueueList
     /// <summary>
     /// 添加数据
     /// </summary>
-    void Add(List<object> datalist);
+    void Add(PooledList<object> datalist);
     /// <summary>
     /// 获取当前队列大小
     /// </summary>
@@ -26,5 +27,5 @@ public interface IQueueList
     /// <summary>
     /// 拉取数据
     /// </summary>
-    List<object> Pull();
+    PooledList<object> Pull();
 }

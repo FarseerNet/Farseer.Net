@@ -1,9 +1,10 @@
+using System;
 using System.Collections.Generic;
 using Collections.Pooled;
 
 namespace FS.Core.LinkTrack
 {
-    public class LinkTrackContext
+    public class LinkTrackContext : IDisposable
     {
         /// <summary>
         ///     上游应用
@@ -29,7 +30,7 @@ namespace FS.Core.LinkTrack
         ///     总共使用时间毫秒
         /// </summary>
         public virtual long UseTs => EndTs > StartTs ? EndTs - StartTs : 0;
-        
+
         /// <summary>
         /// 状态码
         /// </summary>
@@ -54,7 +55,7 @@ namespace FS.Core.LinkTrack
         ///     请求内容类型
         /// </summary>
         public virtual string ContentType { get; set; }
-        
+
         /// <summary>
         /// 状态码
         /// </summary>
@@ -94,5 +95,17 @@ namespace FS.Core.LinkTrack
         ///     异常信息
         /// </summary>
         public virtual string ExceptionMessage { get; set; }
+        public void Dispose()
+        {
+            if (Headers != null) Headers.Dispose();
+            if (List != null)
+            {
+                foreach (var linkTrackDetail in List)
+                {
+                    linkTrackDetail.Data?.Dispose();
+                    linkTrackDetail.CallStackTrace?.MethodParams.Dispose();
+                }
+            }
+        }
     }
 }
