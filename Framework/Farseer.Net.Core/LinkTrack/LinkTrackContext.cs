@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Collections.Pooled;
 
 namespace FS.Core.LinkTrack
 {
@@ -62,7 +63,7 @@ namespace FS.Core.LinkTrack
         /// <summary>
         ///     请求头部
         /// </summary>
-        public virtual Dictionary<string, string> Headers { get; set; }
+        public virtual PooledDictionary<string, string> Headers { get; set; }
 
         /// <summary>
         ///     请求参数
@@ -82,7 +83,7 @@ namespace FS.Core.LinkTrack
         /// <summary>
         ///     调用的上下文
         /// </summary>
-        public virtual List<LinkTrackDetail> List { get; set; } = new();
+        public virtual PooledList<LinkTrackDetail> List { get; set; } = new();
 
         /// <summary>
         ///     是否执行异常

@@ -1,3 +1,4 @@
+using FS.Core.Abstract.EnvCollect;
 using FS.Core.Abstract.MQ.Queue;
 using FS.Core.LinkTrack;
 using FS.DI;

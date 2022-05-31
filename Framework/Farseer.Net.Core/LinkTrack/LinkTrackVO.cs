@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace FS.Core.LinkTrack
 {
     public class LinkTrackVO

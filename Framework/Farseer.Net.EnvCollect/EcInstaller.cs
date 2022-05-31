@@ -1,6 +1,7 @@
 ﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
+using FS.Core.Abstract.EnvCollect;
 using FS.Core.LinkTrack;
 using FS.DI;
 

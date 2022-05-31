@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.Core.Abstract.MQ.Queue;
 using FS.Core.LinkTrack;
 using FS.LinkTrack.Dal;
@@ -18,8 +19,8 @@ namespace FS.LinkTrack.Consumer
         public async Task<bool> Consumer(List<object> queueList)
         {
             if (queueList.Count == 0) return true;
-            
-            var lst = queueList.Select(o => o.Adapt<LinkTrackContextPO>()).ToList();
+
+            using var lst = queueList.Select(o => o.Adapt<LinkTrackContextPO>()).ToPooledList();
 
             // 设置C#的调用链
             foreach (var linkTrackContext in lst)
@@ -35,6 +36,18 @@ namespace FS.LinkTrack.Consumer
             // 依赖外部系统的，单独存储，用于统计慢查询
             await AddSlowQuery(lst);
 
+            foreach (var linkTrackContextPO in lst)
+            {
+                linkTrackContextPO.Headers.Dispose();
+                if (linkTrackContextPO.List != null)
+                {
+                    foreach (var linkTrackDetail in linkTrackContextPO.List)
+                    {
+                        linkTrackDetail.Data.Dispose();
+                    }
+                    linkTrackContextPO.List.Dispose();
+                }
+            }
             return true;
         }
 
@@ -43,9 +56,9 @@ namespace FS.LinkTrack.Consumer
         /// <summary>
         /// 依赖外部系统的，单独存储，用于统计慢查询
         /// </summary>
-        private Task AddSlowQuery(List<LinkTrackContextPO> lst)
+        private Task AddSlowQuery(PooledList<LinkTrackContextPO> lst)
         {
-            var lstSlowQuery = new List<SlowQueryPO>();
+            using var lstSlowQuery = new PooledList<SlowQueryPO>();
             foreach (var linkTrackContext in lst)
             {
                 foreach (var linkTrackDetail in linkTrackContext.List)

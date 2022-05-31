@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.Core.LinkTrack;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
@@ -26,7 +27,7 @@ namespace FS.Grpc
             }
 
             TResponse result;
-            var       dicHeader = context.RequestHeaders.ToDictionary(keySelector: o => o.Key, elementSelector: o => o.Value);
+            var       dicHeader = context.RequestHeaders.ToPooledDictionary(keySelector: o => o.Key, o => o.Value);
             var       path      = $"http://{context.Host}{context.Method.ToLower()}";
 
             using (var trackEnd = FsLinkTrack.TrackApiServer(contextId, parentAppId, domain: context.Host, path: path, method: "GRPC", contentType: "application/grpc", headerDictionary: dicHeader, requestBody: JsonConvert.SerializeObject(value: request), context.Peer))

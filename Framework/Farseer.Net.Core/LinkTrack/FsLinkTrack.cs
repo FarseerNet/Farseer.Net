@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using Collections.Pooled;
 using FS.Extends;
 using FS.Utils.Common;
 using Newtonsoft.Json;
@@ -55,7 +56,7 @@ namespace FS.Core.LinkTrack
                 ParentAppName = "",
                 ContextId     = SnowflakeId.GenerateId.ToString(),
                 StartTs       = DateTime.Now.ToTimestamps(),
-                List          = new List<LinkTrackDetail>(),
+                List          = new PooledList<LinkTrackDetail>(),
                 Method        = method,
                 Path          = queueName,
                 Domain        = endPort,
@@ -78,7 +79,7 @@ namespace FS.Core.LinkTrack
                 ParentAppName = "",
                 ContextId     = SnowflakeId.GenerateId.ToString(),
                 StartTs       = DateTime.Now.ToTimestamps(),
-                List          = new List<LinkTrackDetail>(),
+                List          = new PooledList<LinkTrackDetail>(),
                 Method        = jobName,
                 Path          = $"{taskGroupId}",
                 Domain        = clientHost,
@@ -100,7 +101,7 @@ namespace FS.Core.LinkTrack
                 ParentAppName = "",
                 ContextId     = SnowflakeId.GenerateId.ToString(),
                 StartTs       = DateTime.Now.ToTimestamps(),
-                List          = new List<LinkTrackDetail>(),
+                List          = new PooledList<LinkTrackDetail>(),
                 RequestIp     = FarseerApplication.AppIp.FirstOrDefault(),
                 Method        = "",
                 Path          = jobName,
@@ -112,7 +113,7 @@ namespace FS.Core.LinkTrack
         /// <summary>
         ///     追踪ApiServer
         /// </summary>
-        public static TrackEnd TrackApiServer(string contextId, string parentAppId, string domain, string path, string method, string contentType, Dictionary<string, string> headerDictionary, string requestBody, string requestIp)
+        public static TrackEnd TrackApiServer(string contextId, string parentAppId, string domain, string path, string method, string contentType, PooledDictionary<string, string> headerDictionary, string requestBody, string requestIp)
         {
             if (string.IsNullOrWhiteSpace(contextId)) contextId = SnowflakeId.GenerateId.ToString();
             // 移除charset的类型
@@ -132,7 +133,7 @@ namespace FS.Core.LinkTrack
                 ParentAppName = parentAppId ?? "",
                 ContextId     = contextId,
                 StartTs       = DateTime.Now.ToTimestamps(),
-                List          = new List<LinkTrackDetail>(),
+                List          = new PooledList<LinkTrackDetail>(),
                 Domain        = domain,
                 Path          = path,
                 Method        = method,
@@ -245,7 +246,7 @@ namespace FS.Core.LinkTrack
             {
                 CallType   = EumCallType.Redis,
                 CallMethod = method,
-                Data = new Dictionary<string, string>
+                Data = new PooledDictionary<string, string>
                 {
                     { "RedisKey", key },
                     { "RedisHashFields", member }
@@ -292,7 +293,7 @@ namespace FS.Core.LinkTrack
             {
                 CallType = EumCallType.GrpcClient,
                 StartTs  = DateTime.Now.ToTimestamps(),
-                Data = new Dictionary<string, string>
+                Data = new PooledDictionary<string, string>
                 {
                     { "Server", server },
                     { "Action", action }
@@ -311,7 +312,7 @@ namespace FS.Core.LinkTrack
             {
                 CallType = EumCallType.HttpClient,
                 StartTs  = DateTime.Now.ToTimestamps(),
-                Data = new Dictionary<string, string>
+                Data = new PooledDictionary<string, string>
                 {
                     { "Url", url },
                     { "Method", method },
@@ -332,7 +333,7 @@ namespace FS.Core.LinkTrack
             {
                 CallType = EumCallType.Custom,
                 StartTs  = DateTime.Now.ToTimestamps(),
-                Data = new Dictionary<string, string>
+                Data = new PooledDictionary<string, string>
                 {
                     { "Message", message }
                 }

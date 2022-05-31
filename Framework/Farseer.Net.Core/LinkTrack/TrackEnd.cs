@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Collections.Pooled;
 using FS.DI;
 using FS.Extends;
 using Microsoft.Extensions.Logging;
@@ -63,7 +64,7 @@ namespace FS.Core.LinkTrack
                 _linkTrackContext.EndTs = DateTime.Now.ToTimestamps();
                 if (!Env.IsPro)
                 {
-                    var lst = new List<string>
+                    using var lst = new PooledList<string>
                     {
                         $"{_linkTrackContext.ContentType} {_linkTrackContext.Method}：{_linkTrackContext.Path} {_linkTrackContext.UseTs} ms",
                     };

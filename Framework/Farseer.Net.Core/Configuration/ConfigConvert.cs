@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using Collections.Pooled;
 using FS.Cache;
 
 namespace FS.Core.Configuration
@@ -12,7 +12,7 @@ namespace FS.Core.Configuration
         /// <param name="configValue">配置字符串：a=b,c=d,e=f</param>
         public static TConfig ToEntity<TConfig>(string configValue) where TConfig : new()
         {
-            var dicConfig = new Dictionary<string, string>();
+            using var dicConfig = new PooledDictionary<string, string>();
             foreach (var items in configValue.Split(','))
             {
                 var kv = items.Split('=');

@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Collections.Pooled;
 using FS.Extends;
 
 namespace FS.Core.LinkTrack
@@ -35,7 +36,7 @@ namespace FS.Core.LinkTrack
         /// <summary>
         ///     埋点数据
         /// </summary>
-        public Dictionary<string, string> Data { get; set; } = new();
+        public PooledDictionary<string, string> Data { get; set; } = new();
 
         /// <summary>
         ///     调用开始时间戳
@@ -109,7 +110,7 @@ namespace FS.Core.LinkTrack
 
                 // 方法入参
                 var parameterInfos = methodBase.GetParameters();
-                var methodParams   = parameterInfos.Length > 0 ? parameterInfos.ToDictionary(keySelector: o => o.Name, elementSelector: o => o.ParameterType.Name) : new Dictionary<string, string>();
+                var methodParams   = parameterInfos.Length > 0 ? parameterInfos.ToPooledDictionary(keySelector: o => o.Name, o => o.ParameterType.Name) : new PooledDictionary<string, string>();
 
                 CallStackTrace = new CallStackTrace
                 {

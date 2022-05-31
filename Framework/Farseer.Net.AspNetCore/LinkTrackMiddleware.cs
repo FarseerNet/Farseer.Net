@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.Core.LinkTrack;
 using FS.DI;
 using Microsoft.AspNetCore.Http;
@@ -61,7 +62,7 @@ public class LinkTrackMiddleware
         // 读取响应Body
         var path = $"{httpContext.Request.Scheme}://{httpContext.Request.Host.Value}{httpContext.Request.Path.Value?.ToLower()}";
 
-        var dicHeader = httpContext.Request.Headers.ToDictionary(keySelector: o => o.Key, elementSelector: o => o.Value.ToString());
+        var dicHeader = httpContext.Request.Headers.ToPooledDictionary(keySelector: o => o.Key, o => o.Value.ToString());
         using (var trackEnd = FsLinkTrack.TrackApiServer(contextId: contextId, parentAppId: parentAppId, domain: httpContext.Request.Host.Host, path: path, method: httpContext.Request.Method, contentType: httpContext.Request.ContentType, headerDictionary: dicHeader, requestBody: requestContent, requestIp: httpContext.GetIP()))
         {
             var originalBodyStream = httpContext.Response.Body;

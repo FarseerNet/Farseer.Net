@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Collections.Pooled;
 
 namespace FS.Core.LinkTrack
 {
@@ -27,6 +28,6 @@ namespace FS.Core.LinkTrack
         /// <summary>
         ///     方法入参
         /// </summary>
-        public Dictionary<string, string> MethodParams { get; set; }
+        public PooledDictionary<string, string> MethodParams { get; set; }
     }
 }

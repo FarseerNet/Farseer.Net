@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using Collections.Pooled;
 
 namespace FS.Core.Entity
 {
@@ -10,7 +10,7 @@ namespace FS.Core.Entity
         public RunShellResult(bool isError, string output)
         {
             IsError = isError;
-            Output  = new List<string> { output };
+            Output  = new PooledList<string> { output };
         }
 
         public RunShellResult()
@@ -25,7 +25,7 @@ namespace FS.Core.Entity
         /// <summary>
         ///     输出结果
         /// </summary>
-        public List<string> Output { get; set; }
+        public PooledList<string> Output { get; set; }
 
         /// <summary>
         ///     按<br />拼接成一条消息
