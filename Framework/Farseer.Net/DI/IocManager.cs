@@ -78,7 +78,9 @@ namespace FS.DI
         {
             using var assemblyNames = type.Assembly.GetReferencedAssemblies().Select(Assembly.Load).ToPooledList();
             assemblyNames.Add(type.Assembly);
-            RegisterAssemblyByConvention(GetService<ITypeFinder>().IgnoreAssembly(assemblyNames));
+            
+            using var ignoreAssembly = GetService<ITypeFinder>().IgnoreAssembly(assemblyNames);
+            RegisterAssemblyByConvention(ignoreAssembly);
         }
         
         /// <summary>

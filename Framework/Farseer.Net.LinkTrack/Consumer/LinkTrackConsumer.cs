@@ -16,9 +16,9 @@ namespace FS.LinkTrack.Consumer
     [Consumer(Enable = true, Name = "LinkTrackQueue", PullCount = 1000, SleepTime = 500)]
     public class LinkTrackConsumer : IListenerMessage
     {
-        public async Task<bool> Consumer(PooledList<object> queueList)
+        public async Task<bool> Consumer(IEnumerable<object> queueList)
         {
-            if (queueList.Count == 0) return true;
+            if (!queueList.Any()) return true;
 
             using var lst = queueList.Select(o => o.Adapt<LinkTrackContextPO>()).ToPooledList();
 
@@ -47,12 +47,12 @@ namespace FS.LinkTrack.Consumer
             return true;
         }
 
-        public Task<bool> FailureHandling(PooledList<object> messages) => Task.FromResult(false);
+        public Task<bool> FailureHandling(IEnumerable<object> messages) => Task.FromResult(false);
 
         /// <summary>
         /// 依赖外部系统的，单独存储，用于统计慢查询
         /// </summary>
-        private Task AddSlowQuery(PooledList<LinkTrackContextPO> lst)
+        private Task AddSlowQuery(IEnumerable<LinkTrackContextPO> lst)
         {
             using var lstSlowQuery = new PooledList<SlowQueryPO>();
             foreach (var linkTrackContext in lst)

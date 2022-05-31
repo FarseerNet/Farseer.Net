@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.Core.LinkTrack;
 using FS.DI;
 using FS.MQ.Rabbit.Attr;
@@ -177,12 +178,12 @@ namespace FS.MQ.Rabbit
             var consumer = new EventingBasicConsumer(model: _channel);
             consumer.Received += async (model, ea) =>
             {
-                ea.BasicProperties.Headers ??= new Dictionary<string, object>();
+                ea.BasicProperties.Headers ??= new PooledDictionary<string, object>();
                 ea.BasicProperties.Headers.Add(key: "QueueName", value: _queueName);
 
                 var consumerService = _iocManager.Resolve<IListenerMessage>(name: _consumerTypeName);
-                var result   = false;
-                var message  = Encoding.UTF8.GetString(bytes: ea.Body.ToArray());
+                var result          = false;
+                var message         = Encoding.UTF8.GetString(bytes: ea.Body.ToArray());
                 try
                 {
                     using (FsLinkTrack.TrackMqConsumer(endPort: _rabbitConnect.Connection.Endpoint.ToString(), queueName: _queueName, method: "RabbitConsumer", message))
@@ -242,9 +243,9 @@ namespace FS.MQ.Rabbit
                 finally
                 {
                     if (_channel is
-                    {
-                        IsOpen: true
-                    } && !autoAck)
+                        {
+                            IsOpen: true
+                        } && !autoAck)
                     {
                         if (result)
                             _channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);

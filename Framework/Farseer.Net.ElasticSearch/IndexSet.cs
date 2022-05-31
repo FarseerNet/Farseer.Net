@@ -217,7 +217,7 @@ namespace FS.ElasticSearch
         /// <summary>
         ///     批量写入数据
         /// </summary>
-        public virtual bool Insert(List<TDocument> lst)
+        public virtual bool Insert(IEnumerable<TDocument> lst)
         {
             using (FsLinkTrack.TrackElasticsearch(method: "Insert"))
             {
@@ -226,7 +226,7 @@ namespace FS.ElasticSearch
                 if (!result.IsValid)
                 {
                     var error = result.OriginalException != null ? result.OriginalException.Message : result.DebugInformation;
-                    IocManager.Instance.Logger<IndexSet<TDocument>>().LogError(message: $"索引失败：{typeof(TDocument).FullName}，数据量：{lst.Count}条 \r\n" + error);
+                    IocManager.Instance.Logger<IndexSet<TDocument>>().LogError(message: $"索引失败：{typeof(TDocument).FullName}，数据量：{lst.Count()}条 \r\n" + error);
                 }
 
                 return result.IsValid;
@@ -236,26 +236,7 @@ namespace FS.ElasticSearch
         /// <summary>
         ///     批量写入数据
         /// </summary>
-        public virtual bool Insert(PooledList<TDocument> lst)
-        {
-            using (FsLinkTrack.TrackElasticsearch(method: "Insert"))
-            {
-                WhenNotExistsAddIndex();
-                var result = Client.IndexMany(objects: lst, index: SetMap.IndexName);
-                if (!result.IsValid)
-                {
-                    var error = result.OriginalException != null ? result.OriginalException.Message : result.DebugInformation;
-                    IocManager.Instance.Logger<IndexSet<TDocument>>().LogError(message: $"索引失败：{typeof(TDocument).FullName}，数据量：{lst.Count}条 \r\n" + error);
-                }
-
-                return result.IsValid;
-            }
-        }
-
-        /// <summary>
-        ///     批量写入数据
-        /// </summary>
-        public virtual async Task<bool> InsertAsync(List<TDocument> lst)
+        public virtual async Task<bool> InsertAsync(IEnumerable<TDocument> lst)
         {
             using (FsLinkTrack.TrackElasticsearch(method: "InsertAsync"))
             {
@@ -264,26 +245,7 @@ namespace FS.ElasticSearch
                 if (!result.IsValid)
                 {
                     var error = result.OriginalException != null ? result.OriginalException.Message : result.DebugInformation;
-                    IocManager.Instance.Logger<IndexSet<TDocument>>().LogError(message: $"索引失败：{typeof(TDocument).FullName}，数据量：{lst.Count}条 \r\n" + error);
-                }
-
-                return result.IsValid;
-            }
-        }
-
-        /// <summary>
-        ///     批量写入数据
-        /// </summary>
-        public virtual async Task<bool> InsertAsync(PooledList<TDocument> lst)
-        {
-            using (FsLinkTrack.TrackElasticsearch(method: "InsertAsync"))
-            {
-                WhenNotExistsAddIndex();
-                var result = await Client.IndexManyAsync(objects: lst, index: SetMap.IndexName);
-                if (!result.IsValid)
-                {
-                    var error = result.OriginalException != null ? result.OriginalException.Message : result.DebugInformation;
-                    IocManager.Instance.Logger<IndexSet<TDocument>>().LogError(message: $"索引失败：{typeof(TDocument).FullName}，数据量：{lst.Count}条 \r\n" + error);
+                    IocManager.Instance.Logger<IndexSet<TDocument>>().LogError(message: $"索引失败：{typeof(TDocument).FullName}，数据量：{lst.Count()}条 \r\n" + error);
                 }
 
                 return result.IsValid;

@@ -22,7 +22,7 @@ namespace FS.MQ.Rabbit
         {
             _typeFinder = typeFinder;
         }
-        
+
         private readonly ITypeFinder _typeFinder;
 
         /// <inheritdoc />
@@ -54,21 +54,22 @@ namespace FS.MQ.Rabbit
             // 查找入口方法是否启用了Rabbit消费
             var rabbitAttribute = Assembly.GetEntryAssembly().EntryPoint.DeclaringType.GetCustomAttribute<RabbitAttribute>();
             if (rabbitAttribute is not
-            {
-                Enable: true
-            }) return;
-            
+                {
+                    Enable: true
+                }) return;
+
             var iocManager = container.Resolve<IIocManager>();
             try
             {
                 // 启动单次消费程序
-                foreach (var consumerType in _typeFinder.Find<IListenerMessage>())
+                using var consumerTypes = _typeFinder.Find<IListenerMessage>();
+                foreach (var consumerType in consumerTypes)
                 {
                     var consumerAtt = consumerType.GetCustomAttribute<ConsumerAttribute>();
                     if (consumerAtt is
-                    {
-                        Enable: false
-                    })
+                        {
+                            Enable: false
+                        })
                         continue;
 
                     if (!iocManager.IsRegistered(name: consumerType.FullName)) iocManager.Register(type: consumerType, name: consumerType.FullName, lifeStyle: DependencyLifeStyle.Transient);
@@ -81,13 +82,14 @@ namespace FS.MQ.Rabbit
                 }
 
                 // 启动批量消费程序
-                foreach (var consumerType in _typeFinder.Find<IListenerMessageBatch>())
+                using var listeners = _typeFinder.Find<IListenerMessageBatch>();
+                foreach (var consumerType in listeners)
                 {
                     var consumerAtt = consumerType.GetCustomAttribute<ConsumerAttribute>();
                     if (consumerAtt is
-                    {
-                        Enable: false
-                    })
+                        {
+                            Enable: false
+                        })
                         continue;
 
                     if (!iocManager.IsRegistered(name: consumerType.FullName)) iocManager.Register(type: consumerType, name: consumerType.FullName, lifeStyle: DependencyLifeStyle.Transient);

@@ -5,8 +5,8 @@ namespace Farseer.Net.Benchmark.Other;
 
 public class TestUsingPooled
 {
-    public List<UserPO> lst = new();
-    public UserPO       User;
+    public PooledList<UserPO> lst = new();
+    public UserPO             User;
 
     public TestUsingPooled()
     {
@@ -15,13 +15,62 @@ public class TestUsingPooled
             lst.Add(new UserPO() { Name = "123123" });
         }
     }
+
     public void Test()
     {
-        TestToList();
-        TestToPooledList();
-        TestToList_ToPooledList();
+        TestClassConvert();
+        // TestToList();
+        // TestToPooledList();
+        // TestToList_ToPooledList();
     }
-    
+
+    public void TestClassConvert()
+    {
+        Console.WriteLine($"准备测试类型转换的堆分配大小");
+        TestAllocatedBytes("IEnumerable<UserPO> newUser = lst", () =>
+        {
+            IEnumerable<UserPO> newUser = lst;
+        }, 3);
+
+        TestAllocatedBytes("lst.AsEnumerable()", () =>
+        {
+            lst.AsEnumerable();
+        }, 3);
+
+        TestAllocatedBytes("lst.ToArray()", () =>
+        {
+            lst.ToArray();
+        }, 3);
+
+        TestAllocatedBytes("lst.ToList()", () =>
+        {
+            lst.ToList();
+        }, 3);
+
+        TestAllocatedBytes("lst.AsEnumerable().ToList()", () =>
+        {
+            lst.AsEnumerable().ToList();
+        }, 3);
+
+        TestAllocatedBytes("PooledList.Add()", () =>
+        {
+            using PooledList<UserPO> lst = new(100000);
+            for (int i = 0; i < 100000; i++)
+            {
+                lst.Add(new UserPO() { Name = "123123" });
+            }
+        }, 10);
+
+        TestAllocatedBytes("List.Add()", () =>
+        {
+            List<UserPO> lst = new(100000);
+            for (int i = 0; i < 100000; i++)
+            {
+                lst.Add(new UserPO() { Name = "123123" });
+            }
+        }, 10);
+    }
+
     public void TestToList()
     {
         GC.Collect();
@@ -66,5 +115,18 @@ public class TestUsingPooled
             }
             Console.WriteLine($"{j}/5:ToList().ToPooledList：当前已分配堆大小：{(GC.GetTotalAllocatedBytes() - baseAllocated).ToString("N0")} byte");
         }
+    }
+
+    public void TestAllocatedBytes(string testName, Action act, int count)
+    {
+        GC.Collect();
+        for (int index = 1; index <= count; index++)
+        {
+            var callBefore = GC.GetAllocatedBytesForCurrentThread();
+            act();
+            var callAfter = GC.GetAllocatedBytesForCurrentThread();
+            Console.WriteLine($"({index}/{count})\t{testName}：当前堆分配大小：{(callAfter - callBefore):N0} byte");
+        }
+        Console.WriteLine("------------------------------------------------------");
     }
 }

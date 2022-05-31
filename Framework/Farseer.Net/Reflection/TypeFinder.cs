@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Castle.Core.Internal;
@@ -15,9 +14,9 @@ namespace FS.Reflection
     /// </summary>
     public class TypeFinder : ITypeFinder
     {
-        private readonly IAssemblyFinder _assemblyFinder;
-        private readonly object          _syncObj = new();
-        private          Type[]          _types;
+        private readonly IAssemblyFinder  _assemblyFinder;
+        private readonly object           _syncObj = new();
+        private          PooledList<Type> _types;
 
         /// <summary>
         ///     构造函数
@@ -30,12 +29,15 @@ namespace FS.Reflection
         /// <summary>
         ///     查找类型
         /// </summary>
-        public Type[] Find(Func<Type, bool> predicate) => GetAllTypes().Where(predicate: predicate).ToArray();
+        public PooledList<Type> Find(Func<Type, bool> predicate)
+        {
+            return GetAllTypes().Where(predicate: predicate).ToPooledList();
+        }
 
         /// <summary>
         ///     找继承TType接口的实现类
         /// </summary>
-        public Type[] Find<TInterface>()
+        public PooledList<Type> Find<TInterface>()
         {
             var baseType = typeof(TInterface);
             return Find(t => t.BaseType == baseType || t.GetInterfaces().Contains(baseType));
@@ -44,26 +46,26 @@ namespace FS.Reflection
         /// <summary>
         ///     查找所有的类型
         /// </summary>
-        public Type[] FindAll() => GetAllTypes().ToArray();
+        public IEnumerable<Type> FindAll() => GetAllTypes();
 
         /// <summary>
         ///     获取所有的类型
         /// </summary>
-        private Type[] GetAllTypes()
+        private IEnumerable<Type> GetAllTypes()
         {
             if (_types == null)
             {
                 lock (_syncObj)
                 {
-                    if (_types == null) _types = CreateTypeList().ToArray();
+                    if (_types == null) _types = CreateTypeList();
                 }
             }
 
             return _types;
         }
 
-        private string[] _IgnoreAssembly       = { "Newtonsoft.Json.dll", "Elasticsearch.Net.dll", "Mapster.Core.dll", "Mapster.dll", "Mapster.Async.dll", "Castle.Core.dll", "Castle.Windsor.dll", "Docker.DotNet.dll", "Snowflake.Core.dll", "Nest.dll", "netstandard.dll" };
-        private string[] _IgnorePrefixAssembly = { "Microsoft.Extensions.", "Microsoft.Bcl.", "Castle.Windsor.", "System.Security.", "System.Private.", "System.Configuration.", "System.Drawing.", "System.ServiceModel.", "System.Windows.", "Microsoft.IdentityModel.", "Microsoft.Win32.", "Microsoft.DotNet.", "System.ServiceProcess.", "System.IdentityModel.", "System.Diagnostics." };
+        private readonly string[] _IgnoreAssembly       = { "Newtonsoft.Json.dll", "Elasticsearch.Net.dll", "Mapster.Core.dll", "Mapster.dll", "Mapster.Async.dll", "Castle.Core.dll", "Castle.Windsor.dll", "Docker.DotNet.dll", "Snowflake.Core.dll", "Nest.dll", "netstandard.dll" };
+        private readonly string[] _IgnorePrefixAssembly = { "Microsoft.Extensions.", "Microsoft.Bcl.", "Castle.Windsor.", "System.Security.", "System.Private.", "System.Configuration.", "System.Drawing.", "System.ServiceModel.", "System.Windows.", "Microsoft.IdentityModel.", "Microsoft.Win32.", "Microsoft.DotNet.", "System.ServiceProcess.", "System.IdentityModel.", "System.Diagnostics." };
 
         /// <summary>
         /// 忽略微软及常用的程序集

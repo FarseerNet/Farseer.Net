@@ -58,7 +58,7 @@ namespace FS.MQ.RedisStream
             if (rabbitAttribute is { Enable: false }) return;
             
             // 查找消费实现
-            var types = container.Resolve<ITypeFinder>().Find<IListenerMessage>();
+            using var types = container.Resolve<ITypeFinder>().Find<IListenerMessage>();
             try
             {
                 foreach (var consumerType in types)

@@ -48,7 +48,7 @@ namespace FS.Data
             Task.Run(() =>
             {
                 // 找到Context
-                var lstContext = _typeFinder.Find(o => !o.IsGenericType && o.IsClass && o.BaseType != null && o.BaseType.BaseType != null && o.BaseType.BaseType == typeof(DbContext));
+                using var lstContext = _typeFinder.Find(o => !o.IsGenericType && o.IsClass && o.BaseType != null && o.BaseType.BaseType != null && o.BaseType.BaseType == typeof(DbContext));
 
                 using var lstLog = new PooledList<string>();
                 foreach (var context in lstContext)

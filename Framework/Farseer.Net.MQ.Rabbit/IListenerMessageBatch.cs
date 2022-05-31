@@ -22,13 +22,13 @@ namespace FS.MQ.Rabbit
         /// <param name="messages"> </param>
         /// <param name="resp"> </param>
         /// <returns> 当开启手动确认时，返回true时，才会进行ACK确认 </returns>
-        Task<bool> Consumer(List<string> messages, List<BasicGetResult> resp);
+        Task<bool> Consumer(IEnumerable<string> messages, IEnumerable<BasicGetResult> resp);
 
         /// <summary>
         ///     当异常时处理
         /// </summary>
         /// <returns> true：表示成功处理，移除消息。false：处理失败，如果是重试状态，则放回队列 </returns>
-        Task<bool> FailureHandling(List<string> messages, List<BasicGetResult> resp) => Task.FromResult(result: false);
+        Task<bool> FailureHandling(IEnumerable<string> messages, IEnumerable<BasicGetResult> resp) => Task.FromResult(result: false);
 
         /// <summary>
         ///     初始化并自动消费
@@ -37,7 +37,7 @@ namespace FS.MQ.Rabbit
         {
             // 读取配置
             using var rabbitItemConfigs = RabbitConfigRoot.Get().ToPooledList();
-            var rabbitItemConfig  = rabbitItemConfigs.FirstOrDefault(o => o.Server.Name == consumerAtt.Server);
+            var       rabbitItemConfig  = rabbitItemConfigs.FirstOrDefault(o => o.Server.Name == consumerAtt.Server);
             if (rabbitItemConfig == null)
             {
                 iocManager.Logger<IListenerMessageBatch>().LogWarning(message: $"未找到：{consumerType.FullName}的配置项：{consumerAtt.Server}");

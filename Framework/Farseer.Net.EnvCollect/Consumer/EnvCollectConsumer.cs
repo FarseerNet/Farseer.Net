@@ -18,7 +18,7 @@ namespace FS.EC.Consumer
     [Consumer(Enable = true, Name = "EnvCollect", PullCount = 1000, SleepTime = 500)]
     public class EnvCollectConsumer : IListenerMessage
     {
-        public async Task<bool> Consumer(PooledList<object> queueList)
+        public async Task<bool> Consumer(IEnumerable<object> queueList)
         {
             using var lst = queueList.Select(o => (LinkTrackContext)o).ToPooledList();
             // 设置C#的调用链
@@ -28,6 +28,6 @@ namespace FS.EC.Consumer
             return true;
         }
 
-        public Task<bool> FailureHandling(PooledList<object> messages) => throw new NotImplementedException();
+        public Task<bool> FailureHandling(IEnumerable<object> messages) => throw new NotImplementedException();
     }
 }

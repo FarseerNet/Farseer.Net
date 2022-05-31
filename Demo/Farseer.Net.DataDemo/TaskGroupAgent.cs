@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.DI;
 
 namespace Farseer.Net.DataDemo
@@ -12,7 +13,7 @@ namespace Farseer.Net.DataDemo
         /// <summary>
         /// 获取所有任务组列表
         /// </summary>
-        public Task<List<UserPO>> ToListAsync() => MysqlContext.Data.User.ToListAsync();
+        public Task<PooledList<UserPO>> ToListAsync() => MysqlContext.Data.User.ToListAsync();
 
         /// <summary>
         /// 获取任务组信息

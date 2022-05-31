@@ -33,7 +33,8 @@ namespace FS.EventBus
             try
             {
                 // 启动订阅程序
-                foreach (var consumerType in container.Resolve<ITypeFinder>().Find<IListenerMessage>())
+                using var consumerTypes = container.Resolve<ITypeFinder>().Find<IListenerMessage>();
+                foreach (var consumerType in consumerTypes)
                 {
                     var consumerAtt = consumerType.GetCustomAttribute<ConsumerAttribute>();
 

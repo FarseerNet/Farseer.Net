@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.Cache.Redis;
 using FS.Core.LinkTrack;
 using FS.DI;
@@ -110,12 +111,12 @@ namespace FS.MQ.RedisStream
         {
             while (true)
             {
-                var                 result          = false;
-                var                 consumerService = _iocManager.Resolve<IListenerMessage>(name: _consumerType);
-                StreamEntry[]       streamEntries   = null;
-                ConsumeContext      consumeContext  = null;
-                var                 sw              = new Stopwatch();
-                IEnumerable<string> messages        = null;
+                var                      result          = false;
+                var                      consumerService = _iocManager.Resolve<IListenerMessage>(name: _consumerType);
+                StreamEntry[]            streamEntries   = null;
+                using PooledList<string> messages        = new();
+                ConsumeContext           consumeContext  = null;
+                var                      sw              = new Stopwatch();
                 try
                 {
                     streamEntries = await _redisCacheManager.Db.StreamReadGroupAsync(key: _queueName, groupName: _groupName, consumerName: _hostName, count: _pullCount);
@@ -132,10 +133,10 @@ namespace FS.MQ.RedisStream
                     };
 
                     // 将拉取到的消息转成集合
-                    messages = streamEntries.SelectMany(o => o.Values).Select(o => o.Value.ToString());
+                    messages.AddRange(streamEntries.SelectMany(o => o.Values).Select(o => o.Value.ToString()));
                     using (FsLinkTrack.TrackMqConsumer(endPort: _redisCacheManager.Server, queueName: $"{_queueName}/{_groupName}", method: "RedisStreamConsumer", JsonConvert.SerializeObject(messages)))
                     {
-                        result = await consumerService.Consumer(messages: streamEntries, content: consumeContext);
+                        result = await consumerService.Consumer(messages: streamEntries, context: consumeContext);
                     }
                 }
                 catch (Exception e)
@@ -146,7 +147,7 @@ namespace FS.MQ.RedisStream
                     {
                         using (FsLinkTrack.TrackMqConsumer(endPort: _redisCacheManager.Server, queueName: $"{_queueName}/{_groupName}", method: "RedisStreamConsumer", JsonConvert.SerializeObject(messages)))
                         {
-                            result = await consumerService.FailureHandling(messages: streamEntries, content: consumeContext);
+                            result = await consumerService.FailureHandling(messages: streamEntries, context: consumeContext);
                         }
                     }
                     catch (Exception exception)
@@ -191,7 +192,7 @@ namespace FS.MQ.RedisStream
                 };
 
                 // 将拉取到的消息转成集合
-                var messages = streamEntries.SelectMany(o => o.Values).Select(o => o.Value.ToString());
+                using var messages = streamEntries.SelectMany(o => o.Values).Select(o => o.Value.ToString()).ToPooledList();
 
                 var  listener = _iocManager.Resolve<IListenerMessage>(name: _consumerType);
                 bool result;
@@ -199,7 +200,7 @@ namespace FS.MQ.RedisStream
                 {
                     using (FsLinkTrack.TrackMqConsumer(endPort: _redisCacheManager.Server, queueName: $"{_queueName}/{_groupName}", method: "RedisStreamConsumer", JsonConvert.SerializeObject(messages)))
                     {
-                        result = await listener.Consumer(messages: streamEntries, content: consumeContext);
+                        result = await listener.Consumer(messages: streamEntries, context: consumeContext);
                     }
 
                     if (result)
@@ -216,7 +217,7 @@ namespace FS.MQ.RedisStream
                     {
                         using (FsLinkTrack.TrackMqConsumer(endPort: _redisCacheManager.Server, queueName: $"{_queueName}/{_groupName}", method: "RedisStreamConsumer", JsonConvert.SerializeObject(messages)))
                         {
-                            result = await listener.FailureHandling(messages: streamEntries, content: consumeContext);
+                            result = await listener.FailureHandling(messages: streamEntries, context: consumeContext);
                         }
                         if (result)
                         {

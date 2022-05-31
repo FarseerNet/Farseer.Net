@@ -47,7 +47,7 @@ namespace FS.MQ.Rabbit
                 var rabbitManager = new RabbitManager(rabbitItemConfig: rabbitItemConfig);
 
                 // 配置死信参数
-                var arguments                                                                                                 = new Dictionary<string, object>();
+                using var arguments                                                                                           = new PooledDictionary<string, object>();
                 if (!string.IsNullOrWhiteSpace(value: consumerAtt.DlxExchangeName)) arguments[key: "x-dead-letter-exchange"]  = consumerAtt.DlxExchangeName;
                 if (!string.IsNullOrWhiteSpace(value: consumerAtt.DlxRoutingKey)) arguments[key: "x-dead-letter-routing-key"] = consumerAtt.DlxRoutingKey;
                 if (consumerAtt.DlxTime > 0) arguments[key: "x-message-ttl"]                                                  = consumerAtt.DlxTime;

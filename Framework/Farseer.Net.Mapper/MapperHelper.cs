@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using AutoMapper;
 using AutoMapper.Configuration;
+using Collections.Pooled;
 
 namespace FS.Mapper
 {
@@ -13,7 +14,7 @@ namespace FS.Mapper
         /// <summary>
         ///     初始化AutoMapper
         /// </summary>
-        public static void CreateMap(Type[] typeArr)
+        public static void CreateMap(PooledList<Type> typeArr)
         {
             var cfg = new MapperConfigurationExpression();
             foreach (var type in typeArr)

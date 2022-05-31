@@ -15,17 +15,17 @@ namespace FS.Reflection
         /// </summary>
         /// <param name="predicate"> </param>
         /// <returns> </returns>
-        Type[] Find(Func<Type, bool> predicate);
+        PooledList<Type> Find(Func<Type, bool> predicate);
 
         /// <summary>
         ///     查找所有的类型
         /// </summary>
         /// <returns> </returns>
-        Type[] FindAll();
+        IEnumerable<Type> FindAll();
         /// <summary>
         ///     找继承TType接口的实现类
         /// </summary>
-        Type[] Find<TInterface>();
+        PooledList<Type> Find<TInterface>();
         /// <summary>
         /// 忽略微软及常用的程序集
         /// </summary>

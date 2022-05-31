@@ -31,8 +31,8 @@ public class TaskInstaller : IWindsorInstaller
     public void Install(IWindsorContainer container, IConfigurationStore store)
     {
         // 业务job
-        var types = _typeFinder.Find<IJob>();
-        foreach (var jobType in types)
+        using var jobTypes = _typeFinder.Find<IJob>();
+        foreach (var jobType in jobTypes)
         {
             var jobAtt = jobType.GetCustomAttribute<JobAttribute>();
             if (jobAtt == null || !jobAtt.Enable) continue;

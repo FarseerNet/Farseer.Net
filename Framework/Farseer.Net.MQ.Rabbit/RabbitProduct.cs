@@ -54,8 +54,7 @@ namespace FS.MQ.Rabbit
         /// <param name="message"> 消息主体 </param>
         /// <param name="funcBasicProperties"> 属性 </param>
         public bool Send(IEnumerable<string> message, Action<IBasicProperties> funcBasicProperties = null) => Send(message: message, routingKey: _productConfig.RoutingKey, exchange: _productConfig.ExchangeName, funcBasicProperties: funcBasicProperties);
-
-
+        
         /// <summary>
         ///     发送消息（Routingkey默认配置中的RoutingKey；ExchangeName默认配置中的ExchangeName）
         /// </summary>

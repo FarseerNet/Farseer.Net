@@ -37,7 +37,8 @@ namespace FS.MQ.Queue
             using var queueConfigs = QueueRoot.Get().ToPooledList();
 
             // 从消费中找到未包含配置文件的。并生成到配置中 耗时：31 ms
-            var consumerAttributes = _typeFinder.Find<IListenerMessage>().Select(o => o.GetCustomAttribute<ConsumerAttribute>()).Where(o => o != null);
+            using var consumerTypes      = _typeFinder.Find<IListenerMessage>();
+            var       consumerAttributes = consumerTypes.Select(o => o.GetCustomAttribute<ConsumerAttribute>()).Where(o => o != null);
             foreach (var consumerAtt in consumerAttributes)
             {
                 if (!queueConfigs.Exists(o => o.Name == consumerAtt.Name))
@@ -49,7 +50,7 @@ namespace FS.MQ.Queue
                         SleepTime = consumerAtt.SleepTime
                     });
             }
-            
+
             // 注册生产者
             foreach (var queueConfig in queueConfigs)
             {
@@ -75,7 +76,7 @@ namespace FS.MQ.Queue
 
             using PooledDictionary<string, Type> dicConsumerName = new();
             // 启动单次消费程序
-            foreach (var consumerType in _typeFinder.Find<IListenerMessage>())
+            foreach (var consumerType in consumerTypes)
             {
                 var consumerAtt = consumerType.GetCustomAttribute<ConsumerAttribute>();
                 if (consumerAtt is

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.Core.LinkTrack;
 using FS.DI;
 using FS.MQ.Rabbit.Configuration;
@@ -103,9 +104,9 @@ namespace FS.MQ.Rabbit
         public async Task<int> Start(bool autoAck = false)
         {
             Connect();
-            var   lstResult         = new List<string>();
-            var   lstBasicGetResult = new List<BasicGetResult>();
-            ulong deliveryTag       = 0;
+            using var lstResult         = new PooledList<string>();
+            using var lstBasicGetResult = new PooledList<BasicGetResult>();
+            ulong     deliveryTag       = 0;
 
             var consumerService = _iocManager.Resolve<IListenerMessageBatch>(name: _consumerTypeName);
 
@@ -135,9 +136,9 @@ namespace FS.MQ.Rabbit
                 deliveryTag = lstBasicGetResult.Max(selector: o => o.DeliveryTag);
 
                 // 消费
-                using (FsLinkTrack.TrackMqConsumer(endPort: _connect.Connection.Endpoint.ToString(), queueName: _queueName, method: "RabbitConsumerBatch", $"[{string.Join(",",lstResult)}]"))
+                using (FsLinkTrack.TrackMqConsumer(endPort: _connect.Connection.Endpoint.ToString(), queueName: _queueName, method: "RabbitConsumerBatch", $"[{string.Join(",", lstResult)}]"))
                 {
-                    result = await consumerService.Consumer(messages: lstResult, resp: lstBasicGetResult);
+                    result = await consumerService.Consumer(lstResult, resp: lstBasicGetResult);
                 }
 
                 // 写入链路追踪

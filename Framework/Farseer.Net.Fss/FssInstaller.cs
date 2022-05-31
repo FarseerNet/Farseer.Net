@@ -32,7 +32,7 @@ namespace FS.Fss
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             // 业务job
-            var types = _typeFinder.Find<IFssJob>();
+            using var types = _typeFinder.Find<IFssJob>();
             foreach (var jobType in types)
             {
                 var fssJobAttribute = jobType.GetCustomAttribute<FssJobAttribute>();

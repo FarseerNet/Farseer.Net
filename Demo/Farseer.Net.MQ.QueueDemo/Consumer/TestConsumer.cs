@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FS.Core.Abstract.MQ.Queue;
 using FS.MQ.Queue;
@@ -13,11 +14,11 @@ namespace Farseer.Net.MQ.QueueDemo.Consumer
     [Consumer(Enable = true, Name = "test")]
     public class TestConsumer : IListenerMessage
     {
-        public Task<bool> Consumer(List<object> queueList)
+        public Task<bool> Consumer(IEnumerable<object> queueList)
         {
-            Console.WriteLine(value: $"消费到{queueList.Count}条");
+            Console.WriteLine(value: $"消费到{queueList.Count()}条");
             return Task.FromResult(result: true);
         }
-        public Task<bool> FailureHandling(List<object> messages) => throw new NotImplementedException();
+        public Task<bool> FailureHandling(IEnumerable<object> messages) => throw new NotImplementedException();
     }
 }
