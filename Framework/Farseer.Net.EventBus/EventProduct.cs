@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.Core.Abstract.EventBus;
 
 namespace FS.EventBus
@@ -15,18 +16,18 @@ namespace FS.EventBus
         /// 事件订阅者
         /// Key：EventName，Value：订阅者Type.FullName
         /// </summary>
-        private static readonly Dictionary<string, List<EventQueue>> DicConsumer = new();
+        private static readonly PooledDictionary<string, PooledList<EventQueue>> DicConsumer = new();
 
         public EventProduct(string eventName)
         {
             _eventName = eventName;
-            DicConsumer.Add(_eventName, new List<EventQueue>());
+            DicConsumer.Add(_eventName, new PooledList<EventQueue>());
         }
 
         /// <summary>
         /// 订阅事件
         /// </summary>
-        public void Subscribe(string consumer)
+        internal void Subscribe(string consumer)
         {
             var eventQueue = new EventQueue(consumer);
             DicConsumer[_eventName].Add(eventQueue);

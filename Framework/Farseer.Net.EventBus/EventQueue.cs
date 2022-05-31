@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.Core.Abstract.EventBus;
 using FS.DI;
 using Microsoft.Extensions.Logging;
@@ -19,12 +20,12 @@ namespace FS.EventBus
         /// 事件消息
         /// Key：Type.FullName，Value：事件内容
         /// </summary>
-        private static readonly Dictionary<string, ConcurrentQueue<DomainEventArgs>> DicEventMessage = new();
+        private static readonly PooledDictionary<string, ConcurrentQueue<DomainEventArgs>> DicEventMessage = new();
         /// <summary>
         /// 失败的队列
         /// Key：Type.FullName，Value：事件内容
         /// </summary>
-        private static readonly Dictionary<string, ConcurrentQueue<DomainEventArgs>> DicEventFailMessage = new();
+        private static readonly PooledDictionary<string, ConcurrentQueue<DomainEventArgs>> DicEventFailMessage = new();
         /// <summary>
         /// 订阅端
         /// </summary>

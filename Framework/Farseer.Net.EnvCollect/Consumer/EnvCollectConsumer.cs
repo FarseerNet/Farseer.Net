@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.Core.Abstract.MQ.Queue;
 using FS.Core.LinkTrack;
 using FS.EC.Dal;
@@ -17,16 +18,16 @@ namespace FS.EC.Consumer
     [Consumer(Enable = true, Name = "EnvCollect", PullCount = 1000, SleepTime = 500)]
     public class EnvCollectConsumer : IListenerMessage
     {
-        public async Task<bool> Consumer(List<object> queueList)
+        public async Task<bool> Consumer(PooledList<object> queueList)
         {
-            var lst = queueList.Select(o => (LinkTrackContext)o).ToList();
+            using var lst = queueList.Select(o => (LinkTrackContext)o).ToPooledList();
             // 设置C#的调用链
             foreach (var linkTrackContext in lst) linkTrackContext.List.ForEach(action: o => o.SetCallStackTrace());
 
             await EnvCollectEsContext.Data.Host.InsertAsync(lst.Select(o => o.Map<HostPO>()).ToList());
             return true;
         }
-        
-        public Task<bool> FailureHandling(List<object> messages) => throw new NotImplementedException();
+
+        public Task<bool> FailureHandling(PooledList<object> messages) => throw new NotImplementedException();
     }
 }

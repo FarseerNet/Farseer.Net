@@ -49,7 +49,8 @@ namespace FS.EventBus
                     if (!iocManager.IsRegistered(name: consumerType.FullName)) iocManager.Register(type: consumerType, name: consumerType.FullName, lifeStyle: DependencyLifeStyle.Transient);
                     
                     // 订阅事件
-                    container.Resolve<IEventProduct>(consumerAtt.EventName).Subscribe(consumerType.FullName);
+                    var eventProduct = (EventProduct)container.Resolve<IEventProduct>(consumerAtt.EventName);
+                    eventProduct.Subscribe(consumerType.FullName);
                 }
 
                 IocManager.Instance.Logger<EventBusInstaller>().LogInformation(message: "全部事件总线订阅启动完成!");

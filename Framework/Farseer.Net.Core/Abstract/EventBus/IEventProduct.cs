@@ -15,9 +15,5 @@ namespace FS.Core.Abstract.EventBus
         /// <param name="message"> 消息主体 </param>
         /// <returns></returns>
         bool SendAsync(object sender, object message);
-        /// <summary>
-        /// 订阅事件
-        /// </summary>
-        void Subscribe(string consumer);
     }
 }
