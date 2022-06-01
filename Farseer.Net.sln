@@ -90,6 +90,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Study", "Study", "{0B43AD20
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Study", "Study\Study\Study.csproj", "{BEC94E2E-D307-499A-8583-304C673E90D1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.Data.Test", "Tests\Farseer.Net.Data.Test\Farseer.Net.Data.Test.csproj", "{1CC9EBA1-B1BC-4051-9474-D0DE34DA1ACE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -352,6 +354,14 @@ Global
 		{BEC94E2E-D307-499A-8583-304C673E90D1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BEC94E2E-D307-499A-8583-304C673E90D1}.Release|x64.ActiveCfg = Release|Any CPU
 		{BEC94E2E-D307-499A-8583-304C673E90D1}.Release|x64.Build.0 = Release|Any CPU
+		{1CC9EBA1-B1BC-4051-9474-D0DE34DA1ACE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CC9EBA1-B1BC-4051-9474-D0DE34DA1ACE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CC9EBA1-B1BC-4051-9474-D0DE34DA1ACE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1CC9EBA1-B1BC-4051-9474-D0DE34DA1ACE}.Debug|x64.Build.0 = Debug|Any CPU
+		{1CC9EBA1-B1BC-4051-9474-D0DE34DA1ACE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CC9EBA1-B1BC-4051-9474-D0DE34DA1ACE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CC9EBA1-B1BC-4051-9474-D0DE34DA1ACE}.Release|x64.ActiveCfg = Release|Any CPU
+		{1CC9EBA1-B1BC-4051-9474-D0DE34DA1ACE}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -389,6 +399,7 @@ Global
 		{0E9888FC-D4EA-413A-89F7-0016244A5016} = {BA9C8E90-5B9E-464C-B0CA-7988E2CA850B}
 		{C28FC186-0FC0-4DBD-A4D8-5CBBE8360333} = {6E0FEE87-1277-4E10-9BE3-ED5F9DC0A398}
 		{BEC94E2E-D307-499A-8583-304C673E90D1} = {0B43AD20-6A65-4C69-991A-BDB3821F2D51}
+		{1CC9EBA1-B1BC-4051-9474-D0DE34DA1ACE} = {946F6E15-0F84-4D36-A000-D8BAB93FB8DC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {22E81E03-33DB-418D-90D2-FD1B560FEF14}
