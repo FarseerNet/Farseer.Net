@@ -3,8 +3,8 @@ using System.Collections;
 using System.Linq;
 using System.Text;
 using FS.Core.Mapping.Attribute;
+using FS.Data.Abstract;
 using FS.Data.Cache;
-using FS.Data.Inteface;
 using FS.Data.Map;
 using FS.Extends;
 
@@ -48,10 +48,11 @@ public class DynamicGenerateSourceCode
     private string GenerateToList()
     {
         return @$"
-            public static PooledList<{ParentClassName}> ToList(MapingData[] mapData)
+            public static PooledList<{ParentClassName}> ToList(IEnumerable<MapingData> mapData)
             {{
-                var lst = new PooledList<{ParentClassName} >(mapData[0].DataList.Count);
-                for (int i = 0; i < mapData[0].DataList.Count; i++)
+                var firstData = mapData.FirstOrDefault();
+                var lst = new PooledList<{ParentClassName} >(firstData.DataList.Count);
+                for (int i = 0; i < firstData.DataList.Count; i++)
                 {{
                     lst.Add(ToEntity(mapData, i));
                 }}
@@ -63,9 +64,9 @@ public class DynamicGenerateSourceCode
     private string GenerateToEntity()
     {
         return @$"
-            public static {ParentClassName} ToEntity(MapingData[] mapData, int rowsIndex = 0)
+            public static {ParentClassName} ToEntity(IEnumerable<MapingData> mapData, int rowsIndex = 0)
             {{
-                if ( mapData == null || mapData.Length == 0 || mapData[0].DataList.Count == 0) {{ return null; }}
+                if (mapData == null || !mapData.Any() || mapData.FirstOrDefault().DataList.Count == 0) {{ return null; }}
                 var entity = new {ParentClassName}();
                 foreach (var map in mapData)
                 {{

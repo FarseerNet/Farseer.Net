@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 using FS.Cache;
-using FS.Data.Inteface;
+using FS.Data.Abstract;
 using FS.Data.Internal;
 using FS.Utils.Common.ExpressionVisitor;
 
@@ -154,7 +154,7 @@ namespace FS.Data
         /// <param name="entity"> </param>
         public int Update(TEntity entity)
         {
-            var updateQueue = _set.Queue;
+            var updateQueue = _set.Query;
             _set.Update(entity: entity);
 
             // 由于Update时，有可能会产生条件（主键赋值被转成条件），故在Update之后，进行获取条件及赋值
@@ -173,7 +173,7 @@ namespace FS.Data
         /// <param name="entity"> </param>
         public async Task<int> UpdateAsync(TEntity entity)
         {
-            var updateQueue = _set.Queue;
+            var updateQueue = _set.Query;
             await _set.UpdateAsync(entity: entity);
 
             // 由于Update时，有可能会产生条件（主键赋值被转成条件），故在Update之后，进行获取条件及赋值
@@ -310,7 +310,7 @@ namespace FS.Data
         /// </summary>
         public int Delete()
         {
-            var exp = (Expression<Func<TEntity, bool>>)_set.Queue.ExpBuilder.ExpWhere;
+            var exp = (Expression<Func<TEntity, bool>>)_set.Query.ExpBuilder.ExpWhere;
             _set.Delete();
 
             // 更新本地缓存
@@ -325,7 +325,7 @@ namespace FS.Data
         /// </summary>
         public async Task<int> DeleteAsync()
         {
-            var exp = (Expression<Func<TEntity, bool>>)_set.Queue.ExpBuilder.ExpWhere;
+            var exp = (Expression<Func<TEntity, bool>>)_set.Query.ExpBuilder.ExpWhere;
             await _set.DeleteAsync();
 
             // 更新本地缓存
@@ -376,8 +376,8 @@ namespace FS.Data
         /// </summary>
         public int AddUp()
         {
-            var assign = _set.Queue.ExpBuilder.ExpAssign;
-            var exp    = (Expression<Func<TEntity, bool>>)_set.Queue.ExpBuilder.ExpWhere;
+            var assign = _set.Query.ExpBuilder.ExpAssign;
+            var exp    = (Expression<Func<TEntity, bool>>)_set.Query.ExpBuilder.ExpWhere;
             _set.AddUp();
 
             // 更新本地缓存
@@ -389,8 +389,8 @@ namespace FS.Data
         /// </summary>
         public async Task<int> AddUpAsync()
         {
-            var assign = _set.Queue.ExpBuilder.ExpAssign;
-            var exp    = (Expression<Func<TEntity, bool>>)_set.Queue.ExpBuilder.ExpWhere;
+            var assign = _set.Query.ExpBuilder.ExpAssign;
+            var exp    = (Expression<Func<TEntity, bool>>)_set.Query.ExpBuilder.ExpWhere;
             await _set.AddUpAsync();
 
             // 更新本地缓存

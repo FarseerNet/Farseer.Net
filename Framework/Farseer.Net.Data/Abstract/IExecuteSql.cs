@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using Collections.Pooled;
-using FS.Data.Data;
 using FS.Data.Internal;
 
-namespace FS.Data.Inteface
+namespace FS.Data.Abstract
 {
     /// <summary> 将SQL发送到数据库 </summary>
     internal interface IExecuteSql : IDisposable

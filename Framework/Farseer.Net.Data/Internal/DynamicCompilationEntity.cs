@@ -21,6 +21,11 @@ namespace FS.Data.Internal
     /// </summary>
     public class DynamicCompilationEntity
     {
+        private DynamicCompilationEntity()
+        {
+        }
+        public static DynamicCompilationEntity Instance { get; } = new();
+        
         /// <summary>
         ///     生成的派生类dll缓存起来
         /// </summary>
@@ -54,7 +59,7 @@ namespace FS.Data.Internal
                                              .AddImports("Newtonsoft.Json")
                                              .AddImports("FS.Core")
                                              .AddImports("FS.Utils.Common")
-                                             .AddImports("FS.Data.Infrastructure");
+                                             .AddImports("FS.Data.Abstract");
 
             // 加载成员依赖的类型所在的程序集
             var properties = entityType.GetProperties();

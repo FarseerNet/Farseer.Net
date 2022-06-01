@@ -7,7 +7,7 @@ namespace FS.Data.Internal
     /// <summary>
     ///     队列，每一次的查询将生成一个新的实例
     /// </summary>
-    internal class Queue : IDisposable
+    internal class Query : IDisposable
     {
         /// <summary>
         ///     表达式持久化
@@ -29,7 +29,7 @@ namespace FS.Data.Internal
         /// </summary>
         internal SetDataMap Map;
 
-        internal Queue(InternalContext context, SetDataMap map)
+        internal Query(InternalContext context, SetDataMap map)
         {
             ID      = Guid.NewGuid();
             Context = context;
@@ -53,13 +53,13 @@ namespace FS.Data.Internal
         /// <summary>
         ///     复制条件
         /// </summary>
-        /// <param name="queue"> 队列 </param>
-        internal void Copy(Queue queue)
+        /// <param name="query"> 队列 </param>
+        internal void Copy(Query query)
         {
-            ID          = queue.ID;
-            Context     = queue.Context;
-            _expBuilder = queue.ExpBuilder;
-            queue.Dispose();
+            ID          = query.ID;
+            Context     = query.Context;
+            _expBuilder = query.ExpBuilder;
+            query.Dispose();
         }
 
         #region 释放

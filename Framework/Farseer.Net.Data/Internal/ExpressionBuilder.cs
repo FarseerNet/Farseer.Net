@@ -190,7 +190,7 @@ namespace FS.Data.Internal
         
         public void Dispose()
         {
-            ExpOrderBy.Dispose();
+            ExpOrderBy?.Dispose();
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Collections.Pooled;
 using FS.Core.Mapping.Attribute;
-using FS.Data.Inteface;
+using FS.Data.Abstract;
 using FS.Data.Internal;
 using FS.DI;
 using FS.Modules;
@@ -66,7 +66,7 @@ namespace FS.Data
                         foreach (var setType in lstPOType)
                         {
                             var beginIndex = sw.ElapsedMilliseconds;
-                            new DynamicCompilationEntity().BuildType(setType.GenericTypeArguments[0]);
+                            DynamicCompilationEntity.Instance.BuildType(setType.GenericTypeArguments[0]);
                             lstLog.Add($"编译：{setType.GenericTypeArguments[0].FullName} \t耗时：{(sw.ElapsedMilliseconds - beginIndex):n} ms");
                         }
                         lstLog.Add($"耗时：{sw.ElapsedMilliseconds:n} ms");

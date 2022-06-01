@@ -1,4 +1,4 @@
-namespace FS.Data.Inteface
+namespace FS.Data.Abstract
 {
     public interface IDatabaseConnection
     {

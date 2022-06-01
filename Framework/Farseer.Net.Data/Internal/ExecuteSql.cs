@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using System.Threading.Tasks;
 using Collections.Pooled;
-using FS.Data.Inteface;
+using FS.Data.Abstract;
 using FS.Extends;
 using FS.Utils.Common;
 

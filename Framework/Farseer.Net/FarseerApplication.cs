@@ -173,7 +173,7 @@ namespace FS
                 InitCallback.Dispose();
                 
                 // 优化前：1.3s，优化后：700ms
-                IocManager.Logger<FarseerApplication>().LogInformation(message: $"初始化完毕，共耗时{(DateTime.Now - StartupAt).TotalMilliseconds:n}ms");
+                IocManager.Logger<FarseerApplication>().LogInformation(message: $"初始化完毕，共耗时{(DateTime.Now - StartupAt).TotalMilliseconds:n}ms\r\n---------------------------------------");
             }
             catch (Exception ex)
             {

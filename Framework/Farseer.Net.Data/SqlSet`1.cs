@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Collections.Pooled;
-using FS.Data.Inteface;
+using FS.Data.Abstract;
 
 namespace FS.Data
 {

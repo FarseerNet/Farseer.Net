@@ -5,8 +5,8 @@ using System.Data.Common;
 using System.Threading.Tasks;
 using Collections.Pooled;
 using FS.Core.LinkTrack;
+using FS.Data.Abstract;
 using FS.Data.Client;
-using FS.Data.Inteface;
 
 namespace FS.Data.Internal
 {

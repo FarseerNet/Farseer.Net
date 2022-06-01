@@ -4,7 +4,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using Collections.Pooled;
-using FS.Data.Inteface;
+using FS.Data.Abstract;
 using FS.Data.Map;
 
 namespace FS.Data.Internal

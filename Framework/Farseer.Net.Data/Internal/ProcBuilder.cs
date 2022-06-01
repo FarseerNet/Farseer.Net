@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Data.Common;
 using Collections.Pooled;
+using FS.Data.Abstract;
 using FS.Data.Client;
-using FS.Data.Inteface;
 using FS.Data.Map;
 
 namespace FS.Data.Internal

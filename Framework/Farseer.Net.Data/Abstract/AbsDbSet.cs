@@ -4,7 +4,7 @@ using System.Reflection;
 using FS.Data.Internal;
 using FS.Data.Map;
 
-namespace FS.Data.Inteface
+namespace FS.Data.Abstract
 {
     /// <summary>
     ///     Set基类
@@ -24,12 +24,12 @@ namespace FS.Data.Inteface
         /// <summary>
         ///     当前队列
         /// </summary>
-        internal virtual Queue Queue => Context.QueueManger.CreateQueue(map: SetMap);
+        internal virtual Query Query => Context.QueryManger.CreateQueue(map: SetMap);
 
         /// <summary>
         ///     队列管理
         /// </summary>
-        internal virtual QueueManger QueueManger => Context.QueueManger;
+        internal virtual QueryManger QueryManger => Context.QueryManger;
 
         /// <summary>
         ///     设置所属上下文

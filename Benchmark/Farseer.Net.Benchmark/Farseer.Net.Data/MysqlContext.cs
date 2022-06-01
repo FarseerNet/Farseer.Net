@@ -1,6 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using FS.Data;
-using FS.Data.Inteface;
+using FS.Data.Abstract;
 using FS.DI;
 
 namespace Farseer.Net.Benchmark.Data

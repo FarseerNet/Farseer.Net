@@ -9,7 +9,7 @@ using FS.Core.Abstract.Data;
 using FS.Data.Features;
 using FS.Utils.Common;
 
-namespace FS.Data.Inteface
+namespace FS.Data.Abstract
 {
     /// <summary>
     ///     通用查询Set（表、视图）
@@ -44,7 +44,7 @@ namespace FS.Data.Inteface
         /// <param name="select"> 字段选择器 </param>
         public virtual TSet Select<T>(Expression<Func<TEntity, T>> select)
         {
-            Queue.ExpBuilder.AddSelect(select: select);
+            Query.ExpBuilder.AddSelect(select: select);
             return (TSet)this;
         }
 
@@ -54,7 +54,7 @@ namespace FS.Data.Inteface
         /// <param name="where"> 查询条件 </param>
         public virtual TSet Where(Expression<Func<TEntity, bool>> where)
         {
-            Queue.ExpBuilder.AddWhere(where: where);
+            Query.ExpBuilder.AddWhere(where: where);
             return (TSet)this;
         }
 
@@ -64,7 +64,7 @@ namespace FS.Data.Inteface
         /// <param name="where"> 查询条件 </param>
         public virtual TSet WhereOr(Expression<Func<TEntity, bool>> where)
         {
-            Queue.ExpBuilder.AddWhereOr(where: where);
+            Query.ExpBuilder.AddWhereOr(where: where);
             return (TSet)this;
         }
 
@@ -105,7 +105,7 @@ namespace FS.Data.Inteface
         /// <param name="desc"> 字段选择器 </param>
         public virtual TSet Desc<TKey>(Expression<Func<TEntity, TKey>> desc)
         {
-            Queue.ExpBuilder.AddOrderBy(exp: desc, isAsc: false);
+            Query.ExpBuilder.AddOrderBy(exp: desc, isAsc: false);
             return (TSet)this;
         }
 
@@ -116,7 +116,7 @@ namespace FS.Data.Inteface
         /// <param name="asc"> 字段选择器 </param>
         public virtual TSet Asc<TKey>(Expression<Func<TEntity, TKey>> asc)
         {
-            Queue.ExpBuilder.AddOrderBy(exp: asc, isAsc: true);
+            Query.ExpBuilder.AddOrderBy(exp: asc, isAsc: true);
             return (TSet)this;
         }
 
@@ -128,13 +128,13 @@ namespace FS.Data.Inteface
         /// <param name="top"> 限制显示的数量 </param>
         /// <param name="isDistinct"> 返回当前条件下非重复数据 </param>
         /// <param name="isRand"> 返回当前条件下随机的数据 </param>
-        public virtual DataTable ToTable(int top = 0, bool isDistinct = false, bool isRand = false) => QueueManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.ToTable(callMethod: $"{typeof(TEntity).Name}.ToTable", sqlParam: queue.SqlBuilder.ToList(top: top, isDistinct: isDistinct, isRand: isRand)), joinSoftDeleteCondition: true);
+        public virtual DataTable ToTable(int top = 0, bool isDistinct = false, bool isRand = false) => QueryManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.ToTable(callMethod: $"{typeof(TEntity).Name}.ToTable", sqlParam: queue.SqlBuilder.ToList(top: top, isDistinct: isDistinct, isRand: isRand)), joinSoftDeleteCondition: true);
 
         /// <summary> 异步查询多条记录 </summary>
         /// <param name="top"> 限制显示的数量 </param>
         /// <param name="isDistinct"> 返回当前条件下非重复数据 </param>
         /// <param name="isRand"> 返回当前条件下随机的数据 </param>
-        public virtual Task<DataTable> ToTableAsync(int top = 0, bool isDistinct = false, bool isRand = false) => QueueManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.ToTableAsync(callMethod: $"{typeof(TEntity).Name}.ToTableAsync", sqlParam: queue.SqlBuilder.ToList(top: top, isDistinct: isDistinct, isRand: isRand)), joinSoftDeleteCondition: true);
+        public virtual Task<DataTable> ToTableAsync(int top = 0, bool isDistinct = false, bool isRand = false) => QueryManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.ToTableAsync(callMethod: $"{typeof(TEntity).Name}.ToTableAsync", sqlParam: queue.SqlBuilder.ToList(top: top, isDistinct: isDistinct, isRand: isRand)), joinSoftDeleteCondition: true);
 
         /// <summary> 查询多条记录 </summary>
         /// <param name="pageSize"> 每页显示数量 </param>
@@ -147,7 +147,7 @@ namespace FS.Data.Inteface
             Check.IsTure(isTrue: pageIndex < 1, parameterName: $"参数{nameof(pageIndex)}，不能小于1");
             Check.IsTure(isTrue: pageSize  < 1, parameterName: $"参数{nameof(pageSize)}，不能小于1");
 
-            return QueueManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.ToTable(callMethod: $"{typeof(TEntity).Name}.ToTable", sqlParam: queue.SqlBuilder.ToList(pageSize: pageSize, pageIndex: pageIndex, isDistinct: isDistinct)), joinSoftDeleteCondition: true);
+            return QueryManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.ToTable(callMethod: $"{typeof(TEntity).Name}.ToTable", sqlParam: queue.SqlBuilder.ToList(pageSize: pageSize, pageIndex: pageIndex, isDistinct: isDistinct)), joinSoftDeleteCondition: true);
         }
 
         /// <summary> 异步查询多条记录 </summary>
@@ -161,7 +161,7 @@ namespace FS.Data.Inteface
             Check.IsTure(isTrue: pageIndex < 1, parameterName: $"参数{nameof(pageIndex)}，不能小于1");
             Check.IsTure(isTrue: pageSize  < 1, parameterName: $"参数{nameof(pageSize)}，不能小于1");
 
-            return QueueManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.ToTableAsync(callMethod: $"{typeof(TEntity).Name}.ToTableAsync", sqlParam: queue.SqlBuilder.ToList(pageSize: pageSize, pageIndex: pageIndex, isDistinct: isDistinct)), joinSoftDeleteCondition: true);
+            return QueryManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.ToTableAsync(callMethod: $"{typeof(TEntity).Name}.ToTableAsync", sqlParam: queue.SqlBuilder.ToList(pageSize: pageSize, pageIndex: pageIndex, isDistinct: isDistinct)), joinSoftDeleteCondition: true);
         }
 
         /// <summary> 查询多条记录 </summary>
@@ -175,9 +175,9 @@ namespace FS.Data.Inteface
             Check.IsTure(isTrue: pageIndex < 1, parameterName: $"参数{nameof(pageIndex)}，不能小于1");
             Check.IsTure(isTrue: pageSize  < 1, parameterName: $"参数{nameof(pageSize)}，不能小于1");
 
-            var queue = Queue;
+            var queue = Query;
             recordCount = Count();
-            Queue.Copy(queue: queue);
+            Query.Copy(query: queue);
 
             return ToTable(pageSize: pageSize, pageIndex: pageIndex, isDistinct: isDistinct);
         }
@@ -193,9 +193,9 @@ namespace FS.Data.Inteface
             Check.IsTure(isTrue: pageIndex < 1, parameterName: $"参数{nameof(pageIndex)}，不能小于1");
             Check.IsTure(isTrue: pageSize  < 1, parameterName: $"参数{nameof(pageSize)}，不能小于1");
 
-            var queue = Queue;
+            var queue = Query;
             recordCount = Count();
-            Queue.Copy(queue: queue);
+            Query.Copy(query: queue);
 
             return ToTableAsync(pageSize: pageSize, pageIndex: pageIndex, isDistinct: isDistinct);
         }
@@ -208,13 +208,13 @@ namespace FS.Data.Inteface
         /// <param name="top"> 限制显示的数量 </param>
         /// <param name="isDistinct"> 返回当前条件下非重复数据 </param>
         /// <param name="isRand"> 返回当前条件下随机的数据 </param>
-        public virtual PooledList<TEntity> ToList(int top = 0, bool isDistinct = false, bool isRand = false) => QueueManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.ToList<TEntity>(callMethod: $"{typeof(TEntity).Name}.ToList", sqlParam: queue.SqlBuilder.ToList(top: top, isDistinct: isDistinct, isRand: isRand)), joinSoftDeleteCondition: true);
+        public virtual PooledList<TEntity> ToList(int top = 0, bool isDistinct = false, bool isRand = false) => QueryManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.ToList<TEntity>(callMethod: $"{typeof(TEntity).Name}.ToList", sqlParam: queue.SqlBuilder.ToList(top: top, isDistinct: isDistinct, isRand: isRand)), joinSoftDeleteCondition: true);
 
         /// <summary> 查询多条记录 </summary>
         /// <param name="top"> 限制显示的数量 </param>
         /// <param name="isDistinct"> 返回当前条件下非重复数据 </param>
         /// <param name="isRand"> 返回当前条件下随机的数据 </param>
-        public virtual Task<PooledList<TEntity>> ToListAsync(int top = 0, bool isDistinct = false, bool isRand = false) => QueueManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.ToListAsync<TEntity>(callMethod: $"{typeof(TEntity).Name}.ToListAsync", sqlParam: queue.SqlBuilder.ToList(top: top, isDistinct: isDistinct, isRand: isRand)), joinSoftDeleteCondition: true);
+        public virtual Task<PooledList<TEntity>> ToListAsync(int top = 0, bool isDistinct = false, bool isRand = false) => QueryManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.ToListAsync<TEntity>(callMethod: $"{typeof(TEntity).Name}.ToListAsync", sqlParam: queue.SqlBuilder.ToList(top: top, isDistinct: isDistinct, isRand: isRand)), joinSoftDeleteCondition: true);
 
         /// <summary>
         ///     查询多条记录
@@ -229,7 +229,7 @@ namespace FS.Data.Inteface
             Check.IsTure(isTrue: pageIndex < 1, parameterName: $"参数{nameof(pageIndex)}，不能小于1");
             Check.IsTure(isTrue: pageSize  < 1, parameterName: $"参数{nameof(pageSize)}，不能小于1");
 
-            return QueueManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.ToList<TEntity>(callMethod: $"{typeof(TEntity).Name}.ToList", sqlParam: queue.SqlBuilder.ToList(pageSize: pageSize, pageIndex: pageIndex, isDistinct: isDistinct)), joinSoftDeleteCondition: true);
+            return QueryManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.ToList<TEntity>(callMethod: $"{typeof(TEntity).Name}.ToList", sqlParam: queue.SqlBuilder.ToList(pageSize: pageSize, pageIndex: pageIndex, isDistinct: isDistinct)), joinSoftDeleteCondition: true);
         }
 
         /// <summary>
@@ -245,7 +245,7 @@ namespace FS.Data.Inteface
             Check.IsTure(isTrue: pageIndex < 1, parameterName: $"参数{nameof(pageIndex)}，不能小于1");
             Check.IsTure(isTrue: pageSize  < 1, parameterName: $"参数{nameof(pageSize)}，不能小于1");
 
-            return QueueManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.ToListAsync<TEntity>(callMethod: $"{typeof(TEntity).Name}.ToListAsync", sqlParam: queue.SqlBuilder.ToList(pageSize: pageSize, pageIndex: pageIndex, isDistinct: isDistinct)), joinSoftDeleteCondition: true);
+            return QueryManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.ToListAsync<TEntity>(callMethod: $"{typeof(TEntity).Name}.ToListAsync", sqlParam: queue.SqlBuilder.ToList(pageSize: pageSize, pageIndex: pageIndex, isDistinct: isDistinct)), joinSoftDeleteCondition: true);
         }
 
         /// <summary>
@@ -260,9 +260,9 @@ namespace FS.Data.Inteface
             Check.IsTure(isTrue: pageIndex < 1, parameterName: $"参数{nameof(pageIndex)}，不能小于1");
             Check.IsTure(isTrue: pageSize  < 1, parameterName: $"参数{nameof(pageSize)}，不能小于1");
 
-            var queue       = Queue;
+            var queue       = Query;
             var recordCount = Count();
-            Queue.Copy(queue: queue);
+            Query.Copy(query: queue);
 
             var lst = ToList(pageSize: pageSize, pageIndex: pageIndex, isDistinct: isDistinct);
             return new PageList<TEntity>(lst, recordCount);
@@ -280,9 +280,9 @@ namespace FS.Data.Inteface
             Check.IsTure(isTrue: pageIndex < 1, parameterName: $"参数{nameof(pageIndex)}，不能小于1");
             Check.IsTure(isTrue: pageSize  < 1, parameterName: $"参数{nameof(pageSize)}，不能小于1");
 
-            var queue       = Queue;
+            var queue       = Query;
             var recordCount = await CountAsync();
-            Queue.Copy(queue: queue);
+            Query.Copy(query: queue);
 
             var lst = await ToListAsync(pageSize: pageSize, pageIndex: pageIndex, isDistinct: isDistinct);
             return new PageList<TEntity>(lst, recordCount);
@@ -495,12 +495,12 @@ namespace FS.Data.Inteface
         /// <summary>
         ///     查询单条记录
         /// </summary>
-        public virtual TEntity ToEntity() => QueueManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.ToEntity<TEntity>(callMethod: $"{typeof(TEntity).Name}.ToEntity", sqlParam: queue.SqlBuilder.ToEntity()), joinSoftDeleteCondition: true);
+        public virtual TEntity ToEntity() => QueryManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.ToEntity<TEntity>(callMethod: $"{typeof(TEntity).Name}.ToEntity", sqlParam: queue.SqlBuilder.ToEntity()), joinSoftDeleteCondition: true);
 
         /// <summary>
         ///     查询单条记录
         /// </summary>
-        public virtual Task<TEntity> ToEntityAsync() => QueueManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.ToEntityAsync<TEntity>(callMethod: $"{typeof(TEntity).Name}.ToEntityAsync", sqlParam: queue.SqlBuilder.ToEntity()), joinSoftDeleteCondition: true);
+        public virtual Task<TEntity> ToEntityAsync() => QueryManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.ToEntityAsync<TEntity>(callMethod: $"{typeof(TEntity).Name}.ToEntityAsync", sqlParam: queue.SqlBuilder.ToEntity()), joinSoftDeleteCondition: true);
 
         /// <summary>
         ///     获取单条记录
@@ -533,12 +533,12 @@ namespace FS.Data.Inteface
         /// <summary>
         ///     查询数量
         /// </summary>
-        public virtual int Count(bool isDistinct = false, bool isRand = false) => QueueManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.GetValue<int>(callMethod: $"{typeof(TEntity).Name}.Count", sqlParam: queue.SqlBuilder.Count()), joinSoftDeleteCondition: true);
+        public virtual int Count(bool isDistinct = false, bool isRand = false) => QueryManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.GetValue<int>(callMethod: $"{typeof(TEntity).Name}.Count", sqlParam: queue.SqlBuilder.Count()), joinSoftDeleteCondition: true);
 
         /// <summary>
         ///     查询数量
         /// </summary>
-        public virtual Task<int> CountAsync(bool isDistinct = false, bool isRand = false) => QueueManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.GetValueAsync<int>(callMethod: $"{typeof(TEntity).Name}.CountAsync", sqlParam: queue.SqlBuilder.Count()), joinSoftDeleteCondition: true);
+        public virtual Task<int> CountAsync(bool isDistinct = false, bool isRand = false) => QueryManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.GetValueAsync<int>(callMethod: $"{typeof(TEntity).Name}.CountAsync", sqlParam: queue.SqlBuilder.Count()), joinSoftDeleteCondition: true);
 
         /// <summary>
         ///     获取数量
@@ -646,7 +646,7 @@ namespace FS.Data.Inteface
             if (fieldName == null) throw new ArgumentNullException(paramName: "fieldName", message: "查询Value操作时，fieldName参数不能为空！");
 
             Select(select: fieldName);
-            return QueueManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.GetValue(callMethod: $"{typeof(TEntity).Name}.GetValue", sqlParam: queue.SqlBuilder.GetValue(), defValue: defValue), joinSoftDeleteCondition: true);
+            return QueryManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.GetValue(callMethod: $"{typeof(TEntity).Name}.GetValue", sqlParam: queue.SqlBuilder.GetValue(), defValue: defValue), joinSoftDeleteCondition: true);
         }
 
         /// <summary>
@@ -657,7 +657,7 @@ namespace FS.Data.Inteface
             if (fieldName == null) throw new ArgumentNullException(paramName: "fieldName", message: "查询Value操作时，fieldName参数不能为空！");
 
             Select(select: fieldName);
-            return QueueManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.GetValueAsync(callMethod: $"{typeof(TEntity).Name}.GetValueAsync", sqlParam: queue.SqlBuilder.GetValue(), defValue: defValue), joinSoftDeleteCondition: true);
+            return QueryManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.GetValueAsync(callMethod: $"{typeof(TEntity).Name}.GetValueAsync", sqlParam: queue.SqlBuilder.GetValue(), defValue: defValue), joinSoftDeleteCondition: true);
         }
 
         /// <summary>
@@ -694,7 +694,7 @@ namespace FS.Data.Inteface
             if (fieldName == null) throw new ArgumentNullException(paramName: "fieldName", message: "查询Sum操作时，fieldName参数不能为空！");
 
             Select(select: fieldName);
-            return QueueManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.GetValue(callMethod: $"{typeof(TEntity).Name}.Sum", sqlParam: queue.SqlBuilder.Sum(), defValue: defValue), joinSoftDeleteCondition: true);
+            return QueryManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.GetValue(callMethod: $"{typeof(TEntity).Name}.Sum", sqlParam: queue.SqlBuilder.Sum(), defValue: defValue), joinSoftDeleteCondition: true);
         }
 
         /// <summary>
@@ -705,7 +705,7 @@ namespace FS.Data.Inteface
             if (fieldName == null) throw new ArgumentNullException(paramName: "fieldName", message: "查询Sum操作时，fieldName参数不能为空！");
 
             Select(select: fieldName);
-            return QueueManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.GetValueAsync(callMethod: $"{typeof(TEntity).Name}.SumAsync", sqlParam: queue.SqlBuilder.Sum(), defValue: defValue), joinSoftDeleteCondition: true);
+            return QueryManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.GetValueAsync(callMethod: $"{typeof(TEntity).Name}.SumAsync", sqlParam: queue.SqlBuilder.Sum(), defValue: defValue), joinSoftDeleteCondition: true);
         }
 
         /// <summary>
@@ -716,7 +716,7 @@ namespace FS.Data.Inteface
             if (fieldName == null) throw new ArgumentNullException(paramName: "fieldName", message: "查询Max操作时，fieldName参数不能为空！");
 
             Select(select: fieldName);
-            return QueueManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.GetValue(callMethod: $"{typeof(TEntity).Name}.Max", sqlParam: queue.SqlBuilder.Max(), defValue: defValue), joinSoftDeleteCondition: true);
+            return QueryManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.GetValue(callMethod: $"{typeof(TEntity).Name}.Max", sqlParam: queue.SqlBuilder.Max(), defValue: defValue), joinSoftDeleteCondition: true);
         }
 
         /// <summary>
@@ -727,7 +727,7 @@ namespace FS.Data.Inteface
             if (fieldName == null) throw new ArgumentNullException(paramName: "fieldName", message: "查询Max操作时，fieldName参数不能为空！");
 
             Select(select: fieldName);
-            return QueueManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.GetValueAsync(callMethod: $"{typeof(TEntity).Name}.MaxAsync", sqlParam: queue.SqlBuilder.Max(), defValue: defValue), joinSoftDeleteCondition: true);
+            return QueryManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.GetValueAsync(callMethod: $"{typeof(TEntity).Name}.MaxAsync", sqlParam: queue.SqlBuilder.Max(), defValue: defValue), joinSoftDeleteCondition: true);
         }
 
         /// <summary>
@@ -738,7 +738,7 @@ namespace FS.Data.Inteface
             if (fieldName == null) throw new ArgumentNullException(paramName: "fieldName", message: "查询Min操作时，fieldName参数不能为空！");
 
             Select(select: fieldName);
-            return QueueManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.GetValue(callMethod: $"{typeof(TEntity).Name}.Min", sqlParam: queue.SqlBuilder.Min(), defValue: defValue), joinSoftDeleteCondition: true);
+            return QueryManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.GetValue(callMethod: $"{typeof(TEntity).Name}.Min", sqlParam: queue.SqlBuilder.Min(), defValue: defValue), joinSoftDeleteCondition: true);
         }
 
         /// <summary>
@@ -749,7 +749,7 @@ namespace FS.Data.Inteface
             if (fieldName == null) throw new ArgumentNullException(paramName: "fieldName", message: "查询Min操作时，fieldName参数不能为空！");
 
             Select(select: fieldName);
-            return QueueManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.GetValueAsync(callMethod: $"{typeof(TEntity).Name}.MinAsync", sqlParam: queue.SqlBuilder.Min(), defValue: defValue), joinSoftDeleteCondition: true);
+            return QueryManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.GetValueAsync(callMethod: $"{typeof(TEntity).Name}.MinAsync", sqlParam: queue.SqlBuilder.Min(), defValue: defValue), joinSoftDeleteCondition: true);
         }
 
         #endregion

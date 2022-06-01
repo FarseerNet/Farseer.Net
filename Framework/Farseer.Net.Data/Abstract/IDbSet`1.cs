@@ -1,4 +1,4 @@
-﻿namespace FS.Data.Inteface
+﻿namespace FS.Data.Abstract
 {
     /// <summary>
     ///     扩展使用，所有的Set类型的继承

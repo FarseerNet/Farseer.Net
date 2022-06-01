@@ -3,8 +3,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Collections.Pooled;
+using FS.Data.Abstract;
 using FS.Data.Configuration;
-using FS.Data.Inteface;
 using FS.DI;
 using Microsoft.Extensions.Configuration;
 

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using FS.Data.Abstract;
 using FS.Data.Features;
-using FS.Data.Inteface;
 using FS.Data.Internal;
 using FS.Data.Map;
 using Newtonsoft.Json;

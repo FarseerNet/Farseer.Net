@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 using FS.Cache;
-using FS.Data.Inteface;
+using FS.Data.Abstract;
 using FS.Extends;
 using FS.Utils.Common;
 
@@ -37,7 +37,7 @@ namespace FS.Data
         /// <param name="fieldValue"> 值 </param>
         public TableSet<TEntity> AddAssign<T>(Expression<Func<TEntity, T>> fieldName, T fieldValue)
         {
-            Queue.ExpBuilder.AddAssign(fieldName: fieldName, fieldValue: fieldValue);
+            Query.ExpBuilder.AddAssign(fieldName: fieldName, fieldValue: fieldValue);
             return this;
         }
 
@@ -49,7 +49,7 @@ namespace FS.Data
         /// <param name="fieldValue"> 值 </param>
         public TableSet<TEntity> AddAssign<T>(Expression<Func<TEntity, T?>> fieldName, T fieldValue) where T : struct
         {
-            Queue.ExpBuilder.AddAssign(fieldName: fieldName, fieldValue: fieldValue);
+            Query.ExpBuilder.AddAssign(fieldName: fieldName, fieldValue: fieldValue);
             return this;
         }
 
@@ -61,7 +61,7 @@ namespace FS.Data
         /// <param name="fieldValue"> 值 </param>
         public TableSet<TEntity> AddAssign<T>(Expression<Func<TEntity, object>> fieldName, T fieldValue) where T : struct
         {
-            Queue.ExpBuilder.AddAssign(fieldName: fieldName, fieldValue: fieldValue);
+            Query.ExpBuilder.AddAssign(fieldName: fieldName, fieldValue: fieldValue);
             return this;
         }
 
@@ -160,13 +160,13 @@ namespace FS.Data
         /// <param name="entity"> </param>
         public int Update(TEntity entity)
         {
-            Check.IsTure(isTrue: entity == null && Queue.ExpBuilder.ExpAssign == null, parameterName: "更新操作时，参数不能为空！");
+            Check.IsTure(isTrue: entity == null && Query.ExpBuilder.ExpAssign == null, parameterName: "更新操作时，参数不能为空！");
 
             // 实体类的赋值，转成表达式树
-            Queue.ExpBuilder.AssignUpdate(entity: entity);
+            Query.ExpBuilder.AssignUpdate(entity: entity);
 
             // 加入队列
-            return QueueManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.Execute(callMethod: $"{typeof(TEntity).Name}.Update", sqlParam: queue.SqlBuilder.Update()), joinSoftDeleteCondition: true);
+            return QueryManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.Execute(callMethod: $"{typeof(TEntity).Name}.Update", sqlParam: queue.SqlBuilder.Update()), joinSoftDeleteCondition: true);
         }
 
         /// <summary>
@@ -176,12 +176,12 @@ namespace FS.Data
         /// <param name="entity"> </param>
         public Task<int> UpdateAsync(TEntity entity)
         {
-            Check.IsTure(isTrue: entity == null && Queue.ExpBuilder.ExpAssign == null, parameterName: "更新操作时，参数不能为空！");
+            Check.IsTure(isTrue: entity == null && Query.ExpBuilder.ExpAssign == null, parameterName: "更新操作时，参数不能为空！");
             // 实体类的赋值，转成表达式树
-            Queue.ExpBuilder.AssignUpdate(entity: entity);
+            Query.ExpBuilder.AssignUpdate(entity: entity);
 
             // 加入队列
-            return QueueManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.ExecuteAsync(callMethod: $"{typeof(TEntity).Name}.UpdateAsync", sqlParam: queue.SqlBuilder.Update()), joinSoftDeleteCondition: true);
+            return QueryManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.ExecuteAsync(callMethod: $"{typeof(TEntity).Name}.UpdateAsync", sqlParam: queue.SqlBuilder.Update()), joinSoftDeleteCondition: true);
         }
 
         /// <summary>
@@ -234,13 +234,13 @@ namespace FS.Data
             Check.NotNull(value: entity, parameterName: "插入操作时，参数不能为空！");
 
             // 实体类的赋值，转成表达式树
-            Queue.ExpBuilder.AssignInsert(entity: entity);
+            Query.ExpBuilder.AssignInsert(entity: entity);
 
             // 需要返回值时，则不允许延迟提交
             if (isReturnLastId && SetMap.PhysicsMap.DbGeneratedFields.Key != null)
             {
                 // 赋值标识字段
-                return QueueManger.Commit(map: SetMap, act: queue =>
+                return QueryManger.Commit(map: SetMap, act: queue =>
                 {
                     PropertySetCacheManger.Cache(key: SetMap.PhysicsMap.DbGeneratedFields.Key, instance: entity, value: ConvertHelper.ConvertType(sourceValue: Context.ExecuteSql.GetValue<object>(callMethod: $"{typeof(TEntity).Name}.InsertIdentity", sqlParam: queue.SqlBuilder.InsertIdentity()), returnType: SetMap.PhysicsMap.DbGeneratedFields.Key.PropertyType));
                     return 1;
@@ -248,7 +248,7 @@ namespace FS.Data
             }
 
             // 不返回标识字段
-            return QueueManger.Commit(map: SetMap, act: queue =>
+            return QueryManger.Commit(map: SetMap, act: queue =>
             {
                 return Context.ExecuteSql.Execute(callMethod: $"{typeof(TEntity).Name}.Insert", sqlParam: queue.SqlBuilder.Insert());
             }, joinSoftDeleteCondition: false);
@@ -264,13 +264,13 @@ namespace FS.Data
             Check.NotNull(value: entity, parameterName: "插入操作时，参数不能为空！");
 
             // 实体类的赋值，转成表达式树
-            Queue.ExpBuilder.AssignInsert(entity: entity);
+            Query.ExpBuilder.AssignInsert(entity: entity);
 
             // 需要返回值时，则不允许延迟提交
             if (isReturnLastId && SetMap.PhysicsMap.DbGeneratedFields.Key != null)
             {
                 // 赋值标识字段
-                return QueueManger.CommitAsync(map: SetMap, act: async queue =>
+                return QueryManger.CommitAsync(map: SetMap, act: async queue =>
                 {
                     var sourceValue = await Context.ExecuteSql.GetValueAsync<object>(callMethod: $"{typeof(TEntity).Name}.InsertIdentityAsync", sqlParam: queue.SqlBuilder.InsertIdentity());
                     PropertySetCacheManger.Cache(key: SetMap.PhysicsMap.DbGeneratedFields.Key, instance: entity, value: ConvertHelper.ConvertType(sourceValue: sourceValue, returnType: SetMap.PhysicsMap.DbGeneratedFields.Key.PropertyType));
@@ -279,7 +279,7 @@ namespace FS.Data
             }
 
             // 不返回标识字段
-            return QueueManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.ExecuteAsync(callMethod: $"{typeof(TEntity).Name}.InsertAsync", sqlParam: queue.SqlBuilder.Insert()), joinSoftDeleteCondition: false);
+            return QueryManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.ExecuteAsync(callMethod: $"{typeof(TEntity).Name}.InsertAsync", sqlParam: queue.SqlBuilder.Insert()), joinSoftDeleteCondition: false);
         }
 
         /// <summary>
@@ -309,14 +309,14 @@ namespace FS.Data
 
             if (Context.DbExecutor.DataType == eumDbType.SqlServer)
             {
-                return QueueManger.Commit(map: SetMap, act: queue =>
+                return QueryManger.Commit(map: SetMap, act: queue =>
                 {
                     Context.DbExecutor.ExecuteSqlBulkCopy(tableName: SetMap.TableName, dt: lst.ToTable());
                     return lst.Count();
                 }, joinSoftDeleteCondition: false);
             }
 
-            return QueueManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.Execute(callMethod: $"{typeof(TEntity).Name}.InsertBatch", sqlParam: queue.SqlBuilder.InsertBatch(lst: lst)), joinSoftDeleteCondition: false);
+            return QueryManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.Execute(callMethod: $"{typeof(TEntity).Name}.InsertBatch", sqlParam: queue.SqlBuilder.InsertBatch(lst: lst)), joinSoftDeleteCondition: false);
         }
 
         /// <summary>
@@ -330,13 +330,13 @@ namespace FS.Data
             // 如果是SqlServer，则启用BulkCopy
             if (Context.DbExecutor.DataType == eumDbType.SqlServer)
             {
-                return await QueueManger.CommitAsync(map: SetMap, act: async queue =>
+                return await QueryManger.CommitAsync(map: SetMap, act: async queue =>
                 {
                     await Context.DbExecutor.ExecuteSqlBulkCopyAsync(tableName: SetMap.TableName, dt: lst.ToTable());
                     return lst.Count();
                 }, joinSoftDeleteCondition: false);
             }
-            if (Context.DbExecutor.DataType == eumDbType.ClickHouse) return await QueueManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.ExecuteAsync(callMethod: $"{typeof(TEntity).Name}.InsertBatch", sqlParam: queue.SqlBuilder.InsertBatch(lst: lst)), joinSoftDeleteCondition: false);
+            if (Context.DbExecutor.DataType == eumDbType.ClickHouse) return await QueryManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.ExecuteAsync(callMethod: $"{typeof(TEntity).Name}.InsertBatch", sqlParam: queue.SqlBuilder.InsertBatch(lst: lst)), joinSoftDeleteCondition: false);
 
             foreach (var entity in lst)
             {
@@ -356,12 +356,12 @@ namespace FS.Data
         {
             if (SetMap.SortDelete != null)
             {
-                Queue.ExpBuilder.AddAssign(fieldName: SetMap.SortDelete.AssignExpression);
+                Query.ExpBuilder.AddAssign(fieldName: SetMap.SortDelete.AssignExpression);
                 return Update(entity: null);
             }
 
             // 加入队列
-            return QueueManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.Execute(callMethod: $"{typeof(TEntity).Name}.Delete", sqlParam: queue.SqlBuilder.Delete()), joinSoftDeleteCondition: false);
+            return QueryManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.Execute(callMethod: $"{typeof(TEntity).Name}.Delete", sqlParam: queue.SqlBuilder.Delete()), joinSoftDeleteCondition: false);
         }
 
         /// <summary>
@@ -371,12 +371,12 @@ namespace FS.Data
         {
             if (SetMap.SortDelete != null)
             {
-                Queue.ExpBuilder.AddAssign(fieldName: SetMap.SortDelete.AssignExpression);
+                Query.ExpBuilder.AddAssign(fieldName: SetMap.SortDelete.AssignExpression);
                 return UpdateAsync(entity: null);
             }
 
             // 加入队列
-            return QueueManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.ExecuteAsync(callMethod: $"{typeof(TEntity).Name}.DeleteAsync", sqlParam: queue.SqlBuilder.Delete()), joinSoftDeleteCondition: false);
+            return QueryManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.ExecuteAsync(callMethod: $"{typeof(TEntity).Name}.DeleteAsync", sqlParam: queue.SqlBuilder.Delete()), joinSoftDeleteCondition: false);
         }
 
         /// <summary>
@@ -436,10 +436,10 @@ namespace FS.Data
         /// </summary>
         public int AddUp()
         {
-            Check.NotNull(value: Queue.ExpBuilder.ExpAssign, parameterName: "+=字段操作时，必须先执行AddUp的另一个重载版本！");
+            Check.NotNull(value: Query.ExpBuilder.ExpAssign, parameterName: "+=字段操作时，必须先执行AddUp的另一个重载版本！");
 
             // 加入队列
-            return QueueManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.Execute(callMethod: $"{typeof(TEntity).Name}.AddUp", sqlParam: queue.SqlBuilder.AddUp()), joinSoftDeleteCondition: true);
+            return QueryManger.Commit(map: SetMap, act: queue => Context.ExecuteSql.Execute(callMethod: $"{typeof(TEntity).Name}.AddUp", sqlParam: queue.SqlBuilder.AddUp()), joinSoftDeleteCondition: true);
         }
 
         /// <summary>
@@ -447,10 +447,10 @@ namespace FS.Data
         /// </summary>
         public Task<int> AddUpAsync()
         {
-            Check.NotNull(value: Queue.ExpBuilder.ExpAssign, parameterName: "+=字段操作时，必须先执行AddUp的另一个重载版本！");
+            Check.NotNull(value: Query.ExpBuilder.ExpAssign, parameterName: "+=字段操作时，必须先执行AddUp的另一个重载版本！");
 
             // 加入队列
-            return QueueManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.ExecuteAsync(callMethod: $"{typeof(TEntity).Name}.AddUpAsync", sqlParam: queue.SqlBuilder.AddUp()), joinSoftDeleteCondition: true);
+            return QueryManger.CommitAsync(map: SetMap, act: queue => Context.ExecuteSql.ExecuteAsync(callMethod: $"{typeof(TEntity).Name}.AddUpAsync", sqlParam: queue.SqlBuilder.AddUp()), joinSoftDeleteCondition: true);
         }
 
         /// <summary>

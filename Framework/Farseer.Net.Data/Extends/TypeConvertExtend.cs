@@ -25,7 +25,7 @@ namespace FS.Extends
         public static PooledList<TEntity> ToList<TEntity>(this DbDataReader reader)
         {
             using var mapData = DataReaderHelper.DataReaderToDictionary(reader: reader);
-            var       type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
+            var       type    = DynamicCompilationEntity.Instance.BuildType(entityType: typeof(TEntity));
             try
             {
                 return (PooledList<TEntity>)InstanceStaticCacheManger.Cache(type: type, methodName: "ToList", mapData);
@@ -47,7 +47,7 @@ namespace FS.Extends
         public static async Task<PooledList<TEntity>> ToListAsync<TEntity>(this Task<DbDataReader> reader)
         {
             using var mapData = DataReaderHelper.DataReaderToDictionary(reader: await reader);
-            var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
+            var       type    = DynamicCompilationEntity.Instance.BuildType(entityType: typeof(TEntity));
             try
             {
                 return (PooledList<TEntity>)InstanceStaticCacheManger.Cache(type: type, methodName: "ToList", mapData);
@@ -69,7 +69,7 @@ namespace FS.Extends
         public static TEntity ToEntity<TEntity>(this IDataReader reader)
         {
             using var mapData = DataReaderHelper.DataReaderToDictionary(reader: reader);
-            var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
+            var       type    = DynamicCompilationEntity.Instance.BuildType(entityType: typeof(TEntity));
             try
             {
                 return (TEntity)InstanceStaticCacheManger.Cache(type: type, methodName: "ToEntity", mapData, 0);
@@ -91,7 +91,7 @@ namespace FS.Extends
         public static TEntity ToEntity<TEntity>(this DataTable reader)
         {
             using var mapData = DataReaderHelper.DataTableToDictionary(dt: reader);
-            var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
+            var       type    = DynamicCompilationEntity.Instance.BuildType(entityType: typeof(TEntity));
             try
             {
                 return (TEntity)InstanceStaticCacheManger.Cache(type: type, methodName: "ToEntity", mapData, 0);
@@ -113,7 +113,7 @@ namespace FS.Extends
         public static async Task<TEntity> ToEntityAsync<TEntity>(this Task<DataTable> reader)
         {
             using var mapData = DataReaderHelper.DataTableToDictionary(dt: await reader);
-            var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
+            var       type    = DynamicCompilationEntity.Instance.BuildType(entityType: typeof(TEntity));
             try
             {
                 return (TEntity)InstanceStaticCacheManger.Cache(type: type, methodName: "ToEntity", mapData, 0);
@@ -135,7 +135,7 @@ namespace FS.Extends
         public static PooledList<TEntity> ToList<TEntity>(this DataTable dt)
         {
             using var mapData = DataReaderHelper.DataTableToDictionary(dt: dt);
-            var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
+            var       type    = DynamicCompilationEntity.Instance.BuildType(entityType: typeof(TEntity));
             try
             {
                 return (PooledList<TEntity>)InstanceStaticCacheManger.Cache(type: type, methodName: "ToList", mapData);
@@ -157,7 +157,7 @@ namespace FS.Extends
         public static async Task<PooledList<TEntity>> ToListAsync<TEntity>(this Task<DataTable> dt)
         {
             using var mapData = DataReaderHelper.DataTableToDictionary(dt: await dt);
-            var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
+            var       type    = DynamicCompilationEntity.Instance.BuildType(entityType: typeof(TEntity));
             try
             {
                 return (PooledList<TEntity>)InstanceStaticCacheManger.Cache(type: type, methodName: "ToList", mapData);
@@ -179,7 +179,7 @@ namespace FS.Extends
         public static TEntity[] ToArray<TEntity>(this DataTable dt)
         {
             using var mapData = DataReaderHelper.DataTableToDictionary(dt: dt);
-            var type    = new DynamicCompilationEntity().BuildType(entityType: typeof(TEntity));
+            var       type    = DynamicCompilationEntity.Instance.BuildType(entityType: typeof(TEntity));
             try
             {
                 return ((PooledList<TEntity>)InstanceStaticCacheManger.Cache(type: type, methodName: "ToList", mapData)).ToArray();

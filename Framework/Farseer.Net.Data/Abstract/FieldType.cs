@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FS.Data.Inteface
+namespace FS.Data.Abstract
 {
     /// <summary> 字段类型 </summary>
     public enum FieldType

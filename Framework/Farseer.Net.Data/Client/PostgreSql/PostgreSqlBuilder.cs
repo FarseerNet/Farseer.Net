@@ -1,4 +1,4 @@
-﻿using FS.Data.Inteface;
+﻿using FS.Data.Abstract;
 using FS.Data.Internal;
 using FS.Data.Map;
 

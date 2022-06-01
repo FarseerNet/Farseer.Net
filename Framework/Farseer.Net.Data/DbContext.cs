@@ -4,9 +4,9 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 using FS.Core.Abstract.Data;
+using FS.Data.Abstract;
 using FS.Data.Cache;
 using FS.Data.Client;
-using FS.Data.Inteface;
 using FS.Data.Internal;
 using FS.Data.Map;
 

@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Common;
 using System.Text;
 using Collections.Pooled;
 using FS.Data.Map;
 
-namespace FS.Data.Inteface
+namespace FS.Data.Abstract
 {
     /// <summary>
     ///     SQL语句与参数

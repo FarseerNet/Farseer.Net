@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using FS.Data.Abstract;
 using FS.Data.Cache;
-using FS.Data.Inteface;
 
 namespace FS.Data.Internal
 {

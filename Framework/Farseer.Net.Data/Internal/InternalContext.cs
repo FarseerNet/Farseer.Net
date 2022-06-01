@@ -3,9 +3,9 @@ using System.ComponentModel;
 using System.Data;
 using System.Threading;
 using Collections.Pooled;
+using FS.Data.Abstract;
 using FS.Data.Client;
 using FS.Data.Data;
-using FS.Data.Inteface;
 using FS.DI;
 
 namespace FS.Data.Internal
@@ -66,7 +66,7 @@ namespace FS.Data.Internal
         /// <summary>
         ///     队列管理
         /// </summary>
-        public QueueManger QueueManger { get; private set; }
+        public QueryManger QueryManger { get; private set; }
 
         /// <summary>
         ///     手动编写SQL
@@ -99,7 +99,7 @@ namespace FS.Data.Internal
                 ExecuteSql  = CurrentScope.Value.ExecuteSql;
                 DbExecutor = CurrentScope.Value.DbExecutor;
                 // 队列管理者
-                QueueManger = new QueueManger(CurrentScope.Value);
+                QueryManger = new QueryManger(CurrentScope.Value);
 
                 //Console.WriteLine($"我使用主域的事务：当前：{ScopeID}，主域：{CurrentScope.Value.ScopeID}");
             }
@@ -116,7 +116,7 @@ namespace FS.Data.Internal
                 ExecuteSql = new ExecuteSqlMonitorProxy(db: ExecuteSql, dbProvider: DbProvider);
 
                 // 队列管理者
-                QueueManger = new QueueManger(provider: this);
+                QueryManger = new QueryManger(provider: this);
                 // 手动编写SQL
                 ManualSql = new ManualSql(context: this);
 
@@ -220,7 +220,7 @@ namespace FS.Data.Internal
             if (disposing)
             {
                 FinishTransaction();
-                QueueManger.Dispose();
+                QueryManger.Dispose();
                 ExecuteSql.Dispose();
                 DbExecutor.Dispose();
                 _commitCallback.Dispose();

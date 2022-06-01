@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
-using FS.Data.Inteface;
+using FS.Data.Abstract;
 using FS.Data.Internal;
 
 namespace FS.Data
