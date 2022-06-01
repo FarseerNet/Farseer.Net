@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.Core;
 using FS.Core.Abstract.Fss;
 using FS.DI;
@@ -59,7 +60,7 @@ namespace FS.Fss
                     var sw = Stopwatch.StartNew();
                     try
                     {
-                        Task.WaitAll(IocManager.Resolve<IFssJob>(name: $"fss_job_{jobType.Key}").Execute(context: new FssContext(jobType.Key, sw: sw, Jsons.ToObject<Dictionary<string, string>>(fssJobAttribute.DebugMetaData))));
+                        Task.WaitAll(IocManager.Resolve<IFssJob>(name: $"fss_job_{jobType.Key}").Execute(context: new FssContext(jobType.Key, sw: sw, Jsons.ToObject<PooledDictionary<string, string>>(fssJobAttribute.DebugMetaData))));
                     }
                     catch (Exception e)
                     {

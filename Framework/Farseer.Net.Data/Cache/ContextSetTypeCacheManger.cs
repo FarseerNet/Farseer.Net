@@ -42,7 +42,7 @@ namespace FS.Data.Cache
 
                 var dbContextParam = Expression.Parameter(type: typeof(DbContext), name: "_context");
 
-                var initDelegates = new PooledList<Action<DbContext>>();
+                IList<Action<DbContext>> initDelegates = new PooledList<Action<DbContext>>();
 
                 // 一个DbContext对象下的所有Set实体类型
                 var setTypeList = new PooledDictionary<Type, PooledList<string>>();
@@ -106,8 +106,8 @@ namespace FS.Data.Cache
                 // 实体化所有Set属性
                 Action<DbContext> initializer = context =>
                 {
-                    foreach (var initer in initDelegates) initer(obj: context);
-                    initDelegates.Dispose();
+                    // new TableSet<>()
+                    foreach (var setNewInstanceDelegate in initDelegates) setNewInstanceDelegate(obj: context);
                 };
                 var setInfo = new SetTypesInitializersPair(setTypeList, initializer);
                 CacheList.Add(key: Key, value: setInfo);

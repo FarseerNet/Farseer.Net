@@ -130,7 +130,7 @@ namespace FS.Data
         /// <typeparam name="T"> ID </typeparam>
         /// <param name="lstIDs"> o => IDs.Contains(o.ID) </param>
         /// <param name="memberName"> 条件字段名称，如为Null，默认为主键字段 </param>
-        public void Copy<T>(List<T> lstIDs, Action<TEntity> act = null, string memberName = null) where T : struct
+        public void Copy<T>(IEnumerable<T> lstIDs, Action<TEntity> act = null, string memberName = null) where T : struct
         {
             Where(lstvValues: lstIDs, memberName: memberName);
             Copy(acTEntity: act);
@@ -143,7 +143,7 @@ namespace FS.Data
         /// <typeparam name="T"> ID </typeparam>
         /// <param name="lstIDs"> o => IDs.Contains(o.ID) </param>
         /// <param name="memberName"> 条件字段名称，如为Null，默认为主键字段 </param>
-        public Task CopyAsync<T>(List<T> lstIDs, Action<TEntity> act = null, string memberName = null) where T : struct
+        public Task CopyAsync<T>(IEnumerable<T> lstIDs, Action<TEntity> act = null, string memberName = null) where T : struct
         {
             Where(lstvValues: lstIDs, memberName: memberName);
             return CopyAsync(acTEntity: act);
@@ -209,7 +209,7 @@ namespace FS.Data
         /// <typeparam name="T"> ID </typeparam>
         /// <param name="lstIDs"> 条件，等同于：o=> IDs.Contains(o.ID) 的操作 </param>
         /// <param name="memberName"> 条件字段名称，如为Null，默认为主键字段 </param>
-        public int Update<T>(TEntity info, List<T> lstIDs, string memberName = null) => Where(lstvValues: lstIDs, memberName: memberName).Update(entity: info);
+        public int Update<T>(TEntity info, IEnumerable<T> lstIDs, string memberName = null) => Where(lstvValues: lstIDs, memberName: memberName).Update(entity: info);
 
         /// <summary>
         ///     更改实体类
@@ -218,7 +218,7 @@ namespace FS.Data
         /// <typeparam name="T"> ID </typeparam>
         /// <param name="lstIDs"> 条件，等同于：o=> IDs.Contains(o.ID) 的操作 </param>
         /// <param name="memberName"> 条件字段名称，如为Null，默认为主键字段 </param>
-        public Task<int> UpdateAsync<T>(TEntity info, List<T> lstIDs, string memberName = null) where T : struct => Where(lstvValues: lstIDs, memberName: memberName).UpdateAsync(entity: info);
+        public Task<int> UpdateAsync<T>(TEntity info, IEnumerable<T> lstIDs, string memberName = null) where T : struct => Where(lstvValues: lstIDs, memberName: memberName).UpdateAsync(entity: info);
 
         #endregion
 
@@ -417,7 +417,7 @@ namespace FS.Data
         /// <param name="lstIDs"> 条件，等同于：o=> IDs.Contains(o.ID) 的操作 </param>
         /// <typeparam name="T"> ID </typeparam>
         /// <param name="memberName"> 条件字段名称，如为Null，默认为主键字段 </param>
-        public int Delete<T>(List<T> lstIDs, string memberName = null) => Where(lstvValues: lstIDs, memberName: memberName).Delete();
+        public int Delete<T>(IEnumerable<T> lstIDs, string memberName = null) => Where(lstvValues: lstIDs, memberName: memberName).Delete();
 
         /// <summary>
         ///     删除数据
@@ -425,7 +425,7 @@ namespace FS.Data
         /// <param name="lstIDs"> 条件，等同于：o=> IDs.Contains(o.ID) 的操作 </param>
         /// <typeparam name="T"> ID </typeparam>
         /// <param name="memberName"> 条件字段名称，如为Null，默认为主键字段 </param>
-        public Task<int> DeleteAsync<T>(List<T> lstIDs, string memberName = null) where T : struct => Where(lstvValues: lstIDs, memberName: memberName).DeleteAsync();
+        public Task<int> DeleteAsync<T>(IEnumerable<T> lstIDs, string memberName = null) where T : struct => Where(lstvValues: lstIDs, memberName: memberName).DeleteAsync();
 
         #endregion
 

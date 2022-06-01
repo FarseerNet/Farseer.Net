@@ -72,9 +72,9 @@ namespace FS.Fss
         /// <summary>
         ///     将任务添加到队列中
         /// </summary>
-        public static void Enqueue(PooledList<TaskVO> lstTask)
+        public static void Enqueue(IEnumerable<TaskVO> lstTask)
         {
-            if (lstTask == null || lstTask.Count == 0) return;
+            if (lstTask == null || !lstTask.Any()) return;
             foreach (var task in lstTask.OrderBy(o => o.StartAt)) _queue.Enqueue(item: task);
         }
         
@@ -189,6 +189,7 @@ namespace FS.Fss
                 sw.Stop();
                 cts.Cancel();
                 Working--;
+                task.Dispose();
             }
         }
     }

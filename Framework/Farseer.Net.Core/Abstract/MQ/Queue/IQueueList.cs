@@ -19,7 +19,7 @@ public interface IQueueList
     /// <summary>
     /// 添加数据
     /// </summary>
-    void Add(PooledList<object> datalist);
+    void Add(IEnumerable<object> datalist);
     /// <summary>
     /// 获取当前队列大小
     /// </summary>

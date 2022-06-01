@@ -1,4 +1,5 @@
 using System.Linq;
+using Collections.Pooled;
 using FS.Core.Net;
 using FS.Extends;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +23,7 @@ public class BadRequestException : IResultFilter
         {
             if (badResult.Value is ValidationProblemDetails val)
             {
-                var lstError = val.Errors.SelectMany(selector: o => o.Value).ToList();
+                var lstError = val.Errors.SelectMany(selector: o => o.Value);
                 var error    = lstError.ToString(sign: ",");
                 badResult.Value = ApiResponseJson.Error(statusMessage: error, statusCode: badResult.StatusCode.GetValueOrDefault());
                 return;

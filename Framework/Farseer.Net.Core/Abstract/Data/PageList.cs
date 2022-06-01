@@ -21,16 +21,7 @@ namespace FS.Core.Abstract.Data
     {
         public PageList()
         {
-            List = new();
-        }
-
-        /// <summary>
-        ///     数据分页列表及总数
-        /// </summary>
-        public PageList(PooledList<TEntity> list, long recordCount)
-        {
-            List        = list;
-            RecordCount = recordCount;
+            List = new PooledList<TEntity>();
         }
 
         /// <summary>
@@ -38,7 +29,7 @@ namespace FS.Core.Abstract.Data
         /// </summary>
         public PageList(IEnumerable<TEntity> list, long recordCount)
         {
-            List        = list.ToPooledList();
+            List        = list;
             RecordCount = recordCount;
         }
 
@@ -52,13 +43,16 @@ namespace FS.Core.Abstract.Data
         ///     数据列表
         /// </summary>
         [DataMember]
-        public PooledList<TEntity> List { get; set; }
+        public IEnumerable<TEntity> List { get; set; }
 
         public IEnumerable GetList() => List;
-        
+
         public void Dispose()
         {
-            List.Dispose();
+            if (List is PooledList<TEntity> lst)
+            {
+                lst.Dispose();
+            }
         }
     }
 }

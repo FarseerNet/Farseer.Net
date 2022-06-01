@@ -19,9 +19,6 @@ public class TestUsingPooled
     public void Test()
     {
         TestClassConvert();
-        // TestToList();
-        // TestToPooledList();
-        // TestToList_ToPooledList();
     }
 
     public void TestClassConvert()
@@ -52,69 +49,42 @@ public class TestUsingPooled
             lst.AsEnumerable().ToList();
         }, 3);
 
+        TestAllocatedBytes("lst.Select(o => o.Name)", () =>
+        {
+            var lst2 = lst.Select(o => o.Name);
+        }, 3);
+
+        TestAllocatedBytes("foreach (var s in lst.Select(o => o.Name))", () =>
+        {
+            foreach (var s in lst.Select(o => o.Name)) { }
+        }, 3);
+
+        TestAllocatedBytes("lst.Select(o => o.Name).Count()", () =>
+        {
+            lst.Select(o => o.Name).Count();
+        }, 3);
+
+        TestAllocatedBytes("lst.Select(o => o.Name).ToList()", () =>
+        {
+            var lst2 = lst.Select(o => o.Name).ToList();
+        }, 3);
+
+        TestAllocatedBytes("lst.Select(o => o.Name).ToPooledList()", () =>
+        {
+            using var lst2 = lst.Select(o => o.Name).ToPooledList();
+        }, 3);
+
         TestAllocatedBytes("PooledList.Add()", () =>
         {
-            using PooledList<UserPO> lst = new(100000);
-            for (int i = 0; i < 100000; i++)
-            {
-                lst.Add(new UserPO() { Name = "123123" });
-            }
-        }, 10);
+            using PooledList<UserPO> lst = new();
+            lst.Add(new UserPO() { Name = "123123" });
+        }, 3);
 
         TestAllocatedBytes("List.Add()", () =>
         {
-            List<UserPO> lst = new(100000);
-            for (int i = 0; i < 100000; i++)
-            {
-                lst.Add(new UserPO() { Name = "123123" });
-            }
-        }, 10);
-    }
-
-    public void TestToList()
-    {
-        GC.Collect();
-        var baseAllocated = GC.GetTotalAllocatedBytes();
-        Console.WriteLine($"准备测试ToList的堆分配大小");
-        for (int j = 1; j <= 5; j++)
-        {
-            for (int i = 0; i < 1000; i++)
-            {
-                var lst2 = lst.Select(o => o.Name).ToList();
-            }
-            Console.WriteLine($"{j}/5:ToList：当前已分配堆大小：{(GC.GetTotalAllocatedBytes() - baseAllocated).ToString("N0")} byte");
-        }
-        Console.WriteLine("---------------------------");
-    }
-
-    public void TestToPooledList()
-    {
-        GC.Collect();
-        var baseAllocated = GC.GetTotalAllocatedBytes();
-        Console.WriteLine($"准备测试ToPooledList的堆分配大小");
-        for (int j = 1; j <= 5; j++)
-        {
-            for (int i = 0; i < 1000; i++)
-            {
-                using var lst2 = lst.Select(o => o.Name).ToPooledList();
-            }
-            Console.WriteLine($"{j}/5:ToPooledList：当前已分配堆大小：{(GC.GetTotalAllocatedBytes() - baseAllocated).ToString("N0")} byte");
-        }
-    }
-
-    public void TestToList_ToPooledList()
-    {
-        GC.Collect();
-        var baseAllocated = GC.GetTotalAllocatedBytes();
-        Console.WriteLine($"准备测试ToList().ToPooledList的堆分配大小");
-        for (int j = 1; j <= 5; j++)
-        {
-            for (int i = 0; i < 1000; i++)
-            {
-                using var lst2 = lst.Select(o => o.Name).ToList().ToPooledList();
-            }
-            Console.WriteLine($"{j}/5:ToList().ToPooledList：当前已分配堆大小：{(GC.GetTotalAllocatedBytes() - baseAllocated).ToString("N0")} byte");
-        }
+            List<UserPO> lst = new();
+            lst.Add(new UserPO() { Name = "123123" });
+        }, 3);
     }
 
     public void TestAllocatedBytes(string testName, Action act, int count)

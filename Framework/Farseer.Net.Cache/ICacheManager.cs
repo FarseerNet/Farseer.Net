@@ -10,13 +10,6 @@ namespace FS.Cache
     /// </summary>
     public interface ICacheManager
     {
-
-        /// <summary>
-        ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
-        /// </summary>
-        /// <param name="get"> 数据源获取 </param>
-        /// <param name="cacheKey"> 缓存策略 </param>
-        PooledList<TEntity> GetList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, Func<PooledList<TEntity>> get);
         /// <summary>
         ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
         /// </summary>
@@ -224,54 +217,5 @@ namespace FS.Cache
         /// <param name="get"> 数据源获取 </param>
         /// <param name="cacheKey"> 缓存策略 </param>
         PooledList<TEntity> GetList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, Func<IEnumerable<TEntity>> get);
-        /// <summary>
-        ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
-        /// </summary>
-        /// <param name="get"> 数据源获取 </param>
-        /// <param name="cacheKey"> 缓存策略 </param>
-        Task<PooledList<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, Func<PooledList<TEntity>> get);
-        /// <summary>
-        ///     从缓存中获取数据，如果不存在则通过get委托获取，并保存到缓存中
-        /// </summary>
-        /// <param name="get"> 数据源获取 </param>
-        /// <param name="cacheKey"> 缓存策略 </param>
-        Task<PooledList<TEntity>> GetListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, Func<Task<PooledList<TEntity>>> get);
-        /// <summary>
-        ///     从集合中获取其中一项数据，如果不存在则通过get委托获取，并保存到缓存中
-        /// </summary>
-        /// <param name="fieldKey"> hash里的field值 </param>
-        /// <param name="get"> 数据源获取 </param>
-        /// <param name="cacheKey"> 缓存策略 </param>
-        TEntity GetItem<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<PooledList<TEntity>> get);
-        /// <summary>
-        ///     从集合中获取其中一项数据，如果不存在则通过get委托获取，并保存到缓存中
-        /// </summary>
-        /// <param name="fieldKey"> hash里的field值 </param>
-        /// <param name="get"> 数据源获取 </param>
-        /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
-        /// <param name="cacheKey"> 缓存策略 </param>
-        Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<Task<PooledList<TEntity>>> get);
-        /// <summary>
-        ///     从集合中获取其中一项数据，如果不存在则通过get委托获取，并保存到缓存中
-        /// </summary>
-        /// <param name="fieldKey"> hash里的field值 </param>
-        /// <param name="get"> 数据源获取 </param>
-        /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
-        /// <param name="cacheKey"> 缓存策略 </param>
-        Task<TEntity> GetItemAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, TEntityId fieldKey, Func<PooledList<TEntity>> get);
-        /// <summary>
-        ///     保存列表到缓存中
-        /// </summary>
-        /// <param name="lst"> 数据源获取 </param>
-        /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
-        /// <param name="cacheKey"> 缓存策略 </param>
-        void SaveList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, PooledList<TEntity> lst);
-        /// <summary>
-        ///     保存集合到集合列表中
-        /// </summary>
-        /// <param name="lst"> 数据源获取 </param>
-        /// <param name="cacheKey.GetField"> 实体的ID（必须是具有唯一性） </param>
-        /// <param name="cacheKey"> 缓存策略 </param>
-        Task SaveListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, PooledList<TEntity> lst);
     }
 }

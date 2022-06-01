@@ -19,11 +19,10 @@ namespace FS.Core
         /// <summary>
         ///     检测实体类值状况
         /// </summary>
-        public static bool Check<TEntity>(TEntity info, Action<Dictionary<string, List<string>>> tip)
+        public static bool Check<TEntity>(TEntity info, Action<IDictionary<string, List<string>>> tip)
         {
             //返回错误
-            Dictionary<string, List<string>> dicError;
-            var                              result = Check(entity: info, dicError: out dicError);
+            var result = Check(entity: info, dicError: out var dicError);
 
             if (!result) tip(obj: dicError);
             return result;
@@ -35,10 +34,9 @@ namespace FS.Core
         public static ApiResponseJson Check<TEntity>(TEntity info)
         {
             // 返回错误
-            Dictionary<string, List<string>> dicError;
-            var json = Check(entity: info, dicError: out dicError)
-                           ? ApiResponseJson.Success(statusMessage: "实体类检测通过")
-                           : ApiResponseJson.Error(statusMessage: "实体类检测失败");
+            var json = Check(entity: info, dicError: out var dicError)
+            ? ApiResponseJson.Success(statusMessage: "实体类检测通过")
+            : ApiResponseJson.Error(statusMessage: "实体类检测失败");
 
             if (!json.Status)
             {
@@ -58,7 +56,7 @@ namespace FS.Core
         /// </summary>
         /// <param name="dicError"> 返回错误消息,key：属性名称；vakue：错误消息 </param>
         /// <param name="entity"> 要检测的实体 </param>
-        public static bool Check(object entity, out Dictionary<string, List<string>> dicError)
+        public static bool Check(object entity, out IDictionary<string, List<string>> dicError)
         {
             dicError = new Dictionary<string, List<string>>();
             if (entity == null)
@@ -88,7 +86,7 @@ namespace FS.Core
         /// </summary>
         /// <param name="dicError"> 返回错误消息,key：属性名称；vakue：错误消息 </param>
         /// <param name="entity"> 要检测的实体 </param>
-        private static bool CheckEntity(object entity, out Dictionary<string, List<string>> dicError)
+        private static bool CheckEntity(object entity, out IDictionary<string, List<string>> dicError)
         {
             dicError = new Dictionary<string, List<string>>();
             if (entity == null)

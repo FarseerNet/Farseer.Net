@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.Core.Abstract.Fss;
 using FS.DI;
 using FS.Extends;
@@ -27,20 +28,20 @@ namespace FS.Fss.Entity
         {
             Meta        =   task;
             _sw         =   sw;
-            Meta.Data   ??= new Dictionary<string, string>();
+            Meta.Data   ??= new PooledDictionary<string, string>();
             _taskStatus =   EumTaskType.Working;
         }
 
         /// <summary>
         ///     DEBUG模式
         /// </summary>
-        internal FssContext(string jobName, Stopwatch sw, Dictionary<string, string> debugMetaData)
+        internal FssContext(string jobName, Stopwatch sw, IDictionary<string, string> debugMetaData)
         {
             Meta = new TaskVO
             {
                 Caption = "调试",
                 JobName = jobName,
-                Data    = debugMetaData ?? new Dictionary<string, string>()
+                Data    = debugMetaData as PooledDictionary<string, string> ?? new()
             };
 
             _isDebug    = true;

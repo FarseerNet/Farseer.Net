@@ -5,7 +5,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Collections.Pooled;
-using FS.Core;
 using FS.Core.Abstract.Data;
 using FS.Data.Features;
 using FS.Utils.Common;
@@ -87,7 +86,7 @@ namespace FS.Data.Inteface
         /// <summary> 自动生成lstIDs.Contains(o.ID) </summary>
         /// <param name="lstvValues"> </param>
         /// <param name="memberName"> 条件字段名称，如为Null，默认为主键字段 </param>
-        public virtual TSet Where<T>(List<T> lstvValues, string memberName = null)
+        public virtual TSet Where<T>(IEnumerable<T> lstvValues, string memberName = null)
         {
             if (string.IsNullOrWhiteSpace(value: memberName))
             {
@@ -339,7 +338,7 @@ namespace FS.Data.Inteface
         /// <typeparam name="TEntity"> 实体类 </typeparam>
         /// <typeparam name="T"> 实体类的属性 </typeparam>
         /// <param name="memberName"> 条件字段名称，如为Null，默认为主键字段 </param>
-        public virtual PooledList<T> ToSelectList<T>(List<T> lstIDs, Expression<Func<TEntity, T>> select, string memberName = null)
+        public virtual PooledList<T> ToSelectList<T>(IEnumerable<T> lstIDs, Expression<Func<TEntity, T>> select, string memberName = null)
         {
             Where(lstvValues: lstIDs, memberName: memberName);
             return ToSelectList(select: select);
@@ -353,7 +352,7 @@ namespace FS.Data.Inteface
         /// <typeparam name="TEntity"> 实体类 </typeparam>
         /// <typeparam name="T"> 实体类的属性 </typeparam>
         /// <param name="memberName"> 条件字段名称，如为Null，默认为主键字段 </param>
-        public virtual Task<PooledList<T>> ToSelectListAsync<T>(List<T> lstIDs, Expression<Func<TEntity, T>> select, string memberName = null)
+        public virtual Task<PooledList<T>> ToSelectListAsync<T>(IEnumerable<T> lstIDs, Expression<Func<TEntity, T>> select, string memberName = null)
         {
             Where(lstvValues: lstIDs, memberName: memberName);
             return ToSelectListAsync(select: select);
@@ -368,7 +367,7 @@ namespace FS.Data.Inteface
         /// <typeparam name="TEntity"> 实体类 </typeparam>
         /// <typeparam name="T"> 实体类的属性 </typeparam>
         /// <param name="memberName"> 条件字段名称，如为Null，默认为主键字段 </param>
-        public virtual PooledList<T> ToSelectList<T>(List<T> lstIDs, int top, Expression<Func<TEntity, T>> select, string memberName = null)
+        public virtual PooledList<T> ToSelectList<T>(IEnumerable<T> lstIDs, int top, Expression<Func<TEntity, T>> select, string memberName = null)
         {
             Where(lstvValues: lstIDs, memberName: memberName);
             return ToSelectList(top: top, select: select);
@@ -383,7 +382,7 @@ namespace FS.Data.Inteface
         /// <typeparam name="TEntity"> 实体类 </typeparam>
         /// <typeparam name="T"> 实体类的属性 </typeparam>
         /// <param name="memberName"> 条件字段名称，如为Null，默认为主键字段 </param>
-        public virtual Task<PooledList<T>> ToSelectListAsync<T>(List<T> lstIDs, int top, Expression<Func<TEntity, T>> select, string memberName = null)
+        public virtual Task<PooledList<T>> ToSelectListAsync<T>(IEnumerable<T> lstIDs, int top, Expression<Func<TEntity, T>> select, string memberName = null)
         {
             Where(lstvValues: lstIDs, memberName: memberName);
             return ToSelectListAsync(top: top, select: select);
@@ -571,7 +570,7 @@ namespace FS.Data.Inteface
         /// <typeparam name="T"> ID </typeparam>
         /// <param name="lstIDs"> 条件，等同于：o=> IDs.Contains(o.ID) 的操作 </param>
         /// <param name="memberName"> 条件字段名称，如为Null，默认为主键字段 </param>
-        public virtual int Count<T>(List<T> lstIDs, string memberName = null) where T : struct
+        public virtual int Count<T>(IEnumerable<T> lstIDs, string memberName = null) where T : struct
         {
             Where(lstvValues: lstIDs, memberName: memberName);
             return Count();
@@ -583,7 +582,7 @@ namespace FS.Data.Inteface
         /// <typeparam name="T"> ID </typeparam>
         /// <param name="lstIDs"> 条件，等同于：o=> IDs.Contains(o.ID) 的操作 </param>
         /// <param name="memberName"> 条件字段名称，如为Null，默认为主键字段 </param>
-        public virtual Task<int> CountAsync<T>(List<T> lstIDs, string memberName = null) where T : struct
+        public virtual Task<int> CountAsync<T>(IEnumerable<T> lstIDs, string memberName = null) where T : struct
         {
             Where(lstvValues: lstIDs, memberName: memberName);
             return CountAsync();
@@ -625,7 +624,7 @@ namespace FS.Data.Inteface
         /// <typeparam name="T"> ID </typeparam>
         /// <param name="lstIDs"> 条件，等同于：o=> IDs.Contains(o.ID) 的操作 </param>
         /// <param name="memberName"> 条件字段名称，如为Null，默认为主键字段 </param>
-        public virtual bool IsHaving<T>(List<T> lstIDs, string memberName = null) => Where(lstvValues: lstIDs, memberName: memberName).IsHaving();
+        public virtual bool IsHaving<T>(IEnumerable<T> lstIDs, string memberName = null) => Where(lstvValues: lstIDs, memberName: memberName).IsHaving();
 
         /// <summary>
         ///     判断是否存在记录
@@ -633,7 +632,7 @@ namespace FS.Data.Inteface
         /// <typeparam name="T"> ID </typeparam>
         /// <param name="lstIDs"> 条件，等同于：o=> IDs.Contains(o.ID) 的操作 </param>
         /// <param name="memberName"> 条件字段名称，如为Null，默认为主键字段 </param>
-        public virtual Task<bool> IsHavingAsync<T>(List<T> lstIDs, string memberName = null) => Where(lstvValues: lstIDs, memberName: memberName).IsHavingAsync();
+        public virtual Task<bool> IsHavingAsync<T>(IEnumerable<T> lstIDs, string memberName = null) => Where(lstvValues: lstIDs, memberName: memberName).IsHavingAsync();
 
         #endregion
 

@@ -122,7 +122,7 @@ public class GetCacheInRedis : IGetCache
     /// <summary>
     ///     将LIST保存到缓存中
     /// </summary>
-    public void SaveList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, PooledList<TEntity> lst)
+    public void SaveList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, IEnumerable<TEntity> lst)
     {
         _redisCacheManager.HashSetTransaction(key: cacheKey.Key, lst: lst, funcDataKey: cacheKey.GetField, funcData: null, expiry: cacheKey.RedisExpiry);
     }
@@ -130,7 +130,7 @@ public class GetCacheInRedis : IGetCache
     /// <summary>
     ///     将LIST保存到缓存中
     /// </summary>
-    public Task SaveListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, PooledList<TEntity> lst) => _redisCacheManager.HashSetTransactionAsync(key: cacheKey.Key, lst: lst, funcDataKey: cacheKey.GetField, funcData: null, expiry: cacheKey.RedisExpiry);
+    public Task SaveListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, IEnumerable<TEntity> lst) => _redisCacheManager.HashSetTransactionAsync(key: cacheKey.Key, lst: lst, funcDataKey: cacheKey.GetField, funcData: null, expiry: cacheKey.RedisExpiry);
     
     /// <summary>
     ///     删除整个缓存

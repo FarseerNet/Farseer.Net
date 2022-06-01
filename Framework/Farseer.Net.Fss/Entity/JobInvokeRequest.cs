@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Collections.Pooled;
 using FS.Core.Abstract.Fss;
 
 namespace FS.Fss.Entity
@@ -41,6 +42,6 @@ namespace FS.Fss.Entity
         /// <summary>
         ///     数据
         /// </summary>
-        public Dictionary<string, string> Data { get; set; }
+        public IDictionary<string, string> Data { get; set; }
     }
 }

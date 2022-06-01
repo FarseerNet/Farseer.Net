@@ -1,12 +1,12 @@
 using System;
-using System.Collections.Generic;
+using Collections.Pooled;
 
 namespace FS.Core.Abstract.Fss
 {
     /// <summary>
     ///     任务记录
     /// </summary>
-    public class TaskVO
+    public class TaskVO : IDisposable
     {
         /// <summary>
         ///     任务组ID
@@ -77,6 +77,11 @@ namespace FS.Core.Abstract.Fss
         /// <summary>
         ///     本次执行任务时的Data数据
         /// </summary>
-        public Dictionary<string, string> Data { get; set; }
+        public PooledDictionary<string, string> Data { get; set; }
+
+        public void Dispose()
+        {
+            Data?.Dispose();
+        }
     }
 }

@@ -11,10 +11,8 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Collections.Pooled;
 using FS.Core.LinkTrack;
 using FS.Extends;
-using Newtonsoft.Json;
 
 namespace FS.Core.Http
 {
@@ -42,7 +40,7 @@ namespace FS.Core.Http
         /// <param name="requestTimeout"> 超时时间 </param>
         /// <param name="encoding"> 编码格式 </param>
         /// <param name="cookie"> 是否需要cookie </param>
-        public static async Task<string> PutAsync(string url, string postData, PooledDictionary<string, string> headerData, Encoding encoding = null, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, CookieContainer cookie = null)
+        public static async Task<string> PutAsync(string url, string postData, IDictionary<string, string> headerData, Encoding encoding = null, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, CookieContainer cookie = null)
         {
             using (var trackEnd = FsLinkTrack.TrackHttp(url: url, method: "POST", headerData: headerData, requestBody: postData))
             {
@@ -81,7 +79,7 @@ namespace FS.Core.Http
         /// <param name="requestTimeout"> 超时时间 </param>
         /// <param name="encoding"> 编码格式 </param>
         /// <param name="cookie"> 是否需要cookie </param>
-        public static async Task<TResult> PutAsync<TResult>(string url, string postData, PooledDictionary<string, string> headerData, Encoding encoding = null, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, CookieContainer cookie = null)
+        public static async Task<TResult> PutAsync<TResult>(string url, string postData, IDictionary<string, string> headerData, Encoding encoding = null, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, CookieContainer cookie = null)
         {
             var result = await PutAsync(url, postData, headerData, encoding, contentType, requestTimeout, cookie);
             return Jsons.ToObject<TResult>(result);
@@ -96,7 +94,7 @@ namespace FS.Core.Http
         /// <param name="requestTimeout"> 超时时间 </param>
         /// <param name="encoding"> 编码格式 </param>
         /// <param name="cookie"> 是否需要cookie </param>
-        public static Task<string> PutAsync(string url, PooledDictionary<string, string> postData, Encoding encoding = null, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, CookieContainer cookie = null) => PutAsync(url: url, postData: postData.Select(selector: keyVal => $"{keyVal.Key}={keyVal.Value}").ToString(sign: "&"), headerData: null, encoding: encoding, contentType: contentType, requestTimeout: requestTimeout, cookie: cookie);
+        public static Task<string> PutAsync(string url, IDictionary<string, string> postData, Encoding encoding = null, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, CookieContainer cookie = null) => PutAsync(url: url, postData: postData.Select(selector: keyVal => $"{keyVal.Key}={keyVal.Value}").ToString(sign: "&"), headerData: null, encoding: encoding, contentType: contentType, requestTimeout: requestTimeout, cookie: cookie);
 
         /// <summary>
         ///     以Post方式请求远程URL
@@ -107,7 +105,7 @@ namespace FS.Core.Http
         /// <param name="requestTimeout"> 超时时间 </param>
         /// <param name="encoding"> 编码格式 </param>
         /// <param name="cookie"> 是否需要cookie </param>
-        public static async Task<TResult> PutAsync<TResult>(string url, PooledDictionary<string, string> postData, Encoding encoding = null, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, CookieContainer cookie = null)
+        public static async Task<TResult> PutAsync<TResult>(string url, IDictionary<string, string> postData, Encoding encoding = null, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, CookieContainer cookie = null)
         {
             var result = await PutAsync(url, postData, encoding, contentType, requestTimeout, cookie);
             return Jsons.ToObject<TResult>(result);

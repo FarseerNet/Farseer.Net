@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Castle.Core.Internal;
 using Collections.Pooled;
-using FS.Core;
 using FS.Core.Abstract.Data;
 using FS.Core.LinkTrack;
 using FS.DI;
@@ -16,7 +15,6 @@ using FS.ElasticSearch.Map;
 using FS.Extends;
 using Microsoft.Extensions.Logging;
 using Nest;
-using Newtonsoft.Json;
 
 namespace FS.ElasticSearch
 {

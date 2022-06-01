@@ -101,7 +101,7 @@ namespace FS.Data
         /// <summary> 自动生成lstIDs.Contains(o.ID) </summary>
         /// <param name="lstIDs"> </param>
         /// <param name="memberName"> 默认为主键ID属性（非数据库字段名称） </param>
-        public TableSetCache<TEntity> Where<T>(List<T> lstIDs, string memberName = null)
+        public TableSetCache<TEntity> Where<T>(IEnumerable<T> lstIDs, string memberName = null)
         {
             _set.Where(lstvValues: lstIDs, memberName: memberName);
             return this;
@@ -210,7 +210,7 @@ namespace FS.Data
         /// <typeparam name="T"> ID </typeparam>
         /// <param name="lstIDs"> 条件，等同于：o=> IDs.Contains(o.ID) 的操作 </param>
         /// <param name="memberName"> 条件字段名称，如为Null，默认为主键字段 </param>
-        public int Update<T>(TEntity entity, List<T> lstIDs, string memberName = null) where T : struct => Where(lstIDs: lstIDs, memberName: memberName).Update(entity: entity);
+        public int Update<T>(TEntity entity, IEnumerable<T> lstIDs, string memberName = null) where T : struct => Where(lstIDs: lstIDs, memberName: memberName).Update(entity: entity);
 
         /// <summary>
         ///     更改实体类
@@ -219,7 +219,7 @@ namespace FS.Data
         /// <typeparam name="T"> ID </typeparam>
         /// <param name="lstIDs"> 条件，等同于：o=> IDs.Contains(o.ID) 的操作 </param>
         /// <param name="memberName"> 条件字段名称，如为Null，默认为主键字段 </param>
-        public Task<int> UpdateAsync<T>(TEntity entity, List<T> lstIDs, string memberName = null) where T : struct => Where(lstIDs: lstIDs, memberName: memberName).UpdateAsync(entity: entity);
+        public Task<int> UpdateAsync<T>(TEntity entity, IEnumerable<T> lstIDs, string memberName = null) where T : struct => Where(lstIDs: lstIDs, memberName: memberName).UpdateAsync(entity: entity);
 
         /// <summary>
         ///     更改实体类
@@ -282,20 +282,23 @@ namespace FS.Data
         ///     插入（不支持延迟加载）
         /// </summary>
         /// <param name="lst"> </param>
-        public int Insert(List<TEntity> lst)
+        public int Insert(IEnumerable<TEntity> lst)
         {
-            lst.ForEach(action: o => Insert(entity: o));
-            return lst.Count;
+            foreach (var entity in lst)
+            {
+                Insert(entity);
+            }
+            return lst.Count();
         }
 
         /// <summary>
         ///     插入（不支持延迟加载）
         /// </summary>
         /// <param name="lst"> </param>
-        public async Task<int> InsertAsync(List<TEntity> lst)
+        public async Task<int> InsertAsync(IEnumerable<TEntity> lst)
         {
             foreach (var entity in lst) await InsertAsync(entity: entity);
-            return lst.Count;
+            return lst.Count();
         }
 
         #endregion
@@ -354,7 +357,7 @@ namespace FS.Data
         /// <param name="lstIDs"> 条件，等同于：o=> IDs.Contains(o.ID) 的操作 </param>
         /// <typeparam name="T"> ID </typeparam>
         /// <param name="memberName"> 条件字段名称，如为Null，默认为主键字段 </param>
-        public int Delete<T>(List<T> lstIDs, string memberName = null) where T : struct => Where(lstIDs: lstIDs, memberName: memberName).Delete();
+        public int Delete<T>(IEnumerable<T> lstIDs, string memberName = null) where T : struct => Where(lstIDs: lstIDs, memberName: memberName).Delete();
 
         /// <summary>
         ///     删除数据
@@ -362,7 +365,7 @@ namespace FS.Data
         /// <param name="lstIDs"> 条件，等同于：o=> IDs.Contains(o.ID) 的操作 </param>
         /// <typeparam name="T"> ID </typeparam>
         /// <param name="memberName"> 条件字段名称，如为Null，默认为主键字段 </param>
-        public Task<int> DeleteAsync<T>(List<T> lstIDs, string memberName = null) where T : struct => Where(lstIDs: lstIDs, memberName: memberName).DeleteAsync();
+        public Task<int> DeleteAsync<T>(IEnumerable<T> lstIDs, string memberName = null) where T : struct => Where(lstIDs: lstIDs, memberName: memberName).DeleteAsync();
 
         #endregion
 

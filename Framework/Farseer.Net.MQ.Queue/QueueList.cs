@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Collections.Pooled;
 using FS.Core.Abstract.MQ.Queue;
@@ -79,13 +80,14 @@ public class QueueList : IQueueList
     /// <summary>
     /// 添加数据
     /// </summary>
-    public void Add(PooledList<object> datalist)
+    public void Add(IEnumerable<object> datalist)
     {
         // 当前所有队列的总数 大于 允许的最大数量时，则丢弃最新的数据
         if (_queueConfig.MaxCount > 0 && TotalCount >= _queueConfig.MaxCount) return;
 
+        var totalCount = datalist.Count();
         // 当前所有队列的总数 + datalist数量 大于 允许的最大数量时，则丢弃最新的数据
-        if (TotalCount + datalist.Count >= _queueConfig.MaxCount)
+        if (TotalCount + totalCount >= _queueConfig.MaxCount)
         {
             var surplusCount = _queueConfig.MaxCount - TotalCount;
             using var take         = datalist.Take(surplusCount).ToPooledQueue();
@@ -95,7 +97,7 @@ public class QueueList : IQueueList
         }
 
         _curQueue.AddRange(datalist);
-        TotalCount += datalist.Count;
+        TotalCount += totalCount;
     }
 
     /// <summary>

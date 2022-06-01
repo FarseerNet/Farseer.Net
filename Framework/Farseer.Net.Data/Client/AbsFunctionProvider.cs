@@ -60,7 +60,7 @@ namespace FS.Data.Client
         /// <param name="fieldName"> 字段名称 </param>
         /// <param name="lstParamName"> 多个值 </param>
         /// <param name="isNot"> true：不存在 </param>
-        public virtual string In(string fieldName, List<string> lstParamName, bool isNot) => $"{fieldName} {(isNot ? "Not" : "")} IN ({string.Join(",", lstParamName)})";
+        public virtual string In(string fieldName, IEnumerable<string> lstParamName, bool isNot) => $"{fieldName} {(isNot ? "Not" : "")} IN ({string.Join(",", lstParamName)})";
 
         /// <summary>
         ///     获取长度

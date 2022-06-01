@@ -1,6 +1,4 @@
-﻿using FS.Data.Client;
-using FS.Data.Inteface;
-using FS.DI;
+﻿using FS.Data.Inteface;
 
 namespace FS.Data.Internal
 {

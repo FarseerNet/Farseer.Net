@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
+using Collections.Pooled;
 
 namespace FS.Core.Mapping
 {
     /// <summary>
     ///     普通实体类的 映射关系
     /// </summary>
-    public class EntityPhysicsMap
+    public class EntityPhysicsMap : IDisposable
     {
         /// <summary>
         ///     缓存类型
@@ -20,7 +21,7 @@ namespace FS.Core.Mapping
         /// <summary>
         ///     获取所有Set属性
         /// </summary>
-        public readonly Dictionary<PropertyInfo, EntityPropertyMap> MapList;
+        public readonly PooledDictionary<PropertyInfo, EntityPropertyMap> MapList;
 
         /// <summary>
         ///     关系映射
@@ -29,12 +30,12 @@ namespace FS.Core.Mapping
         private EntityPhysicsMap(Type type)
         {
             Type    = type;
-            MapList = new Dictionary<PropertyInfo, EntityPropertyMap>();
+            MapList = new();
 
             // 循环Set的字段
             foreach (var propertyInfo in Type.GetProperties())
             {
-                var modelAtt = new EntityPropertyMap { ValidationList = new List<ValidationAttribute>() };
+                var modelAtt = new EntityPropertyMap { ValidationList = new() };
 
                 var attrs = propertyInfo.GetCustomAttributes(inherit: false);
 
@@ -105,12 +106,21 @@ namespace FS.Core.Mapping
         {
             // 不存在缓存，则加入
             if (Cache.ContainsKey(key: type)) return Cache[key: type];
-            
+
             lock (objLock)
             {
                 Cache.TryAdd(key: type, value: new EntityPhysicsMap(type: type));
             }
             return Cache[key: type];
+        }
+        
+        public void Dispose()
+        {
+            foreach (var entityPropertyMap in MapList)
+            {
+                entityPropertyMap.Value.ValidationList.Dispose();
+            }
+            MapList.Dispose();
         }
     }
 }

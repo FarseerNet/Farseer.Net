@@ -18,6 +18,16 @@ namespace FS.Data.Client
     public abstract class AbsSqlBuilder : ISqlParam
     {
         /// <summary>
+        ///     当前生成的SQL语句
+        /// </summary>
+        public StringBuilder Sql { get; }
+
+        /// <summary>
+        ///     当前生成的参数
+        /// </summary>
+        public PooledList<DbParameter> Param { get; }
+
+        /// <summary>
         ///     查询支持的SQL方法
         /// </summary>
         /// <param name="dbProvider"> 数据库提供者（不同数据库的特性） </param>
@@ -76,16 +86,6 @@ namespace FS.Data.Client
         ///     提供字段插入表达式树的解析
         /// </summary>
         private InsertVisitor InsertVisitor => new(dbProvider: DbProvider, map: ExpBuilder.SetMap, paramList: Param);
-
-        /// <summary>
-        ///     当前生成的SQL语句
-        /// </summary>
-        public StringBuilder Sql { get; private set; }
-
-        /// <summary>
-        ///     当前生成的参数
-        /// </summary>
-        public PooledList<DbParameter> Param { get; }
 
         /// <summary>
         ///     查询单条记录
@@ -336,7 +336,6 @@ namespace FS.Data.Client
             if (disposing)
             {
                 Sql.Clear();
-                Sql = null;
                 Param?.Dispose();
                 WhereVisitor.Dispose();
                 AssignVisitor.Dispose();

@@ -22,7 +22,7 @@ namespace FS.Data.ExpressionVisitor
         /// <param name="dbProvider"> 数据库提供者（不同数据库的特性） </param>
         /// <param name="map"> 字段映射 </param>
         /// <param name="paramList"> SQL参数列表 </param>
-        public WhereVisitor(AbsDbProvider dbProvider, SetDataMap map, PooledList<DbParameter> paramList) : base(dbProvider: dbProvider, map: map, paramList: paramList)
+        public WhereVisitor(AbsDbProvider dbProvider, SetDataMap map, IList<DbParameter> paramList) : base(dbProvider: dbProvider, map: map, paramList: paramList)
         {
         }
 

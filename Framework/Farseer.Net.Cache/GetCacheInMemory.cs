@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Collections.Pooled;
@@ -137,7 +138,7 @@ namespace FS.Cache
         /// <summary>
         ///     将LIST保存到缓存中
         /// </summary>
-        public void SaveList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, PooledList<TEntity> lst)
+        public void SaveList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, IEnumerable<TEntity> lst)
         {
             var dic = new ConcurrentDictionary<TEntityId, TEntity>();
             foreach (var entity in lst)
@@ -157,13 +158,12 @@ namespace FS.Cache
         /// <summary>
         ///     将LIST保存到缓存中
         /// </summary>
-        public Task SaveListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, PooledList<TEntity> lst)
+        public Task SaveListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, IEnumerable<TEntity> lst)
         {
             SaveList(cacheKey, lst: lst);
             return Task.FromResult(result: 0);
         }
-
-
+        
         /// <summary>
         ///     删除整个缓存
         /// </summary>

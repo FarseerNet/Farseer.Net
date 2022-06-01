@@ -19,7 +19,7 @@ namespace FS.Data.ExpressionVisitor
         /// <param name="dbProvider"> 数据库提供者（不同数据库的特性） </param>
         /// <param name="map"> 字段映射 </param>
         /// <param name="paramList"> SQL参数列表 </param>
-        public OrderByVisitor(AbsDbProvider dbProvider, SetDataMap map, PooledList<DbParameter> paramList) : base(dbProvider: dbProvider, map: map, paramList: paramList)
+        public OrderByVisitor(AbsDbProvider dbProvider, SetDataMap map, IList<DbParameter> paramList) : base(dbProvider: dbProvider, map: map, paramList: paramList)
         {
         }
 
@@ -27,7 +27,7 @@ namespace FS.Data.ExpressionVisitor
         ///     排序解析入口
         /// </summary>
         /// <param name="lstExp"> </param>
-        public virtual string Visit(PooledDictionary<Expression, bool> lstExp)
+        public virtual string Visit(IDictionary<Expression, bool> lstExp)
         {
             if (lstExp == null) return null;
             using var lst = new PooledList<string>();

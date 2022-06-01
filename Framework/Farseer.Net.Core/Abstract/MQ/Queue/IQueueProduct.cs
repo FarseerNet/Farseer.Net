@@ -14,6 +14,6 @@ namespace FS.Core.Abstract.MQ.Queue
         ///     发送数据
         /// </summary>
         /// <param name="datalist"> 数据 </param>
-        void Send(PooledList<object> datalist);
+        void Send(IEnumerable<object> datalist);
     }
 }

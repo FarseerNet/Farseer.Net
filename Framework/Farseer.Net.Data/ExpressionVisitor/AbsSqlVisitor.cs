@@ -54,7 +54,7 @@ namespace FS.Data.ExpressionVisitor
         /// <param name="dbProvider"> 数据库提供者（不同数据库的特性） </param>
         /// <param name="map"> 字段映射 </param>
         /// <param name="paramList"> SQL参数列表 </param>
-        protected AbsSqlVisitor(AbsDbProvider dbProvider, SetDataMap map, PooledList<DbParameter> paramList)
+        protected AbsSqlVisitor(AbsDbProvider dbProvider, SetDataMap map, IList<DbParameter> paramList)
         {
             DbProvider = dbProvider;
             SetMap     = map;
@@ -64,7 +64,7 @@ namespace FS.Data.ExpressionVisitor
         /// <summary>
         ///     SQL参数列表
         /// </summary>
-        protected PooledList<DbParameter> ParamList { get; }
+        protected IList<DbParameter> ParamList { get; }
 
         /// <summary>
         ///     数据库提供者（不同数据库的特性）

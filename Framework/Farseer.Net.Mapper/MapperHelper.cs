@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using AutoMapper;
@@ -14,7 +15,7 @@ namespace FS.Mapper
         /// <summary>
         ///     初始化AutoMapper
         /// </summary>
-        public static void CreateMap(PooledList<Type> typeArr)
+        public static void CreateMap(IEnumerable<Type> typeArr)
         {
             var cfg = new MapperConfigurationExpression();
             foreach (var type in typeArr)

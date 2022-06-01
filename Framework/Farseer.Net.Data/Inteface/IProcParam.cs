@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using Collections.Pooled;
 using FS.Data.Map;
@@ -8,7 +9,7 @@ namespace FS.Data.Inteface
     /// <summary>
     ///     SQL参数
     /// </summary>
-    public interface IProcParam
+    public interface IProcParam : IDisposable
     {
         /// <summary>
         /// 实体类结构映射

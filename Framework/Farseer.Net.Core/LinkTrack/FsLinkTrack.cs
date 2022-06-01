@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading;
 using Collections.Pooled;
 using FS.Extends;
-using FS.Utils.Common;
 using Newtonsoft.Json;
 
 namespace FS.Core.LinkTrack
@@ -71,7 +70,7 @@ namespace FS.Core.LinkTrack
         /// <summary>
         ///     追踪Fss
         /// </summary>
-        public static TrackEnd TrackFss(string clientHost, string jobName, int taskGroupId, Dictionary<string, string> taskData)
+        public static TrackEnd TrackFss(string clientHost, string jobName, int taskGroupId, IDictionary<string, string> taskData)
         {
             AsyncLocal.Value = new LinkTrackContext
             {
@@ -84,7 +83,7 @@ namespace FS.Core.LinkTrack
                 Path          = $"{taskGroupId}",
                 Domain        = clientHost,
                 RequestIp     = FarseerApplication.AppIp.FirstOrDefault(),
-                RequestBody   = JsonConvert.SerializeObject(taskData ?? new()),
+                RequestBody   = JsonConvert.SerializeObject(taskData ?? new Dictionary<string, string>()),
                 ContentType   = ""
             };
             return new TrackEnd(linkTrackContext: AsyncLocal.Value);
@@ -113,7 +112,7 @@ namespace FS.Core.LinkTrack
         /// <summary>
         ///     追踪ApiServer
         /// </summary>
-        public static TrackEnd TrackApiServer(string contextId, string parentAppId, string domain, string path, string method, string contentType, PooledDictionary<string, string> headerDictionary, string requestBody, string requestIp)
+        public static TrackEnd TrackApiServer(string contextId, string parentAppId, string domain, string path, string method, string contentType, IDictionary<string, string> headerDictionary, string requestBody, string requestIp)
         {
             if (string.IsNullOrWhiteSpace(contextId)) contextId = SnowflakeId.GenerateId.ToString();
             // 移除charset的类型
@@ -138,7 +137,7 @@ namespace FS.Core.LinkTrack
                 Path          = path,
                 Method        = method,
                 ContentType   = contentType,
-                Headers       = headerDictionary,
+                Headers       = headerDictionary as PooledDictionary<string, string> ?? headerDictionary.ToPooledDictionary(),
                 RequestBody   = requestBody,
                 RequestIp     = requestIp,
                 StatusCode    = ""
@@ -306,7 +305,7 @@ namespace FS.Core.LinkTrack
         /// <summary>
         ///     追踪Http
         /// </summary>
-        public static TrackEnd TrackHttp(string url, string method, PooledDictionary<string, string> headerData, string requestBody)
+        public static TrackEnd TrackHttp(string url, string method, IDictionary<string, string> headerData, string requestBody)
         {
             var linkTrackDetail = new LinkTrackDetail
             {

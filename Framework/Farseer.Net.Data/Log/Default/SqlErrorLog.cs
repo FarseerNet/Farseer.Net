@@ -28,7 +28,7 @@ namespace FS.Data.Log.Default
         /// <param name="sql"> T-SQL </param>
         /// <param name="param"> SQL参数 </param>
         /// <param name="exp"> 异常信息 </param>
-        public SqlErrorLog(Exception exp, string dbName, string tableName, CommandType cmdType, string sql, List<DbParameter> param)
+        public SqlErrorLog(Exception exp, string dbName, string tableName, CommandType cmdType, string sql, IEnumerable<DbParameter> param)
         {
             Exp       = exp;
             Message   = exp.Message.Replace(oldValue: "\r\n", newValue: "");
@@ -36,7 +36,7 @@ namespace FS.Data.Log.Default
             TableName = tableName;
             CmdType   = cmdType;
             Sql       = sql;
-            if (param != null && param.Count > 0)
+            if (param != null && param.Any())
             {
                 SqlParamList = new PooledList<SqlParam>();
                 foreach (var t in param) SqlParamList.Add(item: new SqlParam { Name = t.ParameterName, Value = (t.Value ?? "null").ToString() });

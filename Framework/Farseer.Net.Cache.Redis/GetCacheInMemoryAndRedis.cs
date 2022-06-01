@@ -201,7 +201,7 @@ public class GetCacheInMemoryAndRedis : IGetCache
     /// <summary>
     ///     将LIST保存到缓存中
     /// </summary>
-    public void SaveList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, PooledList<TEntity> lst)
+    public void SaveList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, IEnumerable<TEntity> lst)
     {
         _redisCache.SaveList(cacheKey: cacheKey, lst: lst);
         // ReSharper disable once MethodHasAsyncOverload
@@ -211,7 +211,7 @@ public class GetCacheInMemoryAndRedis : IGetCache
     /// <summary>
     ///     将LIST保存到缓存中
     /// </summary>
-    public async Task SaveListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, PooledList<TEntity> lst)
+    public async Task SaveListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, IEnumerable<TEntity> lst)
     {
         await _redisCache.SaveListAsync(cacheKey: cacheKey, lst: lst);
         // ReSharper disable once MethodHasAsyncOverload

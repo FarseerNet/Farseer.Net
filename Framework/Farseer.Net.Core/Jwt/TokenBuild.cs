@@ -34,7 +34,7 @@ namespace FS.Core.Jwt
         /// </summary>
         /// <param name="expires"> 过期时间 </param>
         /// <param name="customData"> 自定义要赋加的数据 </param>
-        public TokenInfo Build(DateTime expires, Dictionary<string, string> customData)
+        public TokenInfo Build(DateTime expires, IDictionary<string, string> customData)
         {
             var tokenInfo = new TokenInfo(); //需要返回的口令信息
             try
@@ -56,7 +56,7 @@ namespace FS.Core.Jwt
         /// <summary>
         ///     生成 token
         /// </summary>
-        private string BuildToken(DateTime expires, Dictionary<string, string> customData)
+        private string BuildToken(DateTime expires, IDictionary<string, string> customData)
         {
             try
             {

@@ -6,6 +6,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using Newtonsoft.Json;
 
 namespace FS.Core
@@ -48,9 +49,9 @@ namespace FS.Core
         /// </summary>
         /// <typeparam name="T"> 要转换的对象 </typeparam>
         /// <param name="jsons"> json字符串 </param>
-        public static List<T> ToObject<T>(List<string> jsons)
+        public static PooledList<T> ToObject<T>(IEnumerable<string> jsons)
         {
-            return jsons.Select(selector: ToObject<T>).Where(predicate: adminOprLogVO => adminOprLogVO != null).ToList();
+            return jsons.Select(selector: ToObject<T>).Where(predicate: adminOprLogVO => adminOprLogVO != null).ToPooledList();
         }
     }
 }

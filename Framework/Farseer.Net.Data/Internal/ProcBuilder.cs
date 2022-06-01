@@ -10,7 +10,7 @@ namespace FS.Data.Internal
     /// <summary>
     ///     存储过程生成器
     /// </summary>
-    internal class ProcBuilder : IProcParam, IDisposable
+    internal class ProcBuilder : IProcParam
     {
         /// <summary>
         ///     数据库提供者（不同数据库的特性）

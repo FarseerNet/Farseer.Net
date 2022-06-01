@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Collections.Pooled;
 using FS.Core.Abstract.MQ.Queue;
 using FS.DI;
@@ -39,10 +40,10 @@ namespace FS.MQ.Queue
         ///     发送数据
         /// </summary>
         /// <param name="datalist"> 数据 </param>
-        public void Send(PooledList<object> datalist)
+        public void Send(IEnumerable<object> datalist)
         {
             // 如果当前集合 + 要添加的数据的大小，超出设置的拉取数量，则需要做集合切割
-            if (_queueList.GetCurCount + datalist.Count > _queueConfig.PullCount)
+            if (_queueList.GetCurCount + datalist.Count() > _queueConfig.PullCount)
             {
                 _queueList.Add(datalist);
                 _queueList.CheckAndMoveQueue();

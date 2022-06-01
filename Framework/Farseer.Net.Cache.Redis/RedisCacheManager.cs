@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Collections.Pooled;
 using FS.Cache.Redis.Configuration;
@@ -87,9 +88,9 @@ namespace FS.Cache.Redis
         /// <summary>
         ///     事务，批量写入HASH
         /// </summary>
-        public void HashSetTransaction<TEntity, TEntityId>(string key, PooledList<TEntity> lst, Func<TEntity, TEntityId> funcDataKey, Func<TEntity, string> funcData = null, TimeSpan? expiry = null)
+        public void HashSetTransaction<TEntity, TEntityId>(string key, IEnumerable<TEntity> lst, Func<TEntity, TEntityId> funcDataKey, Func<TEntity, string> funcData = null, TimeSpan? expiry = null)
         {
-            if (lst == null || lst.Count == 0) return;
+            if (lst == null || !lst.Any()) return;
             if (funcData == null) funcData = po => JsonConvert.SerializeObject(value: po);
 
             var       transaction = Db.CreateTransaction();
@@ -110,9 +111,9 @@ namespace FS.Cache.Redis
         /// <summary>
         ///     事务，批量写入HASH
         /// </summary>
-        public Task HashSetTransactionAsync<TEntity, TEntityId>(string key, PooledList<TEntity> lst, Func<TEntity, TEntityId> funcDataKey, Func<TEntity, string> funcData = null, TimeSpan? expiry = null)
+        public Task HashSetTransactionAsync<TEntity, TEntityId>(string key, IEnumerable<TEntity> lst, Func<TEntity, TEntityId> funcDataKey, Func<TEntity, string> funcData = null, TimeSpan? expiry = null)
         {
-            if (lst == null || lst.Count == 0) return Task.FromResult(result: 0);
+            if (lst == null || !lst.Any()) return Task.FromResult(result: 0);
             funcData ??= po => JsonConvert.SerializeObject(value: po);
 
             var transaction = Db.CreateTransaction();

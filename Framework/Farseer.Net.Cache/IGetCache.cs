@@ -22,7 +22,7 @@ namespace FS.Cache
         /// <summary>
         ///     将LIST保存到缓存中
         /// </summary>
-        void SaveList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, PooledList<TEntity> lst);
+        void SaveList<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, IEnumerable<TEntity> lst);
         /// <summary>
         ///     将实体保存到缓存中
         /// </summary>
@@ -70,7 +70,7 @@ namespace FS.Cache
         /// <summary>
         ///     将LIST保存到缓存中
         /// </summary>
-        Task SaveListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, PooledList<TEntity> lst);
+        Task SaveListAsync<TEntity, TEntityId>(CacheKey<TEntity, TEntityId> cacheKey, IEnumerable<TEntity> lst);
         /// <summary>
         ///     删除整个缓存
         /// </summary>

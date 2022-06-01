@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Collections.Pooled;
 using FS.Core.LinkTrack;
 using FS.Extends;
 using Newtonsoft.Json;
@@ -63,7 +62,7 @@ namespace FS.Core.Http
         /// <param name="requestTimeout"> 超时时间 </param>
         /// <param name="encoding"> 编码格式 </param>
         /// <param name="cookie"> 是否需要cookie </param>
-        public static async Task<string> PostAsync(string url, string postData, PooledDictionary<string, string> headerData, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
+        public static async Task<string> PostAsync(string url, string postData, IDictionary<string, string> headerData, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
         {
             using (var trackEnd = FsLinkTrack.TrackHttp(url: url, method: "POST", headerData: headerData, requestBody: postData))
             {
@@ -102,7 +101,7 @@ namespace FS.Core.Http
         /// <param name="requestTimeout"> 超时时间 </param>
         /// <param name="encoding"> 编码格式 </param>
         /// <param name="cookie"> 是否需要cookie </param>
-        public static async Task<TResult> PostAsync<TResult>(string url, string postData, PooledDictionary<string, string> headerData, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
+        public static async Task<TResult> PostAsync<TResult>(string url, string postData, IDictionary<string, string> headerData, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
         {
             var result = await PostAsync(url, postData, headerData, contentType, requestTimeout, encoding, cookie);
             return Jsons.ToObject<TResult>(result);
@@ -119,7 +118,7 @@ namespace FS.Core.Http
         /// <param name="requestTimeout"> 超时时间 </param>
         /// <param name="encoding"> 编码格式 </param>
         /// <param name="cookie"> 是否需要cookie </param>
-        public static Task<string> PostAsync(string url, PooledDictionary<string, string> postData, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
+        public static Task<string> PostAsync(string url, IDictionary<string, string> postData, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
         {
             string pData;
             switch (contentType)
@@ -146,7 +145,7 @@ namespace FS.Core.Http
         /// <param name="requestTimeout"> 超时时间 </param>
         /// <param name="encoding"> 编码格式 </param>
         /// <param name="cookie"> 是否需要cookie </param>
-        public static async Task<TResult> PostAsync<TResult>(string url, PooledDictionary<string, string> postData, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
+        public static async Task<TResult> PostAsync<TResult>(string url, IDictionary<string, string> postData, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
         {
             var result = await PostAsync(url, postData, contentType, requestTimeout, encoding, cookie);
             return Jsons.ToObject<TResult>(result);
@@ -163,7 +162,7 @@ namespace FS.Core.Http
         /// <param name="requestTimeout"> 超时时间 </param>
         /// <param name="encoding"> 编码格式 </param>
         /// <param name="cookie"> 是否需要cookie </param>
-        public static Task<string> PostAsync(string url, PooledDictionary<string, string> postData, PooledDictionary<string, string> headerData, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
+        public static Task<string> PostAsync(string url, IDictionary<string, string> postData, IDictionary<string, string> headerData, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
         {
             string pData;
             switch (contentType)
@@ -189,7 +188,7 @@ namespace FS.Core.Http
         /// <param name="requestTimeout"> 超时时间 </param>
         /// <param name="encoding"> 编码格式 </param>
         /// <param name="cookie"> 是否需要cookie </param>
-        public static async Task<TResult> PostAsync<TResult>(string url, PooledDictionary<string, string> postData, PooledDictionary<string, string> headerData, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
+        public static async Task<TResult> PostAsync<TResult>(string url, IDictionary<string, string> postData, IDictionary<string, string> headerData, string contentType = "application/x-www-form-urlencoded", int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
         {
             var result = await PostAsync(url, postData, headerData, contentType, requestTimeout,encoding, cookie);
             return Jsons.ToObject<TResult>(result);
