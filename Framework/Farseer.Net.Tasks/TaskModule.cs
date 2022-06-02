@@ -28,15 +28,17 @@ public class TaskModule : FarseerModule
     public override void Initialize()
     {
         IocManager.Container.Install(new TaskInstaller(typeFinder: _typeFinder));
-        IocManager.RegisterAssemblyByConvention(assembly: Assembly.GetExecutingAssembly(), config: new ConventionalRegistrationConfig { InstallInstallers = false });
-        AppContext.SetSwitch(switchName: "System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", isEnabled: true);
     }
 
     public override void PostInitialize()
     {
-        var tasksAttribute = Assembly.GetEntryAssembly().EntryPoint.DeclaringType.GetCustomAttribute<TasksAttribute>();
-        if (tasksAttribute is not { Enable: true }) return;
-
+        var entryAssembly = Assembly.GetEntryAssembly();
+        if (entryAssembly.ManifestModule.Name != "ReSharperTestRunner.dll")
+        {
+            var tasksAttribute = entryAssembly.EntryPoint.DeclaringType.GetCustomAttribute<TasksAttribute>();
+            if (tasksAttribute is not { Enable: true }) return;
+        }
+        
         FarseerApplication.AddInitCallback(act: () =>
         {
             // 查找启用了Debug状态的job，立即执行

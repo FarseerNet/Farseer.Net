@@ -52,12 +52,16 @@ namespace FS.MQ.Rabbit
             }
 
             // 查找入口方法是否启用了Rabbit消费
-            var rabbitAttribute = Assembly.GetEntryAssembly().EntryPoint.DeclaringType.GetCustomAttribute<RabbitAttribute>();
-            if (rabbitAttribute is not
-                {
-                    Enable: true
-                }) return;
-
+            var entryAssembly   = Assembly.GetEntryAssembly();
+            if (entryAssembly.ManifestModule.Name != "ReSharperTestRunner.dll")
+            {
+                var rabbitAttribute = entryAssembly.EntryPoint.DeclaringType.GetCustomAttribute<RabbitAttribute>();
+                if (rabbitAttribute is not
+                    {
+                        Enable: true
+                    }) return;
+            }
+            
             var iocManager = container.Resolve<IIocManager>();
             try
             {

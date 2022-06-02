@@ -54,8 +54,12 @@ namespace FS.MQ.RedisStream
             }
 
             // 查找入口方法是否启用了消费
-            var rabbitAttribute = Assembly.GetEntryAssembly().EntryPoint.DeclaringType.GetCustomAttribute<RedisStreamAttribute>();
-            if (rabbitAttribute is { Enable: false }) return;
+            var entryAssembly   = Assembly.GetEntryAssembly();
+            if (entryAssembly.ManifestModule.Name != "ReSharperTestRunner.dll")
+            {
+                var rabbitAttribute = entryAssembly.EntryPoint.DeclaringType.GetCustomAttribute<RedisStreamAttribute>();
+                if (rabbitAttribute is { Enable: false }) return;
+            }
             
             // 查找消费实现
             using var types = container.Resolve<ITypeFinder>().Find<IListenerMessage>();
