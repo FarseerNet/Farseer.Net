@@ -104,12 +104,16 @@ namespace FS.Data.Cache
                 }
 
                 // 实体化所有Set属性
-                Action<DbContext> initializer = context =>
+                void Initializer(DbContext context)
                 {
                     // new TableSet<>()
-                    foreach (var setNewInstanceDelegate in initDelegates) setNewInstanceDelegate(obj: context);
-                };
-                var setInfo = new SetTypesInitializersPair(setTypeList, initializer);
+                    foreach (var setNewInstanceDelegate in initDelegates)
+                    {
+                        setNewInstanceDelegate(obj: context);
+                    }
+                }
+
+                var setInfo = new SetTypesInitializersPair(setTypeList, Initializer);
                 CacheList.Add(key: Key, value: setInfo);
                 return setInfo;
             }
