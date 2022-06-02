@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using FS.Core.Abstract.RedisStream;
 using FS.MQ.RedisStream;
 using FS.MQ.RedisStream.Attr;
 using StackExchange.Redis;
@@ -12,17 +13,17 @@ namespace Farseer.Net.MQ.RedisStreamDemo.Consumer
     [Consumer(Enable = true, Server = "test2", GroupName = "", QueueName = "test2", PullCount = 2, ConsumeThreadNums = 1)]
     public class TestConsumer : IListenerMessage
     {
-        public Task<bool> Consumer(StreamEntry[] messages, ConsumeContext context)
+        public Task<bool> Consumer(ConsumeContext context)
         {
-            foreach (var message in messages)
+            foreach (var message in context.RedisStreamMessages)
             {
-                Console.WriteLine(value: "接收到信息为:" + message.Values[0]);
-                context.Ack(message: message);
+                Console.WriteLine(value: "接收到信息为:" + message.Message);
+                message.Ack();
             }
 
             return Task.FromResult(result: true);
         }
 
-        public Task<bool> FailureHandling(StreamEntry[] messages, ConsumeContext context) => throw new NotImplementedException();
+        public Task<bool> FailureHandling(ConsumeContext context) => throw new NotImplementedException();
     }
 }

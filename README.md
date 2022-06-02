@@ -155,12 +155,12 @@ public class TestEvent : IListenerMessage
   [Consumer(Enable = true, RedisName = "default", GroupName = "", QueueName = "test2", PullCount = 2, ConsumeThreadNums = 1)]
   public class TestConsumer : IListenerMessage
   {
-      public Task<bool> Consumer(StreamEntry[] messages, ConsumeContext ea)
+      public Task<bool> Consumer(ConsumeContext context)
       {
-          foreach (var message in messages)
+          foreach (var redisStreamMessage in context.RedisStreamMessages)
           {
-              Console.WriteLine(value: "接收到信息为:" + message.Values[0]);
-              ea.Ack(message: message);
+              Console.WriteLine(value: "接收到信息为:" + redisStreamMessage.Message);
+              redisStreamMessage.Ack();
           }
   
           return Task.FromResult(result: true);

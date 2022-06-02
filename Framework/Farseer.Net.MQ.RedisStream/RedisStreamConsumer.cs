@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Collections.Pooled;
 using FS.Cache.Redis;
+using FS.Core.Abstract.RedisStream;
 using FS.Core.LinkTrack;
 using FS.DI;
 using Microsoft.Extensions.Logging;
@@ -113,30 +114,31 @@ namespace FS.MQ.RedisStream
             {
                 var                      result          = false;
                 var                      consumerService = _iocManager.Resolve<IListenerMessage>(name: _consumerType);
-                StreamEntry[]            streamEntries   = null;
                 using PooledList<string> messages        = new();
                 ConsumeContext           consumeContext  = null;
                 var                      sw              = new Stopwatch();
                 try
                 {
-                    streamEntries = await _redisCacheManager.Db.StreamReadGroupAsync(key: _queueName, groupName: _groupName, consumerName: _hostName, count: _pullCount);
+                    var streamEntries = await _redisCacheManager.Db.StreamReadGroupAsync(key: _queueName, groupName: _groupName, consumerName: _hostName, count: _pullCount);
                     if (streamEntries.Length == 0)
                     {
                         await Task.Delay(millisecondsDelay: 300);
                         continue;
                     }
-
-                    sw.Restart();
-                    consumeContext = new ConsumeContext(redisCacheManager: _redisCacheManager, queueName: _queueName)
+                    consumeContext = new ConsumeContext(_queueName, streamEntries.Select(o => new RedisStreamMessage
                     {
-                        MessageIds = streamEntries.Select(selector: o => o.Id.ToString()).ToArray()
-                    };
+                        Id      = o.Id.ToString(),
+                        Message = o.Values.FirstOrDefault().Value.ToString()
+                    }));
+
 
                     // 将拉取到的消息转成集合
-                    messages.AddRange(streamEntries.SelectMany(o => o.Values).Select(o => o.Value.ToString()));
+                    messages.AddRange(consumeContext.RedisStreamMessages.Select(o => o.Message));
+
+                    sw.Restart();
                     using (FsLinkTrack.TrackMqConsumer(endPort: _redisCacheManager.Server, queueName: $"{_queueName}/{_groupName}", method: "RedisStreamConsumer", JsonConvert.SerializeObject(messages)))
                     {
-                        result = await consumerService.Consumer(messages: streamEntries, context: consumeContext);
+                        result = await consumerService.Consumer(consumeContext);
                     }
                 }
                 catch (Exception e)
@@ -147,7 +149,7 @@ namespace FS.MQ.RedisStream
                     {
                         using (FsLinkTrack.TrackMqConsumer(endPort: _redisCacheManager.Server, queueName: $"{_queueName}/{_groupName}", method: "RedisStreamConsumer", JsonConvert.SerializeObject(messages)))
                         {
-                            result = await consumerService.FailureHandling(messages: streamEntries, context: consumeContext);
+                            result = await consumerService.FailureHandling(consumeContext);
                         }
                     }
                     catch (Exception exception)
@@ -159,9 +161,11 @@ namespace FS.MQ.RedisStream
                 finally
                 {
                     IocManager.Instance.Release(consumerService);
-                    var ids = streamEntries.Select(selector: o => o.Id).ToArray();
+                    var ids = consumeContext.RedisStreamMessages.Select(o => (RedisValue)o.Id).ToArray();
                     if (result)
+                    {
                         await _redisCacheManager.Db.StreamAcknowledgeAsync(key: _queueName, groupName: _groupName, messageIds: ids);
+                    }
                     else if (ids.Length > 0)
                     // 消费失败时，把pending队列的消息重新放回队列
                         _redisCacheManager.Db.StreamClaim(key: _queueName, consumerGroup: _groupName, claimingConsumer: _groupName, minIdleTimeInMs: sw.ElapsedMilliseconds, messageIds: ids);
@@ -183,30 +187,25 @@ namespace FS.MQ.RedisStream
                     await Task.Delay(millisecondsDelay: 100);
                     continue;
                 }
+                var consumeContext = new ConsumeContext(_queueName, streamEntries.Select(o => new RedisStreamMessage
+                {
+                    Id      = o.Id.ToString(),
+                    Message = o.Values.FirstOrDefault().Value.ToString()
+                }));
+                
+                // 将拉取到的消息转成集合
+                using var messages = consumeContext.RedisStreamMessages.Select(o => o.Message).ToPooledList();
 
                 var sw = new Stopwatch();
                 sw.Start();
-                var consumeContext = new ConsumeContext(redisCacheManager: _redisCacheManager, queueName: _queueName)
-                {
-                    MessageIds = streamEntries.Select(selector: o => o.Id.ToString()).ToArray()
-                };
 
-                // 将拉取到的消息转成集合
-                using var messages = streamEntries.SelectMany(o => o.Values).Select(o => o.Value.ToString()).ToPooledList();
-
-                var  listener = _iocManager.Resolve<IListenerMessage>(name: _consumerType);
-                bool result;
+                var listener = _iocManager.Resolve<IListenerMessage>(name: _consumerType);
+                var result   = false;
                 try
                 {
                     using (FsLinkTrack.TrackMqConsumer(endPort: _redisCacheManager.Server, queueName: $"{_queueName}/{_groupName}", method: "RedisStreamConsumer", JsonConvert.SerializeObject(messages)))
                     {
-                        result = await listener.Consumer(messages: streamEntries, context: consumeContext);
-                    }
-
-                    if (result)
-                    {
-                        await _redisCacheManager.Db.StreamDeleteAsync(key: _queueName, messageIds: consumeContext.MessageIds.Select(selector: o => (RedisValue)o).ToArray());
-                        lastMessageId = consumeContext.MessageIds.Last();
+                        result = await listener.Consumer(context: consumeContext);
                     }
                 }
                 catch (Exception e)
@@ -217,18 +216,29 @@ namespace FS.MQ.RedisStream
                     {
                         using (FsLinkTrack.TrackMqConsumer(endPort: _redisCacheManager.Server, queueName: $"{_queueName}/{_groupName}", method: "RedisStreamConsumer", JsonConvert.SerializeObject(messages)))
                         {
-                            result = await listener.FailureHandling(messages: streamEntries, context: consumeContext);
-                        }
-                        if (result)
-                        {
-                            await _redisCacheManager.Db.StreamDeleteAsync(key: _queueName, messageIds: consumeContext.MessageIds.Select(selector: o => (RedisValue)o).ToArray());
-                            lastMessageId = consumeContext.MessageIds.Last();
+                            result = await listener.FailureHandling(context: consumeContext);
                         }
                     }
                     catch (Exception exception)
                     {
                         _iocManager.Logger<RedisStreamConsumer>().LogError(exception: exception, message: "失败处理出现异常：" + listener.GetType().FullName);
                         result = false;
+                    }
+                }
+                finally
+                {
+                    if (result)
+                    {
+                        var ids = consumeContext.RedisStreamMessages.Select(o => (RedisValue)o.Id).ToArray();
+                        await _redisCacheManager.Db.StreamDeleteAsync(key: _queueName, ids);
+                        lastMessageId = consumeContext.LastId;
+                    }
+
+                    // 失败时，是否有单独需要ack的消息
+                    if (!result && consumeContext.AckMessageIds.Any())
+                    {
+                        var lstAckId = consumeContext.AckMessageIds.Select(o => (RedisValue)o).ToArray();
+                        await _redisCacheManager.Db.StreamDeleteAsync(key: _queueName, lstAckId);
                     }
                 }
             }
