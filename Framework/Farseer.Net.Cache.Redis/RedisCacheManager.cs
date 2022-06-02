@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Collections.Pooled;
 using FS.Cache.Redis.Configuration;
+using FS.Core;
 using FS.DI;
 using Newtonsoft.Json;
 using StackExchange.Redis;
@@ -127,6 +128,50 @@ namespace FS.Cache.Redis
             // 设置过期时间
             if (expiry != null) transaction.KeyExpireAsync(key: key, expiry: expiry.GetValueOrDefault());
             return transaction.ExecuteAsync();
+        }
+
+        /// <summary>
+        /// 从Hash获取集合
+        /// </summary>
+        public IEnumerable<TEntity> HashToList<TEntity>(string key)
+        {
+            var hashGetAll = Db.HashGetAll(key);
+            foreach (var hashEntry in hashGetAll)
+            {
+                var json = hashEntry.Value.ToString();
+                yield return Jsons.ToObject<TEntity>(json);
+            }
+        }
+
+        /// <summary>
+        /// 从Hash获取集合
+        /// </summary>
+        public async IAsyncEnumerable<TEntity> HashToListAsync<TEntity>(string key)
+        {
+            var hashGetAll = await Db.HashGetAllAsync(key);
+            foreach (var hashEntry in hashGetAll)
+            {
+                var json = hashEntry.Value.ToString();
+                yield return Jsons.ToObject<TEntity>(json);
+            }
+        }
+
+        /// <summary>
+        /// 从Hash获取单个实体
+        /// </summary>
+        public TEntity HashToEntity<TEntity>(string key, string field) where TEntity : class
+        {
+            var hashEntry = Db.HashGet(key, field);
+            return !hashEntry.HasValue ? null : Jsons.ToObject<TEntity>(hashEntry.ToString());
+        }
+
+        /// <summary>
+        /// 从Hash获取单个实体
+        /// </summary>
+        public async Task<TEntity> HashToEntityAsync<TEntity>(string key, string field) where TEntity : class
+        {
+            var hashEntry = await Db.HashGetAsync(key, field);
+            return !hashEntry.HasValue ? null : Jsons.ToObject<TEntity>(hashEntry.ToString());
         }
     }
 }

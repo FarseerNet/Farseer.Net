@@ -47,4 +47,20 @@ public interface IRedisCacheManager : IDisposable
     /// <param name="key">KEY</param>
     /// <param name="lockTime">锁的时长</param>
     RedisLock GetLocker(string key, TimeSpan lockTime);
+    /// <summary>
+    /// 从Hash获取集合
+    /// </summary>
+    IEnumerable<TEntity> HashToList<TEntity>(string key);
+    /// <summary>
+    /// 从Hash获取集合
+    /// </summary>
+    IAsyncEnumerable<TEntity> HashToListAsync<TEntity>(string key);
+    /// <summary>
+    /// 从Hash获取单个实体
+    /// </summary>
+    TEntity HashToEntity<TEntity>(string key, string field) where TEntity : class;
+    /// <summary>
+    /// 从Hash获取单个实体
+    /// </summary>
+    Task<TEntity> HashToEntityAsync<TEntity>(string key, string field) where TEntity : class;
 }
