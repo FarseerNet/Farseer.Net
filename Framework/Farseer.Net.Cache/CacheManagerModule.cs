@@ -5,7 +5,7 @@ using FS.Modules;
 namespace FS.Cache
 {
     /// <summary>
-    ///     Redis模块
+    ///     本地缓存模块
     /// </summary>
     public class CacheManagerModule : FarseerModule
     {

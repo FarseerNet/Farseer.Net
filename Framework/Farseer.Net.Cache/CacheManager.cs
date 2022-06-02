@@ -16,7 +16,7 @@ namespace FS.Cache
     {
         private string _redisItemConfigName;
 
-        private CacheManager() { }
+        public CacheManager() { }
 
         /// <param name="redisItemConfigName"> Redis配置 </param>
         public CacheManager(string redisItemConfigName)
