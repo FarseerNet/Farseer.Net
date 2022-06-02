@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using Collections.Pooled;
@@ -32,7 +33,7 @@ namespace FS.ElasticSearch.Cache
 
                 var dbContextParam = Expression.Parameter(type: typeof(EsContext), name: "_context");
 
-                var initDelegates = new PooledList<Action<EsContext>>();
+                IList<Action<EsContext>> initDelegates = new PooledList<Action<EsContext>>();
 
                 // 一个EsContext对象下的所有Set实体类型
                 var setTypeList = new PooledDictionary<Type, PooledList<string>>();
@@ -75,12 +76,16 @@ namespace FS.ElasticSearch.Cache
                 }
 
                 // 实体化所有Set属性
-                Action<EsContext> initializer = context =>
+                void Initializer(EsContext context)
                 {
-                    foreach (var initer in initDelegates) initer(obj: context);
-                    initDelegates.Dispose();
-                };
-                var setInfo = new SetTypesInitializersPair(entityTypeToPropertyNameMap: setTypeList, setsInitializer: initializer);
+                    // new TableSet<>()
+                    foreach (var setNewInstanceDelegate in initDelegates)
+                    {
+                        setNewInstanceDelegate(obj: context);
+                    }
+                }
+
+                var setInfo = new SetTypesInitializersPair(entityTypeToPropertyNameMap: setTypeList, setsInitializer: Initializer);
                 CacheList.Add(key: Key, value: setInfo);
                 return setInfo;
             }

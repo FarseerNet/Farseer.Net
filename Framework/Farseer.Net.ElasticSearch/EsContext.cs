@@ -47,7 +47,7 @@ namespace FS.ElasticSearch
             // 实例化子类中，所有Set属性
             ContextSetTypeCacheManger.Cache(contextKey: GetType()).Item2(obj: this);
 
-            // 设置表名称
+            // 设置索引名称
             CreateModelInit();
         }
 
@@ -59,9 +59,7 @@ namespace FS.ElasticSearch
         /// <summary>
         ///     在创建模型时调用
         /// </summary>
-        protected virtual void CreateModelInit()
-        {
-        }
+        protected virtual void CreateModelInit() { }
 
         #region DbContextInitializer上下文初始化器
 

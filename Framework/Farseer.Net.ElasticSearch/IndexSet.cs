@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Castle.Core.Internal;
 using Collections.Pooled;
+using FS.Cache;
 using FS.Core.Abstract.Data;
 using FS.Core.LinkTrack;
 using FS.DI;
@@ -749,10 +750,14 @@ namespace FS.ElasticSearch
         private UpdateByQueryDescriptor<TDocument> Script(UpdateByQueryDescriptor<TDocument> desc, object entity, bool firstCharToLower)
         {
             using var lstScript = new PooledList<string>();
-            var dicValue  = new Dictionary<string, object>();
+            var       dicValue  = new Dictionary<string, object>();
 
             foreach (var property in entity.GetType().GetProperties())
             {
+                var value = PropertyGetCacheManger.Cache(property, entity);
+                // 值为null时，不更新
+                if (value == null) continue;
+
                 var field = GetFieldName(property: property);
                 // 首字母小写
                 if (firstCharToLower)
@@ -765,7 +770,7 @@ namespace FS.ElasticSearch
                 }
 
                 lstScript.Add(item: $"ctx._source.{field}=params.{field}");
-                dicValue.Add(key: field, value: property.GetValue(obj: entity));
+                dicValue.Add(key: field, value: value);
             }
 
             return desc.Script(scriptSelector: s => s.Source(script: string.Join(separator: ";", values: lstScript)).Params(dicValue));
@@ -896,6 +901,44 @@ namespace FS.ElasticSearch
 
                 return true;
             }
+        }
+
+        /// <summary>
+        /// 删除索引
+        /// </summary>
+        public bool DropIndex()
+        {
+            var result = Client.Indices.Delete(SetMap.IndexName);
+
+            // 移除本地索引缓存
+            if (result.IsValid) IndexCache[key: SetMap.IndexName] = false;
+            return result.IsValid;
+        }
+
+        /// <summary>
+        /// 删除索引
+        /// </summary>
+        public async Task<bool> DropIndexAsync()
+        {
+            var result = await Client.Indices.DeleteAsync(SetMap.IndexName);
+
+            // 移除本地索引缓存
+            if (result.IsValid) IndexCache[key: SetMap.IndexName] = false;
+            return result.IsValid;
+        }
+
+        /// <summary>
+        /// 刷新索引
+        /// </summary>
+        public bool RefreshIndex() => Client.Indices.Refresh(SetMap.IndexName).IsValid;
+
+        /// <summary>
+        /// 刷新索引
+        /// </summary>
+        public async Task<bool> RefreshIndexAsync()
+        {
+            var result = await Client.Indices.RefreshAsync(SetMap.IndexName);
+            return result.IsValid;
         }
     }
 }
