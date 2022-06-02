@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace Farseer.Net.MQ.Queue.Test;
 
-public class RedisCacheManager : BaseTests
+public class QueueProduct : BaseTests
 {
     [Test]
     public void Send()
