@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Farseer.Net.Data.Test.Repository;
+using FS;
 using NUnit.Framework;
 
 namespace Farseer.Net.Data.Test;
@@ -16,21 +17,71 @@ public class TableSet : BaseTests
         Assert.IsNull(user.Name);
 
         var user2 = await MysqlContext.Data.User.Where(o => o.Id == 1).Select(o => o.Id).ToEntityAsync();
-        Assert.True(user2.Id == 1);
+        Assert.AreEqual(user2.Id, 1);
         Assert.IsNull(user2.Name);
     }
 
     [Test]
     public void Select_ToList()
     {
-        var list  = MysqlContext.Data.User.ToList();
-        var count = MysqlContext.Data.User.Count();
+        var lstAsc  = MysqlContext.Data.User.Asc(o => o.Id).ToList();
+        var lstDesc = MysqlContext.Data.User.Desc(o => o.Id).ToList();
+        var count   = MysqlContext.Data.User.Count();
 
-        Assert.True(list.Count == count);
-        Assert.NotZero(list.Count);
-        Assert.NotNull(list[0].Name);
+        Assert.NotZero(lstAsc.Count);
+        Assert.AreEqual(lstAsc.Count, count);
+        Assert.NotNull(lstAsc[0].Name);
+
+        Assert.AreEqual(lstAsc.FirstOrDefault().Id.GetValueOrDefault(), lstDesc.LastOrDefault().Id.GetValueOrDefault());
+    }
+
+    [Test]
+    public void ToTopList()
+    {
+        var lst = MysqlContext.Data.User.Asc(o => o.Id).ToList(5);
+        Assert.AreEqual(lst.Count, 5);
+    }
+
+    [Test]
+    public void ToSplitList()
+    {
+        var lst  = MysqlContext.Data.User.Asc(o => o.Id).ToList(10, 2);
+        var lst2 = MysqlContext.Data.User.Asc(o => o.Id).ToList(20);
+        Assert.AreEqual(lst.Count, 10);
+        for (int i = 0; i < 10; i++)
+        {
+            Assert.AreEqual(lst[i].Id.GetValueOrDefault(), lst2[i + 10].Id.GetValueOrDefault());
+        }
+    }
+
+    [Test]
+    public void Add_Update_Delete()
+    {
+        // 添加
+        MysqlContext.Data.User.Insert(new UserPO()
+        {
+            Name = FarseerApplication.AppId.ToString()
+        });
+
+        var userPO = MysqlContext.Data.User.Where(o => o.Name == FarseerApplication.AppId.ToString()).ToEntity();
+        Assert.AreEqual(userPO.Name, FarseerApplication.AppId.ToString());
+
+        // 修改
+        MysqlContext.Data.User.Where(o => o.Id == userPO.Id).Update(new UserPO()
+        {
+            Age = 1986
+        });
         
-        
+        userPO = MysqlContext.Data.User.Where(o => o.Name == FarseerApplication.AppId.ToString()).ToEntity();
+        Assert.AreEqual(userPO.Age.GetValueOrDefault(), 1986);
+        Assert.AreEqual(userPO.Name, FarseerApplication.AppId.ToString());
+
+        // 删除
+        MysqlContext.Data.User.Where(o => o.Id == userPO.Id).Delete();
+
+        var count = MysqlContext.Data.User.Where(o => o.Name == FarseerApplication.AppId.ToString()).Count();
+        Assert.Zero(count);
+
     }
 
     [Test]
@@ -40,7 +91,7 @@ public class TableSet : BaseTests
         var count2 = await MysqlContext.Data.User.CountAsync();
         Console.WriteLine($"数量：{count}");
         Assert.NotZero(count);
-        Assert.True(count == count2);
+        Assert.AreEqual(count, count2);
     }
 
     [Test]
@@ -51,8 +102,8 @@ public class TableSet : BaseTests
         var       count2 = MysqlContext.Data.User.Where(o => o.Age > 50 && o.Name.StartsWith("farseer-1")).Count();
         var       count3 = await MysqlContext.Data.User.Where(o => o.Age > 50 && o.Name.StartsWith("farseer-1")).CountAsync();
         Console.WriteLine($"数量：{count}");
-        Assert.True(count  == count2);
-        Assert.True(count2 == count3);
+        Assert.AreEqual(count, count2);
+        Assert.AreEqual(count2, count3);
     }
 
     [Test]
@@ -61,7 +112,7 @@ public class TableSet : BaseTests
         var dataUser = MysqlContext.Data.User;
         var count1   = dataUser.Where(o => o.Age > 18).Count();
         var count2   = await dataUser.Where(o => o.Age < 18).CountAsync();
-        Assert.True(count1 > 0);
-        Assert.True(count2 > 0);
+        Assert.NotZero(count1);
+        Assert.NotZero(count2);
     }
 }

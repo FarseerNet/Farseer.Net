@@ -13,7 +13,7 @@ namespace FS.Data.Internal;
 /// <summary>
 /// 动态生成代理类的源代码
 /// </summary>
-public class DynamicGenerateSourceCode
+public class DynamicGenerateProxyCode
 {
     private readonly Type          _entityType;
     private readonly SetPhysicsMap _setPhysicsMap;
@@ -24,7 +24,7 @@ public class DynamicGenerateSourceCode
     public string ClassName => _entityType.Name + "ByDataRow";
     public string ParentClassName => _entityType.FullName;
 
-    public DynamicGenerateSourceCode(Type entityType)
+    public DynamicGenerateProxyCode(Type entityType)
     {
         _entityType    = entityType;
         _setPhysicsMap = SetMapCacheManger.Cache(_entityType);
@@ -36,7 +36,7 @@ public class DynamicGenerateSourceCode
     public string Generate()
     {
         return $@"
-        public class {ClassName} : {ParentClassName}
+        public class {ClassName}
         {{
             {GenerateToList()}
             {GenerateToEntity()}

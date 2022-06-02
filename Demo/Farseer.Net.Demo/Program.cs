@@ -17,7 +17,7 @@ namespace Farseer.Net.Demo
         private static async Task Main(string[] args)
         {
             FarseerApplication.Run<StartupModule>().Initialize();
-            var serviceAll = IocManager.GetService<TestIoc>();
+            //var serviceAll = IocManager.GetService<TestIoc>();
         }
 
         public static async Task<int> ThrowAsync(int index)

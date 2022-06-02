@@ -6,6 +6,7 @@ namespace FS.Cache
 {
     /// <summary>
     ///     根据对象Type，创建实例（替换反射创建实例）
+    /// Func<object[], object> ,Key:方法的参数，Value：方法的返回值
     /// </summary>
     public class InstanceStaticCacheManger : AbsCacheManger<int, Func<object[], object>>
     {
@@ -26,7 +27,7 @@ namespace FS.Cache
             // 缓存
             Key = type.GetHashCode() + methodName.GetHashCode();
             //根据参数列表返回参数类型数组
-            if (args != null && args.Length > 0)
+            if (args is { Length: > 0 })
             {
                 foreach (var t in args)
                 {
@@ -46,7 +47,7 @@ namespace FS.Cache
                 if (CacheList.ContainsKey(key: Key)) return CacheList[key: Key];
                 var method = _type.GetMethod(name: _methodName, bindingAttr: BindingFlags.Static | BindingFlags.Public);
                 //缓存中没有找到，新建一个构造函数的委托
-                return CacheList[key: Key] = param => method.Invoke(obj: null, parameters: param);
+                return CacheList[key: Key] = args => method.Invoke(obj: null, parameters: args);
             }
         }
 

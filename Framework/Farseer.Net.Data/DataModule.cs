@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Collections.Pooled;
-using FS.Core.Mapping.Attribute;
 using FS.Data.Abstract;
 using FS.Data.Internal;
 using FS.DI;
@@ -45,37 +43,24 @@ namespace FS.Data
 
         public override void PostInitialize()
         {
-            Task.Run(() =>
+            using var lstPoType = new PooledList<Type>();
+            // 找到Context
+            using var lstContext = _typeFinder.Find(o => !o.IsGenericType && o.IsClass && o.BaseType != null && o.BaseType.BaseType != null && o.BaseType.BaseType == typeof(DbContext));
+
+            using var lstLog = new PooledList<string>();
+            foreach (var context in lstContext)
             {
-                // 找到Context
-                using var lstContext = _typeFinder.Find(o => !o.IsGenericType && o.IsClass && o.BaseType != null && o.BaseType.BaseType != null && o.BaseType.BaseType == typeof(DbContext));
+                // 需要做实例化，才能初始化上下文
+                Activator.CreateInstance(context);
+                // 找到Set属性
+                var set       = context.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+                var lstPOType = set.Select(o => o.PropertyType).Where(o => o.GetInterfaces().Any(i => i == typeof(IDbSet))).Select(o => o.GenericTypeArguments[0]);
+                lstPoType.AddRange(lstPOType);
+            }
 
-                using var lstLog = new PooledList<string>();
-                foreach (var context in lstContext)
-                {
-                    // 需要做实例化，才能初始化上下文
-                    Activator.CreateInstance(context);
-                    // 找到Set属性
-                    var set       = context.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
-                    var lstPOType = set.Select(o => o.PropertyType).Where(o => o.GetInterfaces().Any(i => i == typeof(IDbSet)));
-                    if (lstPOType != null)
-                    {
-                        lstLog.Add($"{context.Name}上下文（{lstPOType.Count()}个）：");
-                        var sw = Stopwatch.StartNew();
-
-                        foreach (var setType in lstPOType)
-                        {
-                            var beginIndex = sw.ElapsedMilliseconds;
-                            DynamicCompilationEntity.Instance.BuildType(setType.GenericTypeArguments[0]);
-                            lstLog.Add($"编译：{setType.GenericTypeArguments[0].FullName} \t耗时：{(sw.ElapsedMilliseconds - beginIndex):n} ms");
-                        }
-                        lstLog.Add($"耗时：{sw.ElapsedMilliseconds:n} ms");
-                        lstLog.Add($"------------------------------------------");
-                    }
-                }
-                IocManager.Logger<FarseerApplication>().LogInformation(string.Join("\r\n", lstLog));
-            });
+            var sw = Stopwatch.StartNew();
+            DynamicCompilationEntity.Instance.BuildEntities(lstPoType);
+            IocManager.Logger<FarseerApplication>().LogInformation($"编译{lstPoType.Count}个PO类，共耗时{sw.ElapsedMilliseconds:n} ms");
         }
-
     }
 }

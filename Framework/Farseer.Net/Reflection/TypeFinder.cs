@@ -53,15 +53,12 @@ namespace FS.Reflection
         /// </summary>
         private IEnumerable<Type> GetAllTypes()
         {
-            if (_types == null)
+            if (_types != null) return _types;
+            
+            lock (_syncObj)
             {
-                lock (_syncObj)
-                {
-                    _types ??= CreateTypeList();
-                }
+                return _types ??= CreateTypeList();
             }
-
-            return _types;
         }
 
         private readonly string[] _IgnoreAssembly       = { "Newtonsoft.Json.dll", "Elasticsearch.Net.dll", "Mapster.Core.dll", "Mapster.dll", "Mapster.Async.dll", "Castle.Core.dll", "Castle.Windsor.dll", "Docker.DotNet.dll", "Snowflake.Core.dll", "Nest.dll", "netstandard.dll" };
