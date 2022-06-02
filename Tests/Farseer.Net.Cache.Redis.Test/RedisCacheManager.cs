@@ -10,7 +10,7 @@ using NUnit.Framework;
 
 namespace Farseer.Net.Cache.Redis.Test;
 
-public class TableSet : BaseTests
+public class RedisCacheManager : BaseTests
 {
     [Test]
     public void Db_NotNull()
