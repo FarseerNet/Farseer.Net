@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace Farseer.Net.MQ.Rabbit.Test;
 
-public class QueueProduct : BaseTests
+public class RabbitProduct : BaseTests
 {
     [Test]
     public void Send()
