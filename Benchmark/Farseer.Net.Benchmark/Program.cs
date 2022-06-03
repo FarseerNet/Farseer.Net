@@ -7,10 +7,10 @@ using Farseer.Net.Benchmark.Farseer.Net;
 using Farseer.Net.Benchmark.Other;
 using Microsoft.Diagnostics.Tracing.Parsers.MicrosoftWindowsTCPIP;
 
- var testUsingPooled = new TestUsingPooled();
-testUsingPooled.Test();
+//  var testUsingPooled = new TestUsingPooled();
+// testUsingPooled.Test();
 // Console.WriteLine(testUsingPooled.User.Name);
 // lst.Dispose();
 // Console.WriteLine(testUsingPooled.User.Name);
 // Console.WriteLine(lst.Count);
-//BenchmarkDotNet.Running.BenchmarkRunner.Run<PooledListBenchmark>();
+BenchmarkDotNet.Running.BenchmarkRunner.Run<AopSpeed>();
