@@ -1,9 +1,16 @@
 ## Farseer.net是什么?
-针对`.net core` 平台下的一套开发标准制定，提供一系列优雅的组件供使用。
+针对`.net core` 平台下的一套标准制定。
 
-通过该标准，我们会为您选型出目前最为流行的常用组件，并按我们的标准（模块化）来提供如何使用这些组件。
+我们为您选型出目前最为流行的组件，并按模块化来提供使用这些组件。
 
-我们选用`Castle.Windsor`作为我们的`IOC`框架，并制定使用该框架的一些规则。
+##### 优雅
+我们使用`IOC`技术，遍布整个框架及您的业务系统。
+
+##### 简单
+我们使用`AOP`技术，让您无需额外编写非业务功能代码，如事务、异常捕获、日志、链路Track
+
+##### 低内存
+框架内大量使用`集合池化`技术，每次`new List`时，可以`复用堆空间`。
 
 结合[FOPS](https://github.com/FarseerNet/FOPS) 项目（自动构建、链路追踪控制台）支持代码无侵入的全链路实时监控。
 
@@ -11,19 +18,53 @@
 1、[文档](https://github.com/FarseerNet/Farseer.Net/tree/main/Doc)
 2、[demo](https://github.com/FarseerNet/Farseer.Net/tree/main/Demo)
 
-### Farseer.Net.Data 数据库ORM组件：
+### 链路追踪
+如果您使用我们提供的Orm、Redis、Http、Elasticsearch、MQ(Rabbit、RedisStream、Rocker、本地Queue)、EventBus、Task、FSS等等，您什么都不需要做，系统将隐式为您实现链路追踪。
+
+也支持手动埋点：
 ```c#
-  // 获取所有数据
-  MetaInfoContext.Data.Task.ToList();
-  // 写入实体对象
-  MetaInfoContext.Data.Task.InsertAsync(po);
-  // 获取单个对象
-  MetaInfoContext.Data.Task.Where(o => o.Id == id).ToEntity();
-  // 修改对象
-  MetaInfoContext.Data.Task.UpdateAsync(po);
+    [Track] // 此处如果标记了，则Execute1、Execute2方法不需要再指定Track
+    public class TrackDemo
+    {
+        [Track]
+        public void Execute1() { }
+        
+        // 虽然我没有标记[Track]，但类中已标记，此处也会继承。
+        public void Execute2() { }
+
+        public void Execute3()
+        {
+            // 如果是记录某个代码片断，可以使用此种方式
+            using (FsLinkTrack.Track($"一般这里传的是MethodName"))
+            {
+                // doSomething
+            }
+        }
+    }
+```
+
+### Farseer.Net.Data 数据库ORM组件：
+特点：与手写SQL并填充到List集合的性能几乎一样
+```c#
+/// <summary>
+/// 开启事务（指定数据库配置名称）
+/// </summary>
+[TransactionName("test")] // 开启事务标记
+public void AopTransactionByName()
+{
+    // 获取所有数据
+    MetaInfoContext.Data.Task.ToList();
+    // 写入实体对象
+    MetaInfoContext.Data.Task.InsertAsync(po);
+    // 获取单个对象
+    MetaInfoContext.Data.Task.Where(o => o.Id == id).ToEntity();
+    // 修改对象
+    MetaInfoContext.Data.Task.UpdateAsync(po);
+}
 ```
 
 ### Farseer.Net.Cache.Redis Redis组件：
+特点：
 ```c#
   // 取出Redis实例
   var redisCacheManager = IocManager.GetService<IRedisCacheManager>();
@@ -34,6 +75,7 @@
 ```
 
 ### Farseer.Net.Cache 二级缓存组件
+特点：本地内存、Redis双写，并优先读本地内存数据
 ```c#
 // 定义key，并设置为redis与本地缓存双写
 public static CacheKey<TaskGroupVO, int> TaskGroupKey() => new($"FSS_TaskGroup", o => o.Id, EumCacheStoreType.MemoryAndRedis);
@@ -44,6 +86,7 @@ return RedisContext.Instance.CacheManager.GetListAsync(key, () => TaskGroupAgent
 ```
 
 ### Farseer.Net.ElasticSearch es组件：
+特别：提供与数据库ORM一样的操作方式
 ```c#
   var time = "30";
   // 判断时间（并带有复杂的本地函数方法）
