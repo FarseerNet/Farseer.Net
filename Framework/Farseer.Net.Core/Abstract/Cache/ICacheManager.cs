@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Collections.Pooled;
 
-namespace FS.Cache
+namespace FS.Core.Abstract.Cache
 {
     /// <summary>
     ///     支持缓存不存在，则写入

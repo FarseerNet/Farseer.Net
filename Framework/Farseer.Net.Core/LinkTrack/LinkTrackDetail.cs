@@ -69,6 +69,7 @@ namespace FS.Core.LinkTrack
         public void SetCallStackTrace()
         {
             if (_stackTrace == null) return;
+            // https://docs.microsoft.com/zh-cn/dotnet/api/system.runtime.compilerservices.callerlinenumberattribute?redirectedfrom=MSDN&view=net-6.0
             foreach (var stackFrame in _stackTrace.GetFrames())
             {
                 var fileLineNumber = stackFrame.GetFileLineNumber();

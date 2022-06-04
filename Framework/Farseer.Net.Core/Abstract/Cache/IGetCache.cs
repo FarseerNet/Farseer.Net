@@ -1,9 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Collections.Pooled;
 
-namespace FS.Cache
+namespace FS.Core.Abstract.Cache
 {
     public interface IGetCache
     {

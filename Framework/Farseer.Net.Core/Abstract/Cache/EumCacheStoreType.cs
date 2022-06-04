@@ -1,4 +1,4 @@
-namespace FS.Cache
+namespace FS.Core.Abstract.Cache
 {
     public enum EumCacheStoreType
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace FS.Cache
+namespace FS.Core.Abstract.Cache
 {
     /// <summary>
     ///     读写缓存的选项设置

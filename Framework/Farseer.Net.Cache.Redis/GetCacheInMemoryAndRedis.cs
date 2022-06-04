@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Collections.Pooled;
+using FS.Core.Abstract.Cache;
 using FS.DI;
 
 namespace FS.Cache.Redis;

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Collections.Pooled;
 using FS.Cache.Redis.Configuration;
 using FS.Core;
+using FS.Core.Abstract.Cache;
 using FS.DI;
 using Newtonsoft.Json;
 using StackExchange.Redis;

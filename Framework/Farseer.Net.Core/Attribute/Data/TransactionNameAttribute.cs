@@ -1,12 +1,13 @@
 using System;
 using System.Linq;
 using FS.Cache;
+using FS.Core.Abstract.Data;
 using FS.DI;
 using FS.Reflection;
 using PostSharp.Aspects;
 using PostSharp.Serialization;
 
-namespace FS.Core.Abstract.Data;
+namespace FS.Core.Attribute.Data;
 
 /// <summary>
 /// 事务执行

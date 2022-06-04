@@ -30,7 +30,7 @@ namespace FS.Data.Abstract
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="procBuilder"> SQL语句与参数 </param>
         /// <param name="entity"> 实体类 </param>
-        int Execute<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new();
+        int Execute<TEntity>(string callMethod, IProcParam procBuilder, TEntity entity) where TEntity : class, new();
 
         /// <summary>
         ///     返回影响行数
@@ -39,7 +39,7 @@ namespace FS.Data.Abstract
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="procBuilder"> SQL语句与参数 </param>
         /// <param name="entity"> 实体类 </param>
-        Task<int> ExecuteAsync<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new();
+        Task<int> ExecuteAsync<TEntity>(string callMethod, IProcParam procBuilder, TEntity entity) where TEntity : class, new();
 
         /// <summary>
         ///     返回DataTable
@@ -62,7 +62,7 @@ namespace FS.Data.Abstract
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="procBuilder"> SQL语句与参数 </param>
         /// <param name="entity"> 实体类 </param>
-        DataTable ToTable<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new();
+        DataTable ToTable<TEntity>(string callMethod, IProcParam procBuilder, TEntity entity) where TEntity : class, new();
 
         /// <summary>
         ///     返回影响行数
@@ -71,7 +71,7 @@ namespace FS.Data.Abstract
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="procBuilder"> SQL语句与参数 </param>
         /// <param name="entity"> 实体类 </param>
-        Task<DataTable> ToTableAsync<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new();
+        Task<DataTable> ToTableAsync<TEntity>(string callMethod, IProcParam procBuilder, TEntity entity) where TEntity : class, new();
 
         /// <summary>
         ///     返回泛型集合
@@ -94,7 +94,7 @@ namespace FS.Data.Abstract
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="procBuilder"> SQL语句与参数 </param>
         /// <param name="entity"> 实体类 </param>
-        PooledList<TEntity> ToList<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new();
+        PooledList<TEntity> ToList<TEntity>(string callMethod, IProcParam procBuilder, TEntity entity) where TEntity : class, new();
 
         /// <summary>
         ///     返回返回泛型集合
@@ -103,7 +103,7 @@ namespace FS.Data.Abstract
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="procBuilder"> SQL语句与参数 </param>
         /// <param name="entity"> 实体类 </param>
-        Task<PooledList<TEntity>> ToListAsync<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new();
+        Task<PooledList<TEntity>> ToListAsync<TEntity>(string callMethod, IProcParam procBuilder, TEntity entity) where TEntity : class, new();
 
         /// <summary>
         ///     返回单条数据
@@ -128,7 +128,7 @@ namespace FS.Data.Abstract
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="procBuilder"> SQL语句与参数 </param>
         /// <param name="entity"> 实体类 </param>
-        TEntity ToEntity<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new();
+        TEntity ToEntity<TEntity>(string callMethod, IProcParam procBuilder, TEntity entity) where TEntity : class, new();
 
         /// <summary>
         ///     返回影响行数
@@ -137,7 +137,7 @@ namespace FS.Data.Abstract
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="procBuilder"> SQL语句与参数 </param>
         /// <param name="entity"> 实体类 </param>
-        Task<TEntity> ToEntityAsync<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new();
+        Task<TEntity> ToEntityAsync<TEntity>(string callMethod, IProcParam procBuilder, TEntity entity) where TEntity : class, new();
 
         /// <summary>
         ///     查询单个字段值
@@ -166,7 +166,7 @@ namespace FS.Data.Abstract
         /// <param name="procBuilder"> SQL语句与参数 </param>
         /// <param name="entity"> 实体类 </param>
         /// <param name="defValue"> 默认值 </param>
-        T GetValue<TEntity, T>(string callMethod, ProcBuilder procBuilder, TEntity entity, T defValue = default) where TEntity : class, new();
+        T GetValue<TEntity, T>(string callMethod, IProcParam procBuilder, TEntity entity, T defValue = default) where TEntity : class, new();
 
         /// <summary>
         ///     查询单个字段值
@@ -177,6 +177,6 @@ namespace FS.Data.Abstract
         /// <param name="procBuilder"> 存储过程生成器 </param>
         /// <param name="entity"> 实体 </param>
         /// <param name="defValue"> 默认值 </param>
-        Task<T> GetValueAsync<TEntity, T>(string callMethod, ProcBuilder procBuilder, TEntity entity, T defValue = default) where TEntity : class, new();
+        Task<T> GetValueAsync<TEntity, T>(string callMethod, IProcParam procBuilder, TEntity entity, T defValue = default) where TEntity : class, new();
     }
 }

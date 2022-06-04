@@ -3,6 +3,7 @@ using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using FS.Cache.Redis.Configuration;
+using FS.Core.Abstract.Cache;
 using FS.DI;
 
 namespace FS.Cache.Redis

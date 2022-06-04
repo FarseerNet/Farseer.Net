@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Collections.Pooled;
 using FS.Core;
+using FS.Core.Abstract.Cache;
 using FS.DI;
 using Newtonsoft.Json;
 

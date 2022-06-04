@@ -1,9 +1,10 @@
 using System;
 using FS.Cache;
+using FS.Core.Abstract.Data;
 using PostSharp.Aspects;
 using PostSharp.Serialization;
 
-namespace FS.Core.Abstract.Data;
+namespace FS.Core.Attribute.Data;
 
 /// <summary>
 /// 事务执行

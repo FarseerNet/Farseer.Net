@@ -50,12 +50,10 @@ namespace NetCoreConsole
         [HowToUse, ExceptionHandle]
         private static int PropertyTest
         {
-
             get
             {
                 return _propertyTest;
             }
-
             // [HowToUse]
             set
             {
