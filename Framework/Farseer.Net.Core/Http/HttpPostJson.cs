@@ -17,7 +17,7 @@ namespace FS.Core.Http
         /// <param name="requestTimeout"> 超时时间 </param>
         /// <param name="encoding"> 编码格式 </param>
         /// <param name="cookie"> 是否需要cookie </param>
-        public static Task<string> PostAsync(string url, string postData, int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null) => HttpPost.PostAsync(url: url, postData: postData, headerData: null, ContentType, requestTimeout: requestTimeout, encoding: encoding, cookie: cookie);
+        public static Task<HttpResponseResult> PostAsync(string url, string postData, int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null) => HttpPost.PostAsync(url: url, postData: postData, headerData: null, ContentType, requestTimeout: requestTimeout, encoding: encoding, cookie: cookie);
 
         /// <summary>
         ///     http request请求
@@ -28,7 +28,7 @@ namespace FS.Core.Http
         /// <param name="requestTimeout"> 超时时间 </param>
         /// <param name="encoding"> 编码格式 </param>
         /// <param name="cookie"> 是否需要cookie </param>
-        public static async Task<string> TryPostAsync(string url, string postData, string defaultResult, int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
+        public static async Task<HttpResponseResult> TryPostAsync(string url, string postData, string defaultResult, int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
         {
             try
             {
@@ -36,7 +36,7 @@ namespace FS.Core.Http
             }
             catch
             {
-                return defaultResult;
+                return new HttpResponseResult(0, defaultResult);
             }
         }
 
@@ -84,7 +84,7 @@ namespace FS.Core.Http
         /// <param name="requestTimeout"> 超时时间 </param>
         /// <param name="encoding"> 编码格式 </param>
         /// <param name="cookie"> 是否需要cookie </param>
-        public static Task<string> PostAsync(string url, string postData, IDictionary<string, string> headerData, int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
+        public static Task<HttpResponseResult> PostAsync(string url, string postData, IDictionary<string, string> headerData, int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
         {
             return HttpPost.PostAsync(url, postData, headerData, ContentType, requestTimeout, encoding, cookie);
         }
@@ -99,7 +99,7 @@ namespace FS.Core.Http
         /// <param name="encoding"> 编码格式 </param>
         /// <param name="cookie"> 是否需要cookie </param>
         /// <param name="defaultResult">异常时默认返回值 </param>
-        public static async Task<string> TryPostAsync(string url, string postData, IDictionary<string, string> headerData, string defaultResult, int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
+        public static async Task<HttpResponseResult> TryPostAsync(string url, string postData, IDictionary<string, string> headerData, string defaultResult, int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
         {
             try
             {
@@ -107,11 +107,10 @@ namespace FS.Core.Http
             }
             catch
             {
-                return defaultResult;
+                return new HttpResponseResult(0, defaultResult);
             }
         }
-
-
+        
         /// <summary>
         ///     http request请求
         /// </summary>
@@ -125,7 +124,7 @@ namespace FS.Core.Http
         {
             return HttpPost.PostAsync<TResult>(url, postData, headerData, ContentType, requestTimeout, encoding, cookie);
         }
-        
+
         /// <summary>
         ///     http request请求
         /// </summary>
@@ -157,10 +156,11 @@ namespace FS.Core.Http
         /// <param name="requestTimeout"> 超时时间 </param>
         /// <param name="encoding"> 编码格式 </param>
         /// <param name="cookie"> 是否需要cookie </param>
-        public static Task<string> PostAsync(string url, IDictionary<string, string> postData, int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
+        public static Task<HttpResponseResult> PostAsync(string url, IDictionary<string, string> postData, int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
         {
             return HttpPost.PostAsync(url, postData, ContentType, requestTimeout, encoding, cookie);
         }
+
         /// <summary>
         ///     以Post方式请求远程URL
         /// </summary>
@@ -170,7 +170,7 @@ namespace FS.Core.Http
         /// <param name="encoding"> 编码格式 </param>
         /// <param name="cookie"> 是否需要cookie </param>
         /// <param name="defaultResult">异常时默认返回值 </param>
-        public static async Task<string> TryPostAsync(string url, IDictionary<string, string> postData, string defaultResult, int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
+        public static async Task<HttpResponseResult> TryPostAsync(string url, IDictionary<string, string> postData, string defaultResult, int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
         {
             try
             {
@@ -178,7 +178,7 @@ namespace FS.Core.Http
             }
             catch
             {
-                return defaultResult;
+                return new HttpResponseResult(0, defaultResult);
             }
         }
 
@@ -194,7 +194,7 @@ namespace FS.Core.Http
         {
             return HttpPost.PostAsync<TResult>(url, postData, ContentType, requestTimeout, encoding, cookie);
         }
-        
+
         /// <summary>
         ///     以Post方式请求远程URL
         /// </summary>
@@ -226,7 +226,7 @@ namespace FS.Core.Http
         /// <param name="requestTimeout"> 超时时间 </param>
         /// <param name="encoding"> 编码格式 </param>
         /// <param name="cookie"> 是否需要cookie </param>
-        public static Task<string> PostAsync(string url, IDictionary<string, string> postData, IDictionary<string, string> headerData, int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
+        public static Task<HttpResponseResult> PostAsync(string url, IDictionary<string, string> postData, IDictionary<string, string> headerData, int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
         {
             return HttpPost.PostAsync(url, postData, headerData, ContentType, requestTimeout, encoding, cookie);
         }
@@ -241,7 +241,7 @@ namespace FS.Core.Http
         /// <param name="encoding"> 编码格式 </param>
         /// <param name="cookie"> 是否需要cookie </param>
         /// <param name="defaultResult">异常时默认返回值 </param>
-        public static async Task<string> TryPostAsync(string url, IDictionary<string, string> postData, IDictionary<string, string> headerData, string defaultResult, int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
+        public static async Task<HttpResponseResult> TryPostAsync(string url, IDictionary<string, string> postData, IDictionary<string, string> headerData, string defaultResult, int requestTimeout = 0, Encoding encoding = null, CookieContainer cookie = null)
         {
             try
             {
@@ -249,7 +249,7 @@ namespace FS.Core.Http
             }
             catch
             {
-                return defaultResult;
+                return new HttpResponseResult(0, defaultResult);
             }
         }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Collections.Pooled;
+using FS.Core.Http;
 using FS.DI;
 using FS.Extends;
 using Microsoft.Extensions.Logging;
@@ -51,6 +52,15 @@ namespace FS.Core.LinkTrack
         {
             _linkTrackDetail.Data[key: "ResponseBody"] = responseBody;
             _linkTrackDetail.Data["StatusCode"]        = responseStatusCode.ToString();
+        }
+
+        /// <summary>
+        ///     设置Http响应内容
+        /// </summary>
+        public void SetHttpResponseBody(HttpResponseResult httpResponseResult)
+        {
+            _linkTrackDetail.Data["ResponseBody"] = httpResponseResult.Response;
+            _linkTrackDetail.Data["StatusCode"]   = httpResponseResult.HttpCode.ToString();
         }
 
         /// <summary>
