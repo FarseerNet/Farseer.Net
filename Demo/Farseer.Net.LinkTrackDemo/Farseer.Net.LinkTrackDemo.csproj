@@ -9,6 +9,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\Framework\Farseer.Net.Core\Farseer.Net.Core.csproj"/>
         <ProjectReference Include="..\..\Framework\Farseer.Net\Farseer.Net.csproj"/>
+        <PackageReference Include="PostSharp" Version="6.10.12" />
     </ItemGroup>
 
 </Project>
