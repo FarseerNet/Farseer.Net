@@ -21,9 +21,6 @@
     <PropertyGroup Condition="'$(TargetFramework)' == 'net461'">
         <DefineConstants>net461</DefineConstants>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-        <DefineConstants>CORE</DefineConstants>
-    </PropertyGroup>
     <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
         <DefineConstants>CORE</DefineConstants>
     </PropertyGroup>
@@ -33,6 +30,9 @@
         <EmbeddedResource Remove="Map\**" />
         <None Remove="Map\**" />
         <Compile Remove="aa.cs" />
+        <None Update="Farseer.Net.Data.targets">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <ItemGroup>
@@ -47,12 +47,6 @@
         <Reference Include="System.ComponentModel.DataAnnotations" />
     </ItemGroup>
 
-    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-        <PackageReference Include="System.Data.Common" Version="4.3.0" />
-        <Compile Remove="Client\OleDb\**" />
-        <Compile Remove="Client\Oracle\**" />
-    </ItemGroup>
-
     <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
         <PackageReference Include="System.Data.Common" Version="4.3.0" />
         <Compile Remove="Client\OleDb\**" />
@@ -65,9 +59,20 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.2.0" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.1.0" />
         <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
         <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
         <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
+        <PackageReference Include="PostSharp" Version="6.10.12" />
+        <PackageReference Include="Castle.Windsor" Version="5.1.1" />
     </ItemGroup>
+
+<!--    <UsingTask AssemblyFile="Farseer.Net.Data.dll" TaskName="BuildTask">-->
+<!--    </UsingTask>-->
+<!--    <Target Name="BuildPO" AfterTargets="Build">-->
+<!--        <BuildTask></BuildTask>-->
+<!--    </Target>-->
+<!--    <UsingTask AssemblyFile="$(MSBuildProjectDirectory)..HelloTask.LibHelloTask.dll" TaskName="HelloTask"></UsingTask>-->
+
 </Project>

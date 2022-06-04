@@ -31,4 +31,8 @@
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>
+
+    <Target Name="Welcome" AfterTargets="CoreCompile">
+        <Message Text="感谢您支持Farseer.Net系列框架，如发现BUG，请到Github中反馈！" Importance="high" />
+    </Target>
 </Project>

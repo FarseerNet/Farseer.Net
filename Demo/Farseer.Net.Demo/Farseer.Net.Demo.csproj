@@ -12,7 +12,18 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="test.cs" />
+        <PackageReference Include="Microsoft.Build.Framework" Version="17.2.0" />
+        <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.2.0" />
+        <PackageReference Include="PostSharp" Version="6.10.12" />
     </ItemGroup>
 
+<!--    <Target Name="PostBuild" AfterTargets="PostBuildEvent">-->
+<!--      <Exec Command="12313" />-->
+<!--    </Target>-->
+
+
+    
+<!--    <Target Name="HelloWorld" AfterTargets="Build">-->
+<!--        <Message Text="******************************Hello World！******************************" Importance="high" />-->
+<!--    </Target>-->
 </Project>

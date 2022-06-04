@@ -11,6 +11,8 @@ internal class Program
     private static async Task Main(string[] args)
     {
         FarseerApplication.Run<StartupModule>().Initialize();
+        
+        new TransactionTest().AopTransactionByName();
         return;
         // 添加新用户（非事务）
         Console.WriteLine($"测试非事务：");

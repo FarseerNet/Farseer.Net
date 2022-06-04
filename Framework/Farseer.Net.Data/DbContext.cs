@@ -21,7 +21,9 @@ namespace FS.Data
         ///     通过数据库配置，连接数据库
         /// </summary>
         /// <param name="name"> 数据库配置名称 </param>
-        protected DbContext(string name)
+        // ReSharper disable once MemberCanBeProtected.Global
+        // TransactionNameAttribute AOP需要实例化，因此这里需要开启public
+        public DbContext(string name)
         {
             InternalContext = new InternalContext(GetType());
             // 如果name=null,说明需要动态分库

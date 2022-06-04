@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace Farseer.Net.Data.Test;
 
-public class TableSet : BaseTests
+public class TableSetTest : BaseTests
 {
     [Test]
     public async Task Select_ToEntity()
