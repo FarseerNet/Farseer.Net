@@ -3,6 +3,7 @@ using System.Threading;
 using Collections.Pooled;
 using FS;
 using FS.Cache;
+using FS.Core.Abstract.Cache;
 using FS.Core.Net;
 using FS.DI;
 using NUnit.Framework;
