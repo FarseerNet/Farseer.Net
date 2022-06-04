@@ -1,6 +1,6 @@
 using FS;
 using FS.Core.Abstract.Data;
-using FS.Core.Attribute.Data;
+using FS.Core.AOP.Data;
 
 namespace Farseer.Net.DataDemo;
 

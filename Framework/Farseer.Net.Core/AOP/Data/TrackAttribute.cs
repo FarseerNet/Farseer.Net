@@ -5,7 +5,7 @@ using PostSharp.Aspects;
 using PostSharp.Extensibility;
 using PostSharp.Serialization;
 
-namespace FS.Core.Attribute.Data;
+namespace FS.Core.AOP.Data;
 
 /// <summary>
 /// 手动埋点链路追踪

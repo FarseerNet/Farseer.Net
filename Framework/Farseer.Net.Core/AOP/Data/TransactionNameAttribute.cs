@@ -7,7 +7,7 @@ using FS.Reflection;
 using PostSharp.Aspects;
 using PostSharp.Serialization;
 
-namespace FS.Core.Attribute.Data;
+namespace FS.Core.AOP.Data;
 
 /// <summary>
 /// 事务执行

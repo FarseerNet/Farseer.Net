@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using FS;
-using FS.Core.Attribute.Data;
+using FS.Core.AOP.Data;
 using FS.Core.LinkTrack;
 
 namespace Farseer.Net.LinkTrackDemo
