@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Collections.Pooled;
 using FS.Data.Abstract;
+using FS.Data.Attribute;
 using FS.Extends;
 using FS.Utils.Common;
 
@@ -34,6 +35,7 @@ namespace FS.Data.Internal
         /// </summary>
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="sqlParam"> SQL语句与参数 </param>
+        [LinkTrackSqlParam]
         public int Execute(string callMethod, ISqlParam sqlParam)
         {
             SqlParam = sqlParam;
@@ -46,6 +48,7 @@ namespace FS.Data.Internal
         /// </summary>
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="sqlParam"> SQL语句与参数 </param>
+        [LinkTrackSqlParam]
         public async Task<int> ExecuteAsync(string callMethod, ISqlParam sqlParam)
         {
             SqlParam = sqlParam;
@@ -60,7 +63,8 @@ namespace FS.Data.Internal
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="procBuilder"> SQL语句与参数 </param>
         /// <param name="entity"> 实体类 </param>
-        public int Execute<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new()
+        [LinkTrackProcParam]
+        public int Execute<TEntity>(string callMethod, IProcParam procBuilder, TEntity entity) where TEntity : class, new()
         {
             // 生成SQL 输入、输出参数化
             var sqlParam = procBuilder.InitParam(entity: entity);
@@ -79,7 +83,8 @@ namespace FS.Data.Internal
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="procBuilder"> SQL语句与参数 </param>
         /// <param name="entity"> 实体类 </param>
-        public async Task<int> ExecuteAsync<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new()
+        [LinkTrackProcParam]
+        public async Task<int> ExecuteAsync<TEntity>(string callMethod, IProcParam procBuilder, TEntity entity) where TEntity : class, new()
         {
             // 生成SQL 输入、输出参数化
             var sqlParam = procBuilder.InitParam(entity: entity);
@@ -96,6 +101,7 @@ namespace FS.Data.Internal
         /// </summary>
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="sqlParam"> SQL语句与参数 </param>
+        [LinkTrackSqlParam]
         public DataTable ToTable(string callMethod, ISqlParam sqlParam)
         {
             SqlParam = sqlParam;
@@ -108,6 +114,7 @@ namespace FS.Data.Internal
         /// </summary>
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="sqlParam"> SQL语句与参数 </param>
+        [LinkTrackSqlParam]
         public async Task<DataTable> ToTableAsync(string callMethod, ISqlParam sqlParam)
         {
             SqlParam = sqlParam;
@@ -122,7 +129,8 @@ namespace FS.Data.Internal
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="procBuilder"> SQL语句与参数 </param>
         /// <param name="entity"> 实体类 </param>
-        public DataTable ToTable<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new()
+        [LinkTrackProcParam]
+        public DataTable ToTable<TEntity>(string callMethod, IProcParam procBuilder, TEntity entity) where TEntity : class, new()
         {
             // 生成SQL 输入、输出参数化
             var sqlParam = procBuilder.InitParam(entity: entity);
@@ -141,7 +149,8 @@ namespace FS.Data.Internal
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="procBuilder"> SQL语句与参数 </param>
         /// <param name="entity"> 实体类 </param>
-        public async Task<DataTable> ToTableAsync<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new()
+        [LinkTrackProcParam]
+        public async Task<DataTable> ToTableAsync<TEntity>(string callMethod, IProcParam procBuilder, TEntity entity) where TEntity : class, new()
         {
             // 生成SQL 输入、输出参数化
             var sqlParam = procBuilder.InitParam(entity: entity);
@@ -158,6 +167,7 @@ namespace FS.Data.Internal
         /// </summary>
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="sqlParam"> SQL语句与参数 </param>
+        [LinkTrackSqlParam]
         public PooledList<TEntity> ToList<TEntity>(string callMethod, ISqlParam sqlParam) where TEntity : class, new()
         {
             SqlParam = sqlParam;
@@ -170,6 +180,7 @@ namespace FS.Data.Internal
         /// </summary>
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="sqlParam"> SQL语句与参数 </param>
+        [LinkTrackSqlParam]
         public Task<PooledList<TEntity>> ToListAsync<TEntity>(string callMethod, ISqlParam sqlParam) where TEntity : class, new()
         {
             SqlParam = sqlParam;
@@ -177,7 +188,8 @@ namespace FS.Data.Internal
             return _contextProvider.DbExecutor.GetReaderAsync(cmdType: CommandType.Text, cmdText: sqlParam.Sql.ToString(), parameters: param).ToListAsync<TEntity>();
         }
 
-        public PooledList<TEntity> ToList<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new()
+        [LinkTrackProcParam]
+        public PooledList<TEntity> ToList<TEntity>(string callMethod, IProcParam procBuilder, TEntity entity) where TEntity : class, new()
         {
             // 生成SQL 输入、输出参数化
             var sqlParam = procBuilder.InitParam(entity: entity);
@@ -189,7 +201,8 @@ namespace FS.Data.Internal
             return value;
         }
 
-        public async Task<PooledList<TEntity>> ToListAsync<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new()
+        [LinkTrackProcParam]
+        public async Task<PooledList<TEntity>> ToListAsync<TEntity>(string callMethod, IProcParam procBuilder, TEntity entity) where TEntity : class, new()
         {
             // 生成SQL 输入、输出参数化
             var sqlParam = procBuilder.InitParam(entity: entity);
@@ -207,6 +220,7 @@ namespace FS.Data.Internal
         /// <typeparam name="TEntity"> 实体类 </typeparam>
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="sqlParam"> SQL语句与参数 </param>
+        [LinkTrackSqlParam]
         public TEntity ToEntity<TEntity>(string callMethod, ISqlParam sqlParam) where TEntity : class, new()
         {
             SqlParam = sqlParam;
@@ -227,12 +241,13 @@ namespace FS.Data.Internal
         /// <typeparam name="TEntity"> 实体类 </typeparam>
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="sqlParam"> SQL语句与参数 </param>
+        [LinkTrackSqlParam]
         public async Task<TEntity> ToEntityAsync<TEntity>(string callMethod, ISqlParam sqlParam) where TEntity : class, new()
         {
             SqlParam = sqlParam;
             var     param = sqlParam.Param?.ToArray();
             TEntity t;
-            using (var reader = await _contextProvider.DbExecutor.GetReaderAsync(cmdType: CommandType.Text, cmdText: sqlParam.Sql.ToString(), parameters: param))
+            await using (var reader = await _contextProvider.DbExecutor.GetReaderAsync(cmdType: CommandType.Text, cmdText: sqlParam.Sql.ToString(), parameters: param))
             {
                 t = reader.ToEntity<TEntity>();
             }
@@ -248,7 +263,8 @@ namespace FS.Data.Internal
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="procBuilder"> SQL语句与参数 </param>
         /// <param name="entity"> 实体类 </param>
-        public TEntity ToEntity<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new()
+        [LinkTrackProcParam]
+        public TEntity ToEntity<TEntity>(string callMethod, IProcParam procBuilder, TEntity entity) where TEntity : class, new()
         {
             // 生成SQL 输入、输出参数化
             var sqlParam = procBuilder.InitParam(entity: entity);
@@ -273,7 +289,8 @@ namespace FS.Data.Internal
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="procBuilder"> SQL语句与参数 </param>
         /// <param name="entity"> 实体类 </param>
-        public async Task<TEntity> ToEntityAsync<TEntity>(string callMethod, ProcBuilder procBuilder, TEntity entity) where TEntity : class, new()
+        [LinkTrackProcParam]
+        public async Task<TEntity> ToEntityAsync<TEntity>(string callMethod, IProcParam procBuilder, TEntity entity) where TEntity : class, new()
         {
             // 生成SQL 输入、输出参数化
             var sqlParam = procBuilder.InitParam(entity: entity);
@@ -298,6 +315,7 @@ namespace FS.Data.Internal
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="sqlParam"> SQL语句与参数 </param>
         /// <param name="defValue"> 默认值 </param>
+        [LinkTrackSqlParam]
         public T GetValue<T>(string callMethod, ISqlParam sqlParam, T defValue = default)
         {
             SqlParam = sqlParam;
@@ -313,6 +331,7 @@ namespace FS.Data.Internal
         /// <param name="callMethod"> 上游调用的方法名称 </param>
         /// <param name="sqlParam"> SQL语句与参数 </param>
         /// <param name="defValue"> 默认值 </param>
+        [LinkTrackSqlParam]
         public async Task<T> GetValueAsync<T>(string callMethod, ISqlParam sqlParam, T defValue = default)
         {
             SqlParam = sqlParam;
@@ -330,7 +349,8 @@ namespace FS.Data.Internal
         /// <param name="procBuilder"> 存储过程生成器 </param>
         /// <param name="entity"> 实体 </param>
         /// <param name="defValue"> 默认值 </param>
-        public T GetValue<TEntity, T>(string callMethod, ProcBuilder procBuilder, TEntity entity, T defValue = default) where TEntity : class, new()
+        [LinkTrackProcParam]
+        public T GetValue<TEntity, T>(string callMethod, IProcParam procBuilder, TEntity entity, T defValue = default) where TEntity : class, new()
         {
             // 生成SQL 输入、输出参数化
             var sqlParam = procBuilder.InitParam(entity: entity);
@@ -351,7 +371,8 @@ namespace FS.Data.Internal
         /// <param name="procBuilder"> 存储过程生成器 </param>
         /// <param name="entity"> 实体 </param>
         /// <param name="defValue"> 默认值 </param>
-        public async Task<T> GetValueAsync<TEntity, T>(string callMethod, ProcBuilder procBuilder, TEntity entity, T defValue = default) where TEntity : class, new()
+        [LinkTrackProcParam]
+        public async Task<T> GetValueAsync<TEntity, T>(string callMethod, IProcParam procBuilder, TEntity entity, T defValue = default) where TEntity : class, new()
         {
             // 生成SQL 输入、输出参数化
             var sqlParam = procBuilder.InitParam(entity: entity);

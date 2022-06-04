@@ -112,9 +112,6 @@ namespace FS.Data.Internal
                 DbExecutor = new DbExecutor(connectionString: DatabaseConnection.ConnectionString, dbType: DatabaseConnection.DbType, commandTimeout: DatabaseConnection.CommandTimeout, tranLevel: tranLevel, dbProvider: DbProvider);
                 ExecuteSql  = new ExecuteSql(contextProvider: this);
 
-                // 记录执行链路（通过代理模式实现）
-                ExecuteSql = new ExecuteSqlMonitorProxy(db: ExecuteSql, dbProvider: DbProvider);
-
                 // 队列管理者
                 QueryManger = new QueryManger(provider: this);
                 // 手动编写SQL

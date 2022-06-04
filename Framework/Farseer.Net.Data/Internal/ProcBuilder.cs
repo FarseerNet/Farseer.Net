@@ -49,7 +49,7 @@ namespace FS.Data.Internal
         /// </summary>
         /// <typeparam name="TEntity"> 实体类 </typeparam>
         /// <param name="entity"> 实体类 </param>
-        internal IProcParam InitParam<TEntity>(TEntity entity) where TEntity : class, new()
+        public IProcParam InitParam<TEntity>(TEntity entity) where TEntity : class, new()
         {
             Param = _dbProvider.DbParam.InitParam(map: SetMap.PhysicsMap, entity: entity).ToPooledList();
             return this;
@@ -60,7 +60,7 @@ namespace FS.Data.Internal
         /// </summary>
         /// <typeparam name="TEntity"> 实体类 </typeparam>
         /// <param name="entity"> 实体类 </param>
-        internal void SetParamToEntity<TEntity>(TEntity entity) where TEntity : class, new()
+        public void SetParamToEntity<TEntity>(TEntity entity) where TEntity : class, new()
         {
             _dbProvider.DbParam.SetParamToEntity(map: SetMap.PhysicsMap, lstParam: Param, entity: entity);
         }
