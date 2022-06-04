@@ -13,4 +13,4 @@ using Microsoft.Diagnostics.Tracing.Parsers.MicrosoftWindowsTCPIP;
 // lst.Dispose();
 // Console.WriteLine(testUsingPooled.User.Name);
 // Console.WriteLine(lst.Count);
-BenchmarkDotNet.Running.BenchmarkRunner.Run<AopSpeed>();
+BenchmarkDotNet.Running.BenchmarkRunner.Run<StackTraceSpeed>();
