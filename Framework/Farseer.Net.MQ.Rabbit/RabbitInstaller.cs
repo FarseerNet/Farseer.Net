@@ -5,6 +5,7 @@ using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using Collections.Pooled;
+using FS.Core.Abstract.MQ.Rabbit;
 using FS.DI;
 using FS.MQ.Rabbit.Attr;
 using FS.MQ.Rabbit.Configuration;

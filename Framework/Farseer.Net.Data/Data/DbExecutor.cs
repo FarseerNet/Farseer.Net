@@ -4,17 +4,18 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using FS.Core.Abstract.Data;
+using FS.Core.AOP.LinkTrack;
 using FS.Core.LinkTrack;
 using FS.Data.Abstract;
 using FS.Data.Client;
-using FS.DI;
 
 namespace FS.Data.Data
 {
     /// <summary>
     ///     数据库操作
     /// </summary>
-    public sealed class DbExecutor : IDisposable
+    public sealed class DbExecutor : IDbExecutor
     {
         /// <summary>
         ///     数据库执行时间，单位秒
@@ -24,7 +25,12 @@ namespace FS.Data.Data
         /// <summary>
         ///     连接字符串
         /// </summary>
-        private readonly string _connectionString;
+        public string ConnectionString { get; }
+
+        /// <summary>
+        ///     是否开启事务
+        /// </summary>
+        public bool IsTransaction { get; private set; }
 
         private readonly AbsDbProvider _dbProvider;
 
@@ -55,17 +61,13 @@ namespace FS.Data.Data
         /// <param name="dbProvider"> </param>
         public DbExecutor(string connectionString, eumDbType dbType, int commandTimeout = 30, IsolationLevel tranLevel = IsolationLevel.Unspecified, AbsDbProvider dbProvider = null)
         {
-            _connectionString = connectionString;
-            _commandTimeout   = commandTimeout;
-            _dbProvider       = dbProvider;
-            DataType          = dbType;
-            OpenTran(tranLevel: tranLevel);
-        }
+            ConnectionString = connectionString;
+            _commandTimeout  = commandTimeout;
+            _dbProvider      = dbProvider;
+            DataType         = dbType;
 
-        /// <summary>
-        ///     是否开启事务
-        /// </summary>
-        internal bool IsTransaction { get; private set; }
+            SetTranLevel(tranLevel: tranLevel);
+        }
 
         /// <summary>
         ///     事务级别
@@ -82,10 +84,10 @@ namespace FS.Data.Data
         }
 
         /// <summary>
-        ///     开启事务。
+        ///     修改事务。
         /// </summary>
         /// <param name="tranLevel"> 事务方式 </param>
-        public void OpenTran(IsolationLevel tranLevel)
+        public void SetTranLevel(IsolationLevel tranLevel)
         {
             TranLevel     = tranLevel;
             IsTransaction = tranLevel != IsolationLevel.Unspecified;
@@ -94,7 +96,7 @@ namespace FS.Data.Data
         /// <summary>
         ///     关闭事务。
         /// </summary>
-        public void CloseTran()
+        public void CancelTran()
         {
             if (IsTransaction) _comm?.Transaction?.Dispose();
 
@@ -102,37 +104,56 @@ namespace FS.Data.Data
         }
 
         /// <summary>
-        ///     打开数据库连接
+        ///     初始化并打开数据库
         /// </summary>
-        private void Open()
+        private void InitAndOpen()
         {
-            if (_comm == null || _comm.Connection == null)
-            {
-                _factory = _dbProvider.DbProviderFactory;
-                _comm    = _factory.CreateCommand();
-                // ReSharper disable once PossibleNullReferenceException
-                _comm.Connection                  = _factory.CreateConnection();
-                _comm.Connection.ConnectionString = _connectionString;
-                _comm.CommandTimeout              = _commandTimeout;
-            }
-
+            InitCommand();
             if (_comm.Connection.State == ConnectionState.Closed)
             {
-                using (FsLinkTrack.TrackDatabase(method: $"Connection.Open IsTransaction={IsTransaction}", connectionString: _connectionString))
-                {
-                    _comm.Parameters.Clear();
-                    _comm.Connection.Open();
-
-                    // 是否开启事务
-                    if (IsTransaction) _comm.Transaction = _comm.Connection.BeginTransaction(isolationLevel: TranLevel);
-                }
+                Open();
             }
         }
 
         /// <summary>
-        ///     打开数据库连接
+        ///     初始化并打开数据库
         /// </summary>
+        private async Task InitAndOpenAsync()
+        {
+            InitCommand();
+            if (_comm.Connection.State == ConnectionState.Closed)
+            {
+                await OpenAsync();
+            }
+        }
+
+        /// <summary>
+        /// 打开数据库
+        /// </summary>
+        [TrackDatabase]
+        private void Open()
+        {
+            _comm.Connection.Open();
+            // 是否开启事务
+            if (IsTransaction) _comm.Transaction = _comm.Connection.BeginTransaction(isolationLevel: TranLevel);
+        }
+
+        /// <summary>
+        /// 打开数据库
+        /// </summary>
+        [TrackDatabase]
         private async Task OpenAsync()
+        {
+            await _comm.Connection.OpenAsync();
+
+            // 是否开启事务
+            if (IsTransaction) _comm.Transaction = await _comm.Connection.BeginTransactionAsync(isolationLevel: TranLevel);
+        }
+
+        /// <summary>
+        /// 初始化Command
+        /// </summary>
+        private void InitCommand()
         {
             if (_comm == null || _comm.Connection == null)
             {
@@ -140,21 +161,10 @@ namespace FS.Data.Data
                 _comm    = _factory.CreateCommand();
                 // ReSharper disable once PossibleNullReferenceException
                 _comm.Connection                  = _factory.CreateConnection();
-                _comm.Connection.ConnectionString = _connectionString;
+                _comm.Connection.ConnectionString = ConnectionString;
                 _comm.CommandTimeout              = _commandTimeout;
             }
-
-            if (_comm.Connection.State == ConnectionState.Closed)
-            {
-                using (FsLinkTrack.TrackDatabase(method: $"Connection.OpenAsync IsTransaction={IsTransaction}", connectionString: _connectionString))
-                {
-                    _comm.Parameters.Clear();
-                    await _comm.Connection.OpenAsync();
-
-                    // 是否开启事务
-                    if (IsTransaction) _comm.Transaction = _comm.Connection.BeginTransaction(isolationLevel: TranLevel);
-                }
-            }
+            _comm.Parameters.Clear();
         }
 
         /// <summary>
@@ -177,29 +187,25 @@ namespace FS.Data.Data
         ///     提交事务
         ///     如果未开启事务则会引发异常
         /// </summary>
+        [TrackDatabase]
         public void Commit()
         {
-            using (FsLinkTrack.TrackDatabase(method: "Transaction.Commit", connectionString: _connectionString))
-            {
-                if (_comm             == null) return;
-                if (_comm.Transaction == null) throw new Exception(message: "未开启事务");
+            if (_comm             == null) return;
+            if (_comm.Transaction == null) throw new Exception(message: "未开启事务");
 
-                _comm.Transaction.Commit();
-            }
+            _comm.Transaction.Commit();
         }
 
         /// <summary>
         ///     回滚事务
         ///     如果未开启事务则会引发异常
         /// </summary>
+        [TrackDatabase]
         public void Rollback()
         {
-            using (FsLinkTrack.TrackDatabase(method: "Transaction.Rollback", connectionString: _connectionString))
-            {
-                if (_comm?.Transaction == null) throw new Exception(message: "未开启事务");
+            if (_comm?.Transaction == null) throw new Exception(message: "未开启事务");
 
-                _comm.Transaction.Rollback();
-            }
+            _comm.Transaction.Rollback();
         }
 
         /// <summary>
@@ -215,7 +221,7 @@ namespace FS.Data.Data
 
             try
             {
-                Open();
+                InitAndOpen();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
 
@@ -228,10 +234,7 @@ namespace FS.Data.Data
                     })
                     _comm.Parameters.AddRange(values: parameters);
 
-                //using (FsLinkTrack.TrackDatabase("ExecuteScalar", _connectionString, cmdType, cmdText, parameters))
-                {
-                    return _comm.ExecuteScalar();
-                }
+                return _comm.ExecuteScalar();
             }
             catch (Exception)
             {
@@ -257,7 +260,7 @@ namespace FS.Data.Data
 
             try
             {
-                await OpenAsync();
+                await InitAndOpenAsync();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
                 if (_dbProvider.DbParam is
@@ -269,10 +272,7 @@ namespace FS.Data.Data
                     })
                     _comm.Parameters.AddRange(values: parameters);
 
-                //using (FsLinkTrack.TrackDatabase("ExecuteScalarAsync", _connectionString, cmdType, cmdText, parameters))
-                {
-                    return await _comm.ExecuteScalarAsync();
-                }
+                return await _comm.ExecuteScalarAsync();
             }
             catch (Exception)
             {
@@ -298,7 +298,7 @@ namespace FS.Data.Data
 
             try
             {
-                Open();
+                InitAndOpen();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
                 if (_dbProvider.DbParam is
@@ -310,10 +310,7 @@ namespace FS.Data.Data
                     })
                     _comm.Parameters.AddRange(values: parameters);
 
-                //using (FsLinkTrack.TrackDatabase("ExecuteNonQuery", _connectionString, cmdType, cmdText, parameters))
-                {
-                    return _comm.ExecuteNonQuery();
-                }
+                return _comm.ExecuteNonQuery();
             }
             catch (Exception)
             {
@@ -339,7 +336,7 @@ namespace FS.Data.Data
 
             try
             {
-                await OpenAsync();
+                await InitAndOpenAsync();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
                 if (_dbProvider.DbParam is
@@ -351,10 +348,7 @@ namespace FS.Data.Data
                     })
                     _comm.Parameters.AddRange(values: parameters);
 
-                //using (FsLinkTrack.TrackDatabase("ExecuteNonQueryAsync", _connectionString, cmdType, cmdText, parameters))
-                {
-                    return await _comm.ExecuteNonQueryAsync();
-                }
+                return await _comm.ExecuteNonQueryAsync();
             }
             catch (Exception)
             {
@@ -380,7 +374,7 @@ namespace FS.Data.Data
 
             try
             {
-                Open();
+                InitAndOpen();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
                 if (_dbProvider.DbParam is
@@ -392,10 +386,7 @@ namespace FS.Data.Data
                     })
                     _comm.Parameters.AddRange(values: parameters);
 
-                //using (FsLinkTrack.TrackDatabase("ExecuteReader", _connectionString, cmdType, cmdText, parameters))
-                {
-                    return IsTransaction ? _comm.ExecuteReader() : _comm.ExecuteReader(behavior: CommandBehavior.CloseConnection);
-                }
+                return IsTransaction ? _comm.ExecuteReader() : _comm.ExecuteReader(behavior: CommandBehavior.CloseConnection);
             }
             catch (Exception)
             {
@@ -417,7 +408,7 @@ namespace FS.Data.Data
 
             try
             {
-                await OpenAsync();
+                await InitAndOpenAsync();
 
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
@@ -430,10 +421,7 @@ namespace FS.Data.Data
                     })
                     _comm.Parameters.AddRange(values: parameters);
 
-                //using (FsLinkTrack.TrackDatabase("ExecuteReaderAsync", _connectionString, cmdType, cmdText, parameters))
-                {
-                    return await (IsTransaction ? _comm.ExecuteReaderAsync() : _comm.ExecuteReaderAsync(behavior: CommandBehavior.CloseConnection));
-                }
+                return await (IsTransaction ? _comm.ExecuteReaderAsync() : _comm.ExecuteReaderAsync(behavior: CommandBehavior.CloseConnection));
             }
             catch (Exception)
             {
@@ -455,7 +443,7 @@ namespace FS.Data.Data
 
             try
             {
-                Open();
+                InitAndOpen();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
                 if (_dbProvider.DbParam is
@@ -467,14 +455,11 @@ namespace FS.Data.Data
                     })
                     _comm.Parameters.AddRange(values: parameters);
 
-                //using (FsLinkTrack.TrackDatabase("CreateDataAdapter", _connectionString, cmdType, cmdText, parameters))
-                {
-                    var ada = _factory.CreateDataAdapter();
-                    ada.SelectCommand = _comm;
-                    var ds = new DataSet();
-                    ada.Fill(dataSet: ds);
-                    return ds;
-                }
+                var ada = _factory.CreateDataAdapter();
+                ada.SelectCommand = _comm;
+                var ds = new DataSet();
+                ada.Fill(dataSet: ds);
+                return ds;
             }
             catch (Exception)
             {
@@ -500,7 +485,7 @@ namespace FS.Data.Data
 
             try
             {
-                await OpenAsync();
+                await InitAndOpenAsync();
                 _comm.CommandType = cmdType;
                 _comm.CommandText = cmdText;
                 if (_dbProvider.DbParam is
@@ -512,15 +497,12 @@ namespace FS.Data.Data
                     })
                     _comm.Parameters.AddRange(values: parameters);
 
-                //using (FsLinkTrack.TrackDatabase("CreateDataAdapter", _connectionString, cmdType, cmdText, parameters))
-                {
-                    var dataAdapter = _factory.CreateDataAdapter();
-                    // ReSharper disable once PossibleNullReferenceException
-                    dataAdapter.SelectCommand = _comm;
-                    var ds = new DataSet();
-                    dataAdapter.Fill(dataSet: ds);
-                    return ds;
-                }
+                var dataAdapter = _factory.CreateDataAdapter();
+                // ReSharper disable once PossibleNullReferenceException
+                dataAdapter.SelectCommand = _comm;
+                var ds = new DataSet();
+                dataAdapter.Fill(dataSet: ds);
+                return ds;
             }
             catch (Exception)
             {
@@ -568,16 +550,13 @@ namespace FS.Data.Data
 
             try
             {
-                using (FsLinkTrack.TrackDatabase(method: "SqlBulkCopy", connectionString: _connectionString, tableName: tableName))
+                InitAndOpen();
+                using (var bulkCopy = new SqlBulkCopy(connection: (SqlConnection)_comm.Connection, copyOptions: SqlBulkCopyOptions.Default, externalTransaction: (SqlTransaction)_comm.Transaction))
                 {
-                    Open();
-                    using (var bulkCopy = new SqlBulkCopy(connection: (SqlConnection)_comm.Connection, copyOptions: SqlBulkCopyOptions.Default, externalTransaction: (SqlTransaction)_comm.Transaction))
-                    {
-                        bulkCopy.DestinationTableName = tableName;
-                        bulkCopy.BatchSize            = dt.Rows.Count;
-                        bulkCopy.BulkCopyTimeout      = 3600;
-                        bulkCopy.WriteToServer(table: dt);
-                    }
+                    bulkCopy.DestinationTableName = tableName;
+                    bulkCopy.BatchSize            = dt.Rows.Count;
+                    bulkCopy.BulkCopyTimeout      = 3600;
+                    bulkCopy.WriteToServer(table: dt);
                 }
             }
             catch (Exception)
@@ -602,16 +581,13 @@ namespace FS.Data.Data
 
             try
             {
-                using (FsLinkTrack.TrackDatabase(method: "SqlBulkCopy", connectionString: _connectionString, tableName: tableName))
+                await InitAndOpenAsync();
+                using (var bulkCopy = new SqlBulkCopy(connection: (SqlConnection)_comm.Connection, copyOptions: SqlBulkCopyOptions.Default, externalTransaction: (SqlTransaction)_comm.Transaction))
                 {
-                    await OpenAsync();
-                    using (var bulkCopy = new SqlBulkCopy(connection: (SqlConnection)_comm.Connection, copyOptions: SqlBulkCopyOptions.Default, externalTransaction: (SqlTransaction)_comm.Transaction))
-                    {
-                        bulkCopy.DestinationTableName = tableName;
-                        bulkCopy.BatchSize            = dt.Rows.Count;
-                        bulkCopy.BulkCopyTimeout      = 3600;
-                        await bulkCopy.WriteToServerAsync(table: dt);
-                    }
+                    bulkCopy.DestinationTableName = tableName;
+                    bulkCopy.BatchSize            = dt.Rows.Count;
+                    bulkCopy.BulkCopyTimeout      = 3600;
+                    await bulkCopy.WriteToServerAsync(table: dt);
                 }
             }
             catch (Exception)

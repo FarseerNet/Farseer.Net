@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using Collections.Pooled;
+using FS.Core.Abstract.MQ;
 using FS.Core.Abstract.MQ.Queue;
+using FS.Core.AOP.LinkTrack;
 using FS.DI;
 using FS.MQ.Queue.Configuration;
 
@@ -17,6 +18,7 @@ namespace FS.MQ.Queue
         /// 队列数据
         /// </summary>
         private readonly IQueueList _queueList;
+        public string QueueName => _queueConfig.Name;
         public QueueProduct(QueueConfig queueConfig)
         {
             if (queueConfig.MaxCount  == 0) queueConfig.MaxCount  = 1000000;
@@ -30,6 +32,7 @@ namespace FS.MQ.Queue
         ///     发送数据
         /// </summary>
         /// <param name="data"> 数据 </param>
+        [TrackMqProduct(MqType.Queue)]
         public void Send(object data)
         {
             _queueList.CheckAndMoveQueue();
@@ -40,6 +43,7 @@ namespace FS.MQ.Queue
         ///     发送数据
         /// </summary>
         /// <param name="datalist"> 数据 </param>
+        [TrackMqProduct(MqType.Queue)]
         public void Send(IEnumerable<object> datalist)
         {
             // 如果当前集合 + 要添加的数据的大小，超出设置的拉取数量，则需要做集合切割

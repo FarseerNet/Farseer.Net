@@ -6,5 +6,6 @@ namespace FS.Core.LinkTrack
         Fss,
         Consumer,
         BackgroundService,
+        Job,
     }
 }

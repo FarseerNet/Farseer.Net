@@ -1,4 +1,4 @@
-namespace FS.Core.Abstract.RedisStream;
+namespace FS.Core.Abstract.MQ.RedisStream;
 
 public class RedisStreamMessage
 {

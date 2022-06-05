@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Collections.Pooled;
+using FS.Core.Abstract.MQ.Rabbit;
 using FS.Core.LinkTrack;
 using FS.DI;
 using FS.MQ.Rabbit.Attr;
@@ -72,11 +73,6 @@ namespace FS.MQ.Rabbit
         private DateTime _lastAckAt;
 
         /// <summary>
-        /// 是否使用链路追踪
-        /// </summary>
-        private bool _useLinkTrack;
-
-        /// <summary>
         ///     消费客户端
         /// </summary>
         /// <param name="iocManager"> IOC </param>
@@ -97,7 +93,6 @@ namespace FS.MQ.Rabbit
             _lastAckAt             = DateTime.Now;
 
             if (!iocManager.IsRegistered(name: consumerType.FullName)) iocManager.Register(type: consumerType, name: consumerType.FullName, lifeStyle: DependencyLifeStyle.Transient);
-            _useLinkTrack = _iocManager.IsRegistered<ILinkTrackQueue>();
         }
 
         /// <summary>
@@ -186,14 +181,7 @@ namespace FS.MQ.Rabbit
                 var message         = Encoding.UTF8.GetString(bytes: ea.Body.ToArray());
                 try
                 {
-                    using (FsLinkTrack.TrackMqConsumer(endPort: _rabbitConnect.Connection.Endpoint.ToString(), queueName: _queueName, method: "RabbitConsumer", message))
-                    {
-                        result = await consumerService.Consumer(message: message, sender: model, ea: ea);
-                    }
-
-                    // 写入链路追踪
-                    if (_useLinkTrack) _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
-
+                    result     = await consumerService.Consumer(message: message, sender: model, ea: ea);
                     _lastAckAt = DateTime.Now;
                 }
                 catch (AlreadyClosedException e) // rabbit被关闭了，重新打开链接
@@ -207,13 +195,7 @@ namespace FS.MQ.Rabbit
                     IocManager.Instance.Logger<RabbitConsumer>().LogError(exception: e, message: consumerService.GetType().FullName);
                     try
                     {
-                        using (FsLinkTrack.TrackMqConsumer(endPort: _rabbitConnect.Connection.Endpoint.ToString(), queueName: _queueName, method: "RabbitConsumer", message))
-                        {
-                            result = await consumerService.FailureHandling(message: message, sender: model, ea: ea);
-                        }
-
-                        // 写入链路追踪
-                        if (_useLinkTrack) _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
+                        result = await consumerService.FailureHandling(message: message, sender: model, ea: ea);
                     }
                     catch (Exception exception)
                     {

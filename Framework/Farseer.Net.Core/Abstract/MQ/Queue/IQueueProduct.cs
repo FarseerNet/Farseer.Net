@@ -3,7 +3,7 @@ using Collections.Pooled;
 
 namespace FS.Core.Abstract.MQ.Queue
 {
-    public interface IQueueProduct
+    public interface IQueueProduct: IMqProduct
     {
         /// <summary>
         ///     发送数据

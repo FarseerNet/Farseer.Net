@@ -1,4 +1,4 @@
-namespace FS.MQ.Rabbit
+namespace FS.Core.Abstract.MQ.Rabbit
 {
     public enum eumExchangeType
     {

@@ -9,12 +9,12 @@ using PostSharp.Serialization;
 namespace FS.Core.AOP.LinkTrack;
 
 /// <summary>
-/// 手动埋点链路追踪
+/// 关键位置埋点链路追踪
 /// </summary>
 [PSerializable]
 [AttributeUsage(AttributeTargets.Method                                                                 | AttributeTargets.Class | AttributeTargets.Constructor, AllowMultiple = true)]
 [MulticastAttributeUsage(MulticastTargets.Method, TargetMemberAttributes = MulticastAttributes.Instance | MulticastAttributes.Static, Inheritance = MulticastInheritance.Multicast)]
-public class TrackAttribute : MethodInterceptionAspect
+public class TrackKeyLocationAttribute : MethodInterceptionAspect
 {
     public override void OnInvoke(MethodInterceptionArgs args)
     {
@@ -22,7 +22,7 @@ public class TrackAttribute : MethodInterceptionAspect
         var argsString = string.Join(", ", args.Arguments.Select(p => $"{p.GetType().Name} = {p}"));
 
         var callName = args.Method.DeclaringType != null ? $"{args.Method.DeclaringType.Name}.{args.Method.Name}" : $"{args.Method.Name}";
-        using (FsLinkTrack.Track($"{returnType} {callName}({argsString})"))
+        using (FsLinkTrack.TrackKeyLocation($"{returnType} {callName}({argsString})"))
         {
             args.Proceed();
         }
@@ -34,7 +34,7 @@ public class TrackAttribute : MethodInterceptionAspect
         var argsString = string.Join(", ", args.Arguments.Select(p => $"{p.GetType().Name} = {p}"));
 
         var callName = args.Method.DeclaringType != null ? $"{args.Method.DeclaringType.Name}.{args.Method.Name}" : $"{args.Method.Name}";
-        using (FsLinkTrack.Track($"{returnType} {callName}({argsString})"))
+        using (FsLinkTrack.TrackKeyLocation($"{returnType} {callName}({argsString})"))
         {
             await args.ProceedAsync();
         }

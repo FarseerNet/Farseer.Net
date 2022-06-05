@@ -1,6 +1,6 @@
 using System;
 
-namespace FS.MQ.Rabbit.Attr
+namespace FS.Core.Abstract.MQ.Rabbit
 {
     [AttributeUsage(validOn: AttributeTargets.Class, AllowMultiple = true)]
     public class ConsumerAttribute : Attribute

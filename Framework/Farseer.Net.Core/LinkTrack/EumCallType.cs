@@ -8,6 +8,7 @@ namespace FS.Core.LinkTrack
         Redis         = 3,
         Mq            = 4,
         Elasticsearch = 5,
-        Custom        = 6
+        Custom        = 6,
+        KeyLocation   = 7,
     }
 }

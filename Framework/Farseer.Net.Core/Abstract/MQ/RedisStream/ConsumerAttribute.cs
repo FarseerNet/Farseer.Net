@@ -1,6 +1,6 @@
 using System;
 
-namespace FS.MQ.RedisStream.Attr
+namespace FS.Core.Abstract.MQ.RedisStream
 {
     [AttributeUsage(validOn: AttributeTargets.Class, AllowMultiple = true)]
     public class ConsumerAttribute : Attribute

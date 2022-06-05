@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using FS;
 using FS.Core.AOP.Data;
 using FS.Core.AOP.LinkTrack;
@@ -12,7 +13,8 @@ namespace Farseer.Net.LinkTrackDemo
         private static void Main(string[] args)
         {
             FarseerApplication.Run<StartupModule>().Initialize();
-            new TrackDemo().Execute1();
+            new TrackDemo().Execute1<int, string>(new AAA<int, string>());
+            new TrackDemo().ExecuteAsync();
 
             Thread.Sleep(millisecondsTimeout: -1);
         }
@@ -21,9 +23,12 @@ namespace Farseer.Net.LinkTrackDemo
     [Track] // 此处如果标记了，则Execute1、Execute2方法不需要再指定Track
     public class TrackDemo
     {
-        [Track]
-        public void Execute1() { }
-        
+        public void Execute1<TRequest, TResponse>(AAA<TRequest, TResponse> test) { }
+        public Task ExecuteAsync()
+        {
+            return Task.FromResult(0);
+        }
+
         // 虽然我没有标记[Track]，但类中已标记，此处也会继承。
         public void Execute2() { }
 
@@ -35,5 +40,10 @@ namespace Farseer.Net.LinkTrackDemo
                 // doSomething
             }
         }
+    }
+
+    public class AAA<TRequest, TResponse>
+    {
+
     }
 }

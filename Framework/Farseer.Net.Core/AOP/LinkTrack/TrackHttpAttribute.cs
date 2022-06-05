@@ -17,7 +17,7 @@ namespace FS.Core.AOP.LinkTrack;
 /// </summary>
 [PSerializable]
 [AttributeUsage(AttributeTargets.Method                                                                 | AttributeTargets.Class | AttributeTargets.Constructor, AllowMultiple = true)]
-[MulticastAttributeUsage(MulticastTargets.Method, TargetMemberAttributes = MulticastAttributes.Instance | MulticastAttributes.Static)]
+[MulticastAttributeUsage(MulticastTargets.Method, TargetMemberAttributes = MulticastAttributes.Instance | MulticastAttributes.Static, Inheritance = MulticastInheritance.Multicast)]
 public class TrackHttpAttribute : MethodInterceptionAspect
 {
     private string _method;

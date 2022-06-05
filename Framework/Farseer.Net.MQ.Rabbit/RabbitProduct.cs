@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using FS.Core.Abstract.MQ;
+using FS.Core.AOP.LinkTrack;
 using FS.Core.LinkTrack;
 using FS.DI;
 using FS.MQ.Rabbit.Configuration;
@@ -27,6 +29,7 @@ namespace FS.MQ.Rabbit
         private readonly ProductConfig _productConfig;
 
         private readonly ConcurrentQueue<IModel> Stacks = new();
+        public           string                  QueueName => _productConfig.ExchangeName;
 
         public RabbitProduct(RabbitConnect connect, ProductConfig productConfig)
         {
@@ -54,7 +57,7 @@ namespace FS.MQ.Rabbit
         /// <param name="message"> 消息主体 </param>
         /// <param name="funcBasicProperties"> 属性 </param>
         public bool Send(IEnumerable<string> message, Action<IBasicProperties> funcBasicProperties = null) => Send(message: message, routingKey: _productConfig.RoutingKey, exchange: _productConfig.ExchangeName, funcBasicProperties: funcBasicProperties);
-        
+
         /// <summary>
         ///     发送消息（Routingkey默认配置中的RoutingKey；ExchangeName默认配置中的ExchangeName）
         /// </summary>
@@ -78,37 +81,35 @@ namespace FS.MQ.Rabbit
         /// <param name="routingKey"> 路由KEY名称 </param>
         /// <param name="exchange"> 交换器名称 </param>
         /// <param name="funcBasicProperties"> 属性 </param>
-        public bool Send(string message, string routingKey, string exchange, Action<IBasicProperties> funcBasicProperties = null)
+        [TrackMqProduct(MqType.Rabbit)]
+        internal bool Send(string message, string routingKey, string exchange, Action<IBasicProperties> funcBasicProperties = null)
         {
-            using (FsLinkTrack.TrackMqProduct(method: $"Rabbit.Send.{exchange}"))
+            IModel channel = null;
+            try
             {
-                IModel channel = null;
-                try
-                {
-                    channel = CreateChannel();
+                channel = CreateChannel();
 
-                    var basicProperties = channel.CreateBasicProperties();
-                    // 默认设置为消息持久化
-                    if (funcBasicProperties != null)
-                        funcBasicProperties(obj: basicProperties);
-                    else
-                        basicProperties.DeliveryMode = 2;
+                var basicProperties = channel.CreateBasicProperties();
+                // 默认设置为消息持久化
+                if (funcBasicProperties != null)
+                    funcBasicProperties(obj: basicProperties);
+                else
+                    basicProperties.DeliveryMode = 2;
 
-                    //消息内容
-                    var body = Encoding.UTF8.GetBytes(s: message);
-                    //发送消息
-                    channel.BasicPublish(exchange: exchange, routingKey: routingKey, basicProperties: basicProperties, body: body);
-                    return !_productConfig.UseConfirmModel || channel.WaitForConfirms();
-                }
-                catch (Exception e)
-                {
-                    IocManager.Instance.Logger<RabbitProduct>().LogError(exception: e, message: e.ToString());
-                    return false;
-                }
-                finally
-                {
-                    Close(channel: channel);
-                }
+                //消息内容
+                var body = Encoding.UTF8.GetBytes(s: message);
+                //发送消息
+                channel.BasicPublish(exchange: exchange, routingKey: routingKey, basicProperties: basicProperties, body: body);
+                return !_productConfig.UseConfirmModel || channel.WaitForConfirms();
+            }
+            catch (Exception e)
+            {
+                IocManager.Instance.Logger<RabbitProduct>().LogError(exception: e, message: e.ToString());
+                return false;
+            }
+            finally
+            {
+                Close(channel: channel);
             }
         }
 
@@ -119,41 +120,39 @@ namespace FS.MQ.Rabbit
         /// <param name="routingKey"> 路由KEY名称 </param>
         /// <param name="exchange"> 交换器名称 </param>
         /// <param name="funcBasicProperties"> 属性 </param>
+        [TrackMqProduct(MqType.Rabbit)]
         public bool Send(IEnumerable<string> message, string routingKey, string exchange, Action<IBasicProperties> funcBasicProperties = null)
         {
-            using (FsLinkTrack.TrackMqProduct(method: $"Rabbit.Send.{exchange}"))
+            IModel channel = null;
+            try
             {
-                IModel channel = null;
-                try
-                {
-                    channel = CreateChannel();
+                channel = CreateChannel();
 
-                    var basicProperties = channel.CreateBasicProperties();
-                    // 默认设置为消息持久化
-                    if (funcBasicProperties != null)
-                        funcBasicProperties(obj: basicProperties);
-                    else
-                        basicProperties.DeliveryMode = 2;
+                var basicProperties = channel.CreateBasicProperties();
+                // 默认设置为消息持久化
+                if (funcBasicProperties != null)
+                    funcBasicProperties(obj: basicProperties);
+                else
+                    basicProperties.DeliveryMode = 2;
 
-                    foreach (var msg in message)
-                    {
-                        //消息内容
-                        var body = Encoding.UTF8.GetBytes(s: msg);
-                        //发送消息
-                        channel.BasicPublish(exchange: exchange, routingKey: routingKey, basicProperties: basicProperties, body: body);
-                    }
+                foreach (var msg in message)
+                {
+                    //消息内容
+                    var body = Encoding.UTF8.GetBytes(s: msg);
+                    //发送消息
+                    channel.BasicPublish(exchange: exchange, routingKey: routingKey, basicProperties: basicProperties, body: body);
+                }
 
-                    return !_productConfig.UseConfirmModel || channel.WaitForConfirms();
-                }
-                catch (Exception e)
-                {
-                    IocManager.Instance.Logger<RabbitProduct>().LogError(exception: e, message: e.ToString());
-                    return false;
-                }
-                finally
-                {
-                    Close(channel: channel);
-                }
+                return !_productConfig.UseConfirmModel || channel.WaitForConfirms();
+            }
+            catch (Exception e)
+            {
+                IocManager.Instance.Logger<RabbitProduct>().LogError(exception: e, message: e.ToString());
+                return false;
+            }
+            finally
+            {
+                Close(channel: channel);
             }
         }
 
@@ -182,9 +181,9 @@ namespace FS.MQ.Rabbit
 
                         // 取出失败，说明没有可用频道，需要创建新的
                         if (tryPop && channel is
-                        {
-                            IsClosed: false
-                        })
+                            {
+                                IsClosed: false
+                            })
                         {
                             channel.Close();
                             channel.Dispose();
@@ -211,9 +210,9 @@ namespace FS.MQ.Rabbit
 
                 // 取出失败，说明没有可用频道，需要创建新的
                 if (tryPop && channel is
-                {
-                    IsClosed: false
-                })
+                    {
+                        IsClosed: false
+                    })
                     return channel;
 
                 channel = _connect.Connection.CreateModel();

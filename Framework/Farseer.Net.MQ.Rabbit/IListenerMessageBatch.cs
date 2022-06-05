@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Collections.Pooled;
+using FS.Core.Abstract.MQ;
+using FS.Core.Abstract.MQ.Rabbit;
+using FS.Core.AOP.LinkTrack;
 using FS.DI;
 using FS.MQ.Rabbit.Attr;
 using FS.MQ.Rabbit.Configuration;
@@ -22,12 +25,14 @@ namespace FS.MQ.Rabbit
         /// <param name="messages"> </param>
         /// <param name="resp"> </param>
         /// <returns> 当开启手动确认时，返回true时，才会进行ACK确认 </returns>
+        [TrackMqConsumer(MqType.Rabbit)]
         Task<bool> Consumer(IEnumerable<string> messages, IEnumerable<BasicGetResult> resp);
 
         /// <summary>
         ///     当异常时处理
         /// </summary>
         /// <returns> true：表示成功处理，移除消息。false：处理失败，如果是重试状态，则放回队列 </returns>
+        [TrackMqConsumer(MqType.Rabbit)]
         Task<bool> FailureHandling(IEnumerable<string> messages, IEnumerable<BasicGetResult> resp) => Task.FromResult(result: false);
 
         /// <summary>

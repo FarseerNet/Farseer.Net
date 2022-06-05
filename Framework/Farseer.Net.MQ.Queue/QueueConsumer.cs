@@ -31,11 +31,6 @@ namespace FS.MQ.Queue
         private readonly IQueueList _queueList;
 
         /// <summary>
-        /// 是否使用链路追踪
-        /// </summary>
-        private bool _useLinkTrack;
-
-        /// <summary>
         ///     消费客户端
         /// </summary>
         /// <param name="iocManager"> IOC </param>
@@ -48,7 +43,6 @@ namespace FS.MQ.Queue
             _consumerTypeName = consumerType.FullName;
             _queueList        = IocManager.GetService<IQueueList>($"queue_list_{queueConfig.Name}");
             if (!iocManager.IsRegistered(name: consumerType.FullName)) iocManager.Register(type: consumerType, name: consumerType.FullName, lifeStyle: DependencyLifeStyle.Transient);
-            _useLinkTrack = consumerType.Module.Name != "Farseer.Net.LinkTrack.dll" && _iocManager.IsRegistered<ILinkTrackQueue>();
         }
 
         /// <summary>
@@ -88,19 +82,7 @@ namespace FS.MQ.Queue
             try
             {
                 // 消费
-                // 由于全链路追踪的数据是通过QueueConsumer消费后写入ES的，所以LinkTrackConsumer的消费不能再次调用消费追踪，否则会重复
-                if (!_useLinkTrack)
-                {
-                    result = await consumerService.Consumer(lst);
-                }
-                else
-                {
-                    using (FsLinkTrack.TrackMqConsumer(endPort: "127.0.0.1", queueName: _queueConfig.Name, method: "QueueConsumer", $"本次消费{lst.Count}条"))
-                    {
-                        result = await consumerService.Consumer(lst);
-                    }
-                    _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
-                }
+                result = await consumerService.Consumer(lst);
             }
             catch (Exception e)
             {
@@ -110,19 +92,7 @@ namespace FS.MQ.Queue
                 // 消费失败后处理
                 try
                 {
-                    // 由于全链路追踪的数据是通过QueueConsumer消费后写入ES的，所以LinkTrackConsumer的消费不能再次调用消费追踪，否则会重复
-                    if (!_useLinkTrack)
-                    {
-                        result = await consumerService.FailureHandling(lst);
-                    }
-                    else
-                    {
-                        using (FsLinkTrack.TrackMqConsumer(endPort: "127.0.0.1", queueName: _queueConfig.Name, method: "QueueConsumer", $"本次消费{lst.Count}条"))
-                        {
-                            result = await consumerService.FailureHandling(lst);
-                        }
-                        _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
-                    }
+                    result = await consumerService.FailureHandling(lst);
                 }
                 catch (Exception exception)
                 {

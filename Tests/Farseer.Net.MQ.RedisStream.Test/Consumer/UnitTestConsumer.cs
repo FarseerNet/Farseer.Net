@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using FS.Core.Abstract.RedisStream;
+using FS.Core.Abstract.MQ.RedisStream;
 using FS.Extends;
 using FS.MQ.RedisStream;
 using FS.MQ.RedisStream.Attr;

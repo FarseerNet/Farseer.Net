@@ -34,7 +34,7 @@ public static class PostSharpExtend
     }
     
     /// <summary>
-    /// 根据参数名称，找到参数值所在的索引位置
+    /// 根据参数名称，找到参数值
     /// </summary>
     public static TValue GetParamValue<TValue>(this MethodInterceptionArgs args, string paramName)
     {
@@ -45,5 +45,30 @@ public static class PostSharpExtend
         }
 
         throw new FarseerException($"未找到参数名称：{paramName}");
+    }
+    
+    /// <summary>
+    /// 根据参数类型，找到参数值
+    /// </summary>
+    public static TValue GetParamValue<TValue>(this MethodInterceptionArgs args)
+    {
+        foreach (var argVal in args.Arguments)
+        {
+            if (argVal is TValue val) return val;
+        }
+
+        throw new FarseerException($"未找到参数类型：{typeof(TValue).Name}");
+    }
+    
+    /// <summary>
+    /// 根据参数类型，找到参数值
+    /// </summary>
+    public static TValue GetParamValueWithoutException<TValue>(this MethodInterceptionArgs args)
+    {
+        foreach (var argVal in args.Arguments)
+        {
+            if (argVal is TValue val) return val;
+        }
+        return default;
     }
 }

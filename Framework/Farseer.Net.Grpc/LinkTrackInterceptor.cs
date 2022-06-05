@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Collections.Pooled;
+using FS.Core.AOP.LinkTrack;
 using FS.Core.LinkTrack;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
@@ -49,25 +50,21 @@ namespace FS.Grpc
         /// <summary>
         ///     客户端请求GRPC服务时，要添加的头部信息
         /// </summary>
+        [TrackGrpc]
         public override AsyncUnaryCall<TResponse> AsyncUnaryCall<TRequest, TResponse>(TRequest request, ClientInterceptorContext<TRequest, TResponse> context, AsyncUnaryCallContinuation<TRequest, TResponse> continuation)
         {
-            using (FsLinkTrack.TrackGrpc(server: context.Method.ServiceName, action: context.Method.Name))
-            {
-                var result = continuation(request: request, context: Continuation(context: context));
-                result.GetAwaiter().GetResult();
-                return result;
-            }
+            var result = continuation(request: request, context: Continuation(context: context));
+            result.GetAwaiter().GetResult();
+            return result;
         }
 
         /// <summary>
         ///     客户端请求GRPC服务时，要添加的头部信息
         /// </summary>
+        [TrackGrpc]
         public override TResponse BlockingUnaryCall<TRequest, TResponse>(TRequest request, ClientInterceptorContext<TRequest, TResponse> context, BlockingUnaryCallContinuation<TRequest, TResponse> continuation)
         {
-            using (FsLinkTrack.TrackGrpc(server: context.Method.ServiceName, action: context.Method.Name))
-            {
-                return continuation(request: request, context: Continuation(context: context));
-            }
+            return continuation(request: request, context: Continuation(context: context));
         }
 
         /// <summary>
@@ -78,9 +75,7 @@ namespace FS.Grpc
         /// <summary>
         ///     添加通用头部信息
         /// </summary>
-        private ClientInterceptorContext<TRequest, TResponse> Continuation<TRequest, TResponse>(ClientInterceptorContext<TRequest, TResponse> context)
-        where TRequest : class
-        where TResponse : class
+        private ClientInterceptorContext<TRequest, TResponse> Continuation<TRequest, TResponse>(ClientInterceptorContext<TRequest, TResponse> context) where TRequest : class where TResponse : class
         {
             var linkTrackContext = FsLinkTrack.Current.Get();
             if (linkTrackContext == null) return new ClientInterceptorContext<TRequest, TResponse>(method: context.Method, host: context.Host, SetCallOptions(context.Options));

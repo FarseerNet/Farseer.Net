@@ -38,7 +38,7 @@ public class TaskModule : FarseerModule
             var tasksAttribute = entryAssembly.EntryPoint.DeclaringType.GetCustomAttribute<TasksAttribute>();
             if (tasksAttribute is not { Enable: true }) return;
         }
-        
+
         FarseerApplication.AddInitCallback(act: () =>
         {
             // 查找启用了Debug状态的job，立即执行
@@ -52,16 +52,13 @@ public class TaskModule : FarseerModule
                     {
                         var sw          = Stopwatch.StartNew();
                         var taskContext = new TaskContext(jobType: job.Key, sw: sw);
-                        using (var track = FsLinkTrack.TrackBackgroundService(job.Key.Name))
+                        try
                         {
-                            try
-                            {
-                                Task.WaitAll(IocManager.Resolve<IJob>(name: $"task_job_{job.Key.FullName}").Execute(context: taskContext));
-                            }
-                            catch (Exception e)
-                            {
-                                IocManager.Logger<TaskModule>().LogError(exception: e, message: e.Message);
-                            }
+                            Task.WaitAll(IocManager.Resolve<IJob>(name: $"task_job_{job.Key.FullName}").Execute(context: taskContext));
+                        }
+                        catch (Exception e)
+                        {
+                            IocManager.Logger<TaskModule>().LogError(exception: e, message: e.Message);
                         }
 
                         // 如果设置了下次执行时间

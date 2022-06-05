@@ -49,11 +49,6 @@ namespace FS.MQ.Rabbit
         private IModel _channel;
 
         /// <summary>
-        /// 是否使用链路追踪
-        /// </summary>
-        private bool _useLinkTrack;
-
-        /// <summary>
         ///     消费客户端
         /// </summary>
         /// <param name="iocManager"> IOC </param>
@@ -69,7 +64,6 @@ namespace FS.MQ.Rabbit
             _queueName             = queueName;
             _consumerTypeName      = consumerType.FullName;
             if (!iocManager.IsRegistered(name: consumerType.FullName)) iocManager.Register(type: consumerType, name: consumerType.FullName, lifeStyle: DependencyLifeStyle.Transient);
-            _useLinkTrack = _iocManager.IsRegistered<ILinkTrackQueue>();
         }
 
         /// <summary>
@@ -134,15 +128,7 @@ namespace FS.MQ.Rabbit
                 if (lstResult.Count == 0) return 0;
 
                 deliveryTag = lstBasicGetResult.Max(selector: o => o.DeliveryTag);
-
-                // 消费
-                using (FsLinkTrack.TrackMqConsumer(endPort: _connect.Connection.Endpoint.ToString(), queueName: _queueName, method: "RabbitConsumerBatch", $"[{string.Join(",", lstResult)}]"))
-                {
-                    result = await consumerService.Consumer(lstResult, resp: lstBasicGetResult);
-                }
-
-                // 写入链路追踪
-                if (_useLinkTrack) _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
+                result      = await consumerService.Consumer(lstResult, resp: lstBasicGetResult);
             }
             catch (Exception e)
             {
@@ -152,13 +138,7 @@ namespace FS.MQ.Rabbit
                 // 消费失败后处理
                 try
                 {
-                    using (FsLinkTrack.TrackMqConsumer(endPort: _connect.Connection.Endpoint.ToString(), queueName: _queueName, method: "RabbitConsumer", JsonConvert.SerializeObject(lstResult)))
-                    {
-                        result = await consumerService.FailureHandling(messages: lstResult, resp: lstBasicGetResult);
-                    }
-
-                    // 写入链路追踪
-                    if (_useLinkTrack) _iocManager.Resolve<ILinkTrackQueue>().Enqueue();
+                    result = await consumerService.FailureHandling(messages: lstResult, resp: lstBasicGetResult);
                 }
                 catch (Exception exception)
                 {

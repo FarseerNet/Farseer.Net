@@ -1,3 +1,5 @@
+using FS.Core.Abstract.MQ.Rabbit;
+
 namespace FS.MQ.Rabbit.Configuration
 {
     public class ProductConfig

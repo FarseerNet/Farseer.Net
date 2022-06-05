@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Collections.Pooled;
 using FS.Cache;
+using FS.Core.AOP.LinkTrack;
 using FS.Core.Mapping.Attribute;
 using FS.Data.Cache;
 using FS.Data.Internal;
@@ -22,6 +23,7 @@ namespace FS.Extends
         /// </summary>
         /// <param name="reader"> 源IDataReader </param>
         /// <typeparam name="TEntity"> 实体类 </typeparam>
+        [TrackKeyLocation]
         public static PooledList<TEntity> ToList<TEntity>(this DbDataReader reader)
         {
             using var mapData = DataReaderHelper.DataReaderToDictionary(reader: reader);
@@ -44,6 +46,7 @@ namespace FS.Extends
         /// </summary>
         /// <param name="reader"> 源IDataReader </param>
         /// <typeparam name="TEntity"> 实体类 </typeparam>
+        [TrackKeyLocation]
         public static async Task<PooledList<TEntity>> ToListAsync<TEntity>(this Task<DbDataReader> reader)
         {
             using var mapData = DataReaderHelper.DataReaderToDictionary(reader: await reader);
@@ -66,6 +69,7 @@ namespace FS.Extends
         /// </summary>
         /// <param name="reader"> 源IDataReader </param>
         /// <typeparam name="TEntity"> 实体类 </typeparam>
+        [TrackKeyLocation]
         public static TEntity ToEntity<TEntity>(this IDataReader reader)
         {
             using var mapData = DataReaderHelper.DataReaderToDictionary(reader: reader);
@@ -88,6 +92,7 @@ namespace FS.Extends
         /// </summary>
         /// <param name="reader"> 源IDataReader </param>
         /// <typeparam name="TEntity"> 实体类 </typeparam>
+        [TrackKeyLocation]
         public static TEntity ToEntity<TEntity>(this DataTable reader)
         {
             using var mapData = DataReaderHelper.DataTableToDictionary(dt: reader);
@@ -110,6 +115,7 @@ namespace FS.Extends
         /// </summary>
         /// <param name="reader"> 源IDataReader </param>
         /// <typeparam name="TEntity"> 实体类 </typeparam>
+        [TrackKeyLocation]
         public static async Task<TEntity> ToEntityAsync<TEntity>(this Task<DataTable> reader)
         {
             using var mapData = DataReaderHelper.DataTableToDictionary(dt: await reader);
@@ -132,6 +138,7 @@ namespace FS.Extends
         /// </summary>
         /// <param name="dt"> 源DataTable </param>
         /// <typeparam name="TEntity"> 实体类 </typeparam>
+        [TrackKeyLocation]
         public static PooledList<TEntity> ToList<TEntity>(this DataTable dt)
         {
             using var mapData = DataReaderHelper.DataTableToDictionary(dt: dt);
@@ -154,6 +161,7 @@ namespace FS.Extends
         /// </summary>
         /// <param name="dt"> 源DataTable </param>
         /// <typeparam name="TEntity"> 实体类 </typeparam>
+        [TrackKeyLocation]
         public static async Task<PooledList<TEntity>> ToListAsync<TEntity>(this Task<DataTable> dt)
         {
             using var mapData = DataReaderHelper.DataTableToDictionary(dt: await dt);
@@ -176,6 +184,7 @@ namespace FS.Extends
         /// </summary>
         /// <param name="dt"> 源DataTable </param>
         /// <typeparam name="TEntity"> 实体类 </typeparam>
+        [TrackKeyLocation]
         public static TEntity[] ToArray<TEntity>(this DataTable dt)
         {
             using var mapData = DataReaderHelper.DataTableToDictionary(dt: dt);
@@ -198,11 +207,13 @@ namespace FS.Extends
         /// </summary>
         /// <param name="ds"> 源DataSet </param>
         /// <typeparam name="T"> 实体类 </typeparam>
+        [TrackKeyLocation]
         public static PooledList<T> ToList<T>(this DataSet ds) where T : class, new() => ds.Tables.Count == 0 ? null : ds.Tables[index: 0].ToList<T>();
 
         /// <summary>
         ///     将XML转成实体
         /// </summary>
+        [TrackKeyLocation]
         public static IEnumerable<TEntity> ToList<TEntity>(this XElement element) where TEntity : class
         {
             var orm = SetMapCacheManger.Cache(key: typeof(TEntity));

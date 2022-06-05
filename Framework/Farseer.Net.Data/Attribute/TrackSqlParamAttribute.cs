@@ -1,8 +1,7 @@
 using System;
 using System.Data;
 using System.Linq;
-using FS.Cache;
-using FS.Core.Abstract.Data;
+using System.Threading.Tasks;
 using FS.Core.LinkTrack;
 using FS.Data.Abstract;
 using PostSharp.Aspects;
@@ -15,7 +14,7 @@ namespace FS.Data.Attribute;
 /// </summary>
 [PSerializable]
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
-public class LinkTrackSqlParamAttribute : MethodInterceptionAspect
+public class TrackSqlParamAttribute : MethodInterceptionAspect
 {
     public override void OnInvoke(MethodInterceptionArgs args)
     {
@@ -29,6 +28,21 @@ public class LinkTrackSqlParamAttribute : MethodInterceptionAspect
         using (FsLinkTrack.TrackDatabase(method: callMethod, sqlParam.SetMap.DbName, sqlParam.SetMap.TableName, CommandType.Text, sqlParam.Sql.ToString(), sqlParam.Param))
         {
             args.Proceed();
+        }
+    }
+    
+    public override async Task OnInvokeAsync(MethodInterceptionArgs args)
+    {
+        var callMethod = GetCallMethodValue(args: args);
+
+        // 通过入参，获取ISqlParam
+        var arg = args.Arguments.FirstOrDefault(o => o is ISqlParam);
+        if (arg == null) throw new FarseerException($"调用SqlParam链路追踪，需要入参含有ISqlParam类型");
+        var sqlParam = (ISqlParam)arg;
+
+        using (FsLinkTrack.TrackDatabase(method: callMethod, sqlParam.SetMap.DbName, sqlParam.SetMap.TableName, CommandType.Text, sqlParam.Sql.ToString(), sqlParam.Param))
+        {
+            await args.ProceedAsync();
         }
     }
     

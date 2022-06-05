@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using Collections.Pooled;
 
-namespace FS.Core.Abstract.RedisStream
+namespace FS.Core.Abstract.MQ.RedisStream
 {
     public class ConsumeContext
     {

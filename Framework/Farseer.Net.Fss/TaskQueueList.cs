@@ -77,7 +77,7 @@ namespace FS.Fss
             if (lstTask == null || !lstTask.Any()) return;
             foreach (var task in lstTask.OrderBy(o => o.StartAt)) _queue.Enqueue(item: task);
         }
-        
+
         /// <summary>
         ///     运行任务
         /// </summary>
@@ -153,16 +153,12 @@ namespace FS.Fss
             {
                 // 执行业务JOB
                 var  fssJob = IocManager.GetService<IFssJob>(name: jobInsName);
-                bool result;
-                
-                using (FsLinkTrack.TrackFss(clientHost: task.ClientHost, jobName: task.JobName, taskGroupId: task.TaskGroupId, task.Data))
-                {
-                    // 执行具体任务（业务执行）
-                    sw.Start();
-                    Working++;
-                    result = await fssJob.Execute(context: receiveContext);
-                    cts.Cancel();
-                }
+
+                // 执行具体任务（业务执行）
+                sw.Start();
+                Working++;
+                var result = await fssJob.Execute(context: receiveContext);
+                cts.Cancel();
 
                 // 通知服务端，当前客户端执行结果
                 if (result)

@@ -1,6 +1,6 @@
 using System;
 
-namespace FS.MQ.Queue.Attr
+namespace FS.Core.Abstract.MQ.Queue
 {
     [AttributeUsage(validOn: AttributeTargets.Class, AllowMultiple = true)]
     public class ConsumerAttribute : Attribute

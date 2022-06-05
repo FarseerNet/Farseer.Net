@@ -163,7 +163,7 @@ namespace FS.Data
         ///     改变事务级别
         /// </summary>
         /// <param name="tranLevel"> 事务方式 </param>
-        public void ChangeTransaction(IsolationLevel tranLevel) => InternalContext.DbExecutor.OpenTran(tranLevel: tranLevel);
+        public void ChangeTransaction(IsolationLevel tranLevel) => InternalContext.DbExecutor.SetTranLevel(tranLevel: tranLevel);
 
         /// <summary>
         ///     设置表名称

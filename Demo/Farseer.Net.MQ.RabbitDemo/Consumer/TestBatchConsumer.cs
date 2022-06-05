@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FS.Core.Abstract.MQ.Rabbit;
 using FS.MQ.Rabbit;
 using FS.MQ.Rabbit.Attr;
 using RabbitMQ.Client;

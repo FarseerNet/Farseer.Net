@@ -19,7 +19,7 @@
 2、[demo](https://github.com/FarseerNet/Farseer.Net/tree/main/Demo)
 
 ### 链路追踪
-如果您使用我们提供的Orm、Redis、Http、Elasticsearch、MQ(Rabbit、RedisStream、Rocker、本地Queue)、EventBus、Task、FSS等等，您什么都不需要做，系统将隐式为您实现链路追踪。
+如果您使用我们提供的Orm、Redis、Http、Grpc、Elasticsearch、MQ(Rabbit、RedisStream、Rocker、本地Queue)、EventBus、Task、FSS等等，您什么都不需要做，系统将隐式为您实现链路追踪。
 
 也支持手动埋点：
 ```c#

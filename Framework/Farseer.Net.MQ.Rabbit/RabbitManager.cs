@@ -4,6 +4,7 @@
 // ********************************************
 
 using System.Collections.Generic;
+using FS.Core.Abstract.MQ.Rabbit;
 using FS.MQ.Rabbit.Configuration;
 using RabbitMQ.Client;
 

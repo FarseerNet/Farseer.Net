@@ -8,7 +8,6 @@ using Castle.Windsor;
 using Collections.Pooled;
 using FS.Cache.Redis;
 using FS.Core.Abstract.MQ.RedisStream;
-using FS.Core.Abstract.RedisStream;
 using FS.DI;
 using FS.MQ.RedisStream.Attr;
 using FS.MQ.RedisStream.Configuration;

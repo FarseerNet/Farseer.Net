@@ -130,7 +130,7 @@ namespace FS.Data.Internal
             if (CurrentScope.Value.ScopeID == ScopeID)
             {
                 CurrentScope.Value = null;
-                DbExecutor.CloseTran();
+                DbExecutor.CancelTran();
             }
         }
 
@@ -145,7 +145,7 @@ namespace FS.Data.Internal
                 _commitCallback    = CurrentScope.Value._commitCallback;
                 CurrentScope.Value = null;
             }
-            DbExecutor.CloseTran();
+            DbExecutor.CancelTran();
             DbExecutor.Close(dispose: true);
         }
 
