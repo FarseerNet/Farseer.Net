@@ -16,6 +16,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Framework\Farseer.Net.Cache\Farseer.Net.Cache.csproj" />
+      <ProjectReference Include="..\..\Framework\Farseer.Net.Utils\Farseer.Net.Utils.csproj" />
     </ItemGroup>
 
 </Project>

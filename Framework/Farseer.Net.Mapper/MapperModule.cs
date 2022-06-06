@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using FS.DI;
 using FS.Modules;
 using FS.Reflection;
 
@@ -27,6 +28,11 @@ namespace FS.Mapper
                                              type.IsDefined(attributeType: typeof(MapToAttribute))
                                         );
             MapperHelper.CreateMap(typeArr: types);
+        }
+
+        public override void Initialize()
+        {
+            IocManager.RegisterAssemblyByConvention(assembly: Assembly.GetExecutingAssembly(), config: new ConventionalRegistrationConfig { InstallInstallers = false });
         }
     }
 }

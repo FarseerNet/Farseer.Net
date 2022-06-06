@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
+using FS.Core.Http;
 using PostSharp.Aspects;
 using PostSharp.Serialization;
 
@@ -7,8 +9,10 @@ namespace NetCoreConsole
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
+            await HttpGet.GetAsync("http://www.baidu.com");
+            
             var result = Calc(5, 6);
             Console.WriteLine($"计算结果：{result}");
             Console.WriteLine(">>>>>>>>>>>>>>方法拦截测试完毕\r\n");

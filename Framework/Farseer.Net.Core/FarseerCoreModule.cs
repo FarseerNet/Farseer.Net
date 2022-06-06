@@ -1,4 +1,6 @@
-﻿using FS.Modules;
+﻿using System.Reflection;
+using FS.DI;
+using FS.Modules;
 
 namespace FS.Core
 {
@@ -19,6 +21,7 @@ namespace FS.Core
         /// </summary>
         public override void Initialize()
         {
+            IocManager.RegisterAssemblyByConvention(assembly: Assembly.GetExecutingAssembly(), config: new ConventionalRegistrationConfig { InstallInstallers = false });
         }
     }
 }

@@ -28,6 +28,7 @@ public class TaskModule : FarseerModule
     public override void Initialize()
     {
         IocManager.Container.Install(new TaskInstaller(typeFinder: _typeFinder));
+        IocManager.RegisterAssemblyByConvention(assembly: Assembly.GetExecutingAssembly(), config: new ConventionalRegistrationConfig { InstallInstallers = false });
     }
 
     public override void PostInitialize()

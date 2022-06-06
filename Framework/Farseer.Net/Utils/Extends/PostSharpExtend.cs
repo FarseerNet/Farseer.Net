@@ -1,3 +1,5 @@
+using System;
+using System.Reflection;
 using FS.DI;
 using PostSharp.Aspects;
 
@@ -18,7 +20,7 @@ public static class PostSharpExtend
 
         throw new FarseerException($"未找到参数名称：{paramName}");
     }
-    
+
     /// <summary>
     /// 根据参数名称，找到参数值所在的索引位置
     /// </summary>
@@ -32,7 +34,7 @@ public static class PostSharpExtend
 
         throw new FarseerException($"未找到参数名称：{paramName}");
     }
-    
+
     /// <summary>
     /// 根据参数名称，找到参数值
     /// </summary>
@@ -46,7 +48,7 @@ public static class PostSharpExtend
 
         throw new FarseerException($"未找到参数名称：{paramName}");
     }
-    
+
     /// <summary>
     /// 根据参数类型，找到参数值
     /// </summary>
@@ -59,7 +61,7 @@ public static class PostSharpExtend
 
         throw new FarseerException($"未找到参数类型：{typeof(TValue).Name}");
     }
-    
+
     /// <summary>
     /// 根据参数类型，找到参数值
     /// </summary>
@@ -70,5 +72,22 @@ public static class PostSharpExtend
             if (argVal is TValue val) return val;
         }
         return default;
+    }
+
+    /// <summary>
+    /// 根据标记特性的入参，获取值
+    /// </summary>
+    public static object GetParamValueByAttribute<TAttribute>(this MethodInterceptionArgs args) where TAttribute : Attribute
+    {
+        var parameterInfos = args.Method.GetParameters();
+        for (var index = 0; index < parameterInfos.Length; index++)
+        {
+            var cacheIdAttribute = parameterInfos[index].GetCustomAttribute<TAttribute>();
+            if (cacheIdAttribute != null)
+            {
+                return args.Arguments[index];
+            }
+        }
+        throw new FarseerException($"未找到标记：{typeof(TAttribute).Name} 的入参");
     }
 }

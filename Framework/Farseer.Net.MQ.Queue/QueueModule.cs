@@ -26,6 +26,7 @@ namespace FS.MQ.Queue
         public override void Initialize()
         {
             IocManager.Container.Install(new QueueInstaller(_typeFinder));
+            IocManager.RegisterAssemblyByConvention(assembly: Assembly.GetExecutingAssembly(), config: new ConventionalRegistrationConfig { InstallInstallers = false });
         }
     }
 }

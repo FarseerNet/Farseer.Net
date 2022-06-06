@@ -15,7 +15,7 @@ namespace FS.Cache
     /// </summary>
     public class GetCacheInMemory : IGetCache
     {
-        private static readonly MemoryCache MyCache = new(optionsAccessor: new MemoryCacheOptions());
+        internal static readonly MemoryCache MyCache = new(optionsAccessor: new MemoryCacheOptions());
 
         /// <summary>
         ///     从缓存中读取LIST

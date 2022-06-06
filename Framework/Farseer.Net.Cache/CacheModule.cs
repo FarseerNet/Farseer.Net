@@ -7,7 +7,7 @@ namespace FS.Cache
     /// <summary>
     ///     本地缓存模块
     /// </summary>
-    public class CacheManagerModule : FarseerModule
+    public class CacheModule : FarseerModule
     {
         /// <summary>
         ///     初始化之前

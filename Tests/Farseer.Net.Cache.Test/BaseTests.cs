@@ -8,6 +8,6 @@ public class BaseTests
     [NUnit.Framework.OneTimeSetUp]
     public void Setup()
     {
-        FarseerApplication.Run<CacheManagerModule>().Initialize();
+        FarseerApplication.Run<CacheTestModule>().Initialize();
     }
 }

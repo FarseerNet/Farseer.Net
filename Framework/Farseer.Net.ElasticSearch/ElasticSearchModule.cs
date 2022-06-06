@@ -1,4 +1,6 @@
-﻿using Collections.Pooled;
+﻿using System.Reflection;
+using Collections.Pooled;
+using FS.DI;
 using FS.Modules;
 using FS.Reflection;
 
@@ -20,6 +22,7 @@ namespace FS.ElasticSearch
         {
             // 耗时：220ms，优化后：74ms
             IocManager.Container.Install(new ElasticSearchInstaller(iocResolver: IocManager));
+            IocManager.RegisterAssemblyByConvention(assembly: Assembly.GetExecutingAssembly(), config: new ConventionalRegistrationConfig { InstallInstallers = false });
         }
         
         public override void PostInitialize()

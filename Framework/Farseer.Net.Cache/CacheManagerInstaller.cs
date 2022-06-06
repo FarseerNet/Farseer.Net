@@ -36,6 +36,10 @@ namespace FS.Cache
             container.Register(Component.For<IGetCache>().ImplementedBy<GetCacheInMemory>().Named(name: "GetCacheInMemory").LifestyleSingleton());
             // 注册缓存管理
             container.Register(Component.For<ICacheManager>().ImplementedBy<CacheManager>().LifestyleSingleton());
+            
+            container.Register(Component.For<ICacheServices>().ImplementedBy<CacheServices>().LifestyleSingleton());
+            
+            container.Register(Component.For<ICache>().ImplementedBy<CacheInMemory>().Named(name: "CacheInMemory").LifestyleSingleton());
         }
     }
 }

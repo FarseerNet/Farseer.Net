@@ -7,7 +7,7 @@ namespace FS.Cache.Redis
     /// <summary>
     ///     Redis模块
     /// </summary>
-    [DependsOn(typeof(CacheManagerModule))]
+    [DependsOn(typeof(CacheModule))]
     public class RedisModule : FarseerModule
     {
         /// <summary>

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
-using FS.Data.Cache;
+using System.Reflection;
 
 // ReSharper disable once CheckNamespace
 namespace FS.Extends
@@ -11,11 +11,11 @@ namespace FS.Extends
     public static partial class ExpressionExtend
     {
         /// <summary>
-        ///     获取字段名称
+        ///     获取字段
         /// </summary>
         /// <param name="select"> 字段名称 </param>
         /// <returns> </returns>
-        public static string GetUsedName<T1, T2>(this Expression<Func<T1, T2>> select) where T1 : class
+        public static PropertyInfo GetPropertyInfo<T1, T2>(this Expression<Func<T1, T2>> select) where T1 : class
         {
             MemberExpression memberExpression;
 
@@ -26,10 +26,7 @@ namespace FS.Extends
             else
                 memberExpression = select.Body as MemberExpression;
 
-            var map       = SetMapCacheManger.Cache(key: typeof(T1));
-            var modelInfo = map.GetState(propertyName: memberExpression.Member.Name);
-
-            return modelInfo.Value.Field.Name;
+            return (PropertyInfo)memberExpression.Member;
         }
     }
 }
