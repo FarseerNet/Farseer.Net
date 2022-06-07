@@ -22,7 +22,7 @@
 
     <ItemGroup>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-        <PackageReference Include="RabbitMQ.Client" Version="6.2.4" />
+        <PackageReference Include="RabbitMQ.Client" Version="6.3.0" />
     </ItemGroup>
 
     <ItemGroup>

@@ -60,12 +60,12 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.2.0" />
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.1.0" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.2.0" />
         <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
         <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
         <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
         <PackageReference Include="PostSharp" Version="6.10.12" />
-        <PackageReference Include="Castle.Windsor" Version="5.1.1" />
+        <PackageReference Include="Castle.Windsor" Version="5.1.2" />
     </ItemGroup>
 
 <!--    <UsingTask AssemblyFile="Farseer.Net.Data.dll" TaskName="BuildTask">-->
