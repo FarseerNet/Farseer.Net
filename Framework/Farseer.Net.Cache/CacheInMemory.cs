@@ -13,6 +13,27 @@ public class CacheInMemory : ICache
     /// </summary>
     public IList Get(CacheKey2 key) => MyCache.Get<IList>(key.Key);
 
+    public int Count(CacheKey2 key) => Get(key)?.Count ?? 0;
+
+    public bool Exists(CacheKey2 key, string cacheId)
+    {
+        var list = Get(key);
+        if (list == null) return false;
+
+        foreach (var item in list)
+        {
+            // 从当前缓存item中，获取唯一标识
+            var itemDataKey = PropertyGetCacheManger.Cache(key.DataKey, item).ToString();
+
+            // 找到了
+            if (itemDataKey == cacheId)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /// <summary>
     /// 保存数据到缓存
     /// </summary>

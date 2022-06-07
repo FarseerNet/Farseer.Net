@@ -31,4 +31,14 @@ public interface ICache
     /// 清空缓存
     /// </summary>
     void Clear(CacheKey2 key);
+
+    /// <summary>
+    /// 获取集合数量
+    /// </summary>
+    int Count(CacheKey2 key);
+
+    /// <summary>
+    /// 指定数据是否存在
+    /// </summary>
+    bool Exists(CacheKey2 key, string cacheId);
 }

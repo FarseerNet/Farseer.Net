@@ -36,6 +36,24 @@ public class CacheInMemoryAndRedis : ICache
         return list;
     }
 
+    public int Count(CacheKey2 key)
+    {
+        var count = _memoryCache.Count(key);
+        if (count > 0) return count;
+        
+        count = _redisCache.Count(key);
+        if (count > 0) return count;
+        
+        return 0;
+    }
+
+    public bool Exists(CacheKey2 key, string cacheId)
+    {
+        if (_memoryCache.Exists(key, cacheId)) return true;
+        if (_redisCache.Exists(key, cacheId)) return true;
+        return false;
+    }
+
     public void Set(CacheKey2 key, IList lst)
     {
         _redisCache.Set(key, lst);

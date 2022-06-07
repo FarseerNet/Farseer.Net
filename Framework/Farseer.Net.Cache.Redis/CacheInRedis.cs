@@ -24,6 +24,10 @@ public class CacheInRedis : ICache
         return hashGetAll.Select(selector: o => JsonConvert.DeserializeObject(o.Value, key.ItemType)).ToPooledList();
     }
 
+    public int Count(CacheKey2 key) => (int)_redisCacheManager.Db.HashLength(key.Key);
+
+    public bool Exists(CacheKey2 key, string cacheId) => _redisCacheManager.Db.HashExists(key.Key, cacheId);
+
     public void Set(CacheKey2 key, IList lst)
     {
         var       transaction = _redisCacheManager.Db.CreateTransaction();
