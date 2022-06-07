@@ -3,24 +3,24 @@
 
 我们为您选型出目前最为流行的组件，并按模块化来提供使用这些组件。
 
-##### 优雅
+#### 优雅
 `我们使用`IOC`技术，遍布整个框架及您的业务系统。`
-##### 简单
-`我们使用`AOP`技术，让您无需额外编写非业务功能代码，如事务、异常捕获、日志、链路Track`
+#### 简单
+`我们使用`AOP`技术，让您无需额外编写非业务功能代码，如事务、缓存、异常捕获、日志、链路Track`
 
-##### 低内存
+#### 低内存
 `框架内大量使用`集合池化`技术，每次`new List`时，可以`复用堆空间`。`
 
-结合[FOPS](https://github.com/FarseerNet/FOPS) 项目（自动构建、链路追踪控制台）支持代码无侵入的全链路实时监控。
+### 链路追踪
+`如果您使用我们提供的Orm、Redis、Http、Grpc、Elasticsearch、MQ(Rabbit、RedisStream、Rocker、本地Queue)、EventBus、Task、FSS等等，您什么都不需要做，系统将隐式为您实现链路追踪，并提供API请求日志、慢查询（前面提到的都会记录）。`
+
+结合[FOPS](https://github.com/FarseerNet/FOPS) 项目（自动构建、链路追踪控制台、K8S集群日志收集）支持代码无侵入的全链路实时监控。
 
 传送门：
 
 1、[文档](https://github.com/FarseerNet/Farseer.Net/tree/dev/Doc)
 
 2、[demo](https://github.com/FarseerNet/Farseer.Net/tree/dev/Demo)
-
-### 链路追踪
-`如果您使用我们提供的Orm、Redis、Http、Grpc、Elasticsearch、MQ(Rabbit、RedisStream、Rocker、本地Queue)、EventBus、Task、FSS等等，您什么都不需要做，系统将隐式为您实现链路追踪。`
 
 也支持手动埋点：
 ```c#
