@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using Mapster;
 
 // ReSharper disable once CheckNamespace
@@ -38,6 +39,22 @@ public static class AdaptAsyncExtend
         if (mapRule == null) return sources.Adapt<List<TDestination>>();
 
         var lst = new List<TDestination>();
+        foreach (var source in sources)
+        {
+            var dest = source.Adapt<TDestination>();
+            mapRule(dest, source);
+            lst.Add(dest);
+        }
+        return lst;
+    }
+    
+    public static async Task<PooledList<TDestination>> AdaptAsync<TDestination, TSource>(this Task<PooledList<TSource>> sourceTask, Action<TDestination, TSource> mapRule = null)
+    {
+        var sources = await sourceTask;
+        if (sources == null) return default;
+        if (mapRule == null) return sources.Adapt<PooledList<TDestination>>();
+
+        var lst = new PooledList<TDestination>();
         foreach (var source in sources)
         {
             var dest = source.Adapt<TDestination>();
