@@ -32,11 +32,6 @@ namespace FS.Cache
         /// <param name="store"> </param>
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
-            // 注册内存缓存
-            container.Register(Component.For<IGetCache>().ImplementedBy<GetCacheInMemory>().Named(name: "GetCacheInMemory").LifestyleSingleton());
-            // 注册缓存管理
-            container.Register(Component.For<ICacheManager>().ImplementedBy<CacheManager>().LifestyleSingleton());
-            
             container.Register(Component.For<ICacheServices>().ImplementedBy<CacheServices>().LifestyleSingleton());
             
             container.Register(Component.For<ICache>().ImplementedBy<CacheInMemory>().Named(name: "CacheInMemory").LifestyleSingleton());

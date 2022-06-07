@@ -49,11 +49,6 @@ namespace FS.Cache.Redis
         }
 
         /// <summary>
-        ///     支持缓存不存在，则写入
-        /// </summary>
-        public ICacheManager CacheManager => IocManager.GetService<ICacheManager>(name: $"GetCacheInMemory_{_config.Name}");
-
-        /// <summary>
         /// 事务锁
         /// </summary>
         /// <param name="key">KEY</param>

@@ -18,11 +18,6 @@ public interface IRedisCacheManager : IDisposable
     IDatabase Db { get; }
 
     /// <summary>
-    ///     支持缓存不存在，则写入
-    /// </summary>
-    ICacheManager CacheManager { get; }
-
-    /// <summary>
     ///     Redis服务端
     /// </summary>
     string Server { get; }
