@@ -22,7 +22,8 @@
 
 2、[demo](https://github.com/FarseerNet/Farseer.Net/tree/dev/Demo)
 
-也支持手动埋点：
+### 手动埋点：
+说明：标记后，这些方法被调用时，将会被链路追踪记录
 ```c#
     [Track] // 此处如果标记了，则Execute1、Execute2方法不需要再指定Track
     public class TrackDemo
