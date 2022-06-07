@@ -6,11 +6,17 @@ namespace Farseer.Net.Cache.Test.Repository;
 public class UserService
 {
     /// <summary>
+    /// 代表实际查询数据库的次数
+    /// </summary>
+    public int OprCount = 0;
+
+    /// <summary>
     /// 获取数据库集合
     /// </summary>
     [Cache("user")]
     public List<UserPO> ToList()
     {
+        OprCount++;
         return new DbContext().ToList();
     }
 
@@ -26,7 +32,8 @@ public class UserService
     [Cache("user")]
     public void Update(int id, UserPO user)
     {
-        new DbContext().Update(id,user);
+        user.Id = id;
+        new DbContext().Update(id, user);
     }
 
     /// <summary>

@@ -19,8 +19,6 @@ namespace Farseer.Net.Cache.Test
         /// </summary>
         public override void Initialize()
         {
-            IocManager.Container.Install(new CacheManagerInstaller(iocResolver: IocManager));
-            IocManager.RegisterAssemblyByConvention(assembly: Assembly.GetExecutingAssembly(), config: new ConventionalRegistrationConfig { InstallInstallers = false });
         }
 
         public override void PostInitialize()
