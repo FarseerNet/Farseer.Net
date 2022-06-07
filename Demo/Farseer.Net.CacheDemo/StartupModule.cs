@@ -21,7 +21,8 @@ namespace Farseer.Net.CacheDemo
         public override void PostInitialize()
         {
             var cacheServices = IocManager.Resolve<ICacheServices>();
-            cacheServices.SetProfilesInMemory<UserPO, int>("user", o => o.Id, TimeSpan.FromSeconds(10));//"default", 
+            //cacheServices.SetProfilesInMemory<UserPO, int>("user", o => o.Id, TimeSpan.FromSeconds(10)); //"default", 
+            cacheServices.SetProfilesInMemory<UserPO>("user", TimeSpan.FromSeconds(10));                 //"default", 
         }
     }
 }

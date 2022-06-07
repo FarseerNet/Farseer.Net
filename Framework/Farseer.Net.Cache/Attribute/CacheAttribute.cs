@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using FS.Core.Abstract.Cache;
@@ -27,13 +26,8 @@ public class CacheAttribute : MethodInterceptionAspect
 
     public override void OnInvoke(MethodInterceptionArgs args)
     {
+        var cacheKey   = CacheConfigure.Get(_key);
         var returnType = ((MethodInfo)args.Method).ReturnType;
-        if (returnType.Namespace != "System.Collections.Generic" && returnType.Name != "IList`1")
-        {
-            var returnInterfaces = returnType.GetInterfaces();
-            if (!returnInterfaces.Contains(typeof(IList))) throw new Exception($"要缓存的数据，必须是继承IList接口");
-        }
-        var cacheKey = CacheConfigure.Get(_key);
 
         // 缓存中，取出数据
         var lst = cacheKey.Get();
@@ -44,19 +38,14 @@ public class CacheAttribute : MethodInterceptionAspect
         else // 缓存不存在，则执行业务，拿到数据后，并缓存
         {
             args.Proceed();
-            cacheKey.Set((IList)args.ReturnValue);
+            cacheKey.Set(args.ReturnValue, returnType);
         }
     }
 
     public override async Task OnInvokeAsync(MethodInterceptionArgs args)
     {
-        var cacheKey         = CacheConfigure.Get(_key);
-        var returnType       = ((MethodInfo)args.Method).ReturnType;
-        if (returnType.Namespace != "System.Collections.Generic" && returnType.Name != "IList`1")
-        {
-            var returnInterfaces = returnType.GetInterfaces();
-            if (!returnInterfaces.Contains(typeof(IList))) throw new Exception($"要缓存的数据，必须是继承IList接口");
-        }
+        var cacheKey   = CacheConfigure.Get(_key);
+        var returnType = ((MethodInfo)args.Method).ReturnType;
 
         // 缓存中，取出数据
         var lst = cacheKey.Get();
@@ -67,7 +56,7 @@ public class CacheAttribute : MethodInterceptionAspect
         else // 缓存不存在，则执行业务，拿到数据后，并缓存
         {
             await args.ProceedAsync();
-            cacheKey.Set((IList)args.ReturnValue);
+            cacheKey.Set(args.ReturnValue, returnType);
         }
     }
 

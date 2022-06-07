@@ -12,10 +12,8 @@ public class TransactionTest
     [Transaction(typeof(MysqlContext))]
     public void AopTransaction()
     {
-        // 添加
-        MysqlContext.Data.User.Insert(new UserPO { Name = FarseerApplication.AppId.ToString() });
-        // 删除
-        MysqlContext.Data.User.Where(o => o.Name == FarseerApplication.AppId.ToString()).Delete();
+        MysqlContext.Data.User.Insert(new UserPO { Name = FarseerApplication.AppId.ToString() }); // 添加
+        MysqlContext.Data.User.Where(o => o.Name == FarseerApplication.AppId.ToString()).Delete(); // 删除
     }
 
     /// <summary>
@@ -24,10 +22,8 @@ public class TransactionTest
     [TransactionName("test")]
     public void AopTransactionByName()
     {
-        // 添加
-        MysqlContext.Data.User.Insert(new UserPO { Name = FarseerApplication.AppId.ToString() });
-        // 删除
-        MysqlContext.Data.User.Where(o => o.Name == FarseerApplication.AppId.ToString()).Delete();
+        MysqlContext.Data.User.Insert(new UserPO { Name = FarseerApplication.AppId.ToString() }); // 添加
+        MysqlContext.Data.User.Where(o => o.Name == FarseerApplication.AppId.ToString()).Delete(); // 删除
     }
 
     /// <summary>
@@ -37,11 +33,8 @@ public class TransactionTest
     {
         using (var db = new MysqlContext())
         {
-            // 添加
-            db.User.Insert(new UserPO { Name = FarseerApplication.AppId.ToString() });
-            // 删除
-            MysqlContext.Data.User.Where(o => o.Name == FarseerApplication.AppId.ToString()).Delete();
-            
+            db.User.Insert(new UserPO { Name = FarseerApplication.AppId.ToString() }); // 添加
+            MysqlContext.Data.User.Where(o => o.Name == FarseerApplication.AppId.ToString()).Delete(); // 删除
             db.SaveChanges();
         }
     }

@@ -37,37 +37,37 @@ public class CacheKey2
     /// <summary>
     /// 缓存KEY
     /// </summary>
-    public string Key { get; set; }
+    public string Key { get; }
 
     /// <summary>
     /// 缓存的数据Item Type
     /// </summary>
-    public Type ItemType { get; set; }
+    public Type ItemType { get; }
 
     /// <summary>
     ///     缓存策略（默认Memory模式）
     /// </summary>
-    public EumCacheStoreType CacheStoreType { get; set; }
+    public EumCacheStoreType CacheStoreType { get; }
 
     /// <summary>
     ///     设置Redis缓存过期时间
     /// </summary>
-    public TimeSpan? RedisExpiry { get; set; }
+    public TimeSpan? RedisExpiry { get; }
 
     /// <summary>
     ///     设置Memory缓存过期时间
     /// </summary>
-    public TimeSpan? MemoryExpiry { get; set; }
+    public TimeSpan? MemoryExpiry { get; }
 
     /// <summary>
     /// hash中的主键
     /// </summary>
-    public PropertyInfo DataKey { get; set; }
+    public PropertyInfo DataKey { get; protected set; }
 
     /// <summary>
     /// Redis配置名称
     /// </summary>
-    public string RedisConfigName { get; set; }
+    public string RedisConfigName { get; }
 
     /// <summary>
     /// 缓存的数据Item Type
@@ -107,7 +107,31 @@ public class CacheKey2
     /// <summary>
     /// 从本地内存中获取
     /// </summary>
-    public void Set(IList val) => Cache.Set(this, val);
+    public void Set(object val, Type returnType)
+    {
+        IList list;
+        switch (val)
+        {
+            case IList lst:
+                list = lst;
+                break;
+            case IEnumerable enumerable: // IEnumerable类型，则自己创建一个IList
+            {
+                list = CreateNewList(returnType, 100);
+                foreach (var item in enumerable)
+                {
+                    list.Add(item);
+                }
+                break;
+            }
+            default: // 原来不是集合类型，则将其作为item添加到新的集合
+                list = CreateNewList(returnType, 1);
+                list.Add(val);
+                break;
+        }
+
+        Cache.Set(this, list);
+    }
 
     /// <summary>
     /// 更新缓存
@@ -124,7 +148,6 @@ public class CacheKey2
     /// </summary>
     public void Clear() => Cache.Clear(this);
 }
-
 /// <summary>
 ///     读写缓存的选项设置
 /// </summary>

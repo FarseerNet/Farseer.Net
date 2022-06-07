@@ -38,22 +38,26 @@ public class CacheInMemory : ICache
         var list = Get(key);
         if (list == null) return;
 
-        // 从新对象中，获取唯一标识
-        var newValDataKey = PropertyGetCacheManger.Cache(key.DataKey, newVal).ToString();
-
-        for (var index = 0; index < list.Count; index++)
+        // key.DataKey=null，说明实际缓存的是单个对象。所以此处直接替换新的对象即可，而不用查找。
+        if (key.DataKey == null) list.Clear();
+        else
         {
-            // 从当前缓存item中，获取唯一标识
-            var itemDataKey = PropertyGetCacheManger.Cache(key.DataKey, list[index]).ToString();
+            // 从新对象中，获取唯一标识
+            var newValDataKey = PropertyGetCacheManger.Cache(key.DataKey, newVal).ToString();
 
-            // 找到了
-            if (itemDataKey == newValDataKey)
+            for (var index = 0; index < list.Count; index++)
             {
-                list[index] = newVal;
-                return;
+                // 从当前缓存item中，获取唯一标识
+                var itemDataKey = PropertyGetCacheManger.Cache(key.DataKey, list[index]).ToString();
+
+                // 找到了
+                if (itemDataKey == newValDataKey)
+                {
+                    list[index] = newVal;
+                    return;
+                }
             }
         }
-
         list.Add(newVal);
     }
 
@@ -62,16 +66,21 @@ public class CacheInMemory : ICache
         var list = Get(key);
         if (list == null) return;
 
-        for (var index = 0; index < list.Count; index++)
+        // key.DataKey=null，说明实际缓存的是单个对象。所以此处直接清空即可。
+        if (key.DataKey == null) Clear(key);
+        else
         {
-            // 从当前缓存item中，获取唯一标识
-            var itemDataKey = PropertyGetCacheManger.Cache(key.DataKey, list[index]).ToString();
-
-            // 找到了
-            if (itemDataKey == cacheId)
+            for (var index = 0; index < list.Count; index++)
             {
-                list.RemoveAt(index);
-                return;
+                // 从当前缓存item中，获取唯一标识
+                var itemDataKey = PropertyGetCacheManger.Cache(key.DataKey, list[index]).ToString();
+
+                // 找到了
+                if (itemDataKey == cacheId)
+                {
+                    list.RemoveAt(index);
+                    return;
+                }
             }
         }
     }

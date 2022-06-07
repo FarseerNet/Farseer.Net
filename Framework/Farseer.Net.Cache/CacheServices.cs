@@ -34,10 +34,26 @@ public class CacheServices : ICacheServices
     }
 
     /// <summary>
-    /// 设置缓存
+    /// 设置内存缓存（缓存单个对象）
     /// </summary>
-    public void SetProfiles(string key, EumCacheStoreType cacheStoreType, TimeSpan? redisExpiry = null, TimeSpan? memoryExpiry = null)
+    public void SetProfilesInMemory<TEntity>(string key, TimeSpan? memoryExpiry = null) where TEntity : class
     {
-        CacheConfigure.Configure[key] = new CacheKey2(key, null, cacheStoreType, redisExpiry: redisExpiry, memoryExpiry: memoryExpiry);
+        CacheConfigure.Configure[key] = new CacheKey2<TEntity>(key, null, EumCacheStoreType.Memory, null, memoryExpiry);
+    }
+
+    /// <summary>
+    /// 设置Redis缓存（缓存单个对象）
+    /// </summary>
+    public void SetProfilesInRedis<TEntity>(string key, string redisConfigName, TimeSpan? redisExpiry = null) where TEntity : class
+    {
+        CacheConfigure.Configure[key] = new CacheKey2<TEntity>(key, redisConfigName, EumCacheStoreType.Redis, redisExpiry);
+    }
+
+    /// <summary>
+    /// 设置内存-Redis缓存（缓存单个对象）
+    /// </summary>
+    public void SetProfilesInMemoryAndRedis<TEntity>(string key, string redisConfigName, TimeSpan? redisExpiry = null, TimeSpan? memoryExpiry = null) where TEntity : class
+    {
+        CacheConfigure.Configure[key] = new CacheKey2<TEntity>(key, redisConfigName, EumCacheStoreType.MemoryAndRedis, redisExpiry, memoryExpiry);
     }
 }
