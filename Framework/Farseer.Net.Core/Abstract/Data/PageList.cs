@@ -27,7 +27,7 @@ namespace FS.Core.Abstract.Data
         /// <summary>
         ///     数据分页列表及总数
         /// </summary>
-        public PageList(IEnumerable<TEntity> list, long recordCount)
+        public PageList(IList<TEntity> list, long recordCount)
         {
             List        = list;
             RecordCount = recordCount;
@@ -43,7 +43,7 @@ namespace FS.Core.Abstract.Data
         ///     数据列表
         /// </summary>
         [DataMember]
-        public IEnumerable<TEntity> List { get; set; }
+        public IList<TEntity> List { get; set; }
 
         public IEnumerable GetList() => List;
 
