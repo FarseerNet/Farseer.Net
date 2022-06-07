@@ -110,24 +110,19 @@ public class CacheKey2
     public void Set(object val, Type returnType)
     {
         IList list;
-        switch (val)
+        
+        if (val is IEnumerable enumerable) // IEnumerable类型，则自己创建一个IList
         {
-            case IList lst:
-                list = lst;
-                break;
-            case IEnumerable enumerable: // IEnumerable类型，则自己创建一个IList
+            list = CreateNewList(returnType, 100);
+            foreach (var item in enumerable)
             {
-                list = CreateNewList(returnType, 100);
-                foreach (var item in enumerable)
-                {
-                    list.Add(item);
-                }
-                break;
+                list.Add(item);
             }
-            default: // 原来不是集合类型，则将其作为item添加到新的集合
-                list = CreateNewList(returnType, 1);
-                list.Add(val);
-                break;
+        }
+        else // 原来不是集合类型，则将其作为item添加到新的集合
+        {
+            list = CreateNewList(returnType, 1);
+            list.Add(val);
         }
 
         Cache.Set(this, list);

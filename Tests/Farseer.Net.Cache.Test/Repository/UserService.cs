@@ -23,22 +23,27 @@ public class UserService
     /// <summary>
     /// 模拟数据库添加操作
     /// </summary>
-    [Cache("user")]
-    public void Add(UserPO user) => new DbContext().Add(user);
+    [CacheUpdate("user")]
+    public UserPO Add(UserPO user)
+    {
+        new DbContext().Add(user);
+        return user;
+    }
 
     /// <summary>
     /// 模拟数据库更新数据
     /// </summary>
-    [Cache("user")]
-    public void Update(int id, UserPO user)
+    [CacheUpdate("user")]
+    public UserPO Update(int id, UserPO user)
     {
         user.Id = id;
         new DbContext().Update(id, user);
+        return user;
     }
 
     /// <summary>
     /// 模拟数据库删除
     /// </summary>
-    [Cache("user")]
+    [CacheRemove("user")]
     public void Delete(int id) => new DbContext().Delete(id);
 }

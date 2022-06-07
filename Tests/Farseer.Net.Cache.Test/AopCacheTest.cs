@@ -30,15 +30,13 @@ public class AopCacheTest : BaseTests
         // 测试：添加数据
         var newUser = new UserPO { Id = 101, Name = "test-add", Age = 1001 };
         userService.Add(newUser);
-
-        // 判断缓存与数据库，是否则时都增加了一条数据
         var lst3           = userService.ToList();
         var lst3ByDatabase = new DbContext().ToList();
         // 已经缓存数据了，不应该再操作数据库了，此处应该还是=1
         Assert.AreEqual(userService.OprCount, 1);
         // 缓存与数据库的数量应该一样
         Assert.AreEqual(lst3.Count, lst3ByDatabase.Count);
-        Assert.AreEqual(lst3.Count, newUser.Id);
+        Assert.AreEqual(lst3.Count, 101);
         Assert.IsTrue(lst3.Any(o => o.Id           == newUser.Id));
         Assert.IsTrue(lst3ByDatabase.Any(o => o.Id == newUser.Id));
 
