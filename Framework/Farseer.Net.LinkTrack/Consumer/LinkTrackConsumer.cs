@@ -5,7 +5,6 @@ using Collections.Pooled;
 using FS.Core.Abstract.MQ.Queue;
 using FS.Core.LinkTrack;
 using FS.LinkTrack.Dal;
-using FS.MQ.Queue.Attr;
 using Mapster;
 
 namespace FS.LinkTrack.Consumer
@@ -22,6 +21,9 @@ namespace FS.LinkTrack.Consumer
 
             using var lst = queueList.Select(o => o.Adapt<LinkTrackContextPO>()).ToPooledList();
 
+            // 异常信息
+            using var lstException = new PooledList<ExceptionDetailPO>();
+
             // 设置C#的调用链
             foreach (var linkTrackContext in lst)
             {
@@ -29,6 +31,20 @@ namespace FS.LinkTrack.Consumer
                 linkTrackContext.AppName = FarseerApplication.AppName;
                 linkTrackContext.AppId   = FarseerApplication.AppId;
                 linkTrackContext.AppIp   = FarseerApplication.AppIp.FirstOrDefault();
+
+                // 链路上下文发生异常时，单独记录
+                if (linkTrackContext.ExceptionDetail != null)
+                {
+                    var exceptionDetailPO = linkTrackContext.ExceptionDetail.Adapt<ExceptionDetailPO>();
+                    exceptionDetailPO.AppId     = linkTrackContext.AppId;
+                    exceptionDetailPO.AppIp     = linkTrackContext.AppIp;
+                    exceptionDetailPO.AppName   = linkTrackContext.AppName;
+                    exceptionDetailPO.ContextId = linkTrackContext.ContextId;
+                    lstException.Add(exceptionDetailPO);
+
+                    // 链路上下文不需要异常信息
+                    linkTrackContext.ExceptionDetail = null;
+                }
             }
 
             await LinkTrackEsContext.Data.LinkTrackContext.InsertAsync(lst);
@@ -36,14 +52,13 @@ namespace FS.LinkTrack.Consumer
             // 依赖外部系统的，单独存储，用于统计慢查询
             await AddSlowQuery(lst);
 
-            foreach (var linkTrackContextPO in lst)
-            {
-                linkTrackContextPO.Headers.Dispose();
-                if (linkTrackContextPO.List != null)
-                {
-                    linkTrackContextPO.Dispose();
-                }
-            }
+            // 添加异常数据
+            await LinkTrackEsContext.Data.ExceptionDetail.InsertAsync(lstException);
+
+            // 释放内存
+            foreach (var linkTrackContextPO in lst) linkTrackContextPO.Dispose();
+            foreach (var exceptionDetailPO in lstException) exceptionDetailPO.Dispose();
+
             return true;
         }
 

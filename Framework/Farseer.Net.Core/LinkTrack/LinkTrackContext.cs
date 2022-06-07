@@ -89,12 +89,11 @@ namespace FS.Core.LinkTrack
         /// <summary>
         ///     是否执行异常
         /// </summary>
-        public virtual bool IsException { get; set; }
-
+        public virtual ExceptionDetail ExceptionDetail { get; set; }
+        
         /// <summary>
-        ///     异常信息
+        /// Dispose
         /// </summary>
-        public virtual string ExceptionMessage { get; set; }
         public void Dispose()
         {
             if (Headers != null) Headers.Dispose();

@@ -1,3 +1,4 @@
+using System;
 using Collections.Pooled;
 using FS.Core.LinkTrack;
 using Nest;

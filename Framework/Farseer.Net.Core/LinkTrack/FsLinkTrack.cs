@@ -312,7 +312,7 @@ namespace FS.Core.LinkTrack
             Current.Set(linkTrackDetail: linkTrackDetail);
             return new TrackEnd(linkTrackDetail: linkTrackDetail);
         }
-        
+
         /// <summary>
         ///     手动埋点
         /// </summary>
@@ -329,6 +329,32 @@ namespace FS.Core.LinkTrack
             };
             Current.Set(linkTrackDetail: linkTrackDetail);
             return new TrackEnd(linkTrackDetail: linkTrackDetail);
+        }
+
+        /// <summary>
+        /// 记录异常信息
+        /// </summary>
+        public static void Exception(string method, Dictionary<string, string> methodParams, string exceptionTypeName, string exceptionMessage, string callStacks)
+        {
+            var linkTrackContext = Current.Get();
+            // 说明是异常发生处
+            if (linkTrackContext.ExceptionDetail == null)
+            {
+                linkTrackContext.ExceptionDetail = new()
+                {
+                    Method            = method,
+                    MethodParams      = methodParams,
+                    ExceptionTypeName = exceptionTypeName,
+                    ExceptionMessage  = exceptionMessage,
+                    CallStacks        = new List<string>() { callStacks },
+                    CreateAt          = DateTime.Now.ToTimestamps(),
+                };
+            }
+            else
+            {
+                // 之前已记录了异常发生处，再次传入，说明是调用堆栈的信息
+                linkTrackContext.ExceptionDetail.CallStacks.Add(callStacks);
+            }
         }
     }
 }
