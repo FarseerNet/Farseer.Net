@@ -78,11 +78,39 @@ public void AopTransactionByName()
 特点：本地内存、Redis双写，并优先读本地内存数据
 ```c#
 // 定义key，并设置为redis与本地缓存双写
-public static CacheKey<TaskGroupVO, int> TaskGroupKey() => new($"FSS_TaskGroup", o => o.Id, EumCacheStoreType.MemoryAndRedis);
+var cacheServices = IocManager.Resolve<ICacheServices>();
+cacheServices.SetProfilesInMemoryAndRedis<UserPO, int>("user", "default", o => o.Id, TimeSpan.FromSeconds(10));
 
-// 读取数据规则：优先读取本地缓存，不存在则读取Redis缓存，还是不存在，则读取数据库，并同步到Redis、本地缓存中
-var key = CacheKeys.TaskGroupKey();
-return RedisContext.Instance.CacheManager.GetListAsync(key, () => TaskGroupAgent.ToListAsync().MapAsync<TaskGroupVO, TaskGroupPO>());
+// 缓存与数据库操作完全解耦，缓存命中时，不会执行方法内的代码。将被拦截处理
+public class UserService
+{
+    /// <summary> 获取数据集合 </summary>
+    [Cache("user")]
+    public IEnumerable<UserPO> ToList() => new DatabaseContext().ToList();
+    /// <summary> 获取数据集合 </summary>
+    [Cache("user")]
+    public UserPO ToEntity() => new DatabaseContext().ToList().FirstOrDefault();
+
+    /// <summary> 模拟数据库添加操作（缓存必须有一个唯一标识） </summary>
+    [CacheUpdate("user")]
+    public UserPO Add(UserPO user)
+    {
+        new DatabaseContext().Add(user);
+        return user;
+    }
+
+    /// <summary> 模拟数据库更新数据 </summary>
+    [CacheUpdate("user")]
+    public UserPO Update(int id, UserPO user)
+    {
+        new DatabaseContext().Update(id, user);
+        return user;
+    }
+
+    /// <summary> 模拟数据库删除 </summary>
+    [CacheRemove("user")]
+    public void Delete([CacheId] int id) => new DatabaseContext().Delete(id);
+}
 ```
 
 ### Farseer.Net.ElasticSearch es组件：
