@@ -113,6 +113,7 @@ public class CacheKey2
         
         if (val is IEnumerable enumerable) // IEnumerable类型，则自己创建一个IList
         {
+            if (DataKey == null) throw new System.Exception($"缓存集合时，需设置每个item的唯一标识：ICacheServices.SetProfilesXXXXX(key, getField)");
             list = CreateNewList(returnType, 100);
             foreach (var item in enumerable)
             {
