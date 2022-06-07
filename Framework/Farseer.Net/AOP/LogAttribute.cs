@@ -1,58 +1,46 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using FS.Core.LinkTrack;
+using System.Threading.Tasks;
+using FS.DI;
+using Microsoft.Extensions.Logging;
 using PostSharp.Aspects;
+using PostSharp.Extensibility;
 using PostSharp.Serialization;
 
-namespace FS.Core.AOP.LinkTrack;
+namespace FS.AOP;
 
 /// <summary>
-/// 异常跟踪：当使用链路追踪时，该异常会被记录并统计
+/// 日志打印
 /// </summary>
 [PSerializable]
-public sealed class TrackExceptionAttribute : OnExceptionAspect
+[AttributeUsage(AttributeTargets.Method                                                                 | AttributeTargets.Class | AttributeTargets.Constructor, AllowMultiple = true)]
+[MulticastAttributeUsage(MulticastTargets.Method, TargetMemberAttributes = MulticastAttributes.Instance | MulticastAttributes.Static, Inheritance = MulticastInheritance.Multicast)]
+public class LogAttribute : MethodInterceptionAspect
 {
-    /// <summary>
-    /// 异常跟踪：当使用链路追踪时，该异常会被记录并统计
-    /// </summary>
-    public override void OnException(MethodExecutionArgs args)
+    public override void OnInvoke(MethodInterceptionArgs args)
     {
-        var parameterInfos = args.Method.GetParameters();
-
-        // 方法签名 (int MethodName)
-        var method = AppendTypeName(args.Method);
-        AppendParamName(method, parameterInfos);
-
-        // 入参值
-        var methodParams = new Dictionary<string, string>();
-        for (var index = 0; index < parameterInfos.Length; index++)
-        {
-            methodParams[parameterInfos[index].Name] = args.Arguments[index].ToString();
-        }
-
-        // 异常类型
-        var exceptionTypeName = args.Exception.GetType().Name;
-
         // 方法调用模拟
         var methodCall = AppendTypeName(args.Method);
         AppendArguments(methodCall, args.Arguments);
-
-        FsLinkTrack.Exception(method.ToString(), methodParams, exceptionTypeName, args.Exception.Message, methodCall.ToString());
+        var sw = Stopwatch.StartNew();
+        args.Proceed();
+        methodCall.Append($"; 耗时：{sw.ElapsedMilliseconds:N0} ms");
+        IocManager.Instance.Logger<LogAttribute>().LogInformation(methodCall.ToString());
     }
 
-    /// <summary>
-    /// 拼接参数名称
-    /// </summary>
-    private void AppendParamName(StringBuilder method, ParameterInfo[] parameterInfos)
+    public override async Task OnInvokeAsync(MethodInterceptionArgs args)
     {
-
-        method.Append($"(");
-        // 入参签名 (int x, int y)
-        method.Append(parameterInfos.Aggregate(string.Empty, (current, parameter) => current + $"{parameter.ParameterType.Name} {parameter.Name}, ").Trim(',', ' '));
-        method.Append($")");
+        // 方法调用模拟
+        var methodCall = AppendTypeName(args.Method);
+        AppendArguments(methodCall, args.Arguments);
+        var sw = Stopwatch.StartNew();
+        await args.ProceedAsync();
+        methodCall.Append($"; 耗时：{sw.ElapsedMilliseconds:N0} ms");
+        IocManager.Instance.Logger<LogAttribute>().LogInformation(methodCall.ToString());
     }
 
     /// <summary>

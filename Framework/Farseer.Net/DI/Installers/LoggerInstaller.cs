@@ -24,8 +24,9 @@ public class LoggerInstaller : IWindsorInstaller
         // 注册默认日志组件
         var loggerFactory = LoggerFactory.Create(configure: o =>
         {
-            o.AddConsole();
+            o.ClearProviders(); //去掉默认添加的日志提供程序
             o.AddDebug();
+            o.AddConsole();
         });
         container.Register(Component.For<ILoggerFactory>().Instance(instance: loggerFactory).LifestyleSingleton());
     }

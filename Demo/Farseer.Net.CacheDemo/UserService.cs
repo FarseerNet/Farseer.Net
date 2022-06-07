@@ -1,9 +1,11 @@
 using Collections.Pooled;
 using Farseer.Net.CacheDemo.Repository;
+using FS.AOP;
 using FS.Cache.Attribute;
 
 namespace Farseer.Net.CacheDemo;
 
+[Log]
 public class UserService
 {
     /// <summary> 获取数据集合 </summary>
