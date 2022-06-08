@@ -36,11 +36,7 @@ public class TrackMqConsumerAttribute : MethodInterceptionAspect
 
     public override async Task OnInvokeAsync(MethodInterceptionArgs args)
     {
-        if (!IocManager.Instance.IsRegistered<ILinkTrackQueue>())
-        {
-            await args.ProceedAsync();
-            return;
-        }
+        if (!FsLinkTrack.IsUseLinkTrack) { await args.ProceedAsync(); return; }
 
         switch (_mqType)
         {

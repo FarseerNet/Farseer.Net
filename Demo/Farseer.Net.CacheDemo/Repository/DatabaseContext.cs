@@ -1,3 +1,4 @@
+using FS.Core.AOP.LinkTrack;
 using FS.Utils.Common;
 
 namespace Farseer.Net.CacheDemo.Repository;

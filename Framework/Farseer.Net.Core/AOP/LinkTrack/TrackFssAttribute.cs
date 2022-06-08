@@ -19,6 +19,8 @@ public class TrackFssAttribute : MethodInterceptionAspect
 {
     public override void OnInvoke(MethodInterceptionArgs args)
     {
+        if (!FsLinkTrack.IsUseLinkTrack) { args.Proceed(); return; }
+        
         var fssContext = args.GetParamValue<IFssContext>();
         using (FsLinkTrack.TrackFss(clientHost: fssContext.Meta.ClientHost, jobName: fssContext.Meta.JobName, taskGroupId: fssContext.Meta.TaskGroupId, fssContext.Meta.Data))
         {
@@ -28,6 +30,8 @@ public class TrackFssAttribute : MethodInterceptionAspect
     
     public override async Task OnInvokeAsync(MethodInterceptionArgs args)
     {
+        if (!FsLinkTrack.IsUseLinkTrack) { await args.ProceedAsync(); return; }
+
         var fssContext = args.GetParamValue<IFssContext>();
         using (FsLinkTrack.TrackFss(clientHost: fssContext.Meta.ClientHost, jobName: fssContext.Meta.JobName, taskGroupId: fssContext.Meta.TaskGroupId, fssContext.Meta.Data))
         {

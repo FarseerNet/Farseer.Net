@@ -18,6 +18,8 @@ public class TrackElasticsearchAttribute : MethodInterceptionAspect
 {
     public override void OnInvoke(MethodInterceptionArgs args)
     {
+        if (!FsLinkTrack.IsUseLinkTrack) { args.Proceed(); return; }
+        
         using (FsLinkTrack.TrackElasticsearch(args.Method.Name))
         {
             args.Proceed();
@@ -26,6 +28,8 @@ public class TrackElasticsearchAttribute : MethodInterceptionAspect
 
     public override async Task OnInvokeAsync(MethodInterceptionArgs args)
     {
+        if (!FsLinkTrack.IsUseLinkTrack) { await args.ProceedAsync(); return; }
+
         using (FsLinkTrack.TrackElasticsearch(args.Method.Name))
         {
             await args.ProceedAsync();

@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Collections.Pooled;
+using FS.DI;
 using FS.Extends;
 using Newtonsoft.Json;
 
@@ -29,6 +30,11 @@ namespace FS.Core.LinkTrack
         /// </summary>
         public static FsLinkTrack Current => _current ??= new FsLinkTrack();
 
+        /// <summary>
+        /// 是否开启链路追踪
+        /// </summary>
+        public static bool IsUseLinkTrack => IocManager.Instance.IsRegistered<ILinkTrackQueue>();
+        
         /// <summary>
         ///     获取数据
         /// </summary>
@@ -337,6 +343,8 @@ namespace FS.Core.LinkTrack
         public static void Exception(string method, Dictionary<string, string> methodParams, string exceptionTypeName, string exceptionMessage, string callStacks)
         {
             var linkTrackContext = Current.Get();
+            if (linkTrackContext == null) return;
+            
             // 说明是异常发生处
             if (linkTrackContext.ExceptionDetail == null)
             {

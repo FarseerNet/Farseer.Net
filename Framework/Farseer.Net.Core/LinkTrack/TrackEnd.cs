@@ -15,17 +15,14 @@ namespace FS.Core.LinkTrack
     {
         private readonly LinkTrackContext _linkTrackContext;
         private readonly LinkTrackDetail  _linkTrackDetail;
-        private readonly bool             _useTrace;
         public TrackEnd(LinkTrackContext linkTrackContext)
         {
             _linkTrackContext = linkTrackContext;
-            _useTrace         = IocManager.Instance.IsRegistered<ILinkTrackQueue>();
         }
 
         public TrackEnd(LinkTrackDetail linkTrackDetail)
         {
             _linkTrackDetail = linkTrackDetail;
-            _useTrace        = IocManager.Instance.IsRegistered<ILinkTrackQueue>();
         }
 
         /// <summary>
@@ -81,7 +78,7 @@ namespace FS.Core.LinkTrack
                     if (!string.IsNullOrWhiteSpace(value: _linkTrackContext.RequestBody)) lst.Add(item: $"Body：{_linkTrackContext.RequestBody}");
                     IocManager.Instance.Logger<FsLinkTrack>().LogInformation(message: $"{lst.ToString(sign: "\r\n")}");
                 }
-                if (_useTrace) IocManager.GetService<ILinkTrackQueue>().Enqueue();
+                if (FsLinkTrack.IsUseLinkTrack) IocManager.GetService<ILinkTrackQueue>().Enqueue();
             }
         }
 

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using FS.Core.LinkTrack;
+using FS.DI;
+using Microsoft.Extensions.Logging;
 using PostSharp.Aspects;
 using PostSharp.Serialization;
 
@@ -40,15 +42,18 @@ public sealed class TrackExceptionAttribute : OnExceptionAspect
         var methodCall = AppendTypeName(args.Method);
         AppendArguments(methodCall, args.Arguments);
 
-        FsLinkTrack.Exception(method.ToString(), methodParams, exceptionTypeName, args.Exception.Message, methodCall.ToString());
+        if (FsLinkTrack.IsUseLinkTrack) FsLinkTrack.Exception(method.ToString(), methodParams, exceptionTypeName, args.Exception.Message, methodCall.ToString());
+        else
+        {
+            IocManager.Instance.Logger<TrackExceptionAttribute>().LogError($"[{exceptionTypeName}]：{args.Exception.Message} \r\n{methodCall}\r\n---------------------------------------");
+        }
     }
-
+    
     /// <summary>
     /// 拼接参数名称
     /// </summary>
     private void AppendParamName(StringBuilder method, ParameterInfo[] parameterInfos)
     {
-
         method.Append($"(");
         // 入参签名 (int x, int y)
         method.Append(parameterInfos.Aggregate(string.Empty, (current, parameter) => current + $"{parameter.ParameterType.Name} {parameter.Name}, ").Trim(',', ' '));

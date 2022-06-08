@@ -1,8 +1,10 @@
 ﻿using Farseer.Net.CacheDemo.Repository;
 using FS.Cache;
 using FS.Cache.Redis;
+using FS.Core.AOP.LinkTrack;
 using FS.Modules;
 
+[assembly:TrackException]
 namespace Farseer.Net.CacheDemo
 {
     /// <summary>

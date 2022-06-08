@@ -19,6 +19,8 @@ public class TrackDatabaseAttribute : MethodInterceptionAspect
 {
     public override void OnInvoke(MethodInterceptionArgs args)
     {
+        if (!FsLinkTrack.IsUseLinkTrack) { args.Proceed(); return; }
+        
         if (args.Instance is not IDbExecutor dbExecutor) throw new System.Exception($"发送消息的方法所在类，必须继承{nameof(IMqProduct)}");
 
         using (FsLinkTrack.TrackDatabase(method: $"{args.Method.Name} IsTransaction={dbExecutor.IsTransaction}", dbExecutor.ConnectionString))
@@ -29,6 +31,8 @@ public class TrackDatabaseAttribute : MethodInterceptionAspect
 
     public override async Task OnInvokeAsync(MethodInterceptionArgs args)
     {
+        if (!FsLinkTrack.IsUseLinkTrack) { await args.ProceedAsync(); return; }
+
         if (args.Instance is not IDbExecutor dbExecutor) throw new System.Exception($"发送消息的方法所在类，必须继承{nameof(IMqProduct)}");
 
         using (FsLinkTrack.TrackDatabase(method: $"{args.Method.Name} IsTransaction={dbExecutor.IsTransaction}", dbExecutor.ConnectionString))

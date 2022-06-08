@@ -18,20 +18,10 @@ namespace FS.Core.AOP.LinkTrack;
 [MulticastAttributeUsage(MulticastTargets.Method, TargetMemberAttributes = MulticastAttributes.Instance | MulticastAttributes.Static, Inheritance = MulticastInheritance.Multicast)]
 public class TrackGrpcAttribute : MethodInterceptionAspect
 {
-    public override async Task OnInvokeAsync(MethodInterceptionArgs args)
-    {
-        // 找到context参数
-        var     clientInterceptorContext = GetClientInterceptorContext(args);
-        dynamic context                  = args.Arguments[clientInterceptorContext];
-
-        using (FsLinkTrack.TrackGrpc(server: context.Method.ServiceName, action: context.Method.Name))
-        {
-            await args.ProceedAsync();
-        }
-    }
-
     public override void OnInvoke(MethodInterceptionArgs args)
     {
+        if (!FsLinkTrack.IsUseLinkTrack) { args.Proceed(); return; }
+        
         // 找到context参数
         var     clientInterceptorContext = GetClientInterceptorContext(args);
         dynamic context                  = args.Arguments[clientInterceptorContext];
@@ -39,6 +29,19 @@ public class TrackGrpcAttribute : MethodInterceptionAspect
         using (FsLinkTrack.TrackGrpc(server: context.Method.ServiceName, action: context.Method.Name))
         {
             args.Proceed();
+        }
+    }
+    public override async Task OnInvokeAsync(MethodInterceptionArgs args)
+    {
+        if (!FsLinkTrack.IsUseLinkTrack) { await args.ProceedAsync(); return; }
+
+        // 找到context参数
+        var     clientInterceptorContext = GetClientInterceptorContext(args);
+        dynamic context                  = args.Arguments[clientInterceptorContext];
+
+        using (FsLinkTrack.TrackGrpc(server: context.Method.ServiceName, action: context.Method.Name))
+        {
+            await args.ProceedAsync();
         }
     }
 

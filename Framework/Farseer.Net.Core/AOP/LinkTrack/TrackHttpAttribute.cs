@@ -42,6 +42,8 @@ public class TrackHttpAttribute : MethodInterceptionAspect
 
     public override async Task OnInvokeAsync(MethodInterceptionArgs args)
     {
+        if (!FsLinkTrack.IsUseLinkTrack) { await args.ProceedAsync(); return; }
+
         var url         = args.GetParamValue<string>(_urlParamName);
         var headerData  = args.GetParamValue<IDictionary<string, string>>(_headerDataParamName);
         var requestBody = args.GetParamValue<string>(_requestBodyParamName);

@@ -1,7 +1,7 @@
-using Collections.Pooled;
 using Farseer.Net.CacheDemo.Repository;
 using FS.AOP;
 using FS.Cache.Attribute;
+using FS.Core.AOP.LinkTrack;
 
 namespace Farseer.Net.CacheDemo;
 
@@ -13,7 +13,11 @@ public class UserService
     public IEnumerable<UserPO> ToList() => new DatabaseContext().ToList();
     /// <summary> 获取数据集合 </summary>
     [Cache("user")]
-    public UserPO ToEntity() => new DatabaseContext().ToList().FirstOrDefault();
+    public UserPO ToEntity()
+    {
+        throw new ArgumentOutOfRangeException("bbbbbbb");
+        return new DatabaseContext().ToList().FirstOrDefault();
+    }
 
     /// <summary> 模拟数据库添加操作（缓存必须有一个唯一标识） </summary>
     [CacheUpdate("user")]

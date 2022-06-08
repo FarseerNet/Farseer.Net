@@ -20,6 +20,8 @@ public class TrackRedisAttribute : MethodInterceptionAspect
 {
     public override void OnInvoke(MethodInterceptionArgs args)
     {
+        if (!FsLinkTrack.IsUseLinkTrack) { args.Proceed(); return; }
+
         var key   = args.GetParamValueWithoutException<RedisKey>();
         var value = args.GetParamValueWithoutException<RedisValue>();
 
@@ -31,6 +33,8 @@ public class TrackRedisAttribute : MethodInterceptionAspect
 
     public override async Task OnInvokeAsync(MethodInterceptionArgs args)
     {
+        if (!FsLinkTrack.IsUseLinkTrack) { await args.ProceedAsync(); return; }
+
         var key   = args.GetParamValueWithoutException<RedisKey>();
         var value = args.GetParamValueWithoutException<RedisValue>();
 
