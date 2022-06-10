@@ -97,7 +97,7 @@ namespace FS.MQ.Queue
                     // 注册消费端
                     iocManager.Logger<QueueInstaller>().LogInformation(message: $"正在启动Queue消费：{consumerAtt.Name}");
                     var consumerInstance = new QueueConsumer(iocManager: iocManager, consumerType: consumerType, queueConfig: queueConfig);
-                    consumerInstance.StartWhile();
+                    _ = consumerInstance.StartWhile();
                 });
             }
         }

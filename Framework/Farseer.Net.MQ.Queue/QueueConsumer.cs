@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using FS.Core.Abstract.MQ.Queue;
+using FS.Core.AOP;
 using FS.Core.LinkTrack;
 using FS.DI;
 using FS.MQ.Queue.Configuration;

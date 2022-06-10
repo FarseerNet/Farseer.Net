@@ -41,11 +41,11 @@ namespace FS.EventBus
         /// <summary>
         /// 将事件加入到订阅端的队列中
         /// </summary>
-        public void Push(DomainEventArgs args)
-        {
-            DicEventMessage[Consumer].Enqueue(args);
-        }
+        public void Push(DomainEventArgs args) => DicEventMessage[Consumer].Enqueue(args);
 
+        /// <summary>
+        /// 订阅者遍历事件，并消费事件
+        /// </summary>
         public void Work()
         {
             // 执行当前队列
@@ -60,7 +60,8 @@ namespace FS.EventBus
                     }
 
                     DicEventMessage[Consumer].TryDequeue(out var domainEventArgs);
-                    EventHandle(domainEventArgs: domainEventArgs, true);
+                    // 使用异步执行，不需要等待：同一个订阅者，不同事件，允许多线程执行
+                    _ = EventHandle(domainEventArgs: domainEventArgs, true);
                 }
             });
 
@@ -76,7 +77,8 @@ namespace FS.EventBus
                     }
 
                     DicEventFailMessage[Consumer].TryDequeue(out var domainEventArgs);
-                    EventHandle(domainEventArgs: domainEventArgs, true);
+                    // 使用异步执行，不需要等待：同一个订阅者，不同事件，允许多线程执行
+                    _ = EventHandle(domainEventArgs: domainEventArgs, true);
                 }
             });
         }
