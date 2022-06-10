@@ -17,7 +17,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Mapster" Version="7.3.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
         <ProjectReference Include="..\Farseer.Net.Core\Farseer.Net.Core.csproj" />
         <ProjectReference Include="..\Farseer.Net.ElasticSearch\Farseer.Net.ElasticSearch.csproj" />
