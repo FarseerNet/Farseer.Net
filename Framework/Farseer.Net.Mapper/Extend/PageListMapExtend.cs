@@ -11,7 +11,7 @@ public static class PageListMapExtend
 {
     public static PageList<TDestination> Map<TDestination>(this IPageList source) where TDestination : class
     {
-        return source == null ? null : new PageList<TDestination>(source.GetList().Map<TDestination>(), source.RecordCount);
+        return source == null ? null : new PageList<TDestination>(source.GetList().Map<TDestination>().ToPooledList(), source.RecordCount);
     }
 
     public static PageList<TDestination> Map<TDestination, TSource>(this PageList<TSource> source, Action<TDestination, TSource> mapRule) where TSource : class where TDestination : class

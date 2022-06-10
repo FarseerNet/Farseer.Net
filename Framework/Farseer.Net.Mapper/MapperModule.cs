@@ -22,12 +22,6 @@ namespace FS.Mapper
         /// </summary>
         public override void PreInitialize()
         {
-            using var types = _typeFinder.Find(predicate: type =>
-                                             type.IsDefined(attributeType: typeof(MapAttribute))     ||
-                                             type.IsDefined(attributeType: typeof(MapFromAttribute)) ||
-                                             type.IsDefined(attributeType: typeof(MapToAttribute))
-                                        );
-            MapperHelper.CreateMap(typeArr: types);
         }
 
         public override void Initialize()
