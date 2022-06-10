@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using Collections.Pooled;
 using FS.Core.Abstract.MQ.Queue;
 using FS.Core.LinkTrack;
+using FS.Extends;
 using FS.LinkTrack.Dal;
-using Mapster;
 
 namespace FS.LinkTrack.Consumer
 {
@@ -19,7 +19,7 @@ namespace FS.LinkTrack.Consumer
         {
             if (!queueList.Any()) return true;
 
-            using var lst = queueList.Select(o => o.Adapt<LinkTrackContextPO>()).ToPooledList();
+            using var lst = queueList.Select(o => o.Map<LinkTrackContextPO>()).ToPooledList();
 
             // 异常信息
             using var lstException = new PooledList<ExceptionDetailPO>();
@@ -35,7 +35,7 @@ namespace FS.LinkTrack.Consumer
                 // 链路上下文发生异常时，单独记录
                 if (linkTrackContext.ExceptionDetail != null)
                 {
-                    var exceptionDetailPO = linkTrackContext.ExceptionDetail.Adapt<ExceptionDetailPO>();
+                    var exceptionDetailPO = linkTrackContext.ExceptionDetail.Map<ExceptionDetailPO>();
                     exceptionDetailPO.AppId     = linkTrackContext.AppId;
                     exceptionDetailPO.AppIp     = linkTrackContext.AppIp;
                     exceptionDetailPO.AppName   = linkTrackContext.AppName;
