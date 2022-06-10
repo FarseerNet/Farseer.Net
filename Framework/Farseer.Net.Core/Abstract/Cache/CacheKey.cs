@@ -13,9 +13,9 @@ namespace FS.Core.Abstract.Cache;
 /// <summary>
 ///     读写缓存的选项设置
 /// </summary>
-public class CacheKey2
+public class CacheKey
 {
-    public CacheKey2(string key, string redisConfigName, EumCacheStoreType cacheStoreType, Type type = null, TimeSpan? redisExpiry = null, TimeSpan? memoryExpiry = null)
+    public CacheKey(string key, string redisConfigName, EumCacheStoreType cacheStoreType, Type type = null, TimeSpan? redisExpiry = null, TimeSpan? memoryExpiry = null)
     {
         Key             = key;
         CacheStoreType  = cacheStoreType;
@@ -30,7 +30,7 @@ public class CacheKey2
             EumCacheStoreType.Memory => IocManager.GetService<ICache>("CacheInMemory"),
             // Redis缓存
             EumCacheStoreType.Redis => IocManager.GetService<ICache>($"CacheInRedis_{RedisConfigName}"),
-            _                       => IocManager.GetService<ICache>("CacheInMemory")
+            _                       => IocManager.GetService<ICache>($"CacheInMemoryAndRedis_{RedisConfigName}")
         };
     }
 
@@ -147,9 +147,9 @@ public class CacheKey2
 /// <summary>
 ///     读写缓存的选项设置
 /// </summary>
-public class CacheKey2<TEntity> : CacheKey2 where TEntity : class
+public class CacheKey<TEntity> : CacheKey where TEntity : class
 {
-    public CacheKey2(string key, string redisConfigName, EumCacheStoreType cacheStoreType, TimeSpan? redisExpiry = null, TimeSpan? memoryExpiry = null) : base(key, redisConfigName, cacheStoreType, typeof(TEntity), redisExpiry, memoryExpiry)
+    public CacheKey(string key, string redisConfigName, EumCacheStoreType cacheStoreType, TimeSpan? redisExpiry = null, TimeSpan? memoryExpiry = null) : base(key, redisConfigName, cacheStoreType, typeof(TEntity), redisExpiry, memoryExpiry)
     {
         ListType       = typeof(List<TEntity>);
         PooledListType = typeof(PooledList<TEntity>);
@@ -173,9 +173,9 @@ public class CacheKey2<TEntity> : CacheKey2 where TEntity : class
 /// <summary>
 ///     读写缓存的选项设置
 /// </summary>
-public class CacheKey2<TEntity, TEntityId> : CacheKey2<TEntity> where TEntity : class
+public class CacheKey<TEntity, TEntityId> : CacheKey<TEntity> where TEntity : class
 {
-    public CacheKey2(string key, string redisConfigName, Expression<Func<TEntity, TEntityId>> getField, EumCacheStoreType cacheStoreType, TimeSpan? redisExpiry = null, TimeSpan? memoryExpiry = null) : base(key, redisConfigName, cacheStoreType, redisExpiry, memoryExpiry)
+    public CacheKey(string key, string redisConfigName, Expression<Func<TEntity, TEntityId>> getField, EumCacheStoreType cacheStoreType, TimeSpan? redisExpiry = null, TimeSpan? memoryExpiry = null) : base(key, redisConfigName, cacheStoreType, redisExpiry, memoryExpiry)
     {
         DataKey = getField.GetPropertyInfo();
     }

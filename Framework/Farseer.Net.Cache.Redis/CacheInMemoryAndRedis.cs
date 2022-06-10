@@ -19,7 +19,7 @@ public class CacheInMemoryAndRedis : ICache
         _memoryCache = IocManager.GetService<ICache>(name: "CacheInMemory");
     }
 
-    public IList Get(CacheKey2 key)
+    public IList Get(CacheKey key)
     {
         // 优先读本地缓存
         var list = _memoryCache.Get(key);
@@ -36,7 +36,7 @@ public class CacheInMemoryAndRedis : ICache
         return list;
     }
 
-    public int Count(CacheKey2 key)
+    public int Count(CacheKey key)
     {
         var count = _memoryCache.Count(key);
         if (count > 0) return count;
@@ -47,32 +47,32 @@ public class CacheInMemoryAndRedis : ICache
         return 0;
     }
 
-    public bool Exists(CacheKey2 key, string cacheId)
+    public bool Exists(CacheKey key, string cacheId)
     {
         if (_memoryCache.Exists(key, cacheId)) return true;
         if (_redisCache.Exists(key, cacheId)) return true;
         return false;
     }
 
-    public void Set(CacheKey2 key, IList lst)
+    public void Set(CacheKey key, IList lst)
     {
         _redisCache.Set(key, lst);
         _memoryCache.Set(key, lst);
     }
 
-    public void Save(CacheKey2 key, object newVal)
+    public void Save(CacheKey key, object newVal)
     {
         _redisCache.Save(key, newVal);
         _memoryCache.Save(key, newVal);
     }
 
-    public void Remove(CacheKey2 key, string cacheId)
+    public void Remove(CacheKey key, string cacheId)
     {
         _redisCache.Remove(key, cacheId);
         _memoryCache.Remove(key, cacheId);
     }
 
-    public void Clear(CacheKey2 key)
+    public void Clear(CacheKey key)
     {
         _redisCache.Clear(key);
         _memoryCache.Clear(key);

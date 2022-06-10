@@ -63,7 +63,7 @@ public class CacheAttribute : MethodInterceptionAspect
     /// <summary>
     /// 当拿到缓存数据时，返回给实现被拦截的方法
     /// </summary>
-    private void SetReturnValue(MethodInterceptionArgs args, IList lst, Type returnType, CacheKey2 cacheKey)
+    private void SetReturnValue(MethodInterceptionArgs args, IList lst, Type returnType, CacheKey cacheKey)
     {
         var cacheListType = lst.GetType();
 

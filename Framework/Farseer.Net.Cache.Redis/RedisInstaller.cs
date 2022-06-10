@@ -38,6 +38,7 @@ namespace FS.Cache.Redis
             foreach (var redisItemConfig in redisItemConfigs)
             {
                 container.Register(Component.For<ICache>().ImplementedBy<CacheInRedis>().DependsOn(dependency: Dependency.OnValue<string>(value: redisItemConfig.Name)).Named(name: $"CacheInRedis_{redisItemConfig.Name}").LifestyleSingleton());
+                container.Register(Component.For<ICache>().ImplementedBy<CacheInMemoryAndRedis>().DependsOn(dependency: Dependency.OnValue<string>(value: redisItemConfig.Name)).Named(name: $"CacheInMemoryAndRedis_{redisItemConfig.Name}").LifestyleSingleton());
 
                 // Redis缓存管理
                 var redisCacheManager = new RedisCacheManager(config: redisItemConfig);

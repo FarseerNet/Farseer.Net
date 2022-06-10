@@ -17,18 +17,18 @@ public class CacheInRedis : ICache
         _redisCacheManager = IocManager.GetService<IRedisCacheManager>(name: redisItemConfigName);
     }
 
-    public IList Get(CacheKey2 key)
+    public IList Get(CacheKey key)
     {
         var hashGetAll = _redisCacheManager.Db.HashGetAll(key.Key);
         if (hashGetAll.Length == 0) return null;
         return hashGetAll.Select(selector: o => JsonConvert.DeserializeObject(o.Value, key.ItemType)).ToPooledList();
     }
 
-    public int Count(CacheKey2 key) => (int)_redisCacheManager.Db.HashLength(key.Key);
+    public int Count(CacheKey key) => (int)_redisCacheManager.Db.HashLength(key.Key);
 
-    public bool Exists(CacheKey2 key, string cacheId) => _redisCacheManager.Db.HashExists(key.Key, cacheId);
+    public bool Exists(CacheKey key, string cacheId) => _redisCacheManager.Db.HashExists(key.Key, cacheId);
 
-    public void Set(CacheKey2 key, IList lst)
+    public void Set(CacheKey key, IList lst)
     {
         var       transaction = _redisCacheManager.Db.CreateTransaction();
         using var tasks       = new PooledList<Task>();
@@ -46,19 +46,19 @@ public class CacheInRedis : ICache
         Task.WaitAll(tasks: tasks.ToArray());
     }
 
-    public void Save(CacheKey2 key, object newVal)
+    public void Save(CacheKey key, object newVal)
     {
         var dataKey = key.DataKey != null ? PropertyGetCacheManger.Cache(key.DataKey, newVal).ToString() : newVal.GetType().Name;
         var data    = JsonConvert.SerializeObject(newVal);
         _redisCacheManager.Db.HashSet(key.Key, dataKey, data);
     }
 
-    public void Remove(CacheKey2 key, string cacheId)
+    public void Remove(CacheKey key, string cacheId)
     {
         _redisCacheManager.Db.HashDelete(key.Key, cacheId);
     }
 
-    public void Clear(CacheKey2 key)
+    public void Clear(CacheKey key)
     {
         _redisCacheManager.Db.KeyDelete(key.Key);
     }

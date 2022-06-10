@@ -11,11 +11,11 @@ public class CacheInMemory : ICache
     /// <summary>
     /// 从本地内存中获取
     /// </summary>
-    public IList Get(CacheKey2 key) => MyCache.Get<IList>(key.Key);
+    public IList Get(CacheKey key) => MyCache.Get<IList>(key.Key);
 
-    public int Count(CacheKey2 key) => Get(key)?.Count ?? 0;
+    public int Count(CacheKey key) => Get(key)?.Count ?? 0;
 
-    public bool Exists(CacheKey2 key, string cacheId)
+    public bool Exists(CacheKey key, string cacheId)
     {
         var list = Get(key);
         if (list == null) return false;
@@ -39,7 +39,7 @@ public class CacheInMemory : ICache
     /// </summary>
     /// <param name="key">缓存key</param>
     /// <param name="val">要缓存的数据</param>
-    public void Set(CacheKey2 key, IList val)
+    public void Set(CacheKey key, IList val)
     {
         using (var cacheEntry = MyCache.CreateEntry(key.Key))
         {
@@ -54,7 +54,7 @@ public class CacheInMemory : ICache
     /// </summary>
     /// <param name="key">缓存key</param>
     /// <param name="newVal">要缓存的数据</param>
-    public void Save(CacheKey2 key, object newVal)
+    public void Save(CacheKey key, object newVal)
     {
         var list = Get(key);
         if (list == null) return;
@@ -82,7 +82,7 @@ public class CacheInMemory : ICache
         list.Add(newVal);
     }
 
-    public void Remove(CacheKey2 key, string cacheId)
+    public void Remove(CacheKey key, string cacheId)
     {
         var list = Get(key);
         if (list == null) return;
@@ -106,5 +106,5 @@ public class CacheInMemory : ICache
         }
     }
 
-    public void Clear(CacheKey2 key) => MyCache.Remove(key.Key);
+    public void Clear(CacheKey key) => MyCache.Remove(key.Key);
 }
