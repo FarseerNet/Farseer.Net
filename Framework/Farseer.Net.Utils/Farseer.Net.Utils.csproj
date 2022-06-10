@@ -16,38 +16,25 @@
     </PropertyGroup>
 
 
-    <PropertyGroup Condition="'$(TargetFramework)' == 'net461'">
-        <DefineConstants>net461</DefineConstants>
-    </PropertyGroup>
     <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
         <DefineConstants>CORE</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Farseer.Net.Core\Farseer.Net.Core.csproj" />
-        <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />
+        <ProjectReference Include="..\Farseer.Net.Core\Farseer.Net.Core.csproj"/>
+        <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj"/>
     </ItemGroup>
-
-    <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
-        <Reference Include="System" />
-        <Reference Include="Microsoft.CSharp" />
-        <Reference Include="Microsoft.VisualBasic" />
-        <Reference Include="System.ComponentModel.DataAnnotations" />
-        <Reference Include="System.Management" />
-        <Reference Include="System.ServiceProcess" />
-        <Reference Include="System.Net.Http" />
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-        <Compile Remove="Common\Mac.cs" />
-        <Compile Remove="Common\Thumbnail.cs" />
-        <Compile Remove="Component\WinService\BaseService.cs" />
-        <Compile Remove="Component\WinService\BaseTimingService.cs" />
+    
+    <ItemGroup>
+        <Compile Remove="Common\Mac.cs"/>
+        <Compile Remove="Common\Thumbnail.cs"/>
+        <Compile Remove="Component\WinService\BaseService.cs"/>
+        <Compile Remove="Component\WinService\BaseTimingService.cs"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-        <PackageReference Include="System.ServiceProcess.ServiceController" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0"/>
+        <PackageReference Include="System.ServiceProcess.ServiceController" Version="6.0.0"/>
     </ItemGroup>
 
 </Project>
