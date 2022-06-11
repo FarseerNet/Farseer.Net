@@ -49,10 +49,9 @@ namespace FS.EventBus
             // 找出事件的订阅方
             foreach (var consumer in DicConsumer[_eventName])
             {
-                // 订阅者同步处理
-                var eventHandle = consumer.EventHandle(domainEventArgs, false);
-                Task.WaitAll(eventHandle);
-                result = result && eventHandle.Result;
+                // 这里使用Task.Run，是因为如果使用Task.WaitAll，会导致SynchronizationContext上下文切换引导的死锁
+                var consumerResult = Task.Run(async () => await consumer.EventHandle(domainEventArgs, false)).Result;
+                result = result && consumerResult;
             }
             return result;
         }
