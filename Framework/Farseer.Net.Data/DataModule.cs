@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Collections.Pooled;
+using FS.Cache;
 using FS.Data.Abstract;
 using FS.Data.Internal;
 using FS.DI;
@@ -51,7 +52,9 @@ namespace FS.Data
             foreach (var context in lstContext)
             {
                 // 需要做实例化，才能初始化上下文
-                Activator.CreateInstance(context);
+                var dbContext = (DbContext)InstanceCacheManger.Cache(context);
+                dbContext.InternalContext.UseUnitOfWork();
+                
                 // 找到Set属性
                 var set       = context.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
                 var lstPOType = set.Select(o => o.PropertyType).Where(o => o.GetInterfaces().Any(i => i == typeof(IDbSet))).Select(o => o.GenericTypeArguments[0]);
