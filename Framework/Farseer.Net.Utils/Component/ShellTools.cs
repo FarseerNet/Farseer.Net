@@ -32,7 +32,7 @@ namespace FS.Utils.Component
                     UseShellExecute        = false,
                     WorkingDirectory       = workingDirectory
                 };
-
+                
                 // 添加环境变量
                 if (environment != null)
                     foreach (var env in environment)
@@ -53,8 +53,8 @@ namespace FS.Utils.Component
 
                     proc.OutputDataReceived += ProcOnOutputDataReceived;
                     proc.ErrorDataReceived  += ProcOnOutputDataReceived;
-                    proc.BeginOutputReadLine();
                     proc.BeginErrorReadLine();
+                    proc.BeginOutputReadLine();
 
                     // 增加取消令牌
                     var tcs = new TaskCompletionSource<int>(creationOptions: TaskCreationOptions.RunContinuationsAsynchronously);
@@ -86,7 +86,6 @@ namespace FS.Utils.Component
 
                     // 等待退出
                     //proc.WaitForExit();
-                    //runShellResult.IsError = proc.ExitCode != 0;
                 }
 
                 return exitCode;
