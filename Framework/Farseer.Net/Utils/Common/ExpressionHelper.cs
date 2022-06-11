@@ -406,9 +406,26 @@ namespace FS.Utils.Common
         {
             var instanceParam = Expression.Parameter(type: typeof(object), name: "instance");
             //((T)instance)
-            var castInstanceExpression = Expression.Convert(expression: instanceParam, type: fieldInfo.DeclaringType);
-            //((T)instance).Property
+            //var castInstanceExpression = Expression.Convert(expression: instanceParam, type: fieldInfo.DeclaringType);
+            //((T)instance).Field
             var fieldProperty    = Expression.Field(expression: null, field: fieldInfo);
+            var val              = Expression.Convert(expression: fieldProperty, type: typeof(object));
+            var lambdaExpression = Expression.Lambda<Func<object, object>>(body: Expression.Convert(expression: val, type: typeof(object)), instanceParam);
+            return lambdaExpression.Compile();
+        }
+
+        /// <summary>
+        ///     动态构造获取值委托（静态属性）
+        /// </summary>
+        /// <param name="propertyInfo"> 属性值类型 </param>
+        /// <returns> 强类型委托 </returns>
+        public static Func<object, object> GetStaticValue(PropertyInfo propertyInfo)
+        {
+            var instanceParam = Expression.Parameter(type: typeof(object), name: "instance");
+            //((T)instance)
+            //var castInstanceExpression = Expression.Convert(expression: instanceParam, type: propertyInfo.DeclaringType);
+            //((T)instance).Property
+            var fieldProperty    = Expression.Property(expression: null, propertyInfo);
             var val              = Expression.Convert(expression: fieldProperty, type: typeof(object));
             var lambdaExpression = Expression.Lambda<Func<object, object>>(body: Expression.Convert(expression: val, type: typeof(object)), instanceParam);
             return lambdaExpression.Compile();

@@ -5,10 +5,10 @@ using Collections.Pooled;
 namespace FS.Cache
 {
     /// <summary>
-    ///     根据对象Type，创建实例（替换反射创建实例）
+    ///     调用静态方法
     /// Func<object[], object> ,Key:方法的参数，Value：方法的返回值
     /// </summary>
-    public class InstanceStaticCacheManger : AbsCacheManger<int, Func<object[], object>>
+    public class StaticMethodCacheManger : AbsCacheManger<int, Func<object[], object>>
     {
         /// <summary>
         ///     线程锁
@@ -19,7 +19,7 @@ namespace FS.Cache
 
         private readonly Type _type;
 
-        private InstanceStaticCacheManger(Type type, string methodName, params object[] args)
+        private StaticMethodCacheManger(Type type, string methodName, params object[] args)
         {
             _type       = type;
             _methodName = methodName;
@@ -57,6 +57,6 @@ namespace FS.Cache
         /// <param name="type"> 对象类型 </param>
         /// <param name="methodName"> 方法名称 </param>
         /// <param name="args"> 对象构造参数 </param>
-        public static object Cache(Type type, string methodName, params object[] args) => new InstanceStaticCacheManger(type: type, methodName: methodName, args: args).GetValue()(arg: args);
+        public static object Cache(Type type, string methodName, params object[] args) => new StaticMethodCacheManger(type: type, methodName: methodName, args: args).GetValue()(arg: args);
     }
 }

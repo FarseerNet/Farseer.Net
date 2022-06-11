@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Collections.Pooled;
+using FS.Cache;
 using FS.DI;
 using FS.Modules;
 using FS.Reflection;
@@ -34,7 +35,7 @@ namespace FS.ElasticSearch
             foreach (var context in lstContext)
             {
                 // 需要做实例化，才能初始化上下文
-                Activator.CreateInstance(context);
+                InstanceCacheManger.Cache(context);
             }
         }
     }

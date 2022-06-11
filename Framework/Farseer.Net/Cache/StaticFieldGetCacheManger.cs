@@ -7,14 +7,14 @@ namespace FS.Cache
     /// <summary>
     ///     表达式树委托Get缓存
     /// </summary>
-    public class FieldStaticGetCacheManger : AbsCacheManger<FieldInfo, Func<object, object>>
+    public class StaticFieldGetCacheManger : AbsCacheManger<FieldInfo, Func<object, object>>
     {
         /// <summary>
         ///     线程锁
         /// </summary>
         private static readonly object LockObject = new();
 
-        private FieldStaticGetCacheManger(FieldInfo key) : base(key: key)
+        private StaticFieldGetCacheManger(FieldInfo key) : base(key: key)
         {
         }
 
@@ -36,6 +36,6 @@ namespace FS.Cache
         ///     赋值
         /// </summary>
         /// <param name="key"> 缓存Key </param>
-        public static object Cache(FieldInfo key) => new FieldStaticGetCacheManger(key: key).GetValue()(arg: null);
+        public static object Cache(FieldInfo key) => new StaticFieldGetCacheManger(key: key).GetValue()(arg: null);
     }
 }

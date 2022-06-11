@@ -30,7 +30,7 @@ namespace FS.Extends
             var       type    = DynamicCompilationEntity.Instance.GetProxyType(entityType: typeof(TEntity));
             try
             {
-                return (PooledList<TEntity>)InstanceStaticCacheManger.Cache(type: type, methodName: "ToList", mapData);
+                return (PooledList<TEntity>)StaticMethodCacheManger.Cache(type: type, methodName: "ToList", mapData);
             }
             finally
             {
@@ -53,7 +53,7 @@ namespace FS.Extends
             var       type    = DynamicCompilationEntity.Instance.GetProxyType(entityType: typeof(TEntity));
             try
             {
-                return (PooledList<TEntity>)InstanceStaticCacheManger.Cache(type: type, methodName: "ToList", mapData);
+                return (PooledList<TEntity>)StaticMethodCacheManger.Cache(type: type, methodName: "ToList", mapData);
             }
             finally
             {
@@ -76,7 +76,7 @@ namespace FS.Extends
             var       type    = DynamicCompilationEntity.Instance.GetProxyType(entityType: typeof(TEntity));
             try
             {
-                return (TEntity)InstanceStaticCacheManger.Cache(type: type, methodName: "ToEntity", mapData, 0);
+                return (TEntity)StaticMethodCacheManger.Cache(type: type, methodName: "ToEntity", mapData, 0);
             }
             finally
             {
@@ -99,7 +99,7 @@ namespace FS.Extends
             var       type    = DynamicCompilationEntity.Instance.GetProxyType(entityType: typeof(TEntity));
             try
             {
-                return (TEntity)InstanceStaticCacheManger.Cache(type: type, methodName: "ToEntity", mapData, 0);
+                return (TEntity)StaticMethodCacheManger.Cache(type: type, methodName: "ToEntity", mapData, 0);
             }
             finally
             {
@@ -122,7 +122,7 @@ namespace FS.Extends
             var       type    = DynamicCompilationEntity.Instance.GetProxyType(entityType: typeof(TEntity));
             try
             {
-                return (TEntity)InstanceStaticCacheManger.Cache(type: type, methodName: "ToEntity", mapData, 0);
+                return (TEntity)StaticMethodCacheManger.Cache(type: type, methodName: "ToEntity", mapData, 0);
             }
             finally
             {
@@ -145,7 +145,7 @@ namespace FS.Extends
             var       type    = DynamicCompilationEntity.Instance.GetProxyType(entityType: typeof(TEntity));
             try
             {
-                return (PooledList<TEntity>)InstanceStaticCacheManger.Cache(type: type, methodName: "ToList", mapData);
+                return (PooledList<TEntity>)StaticMethodCacheManger.Cache(type: type, methodName: "ToList", mapData);
             }
             finally
             {
@@ -168,7 +168,7 @@ namespace FS.Extends
             var       type    = DynamicCompilationEntity.Instance.GetProxyType(entityType: typeof(TEntity));
             try
             {
-                return (PooledList<TEntity>)InstanceStaticCacheManger.Cache(type: type, methodName: "ToList", mapData);
+                return (PooledList<TEntity>)StaticMethodCacheManger.Cache(type: type, methodName: "ToList", mapData);
             }
             finally
             {
@@ -191,7 +191,7 @@ namespace FS.Extends
             var       type    = DynamicCompilationEntity.Instance.GetProxyType(entityType: typeof(TEntity));
             try
             {
-                return ((PooledList<TEntity>)InstanceStaticCacheManger.Cache(type: type, methodName: "ToList", mapData)).ToArray();
+                return ((PooledList<TEntity>)StaticMethodCacheManger.Cache(type: type, methodName: "ToList", mapData)).ToArray();
             }
             finally
             {
