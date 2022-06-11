@@ -99,8 +99,7 @@ namespace FS.Data.Data
         public void CancelTran()
         {
             if (IsTransaction) _comm?.Transaction?.Dispose();
-
-            IsTransaction = false;
+            SetTranLevel(IsolationLevel.Unspecified);
         }
 
         /// <summary>
