@@ -127,7 +127,7 @@ namespace FS.Data.Internal
         public void UseUnitOfWork()
         {
             // 在同一作用域下，说明外层没有开启事务，则这里需取消事务
-            if (CurrentScope.Value.ScopeID == ScopeID)
+            if (CurrentScope.Value?.ScopeID == ScopeID)
             {
                 CurrentScope.Value = null;
                 DbExecutor.CancelTran();
