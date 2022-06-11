@@ -1,4 +1,5 @@
-﻿using System.Data.Common;
+﻿using System;
+using System.Data.Common;
 using System.Reflection;
 using System.Text;
 using FS.Cache;
@@ -12,11 +13,12 @@ namespace FS.Data.Client.SqLite
     /// </summary>
     public class SqLiteProvider : AbsDbProvider
     {
-        public override DbProviderFactory   DbProviderFactory    => (DbProviderFactory)InstanceCacheManger.Cache(type: Assembly.Load(assemblyString: "System.Data.SQLite").GetType(name: "System.Data.SQLite.SQLiteFactory"));
-        public override AbsFunctionProvider FunctionProvider     => new SqLiteFunctionProvider();
-        public override AbsDbParam          DbParam              => new SqLiteParam(DbProviderFactory);
-        public override AbsConnectionString ConnectionString     => new SqLiteConnectionString();
-        public override bool                IsSupportTransaction => true;
+        private static readonly Type                DbProviderFactoryType = Assembly.Load(assemblyString: "System.Data.SQLite").GetType(name: "System.Data.SQLite.SQLiteFactory");
+        public override         DbProviderFactory   DbProviderFactory    => (DbProviderFactory)InstanceCacheManger.Cache(type: DbProviderFactoryType);
+        public override         AbsFunctionProvider FunctionProvider     => new SqLiteFunctionProvider();
+        public override         AbsDbParam          DbParam              => new SqLiteParam(DbProviderFactory);
+        public override         AbsConnectionString ConnectionString     => new SqLiteConnectionString();
+        public override         bool                IsSupportTransaction => true;
 
         internal override AbsSqlBuilder CreateSqlBuilder(ExpressionBuilder expBuilder, SetDataMap setMap) => new SqLiteBuilder(dbProvider: this, expBuilder: expBuilder, setMap);
     }

@@ -13,7 +13,8 @@ namespace FS.Data.Client.MySql
     public class MySqlProvider : AbsDbProvider
     {
         //public override DbProviderFactory DbProviderFactory => (DbProviderFactory)InstanceCacheManger.Cache(Assembly.Load("MySql.Data").GetType("MySql.Data.MySqlClient.MySqlClientFactory"));
-        public override DbProviderFactory DbProviderFactory => (DbProviderFactory)StaticFieldGetCacheManger.Cache(key: Assembly.Load(assemblyString: "MySqlConnector").GetType(name: "MySqlConnector.MySqlConnectorFactory").GetField(name: "Instance"));
+        private static readonly FieldInfo         dbProviderFactoryType = Assembly.Load(assemblyString: "MySqlConnector").GetType(name: "MySqlConnector.MySqlConnectorFactory").GetField(name: "Instance");
+        public override         DbProviderFactory DbProviderFactory => (DbProviderFactory)StaticFieldGetCacheManger.Cache(key: dbProviderFactoryType);
 
         public override AbsFunctionProvider FunctionProvider     => new MySqlFunctionProvider();
         public override AbsDbParam          DbParam              => new MySqlParam(DbProviderFactory);

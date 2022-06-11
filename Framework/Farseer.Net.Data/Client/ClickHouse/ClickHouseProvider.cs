@@ -1,4 +1,5 @@
-﻿using System.Data.Common;
+﻿using System;
+using System.Data.Common;
 using System.Reflection;
 using System.Text;
 using FS.Cache;
@@ -13,7 +14,9 @@ namespace FS.Data.Client.ClickHouse
     public class ClickHouseProvider : AbsDbProvider
     {
         //public override DbProviderFactory DbProviderFactory => (DbProviderFactory)InstanceCacheManger.Cache(Assembly.Load("Octonica.ClickHouseClient").GetType("Octonica.ClickHouseClient.ClickHouseDbProviderFactory"));
-        public override DbProviderFactory DbProviderFactory => (DbProviderFactory)InstanceCacheManger.Cache(type: Assembly.Load(assemblyString: "ClickHouse.Client").GetType(name: "ClickHouse.Client.ADO.ClickHouseConnectionFactory"));
+
+        private static readonly Type              dbProviderFactoryType = Assembly.Load(assemblyString: "ClickHouse.Client").GetType(name: "ClickHouse.Client.ADO.ClickHouseConnectionFactory");
+        public override         DbProviderFactory DbProviderFactory => (DbProviderFactory)InstanceCacheManger.Cache(type:dbProviderFactoryType);
 
         public override AbsFunctionProvider FunctionProvider => new ClickHouseFunctionProvider();
         public override AbsDbParam          DbParam          => new ClickHouseParam(DbProviderFactory);
