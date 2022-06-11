@@ -18,6 +18,8 @@ public class TrackSqlParamAttribute : MethodInterceptionAspect
 {
     public override void OnInvoke(MethodInterceptionArgs args)
     {
+        if (!FsLinkTrack.IsUseLinkTrack) { args.Proceed(); return; }
+        
         var callMethod = GetCallMethodValue(args: args);
 
         // 通过入参，获取ISqlParam
@@ -33,6 +35,8 @@ public class TrackSqlParamAttribute : MethodInterceptionAspect
     
     public override async Task OnInvokeAsync(MethodInterceptionArgs args)
     {
+        if (!FsLinkTrack.IsUseLinkTrack) { await args.ProceedAsync(); return; }
+        
         var callMethod = GetCallMethodValue(args: args);
 
         // 通过入参，获取ISqlParam

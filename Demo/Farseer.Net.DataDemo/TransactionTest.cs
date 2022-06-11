@@ -19,7 +19,7 @@ public class TransactionTest
     /// <summary>
     /// 开启事务（指定数据库配置名称）
     /// </summary>
-    [TransactionName("test")]
+    [Transaction("test")]
     public void AopTransactionByName()
     {
         MysqlContext.Data.User.Insert(new UserPO { Name = FarseerApplication.AppId.ToString() }); // 添加
