@@ -1,4 +1,6 @@
 ## Farseer.net是什么?
+
+---
 针对 **.net core** 平台下的一套标准制定的框架。
 
 我们为您选型出目前最为流行的组件，并按模块化来提供使用这些组件。
@@ -10,9 +12,9 @@
 1. [文档](https://github.com/FarseerNet/Farseer.Net/tree/dev/Doc)
 2. [demo](https://github.com/FarseerNet/Farseer.Net/tree/dev/Demo)
 
----
 ### 有什么特点？
 
+---
 **优雅**
 
 我们使用`IOC`技术，遍布整个框架及您的业务系统。
