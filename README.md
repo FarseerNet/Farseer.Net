@@ -28,6 +28,7 @@
 
 结合[FOPS](https://github.com/FarseerNet/FOPS) 项目（自动构建、链路追踪控制台、K8S集群日志收集）支持代码无侵入的全链路实时监控。
 
+---
 
 ### Farseer.net有哪些功能？
 | 组件名称 | 描述  |
