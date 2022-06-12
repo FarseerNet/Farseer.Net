@@ -308,19 +308,6 @@ public class TestEvent : IListenerMessage
 ```
 
 ### Mapper组件：Farseer.Net.Mapper
-`实体类`
-```c#
-  /// <summary>
-  ///     会员账号实体
-  /// </summary>
-  [Map(typeof(UserVO),typeof(UserLoginVO))] // 告知Mapper组件，我可以Mapper的对象
-  public class UserPO
-  {
-      /// <summary> </summary>
-      [Field(Name = "ID", IsPrimaryKey = true, IsDbGenerated = true)]
-      public int? Id { get; set; }
-  }
-```
 
 `转换`
 ```c#
@@ -328,35 +315,21 @@ public class TestEvent : IListenerMessage
 ```
 
 ### Farseer.net有哪些功能？
-* `Farseer.Net.Data`
-  *  ORM组件支持：MySql/ClickHouse/Sqlserver/Sqlite/Oracle/Oledb（Access/Execl） 数据库。
-* `Farseer.Net.AspNetCore`
-  *  基于asp.net core的一些封装，如异常中间件、CORS、链路追踪入口、ioc注入web api
-* `Farseer.Net.Cache`
-  *  基于本地缓存MemoryCache的模块化封装
-* `Farseer.Net.Cache.Redis`
-  *  基于StackExchange.Redis的模块化封装
-* `Farseer.Net.ElasticSearch`
-  *  基于ES的ORM封装，于`Farseer.Net.Data`组件使用相似
-* `Farseer.Net.EventBus`
-  *  事件总线，实现轻量级的进程内发布与订阅。
-* `Farseer.Net.Fss`
-  *  基于`FSS`分布式调度平台的客户端，实现高可用的分布式的任务调度
-* `Farseer.Net.LinkTrack`
-  *  全链路追踪监控
-* `Farseer.Net.Mapper`
-  *  对象类型转换组件（基于AutoMapper)
-* `Farseer.Net.MongoDB`
-  *  MongoDB 组件
-* `Farseer.Net.MQ.Queue`
-  *  RabbitMQ 消息队列组件
-* `Farseer.Net.MQ.Queue`
-  *  进程级别的消息队列（批量消费场景）
-* `Farseer.Net.MQ.Rabbit`
-  *  RabbitMQ 消息队列组件
-* `Farseer.Net.MQ.RocketMQ`
-  *  RocketMQ 消息队列组件
-* `Farseer.Net.MQ.RedisStream`
-  * Redis5 消息队列组件
-* `Farseer.Net.Utils`
-  *  常用工具扩展封装
+| 组件名称 | 描述  |
+|------|-----|
+| Farseer.Net.Data  | ORM组件支持：MySql/ClickHouse/Sqlserver/Sqlite/Oracle/Oledb（Access/Execl） 数据库 |
+| Farseer.Net.AspNetCore  | 基于asp.net core的一些封装，如异常中间件、CORS、链路追踪入口、ioc注入web api |
+| Farseer.Net.Cache  | 基于本地缓存MemoryCache的模块化封装 |
+| Farseer.Net.Cache.Redis  | 基于StackExchange.Redis的模块化封装 |
+| Farseer.Net.ElasticSearch  | 基于ES的ORM封装 |
+| Farseer.Net.EventBus  | 事件总线，实现轻量级的进程内发布与订阅 |
+| Farseer.Net.Fss  | 基于`FSS`分布式调度平台的客户端，实现高可用的分布式的任务调度 |
+| Farseer.Net.LinkTrack  | 全链路追踪监控 |
+| Farseer.Net.Mapper  | 对象类型转换组件 |
+| Farseer.Net.MongoDB  | MongoDB 组件 |
+| Farseer.Net.MQ.Queue  | RabbitMQ 消息队列组件 |
+| Farseer.Net.MQ.Queue  | 进程级别的消息队列（批量消费场景） |
+| Farseer.Net.MQ.Rabbit  | RabbitMQ 消息队列组件 |
+| Farseer.Net.MQ.RocketMQ  | RocketMQ 消息队列组件 |
+| Farseer.Net.MQ.RedisStream  | Redis5 消息队列组件 |
+| Farseer.Net.Utils  | 常用工具扩展封装 |
