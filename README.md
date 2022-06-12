@@ -76,7 +76,7 @@ public void AopTransactionByName()
 ```
 
 ### 二级缓存组件：Farseer.Net.Cache
-特点：本地内存、Redis双写，并优先读本地内存数据
+特点：真正实现了数据库与缓存的完美解耦
 ```c#
 // 定义key，并设置为redis与本地缓存双写
 var cacheServices = IocManager.Resolve<ICacheServices>();
