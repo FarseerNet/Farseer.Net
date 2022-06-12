@@ -10,6 +10,9 @@
 1. [文档](https://github.com/FarseerNet/Farseer.Net/tree/dev/Doc)
 2. [demo](https://github.com/FarseerNet/Farseer.Net/tree/dev/Demo)
 
+---
+### 有什么特点？
+
 **优雅**
 
 我们使用`IOC`技术，遍布整个框架及您的业务系统。
@@ -29,8 +32,7 @@
 结合[FOPS](https://github.com/FarseerNet/FOPS) 项目（自动构建、链路追踪控制台、K8S集群日志收集）支持代码无侵入的全链路实时监控。
 
 ---
-
-### Farseer.net有哪些功能？
+### 有哪些功能？
 | 组件名称 | 描述  |
 |------|-----|
 | Farseer.Net.Data  | ORM组件支持：MySql/ClickHouse/Sqlserver/Sqlite/Oracle/Oledb（Access/Execl） 数据库 |
@@ -50,6 +52,7 @@
 | Farseer.Net.MQ.RedisStream  | Redis5 消息队列组件 |
 | Farseer.Net.Utils  | 常用工具扩展封装 |
 
+---
 ### 链路追踪手动埋点：
 说明：标记后，这些方法被调用时，将会被链路追踪记录
 ```c#
@@ -73,6 +76,7 @@
     }
 ```
 
+---
 ### 数据库ORM组件：Farseer.Net.Data
 特点：与手写SQL并填充到List集合的性能几乎一样
 ```c#
@@ -93,6 +97,7 @@ public void AopTransactionByName()
 }
 ```
 
+---
 ### Redis组件：Farseer.Net.Cache.Redis：
 特点：额外增加事务批量读写操作。
 ```c#
@@ -104,6 +109,7 @@ public void AopTransactionByName()
   redisCacheManager.Db.KeyDelete("test_async");
 ```
 
+---
 ### 二级缓存组件：Farseer.Net.Cache
 特点：真正实现了数据库与缓存的完美解耦
 ```c#
@@ -143,6 +149,7 @@ public class UserService
 }
 ```
 
+---
 ### es组件：Farseer.Net.ElasticSearch：
 特别：提供与数据库ORM一样的操作方式
 ```c#
@@ -167,6 +174,7 @@ public class UserService
   TestContext.Data.User.Where(o => o.UserName == "steden" || o.Age >= 10).ToList();
 ```
 
+---
 ### Rabbit组件：Farseer.Net.MQ.Rabbit
 #### 发送
 ```c#
@@ -189,7 +197,7 @@ public class TestConsumer : IListenerMessage
 }
 ```
 
-
+---
 ### 事件总线组件：Farseer.Net.EventBus
 #### 发送
 ```c#
@@ -210,6 +218,8 @@ public class TestEvent : IListenerMessage
     }
 }
 ```
+
+---
 ### 进程级别的消息队列组件：Farseer.Net.MQ.Queue
 `使用场景：多次发送数据后，集中批量写入ES、或数据库。`
 
@@ -240,6 +250,7 @@ public class TestEvent : IListenerMessage
   }
 ```
 
+---
 ### RedisStream组件：Farseer.Net.MQ.RedisStream
 #### 发送
 ```c#
@@ -269,6 +280,7 @@ public class TestEvent : IListenerMessage
   }
 ```
 
+---
 ### 分布式任务调度组件：Farseer.Net.Fss
 ```c#
   [Fss] // 开启后，才能注册到FSS平台
@@ -305,6 +317,7 @@ public class TestEvent : IListenerMessage
   }
 ```
 
+---
 ### 本地任务调度组件：Farseer.Net.Tasks
 ```c#
   [Tasks] // 开启后，才能把JOB自动注册进来
@@ -336,6 +349,7 @@ public class TestEvent : IListenerMessage
   }
 ```
 
+---
 ### Mapper组件：Farseer.Net.Mapper
 
 `转换`
