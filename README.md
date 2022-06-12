@@ -10,16 +10,44 @@
 1. [文档](https://github.com/FarseerNet/Farseer.Net/tree/dev/Doc)
 2. [demo](https://github.com/FarseerNet/Farseer.Net/tree/dev/Demo)
 
-#### 优雅
-`我们使用`IOC`技术，遍布整个框架及您的业务系统。`
-#### 简单
-`我们使用`AOP`技术，让您无需额外编写非业务功能代码，如事务、缓存、异常捕获、日志、链路Track`
-#### 轻量
-`框架内大量使用`集合池化`技术，使您的应用占用内存更小。`
-#### 链路追踪
-`如果您使用我们提供的Orm、Redis、Http、Grpc、Elasticsearch、MQ(Rabbit、RedisStream、Rocker、本地Queue)、EventBus、Task、FSS等等，您什么都不需要做，系统将隐式为您实现链路追踪，并提供API请求日志、慢查询（前面提到的都会记录）。`
+**优雅**
+
+我们使用`IOC`技术，遍布整个框架及您的业务系统。
+
+**简单**
+
+我们使用`AOP`技术，让您无需额外编写非业务功能代码，如事务、缓存、异常捕获、日志、链路Track
+
+**轻量**
+
+框架内大量使用`集合池化`技术，使您的应用占用内存更小。
+
+**链路追踪**
+
+如果您使用我们提供的Orm、Redis、Http、Grpc、Elasticsearch、MQ(Rabbit、RedisStream、Rocker、本地Queue)、EventBus、Task、FSS等等，您什么都不需要做，系统将隐式为您实现链路追踪，并提供API请求日志、慢查询（前面提到的都会记录）。
 
 结合[FOPS](https://github.com/FarseerNet/FOPS) 项目（自动构建、链路追踪控制台、K8S集群日志收集）支持代码无侵入的全链路实时监控。
+
+
+### Farseer.net有哪些功能？
+| 组件名称 | 描述  |
+|------|-----|
+| Farseer.Net.Data  | ORM组件支持：MySql/ClickHouse/Sqlserver/Sqlite/Oracle/Oledb（Access/Execl） 数据库 |
+| Farseer.Net.AspNetCore  | 基于asp.net core的一些封装，如异常中间件、CORS、链路追踪入口、ioc注入web api |
+| Farseer.Net.Cache  | 基于本地缓存MemoryCache的模块化封装 |
+| Farseer.Net.Cache.Redis  | 基于StackExchange.Redis的模块化封装 |
+| Farseer.Net.ElasticSearch  | 基于ES的ORM封装 |
+| Farseer.Net.EventBus  | 事件总线，实现轻量级的进程内发布与订阅 |
+| Farseer.Net.Fss  | 基于`FSS`分布式调度平台的客户端，实现高可用的分布式的任务调度 |
+| Farseer.Net.LinkTrack  | 全链路追踪监控 |
+| Farseer.Net.Mapper  | 对象类型转换组件 |
+| Farseer.Net.MongoDB  | MongoDB 组件 |
+| Farseer.Net.MQ.Queue  | RabbitMQ 消息队列组件 |
+| Farseer.Net.MQ.Queue  | 进程级别的消息队列（批量消费场景） |
+| Farseer.Net.MQ.Rabbit  | RabbitMQ 消息队列组件 |
+| Farseer.Net.MQ.RocketMQ  | RocketMQ 消息队列组件 |
+| Farseer.Net.MQ.RedisStream  | Redis5 消息队列组件 |
+| Farseer.Net.Utils  | 常用工具扩展封装 |
 
 ### 链路追踪手动埋点：
 说明：标记后，这些方法被调用时，将会被链路追踪记录
@@ -313,23 +341,3 @@ public class TestEvent : IListenerMessage
 ```c#
     UserVO vo = new UserPO().Map<UserVO>();
 ```
-
-### Farseer.net有哪些功能？
-| 组件名称 | 描述  |
-|------|-----|
-| Farseer.Net.Data  | ORM组件支持：MySql/ClickHouse/Sqlserver/Sqlite/Oracle/Oledb（Access/Execl） 数据库 |
-| Farseer.Net.AspNetCore  | 基于asp.net core的一些封装，如异常中间件、CORS、链路追踪入口、ioc注入web api |
-| Farseer.Net.Cache  | 基于本地缓存MemoryCache的模块化封装 |
-| Farseer.Net.Cache.Redis  | 基于StackExchange.Redis的模块化封装 |
-| Farseer.Net.ElasticSearch  | 基于ES的ORM封装 |
-| Farseer.Net.EventBus  | 事件总线，实现轻量级的进程内发布与订阅 |
-| Farseer.Net.Fss  | 基于`FSS`分布式调度平台的客户端，实现高可用的分布式的任务调度 |
-| Farseer.Net.LinkTrack  | 全链路追踪监控 |
-| Farseer.Net.Mapper  | 对象类型转换组件 |
-| Farseer.Net.MongoDB  | MongoDB 组件 |
-| Farseer.Net.MQ.Queue  | RabbitMQ 消息队列组件 |
-| Farseer.Net.MQ.Queue  | 进程级别的消息队列（批量消费场景） |
-| Farseer.Net.MQ.Rabbit  | RabbitMQ 消息队列组件 |
-| Farseer.Net.MQ.RocketMQ  | RocketMQ 消息队列组件 |
-| Farseer.Net.MQ.RedisStream  | Redis5 消息队列组件 |
-| Farseer.Net.Utils  | 常用工具扩展封装 |
