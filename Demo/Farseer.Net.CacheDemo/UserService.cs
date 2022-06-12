@@ -15,7 +15,7 @@ public class UserService
     [Cache("user")]
     public UserPO ToEntity()
     {
-        throw new ArgumentOutOfRangeException("bbbbbbb");
+        //throw new ArgumentOutOfRangeException("bbbbbbb");
         return new DatabaseContext().ToList().FirstOrDefault();
     }
 

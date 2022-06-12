@@ -101,16 +101,23 @@ public class CacheKey
 
     /// <summary>
     /// 从本地内存中获取
+    /// 如果存入的是单个Entity，则也会作为集合存入
     /// </summary>
     public IList Get() => Cache.Get(this);
 
     /// <summary>
-    /// 从本地内存中获取
+    /// 获取集合中的item
+    /// </summary>
+    public object GetItem(object cacheId) => Cache.GetItem(this, cacheId.ToString());
+
+    /// <summary>
+    /// 保存数据到缓存
+    /// 如果returnType是单个Entity，则也会作为集合存入
     /// </summary>
     public void Set(object val, Type returnType)
     {
         IList list;
-        
+
         if (val is IEnumerable enumerable) // IEnumerable类型，则自己创建一个IList
         {
             if (DataKey == null) throw new System.Exception($"缓存集合时，需设置每个item的唯一标识：ICacheServices.SetProfilesXXXXX(key, getField)");
@@ -132,7 +139,7 @@ public class CacheKey
     /// <summary>
     /// 更新缓存
     /// </summary>
-    public void Save(object newVal) => Cache.Save(this, newVal);
+    public void SaveItem(object newVal) => Cache.SaveItem(this, newVal);
 
     /// <summary>
     /// 移除缓存
@@ -143,7 +150,18 @@ public class CacheKey
     /// 清空缓存
     /// </summary>
     public void Clear() => Cache.Clear(this);
+
+    /// <summary>
+    /// 缓存是否存在
+    /// </summary>
+    public bool Exists() => Cache.ExistsKey(this);
+
+    /// <summary>
+    /// 数据集合的数量
+    /// </summary>
+    public int Count() => Cache.Count(this);
 }
+
 /// <summary>
 ///     读写缓存的选项设置
 /// </summary>

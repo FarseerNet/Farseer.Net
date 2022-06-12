@@ -19,62 +19,83 @@ public class CacheInMemoryAndRedis : ICache
         _memoryCache = IocManager.GetService<ICache>(name: "CacheInMemory");
     }
 
-    public IList Get(CacheKey key)
+    public IList Get(CacheKey cacheKey)
     {
         // 优先读本地缓存
-        var list = _memoryCache.Get(key);
+        var list = _memoryCache.Get(cacheKey);
         if (list == null)
         {
             // 读redis
-            list = _redisCache.Get(key);
+            list = _redisCache.Get(cacheKey);
             // 读到了，则写到本地缓存
             if (list != null)
             {
-                _memoryCache.Set(key, list);
+                _memoryCache.Set(cacheKey, list);
             }
         }
         return list;
     }
 
-    public int Count(CacheKey key)
+    public object GetItem(CacheKey cacheKey, string cacheId)
     {
-        var count = _memoryCache.Count(key);
+        var item = _memoryCache.GetItem(cacheKey, cacheId);
+        if (item == null)
+        {
+            item = _redisCache.GetItem(cacheKey, cacheId);
+            if (item != null)
+            {
+                _memoryCache.SaveItem(cacheKey, item);
+            }
+        }
+        return item;
+    }
+
+    public void Set(CacheKey cacheKey, IList lst)
+    {
+        _redisCache.Set(cacheKey, lst);
+        _memoryCache.Set(cacheKey, lst);
+    }
+
+    public int Count(CacheKey cacheKey)
+    {
+        var count = _memoryCache.Count(cacheKey);
         if (count > 0) return count;
-        
-        count = _redisCache.Count(key);
+
+        count = _redisCache.Count(cacheKey);
         if (count > 0) return count;
-        
+
         return 0;
     }
 
-    public bool Exists(CacheKey key, string cacheId)
+    public bool ExistsItem(CacheKey cacheKey, string cacheId)
     {
-        if (_memoryCache.Exists(key, cacheId)) return true;
-        if (_redisCache.Exists(key, cacheId)) return true;
+        if (_memoryCache.ExistsItem(cacheKey, cacheId)) return true;
+        if (_redisCache.ExistsItem(cacheKey, cacheId)) return true;
         return false;
     }
 
-    public void Set(CacheKey key, IList lst)
+    public bool ExistsKey(CacheKey cacheKey)
     {
-        _redisCache.Set(key, lst);
-        _memoryCache.Set(key, lst);
+        if (_memoryCache.ExistsKey(cacheKey)) return true;
+        if (_redisCache.ExistsKey(cacheKey)) return true;
+        return false;
     }
 
-    public void Save(CacheKey key, object newVal)
+    public void SaveItem(CacheKey cacheKey, object newVal)
     {
-        _redisCache.Save(key, newVal);
-        _memoryCache.Save(key, newVal);
+        _redisCache.SaveItem(cacheKey, newVal);
+        _memoryCache.SaveItem(cacheKey, newVal);
     }
 
-    public void Remove(CacheKey key, string cacheId)
+    public void Remove(CacheKey cacheKey, string cacheId)
     {
-        _redisCache.Remove(key, cacheId);
-        _memoryCache.Remove(key, cacheId);
+        _redisCache.Remove(cacheKey, cacheId);
+        _memoryCache.Remove(cacheKey, cacheId);
     }
 
-    public void Clear(CacheKey key)
+    public void Clear(CacheKey cacheKey)
     {
-        _redisCache.Clear(key);
-        _memoryCache.Clear(key);
+        _redisCache.Clear(cacheKey);
+        _memoryCache.Clear(cacheKey);
     }
 }

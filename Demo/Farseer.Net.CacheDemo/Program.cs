@@ -6,5 +6,6 @@ using FS;
 FarseerApplication.Run<StartupModule>().Initialize();
 
 new UserService().ToEntity();
+new UserService().ToEntity();
 
 new UserService().Delete(88);
