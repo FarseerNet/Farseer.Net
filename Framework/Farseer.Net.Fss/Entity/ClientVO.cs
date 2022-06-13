@@ -10,12 +10,12 @@ namespace FS.Fss.Entity
         /// <summary>
         ///     客户端IP
         /// </summary>
-        public string ClientIp { get; set; }
+        public string Ip { get; set; }
 
         /// <summary>
         ///     客户端名称
         /// </summary>
-        public string ClientName { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         ///     客户端能执行的任务

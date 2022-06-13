@@ -35,7 +35,7 @@ public class CacheUpdateAttribute : MethodInterceptionAspect
     public override async Task OnInvokeAsync(MethodInterceptionArgs args)
     {
         var cacheKey   = CacheConfigure.Get(_key);
-        var returnType = ((MethodInfo)args.Method).ReturnType;
+        var returnType = ((MethodInfo)args.Method).ReturnType.GetGenericArguments()[0];
         if (returnType != cacheKey.ItemType) throw new Exception($"更新缓存时，方法返回值必须是{cacheKey.ItemType.Name}");
         
         await args.ProceedAsync();

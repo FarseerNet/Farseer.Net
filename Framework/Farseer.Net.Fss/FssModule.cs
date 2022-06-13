@@ -43,9 +43,9 @@ namespace FS.Fss
 
             Client = new ClientVO
             {
-                ClientIp   = IpHelper.GetIp,
+                Ip   = IpHelper.GetIp,
                 Id         = SnowflakeId.GenerateId(),
-                ClientName = Environment.MachineName,
+                Name = Environment.MachineName,
                 Jobs       = FssInstaller.JobImpList.Keys.Select(selector: o => o).ToArray()
             };
 

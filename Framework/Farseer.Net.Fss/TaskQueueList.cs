@@ -102,7 +102,7 @@ namespace FS.Fss
                     }
 
                     // 执行任务，这里不做等待,相当于开启一条线程执行
-                    Task.Run(function: async () =>
+                    _ = Task.Run(function: async () =>
                     {
                         await RunTask(task: _queue.Dequeue());
                     });
@@ -140,7 +140,7 @@ namespace FS.Fss
 
             var cts = new CancellationTokenSource();
             // 开启激活任务，直到任务完成
-            Task.Run(function: async () =>
+            _ = Task.Run(function: async () =>
             {
                 while (!cts.Token.IsCancellationRequested)
                 {
@@ -152,7 +152,7 @@ namespace FS.Fss
             try
             {
                 // 执行业务JOB
-                var  fssJob = IocManager.GetService<IFssJob>(name: jobInsName);
+                var fssJob = IocManager.GetService<IFssJob>(name: jobInsName);
 
                 // 执行具体任务（业务执行）
                 sw.Start();

@@ -55,7 +55,7 @@ public class CacheItem : MethodInterceptionAspect
 
     public override async Task OnInvokeAsync(MethodInterceptionArgs args)
     {
-        var returnType = ((MethodInfo)args.Method).ReturnType;
+        var returnType = ((MethodInfo)args.Method).ReturnType.GetGenericArguments()[0];
         var cacheKey   = CacheConfigure.Get(_key);
         var cacheId = args.Arguments.Count switch
         {

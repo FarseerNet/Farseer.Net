@@ -103,7 +103,7 @@ namespace FS.EventBus
             }
             catch (Exception e)
             {
-                IocManager.Instance.Logger<EventQueue>().LogError(e, $"订阅端：{Consumer}，执行异常，消息：{JsonConvert.SerializeObject(domainEventArgs)}，", e.Message);
+                IocManager.Instance.Logger<EventQueue>().LogError(e, $"订阅端：{Consumer}，执行异常，消息：{e.Message}，");
             }
             if (!result)
             {

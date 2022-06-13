@@ -45,7 +45,7 @@ public class CacheAttribute : MethodInterceptionAspect
     public override async Task OnInvokeAsync(MethodInterceptionArgs args)
     {
         var cacheKey   = CacheConfigure.Get(_key);
-        var returnType = ((MethodInfo)args.Method).ReturnType;
+        var returnType = ((MethodInfo)args.Method).ReturnType.GetGenericArguments()[0];
 
         // 缓存中，取出数据
         var lst = cacheKey.Get();
@@ -68,7 +68,10 @@ public class CacheAttribute : MethodInterceptionAspect
         var cacheListType = lst.GetType();
 
         // 写入的类型与返回的类型一致时，直接返回
-        if (returnType == cacheListType) args.ReturnValue = lst;
+        if (returnType == cacheListType)
+        {
+            args.ReturnValue = lst;
+        }
         else
         {
             if (returnType.IsArray) // 数组

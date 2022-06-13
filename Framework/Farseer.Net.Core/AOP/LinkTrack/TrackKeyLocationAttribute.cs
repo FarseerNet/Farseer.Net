@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using FS.Core.LinkTrack;
 using PostSharp.Aspects;
@@ -18,8 +19,12 @@ public class TrackKeyLocationAttribute : MethodInterceptionAspect
 {
     public override void OnInvoke(MethodInterceptionArgs args)
     {
-        if (!FsLinkTrack.IsUseLinkTrack) { args.Proceed(); return; }
-        
+        if (!FsLinkTrack.IsUseLinkTrack)
+        {
+            args.Proceed();
+            return;
+        }
+
         var returnType = ((System.Reflection.MethodInfo)args.Method).ReturnType.Name;
         var argsString = string.Join(", ", args.Arguments.Select(p => $"{p.GetType().Name} = {p}"));
 
@@ -29,12 +34,16 @@ public class TrackKeyLocationAttribute : MethodInterceptionAspect
             args.Proceed();
         }
     }
-    
+
     public override async Task OnInvokeAsync(MethodInterceptionArgs args)
     {
-        if (!FsLinkTrack.IsUseLinkTrack) { await args.ProceedAsync(); return; }
+        if (!FsLinkTrack.IsUseLinkTrack)
+        {
+            await args.ProceedAsync();
+            return;
+        }
 
-        var returnType = ((System.Reflection.MethodInfo)args.Method).ReturnType.Name;
+        var returnType = ((MethodInfo)args.Method).ReturnType.GetGenericArguments()[0].Name;
         var argsString = string.Join(", ", args.Arguments.Select(p => $"{p.GetType().Name} = {p}"));
 
         var callName = args.Method.DeclaringType != null ? $"{args.Method.DeclaringType.Name}.{args.Method.Name}" : $"{args.Method.Name}";

@@ -215,6 +215,7 @@ namespace FS.ElasticSearch
         [TrackElasticsearch]
         public virtual bool Insert(IEnumerable<TDocument> lst)
         {
+            if (!lst.Any()) return false;
             WhenNotExistsAddIndex();
             var result = Client.IndexMany(objects: lst, index: SetMap.IndexName);
             if (!result.IsValid)
@@ -232,6 +233,7 @@ namespace FS.ElasticSearch
         [TrackElasticsearch]
         public virtual async Task<bool> InsertAsync(IEnumerable<TDocument> lst)
         {
+            if (!lst.Any()) return false;
             WhenNotExistsAddIndex();
             var result = await Client.IndexManyAsync(objects: lst, index: SetMap.IndexName);
             if (!result.IsValid)

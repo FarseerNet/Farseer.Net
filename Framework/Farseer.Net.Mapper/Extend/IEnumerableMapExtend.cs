@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Collections.Pooled;
 using FS.Mapper;
 using Mapster;
 
@@ -20,11 +21,11 @@ public static class IEnumerableMapExtend
         }
     }
     
-    public static List<TDestination> Map<TDestination>(this IList sources)
+    public static PooledList<TDestination> Map<TDestination>(this IList sources)
     {
         if (sources == null) return null;
 
-        var lst = new List<TDestination>();
+        var lst = new PooledList<TDestination>();
         foreach (var source in sources)
         {
             lst.Add(source.Adapt<TDestination>());
