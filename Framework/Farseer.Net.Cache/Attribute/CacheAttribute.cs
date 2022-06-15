@@ -65,36 +65,27 @@ public class CacheAttribute : MethodInterceptionAspect
     /// </summary>
     private void SetReturnValue(MethodInterceptionArgs args, IList lst, Type returnType, CacheKey cacheKey)
     {
-        var cacheListType = lst.GetType();
-
         // 写入的类型与返回的类型一致时，直接返回
-        if (returnType == cacheListType)
+        if (returnType.IsArray) // 数组
         {
-            args.ReturnValue = lst;
+            var arrayList = new ArrayList();
+            foreach (var val in lst)
+            {
+                arrayList.Add(val);
+            }
+            args.ReturnValue = arrayList.ToArray(cacheKey.ItemType);
         }
         else
         {
-            if (returnType.IsArray) // 数组
-            {
-                var arrayList = new ArrayList();
-                foreach (var val in lst)
-                {
-                    arrayList.Add(val);
-                }
-                args.ReturnValue = arrayList.ToArray(cacheKey.ItemType);
-            }
-            else
-            {
-                var count = lst.Count;
+            var count = lst.Count;
 
-                // 根据返回类型，创建集合实例
-                var returnInstance = cacheKey.CreateNewList(returnType, count);
-                foreach (var val in lst)
-                {
-                    returnInstance.Add(val);
-                }
-                args.ReturnValue = returnInstance;
+            // 根据返回类型，创建集合实例
+            var returnInstance = cacheKey.CreateNewList(returnType, count);
+            foreach (var val in lst)
+            {
+                returnInstance.Add(val);
             }
+            args.ReturnValue = returnInstance;
         }
     }
 }

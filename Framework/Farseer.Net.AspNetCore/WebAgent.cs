@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 
-namespace FS;
+namespace Farseer.Net.AspNetCore;
 
 public static class WebAgent
 {

@@ -1,13 +1,12 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Collections.Pooled;
 using FS.Core.LinkTrack;
 using FS.DI;
 using Microsoft.AspNetCore.Http;
 
-namespace FS;
+namespace Farseer.Net.AspNetCore;
 
 /// <summary>
 ///     链路追踪（Web Api入口）

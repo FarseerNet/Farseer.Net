@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Collections.Pooled;
@@ -11,7 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace FS;
+namespace Farseer.Net.AspNetCore;
 
 public class ExceptionMiddleware
 {

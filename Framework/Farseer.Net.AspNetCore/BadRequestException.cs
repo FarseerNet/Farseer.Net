@@ -1,11 +1,10 @@
 using System.Linq;
-using Collections.Pooled;
 using FS.Core.Net;
 using FS.Extends;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace FS;
+namespace Farseer.Net.AspNetCore;
 
 /// <summary>
 ///     错误的消息，使用Json格式返回

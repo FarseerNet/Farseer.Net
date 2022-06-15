@@ -29,5 +29,9 @@ namespace FS.Reflection
         /// 忽略微软及常用的程序集
         /// </summary>
         PooledList<Assembly> IgnoreAssembly(IEnumerable<Assembly> assemblies);
+        /// <summary>
+        ///     找到类中使用了指定特性的类Type
+        /// </summary>
+        PooledList<Type> FindAttribute<TAttribute>() where TAttribute : Attribute;
     }
 }

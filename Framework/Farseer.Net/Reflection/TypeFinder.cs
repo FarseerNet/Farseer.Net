@@ -44,6 +44,14 @@ namespace FS.Reflection
         }
 
         /// <summary>
+        ///     找到类中使用了指定特性的类Type
+        /// </summary>
+        public PooledList<Type> FindAttribute<TAttribute>() where TAttribute : Attribute
+        {
+            return Find(t => t.GetCustomAttribute<TAttribute>() != null);
+        }
+
+        /// <summary>
         ///     查找所有的类型
         /// </summary>
         public IEnumerable<Type> FindAll() => GetAllTypes();
@@ -54,7 +62,7 @@ namespace FS.Reflection
         private IEnumerable<Type> GetAllTypes()
         {
             if (_types != null) return _types;
-            
+
             lock (_syncObj)
             {
                 return _types ??= CreateTypeList();
@@ -117,7 +125,7 @@ namespace FS.Reflection
             }
             return allTypes;
         }
-        
+
         public void Dispose()
         {
             _types?.Dispose();
