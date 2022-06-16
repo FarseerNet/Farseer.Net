@@ -85,5 +85,7 @@ namespace FS.Core.Net
         /// <param name="statusMessage"> 失败提示内容 </param>
         /// <param name="statusCode"> 失败返回的状态码 </param>
         public static Task<ApiResponseJson> ErrorAsync(string statusMessage, int statusCode = 403) => Task.FromResult(result: Error(statusMessage: statusMessage, statusCode: statusCode));
+        
+        
     }
 }
