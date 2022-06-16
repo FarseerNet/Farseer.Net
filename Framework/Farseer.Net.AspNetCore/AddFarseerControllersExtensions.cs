@@ -1,7 +1,11 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using Castle.MicroKernel.Registration;
+using Farseer.Net.AspNetCore.DynamicApi;
+using Farseer.Net.AspNetCore.Filters;
 using FS;
+using FS.Core.Abstract.AspNetCore;
 using FS.DI;
 using FS.Log;
 using FS.Modules;
@@ -32,7 +36,8 @@ public static class AddFarseerControllersExtensions
         };
         services.Configure<KestrelServerOptions>(config: IocManager.GetService<IConfigurationRoot>().GetSection(key: "Kestrel"));
 
-        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        IocManager.Instance.Register<IHttpContextAccessor, HttpContextAccessor>();
+        IocManager.Instance.Register<IDynamicWebApiOptions, DynamicWebApiOptions>();
         services.AddFarseerLogging();
 
         services.AddFarseerIoc();

@@ -1,6 +1,7 @@
+using System;
 using System.Linq;
-using Farseer.Net.AspNetCore.Attribute;
 using Farseer.Net.AspNetCore.DynamicApi;
+using FS.Core.Abstract.AspNetCore;
 using FS.DI;
 using FS.Reflection;
 using Microsoft.AspNetCore.Builder;
@@ -23,7 +24,7 @@ public static class AddFarseerNetApiExtensions
     {
         // 找到应用管理
         var applicationPartManager = services.GetService<ApplicationPartManager>();
-        
+
         // 添加判断是否控制器的提供
         applicationPartManager.FeatureProviders.Add(new DefaultControllerFeatureProvider());
 
@@ -80,6 +81,16 @@ public static class AddFarseerNetApiExtensions
         // 添加控制器路由的约定
         mvcOptions.Value.Conventions.Add(new DynamicWebApiConvention());
 
+        return application;
+    }
+
+    /// <summary>
+    ///     配置动态API
+    /// </summary>
+    public static IApplicationBuilder ConfigureApi(this IApplicationBuilder application, Action<IDynamicWebApiOptions> options)
+    {
+        var dynamicWebApiOptions = IocManager.GetService<IDynamicWebApiOptions>();
+        options(dynamicWebApiOptions);
         return application;
     }
 }

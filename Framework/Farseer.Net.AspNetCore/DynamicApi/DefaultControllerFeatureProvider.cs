@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Reflection;
-using Farseer.Net.AspNetCore.Attribute;
+using FS.Core.Abstract.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 

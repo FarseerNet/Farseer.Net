@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using Farseer.Net.AspNetCore.Attribute;
+using FS.Core.Abstract.AspNetCore;
 using FS.DI;
 using FS.Reflection;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +16,12 @@ namespace Farseer.Net.AspNetCore.DynamicApi
     /// </summary>
     public class DynamicWebApiConvention : IApplicationModelConvention
     {
+        private readonly IDynamicWebApiOptions _dynamicWebApiOptions;
+        public DynamicWebApiConvention()
+        {
+            this._dynamicWebApiOptions = IocManager.GetService<IDynamicWebApiOptions>();
+        }
+
         public void Apply(ApplicationModel application)
         {
             foreach (var controller in application.Controllers)
@@ -118,7 +124,7 @@ namespace Farseer.Net.AspNetCore.DynamicApi
         }
         private AttributeRouteModel CreateActionRouteModel(string areaName, ApiAttribute attribute)
         {
-            var apiPreFix = new DynamicWebApiOptions().DefaultApiPrefix;
+            var apiPreFix = _dynamicWebApiOptions.DefaultApiPrefix;
             var route     = $"{apiPreFix}/{areaName}/{attribute.RouteUrl}".Replace("//", "/");
             return new AttributeRouteModel(new RouteAttribute(route));
         }
@@ -155,7 +161,7 @@ namespace Farseer.Net.AspNetCore.DynamicApi
 
         private bool CanUseFormBodyBinding(ActionModel action, ParameterModel parameter)
         {
-            if (new DynamicWebApiOptions().FormBodyBindingIgnoredTypes.Any(t => t.IsAssignableFrom(parameter.ParameterInfo.ParameterType)))
+            if (_dynamicWebApiOptions.FormBodyBindingIgnoredTypes.Any(t => t.IsAssignableFrom(parameter.ParameterInfo.ParameterType)))
             {
                 return false;
             }

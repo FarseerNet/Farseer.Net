@@ -1,7 +1,7 @@
 using System;
 using System.Net;
 using System.Reflection;
-using Farseer.Net.AspNetCore.Attribute;
+using FS.Core.Abstract.AspNetCore;
 using FS.Core.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -14,6 +14,11 @@ namespace Farseer.Net.AspNetCore.Filters;
 /// </summary>
 public class FarseerApiResultFilters : IResultFilter // IActionFilter
 {
+    public void OnResultExecuted(ResultExecutedContext context)
+    {
+        
+    }
+    
     public void OnResultExecuting(ResultExecutingContext context)
     {
         var methodInfo = ((ControllerActionDescriptor)context.ActionDescriptor).MethodInfo;
@@ -58,10 +63,5 @@ public class FarseerApiResultFilters : IResultFilter // IActionFilter
             var result = context.Result as Exception;
             context.Result = new ObjectResult(new ApiResponseJson { StatusCode = 500, StatusMessage = result.Message });
         }
-    }
-
-    public void OnResultExecuted(ResultExecutedContext context)
-    {
-
     }
 }

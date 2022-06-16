@@ -4,7 +4,7 @@ using FS.Extends;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Farseer.Net.AspNetCore;
+namespace Farseer.Net.AspNetCore.Filters;
 
 /// <summary>
 ///     错误的消息，使用Json格式返回

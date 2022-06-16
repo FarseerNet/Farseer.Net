@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Castle.Core;
 using Castle.MicroKernel.Registration;
-using Farseer.Net.AspNetCore.Attribute;
+using FS.Core.Abstract.AspNetCore;
 using FS.DI;
 using FS.Reflection;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
