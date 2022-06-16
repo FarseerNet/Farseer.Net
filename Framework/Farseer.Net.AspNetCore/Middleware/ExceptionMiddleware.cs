@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace Farseer.Net.AspNetCore;
+namespace Farseer.Net.AspNetCore.Middleware;
 
 public class ExceptionMiddleware
 {

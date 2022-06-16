@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace Farseer.Net.AspNetCore;
+namespace Farseer.Net.AspNetCore.Middleware;
 
 public class CorsMiddleware
 {

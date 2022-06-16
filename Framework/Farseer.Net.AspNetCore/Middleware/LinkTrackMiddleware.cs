@@ -6,7 +6,7 @@ using FS.Core.LinkTrack;
 using FS.DI;
 using Microsoft.AspNetCore.Http;
 
-namespace Farseer.Net.AspNetCore;
+namespace Farseer.Net.AspNetCore.Middleware;
 
 /// <summary>
 ///     链路追踪（Web Api入口）
