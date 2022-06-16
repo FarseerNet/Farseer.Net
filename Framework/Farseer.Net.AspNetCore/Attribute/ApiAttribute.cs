@@ -31,7 +31,7 @@ public class ApiAttribute : System.Attribute
     /// <param name="httpMethod">Get/Post/Put/Delete </param>
     /// <param name="statusCode">状态码</param>
     /// <param name="message">消息提示</param>
-    public ApiAttribute(string routeUrl, HttpMethod httpMethod = HttpMethod.GET, int statusCode = 200, string message = "成功")
+    public ApiAttribute(string routeUrl, HttpMethod httpMethod = HttpMethod.POST, string message = "成功", int statusCode = 200)
     {
         RouteUrl   = routeUrl.StartsWith("/") ? routeUrl.Substring(1) : routeUrl;
         HttpMethod = httpMethod;
