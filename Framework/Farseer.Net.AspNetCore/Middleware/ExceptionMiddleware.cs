@@ -38,6 +38,10 @@ public class ExceptionMiddleware
 
             await _next.Invoke(context: httpContext);
         }
+        catch (RefuseException refuseException)
+        {
+            await HandleExceptionAsync(context: httpContext, message: refuseException.Message, statusCode: refuseException.StatusCode);
+        }
         catch (Exception e)
         {
             var http = httpContext.Request.IsHttps ? "s" : "";
