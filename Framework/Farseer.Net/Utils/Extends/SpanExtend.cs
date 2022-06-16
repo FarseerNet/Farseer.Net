@@ -1,6 +1,7 @@
 using System;
 using Collections.Pooled;
 
+// ReSharper disable once CheckNamespace
 namespace FS.Extends;
 
 public static class SpanExtend

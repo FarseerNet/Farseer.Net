@@ -1,8 +1,8 @@
 using System;
 using System.Reflection;
-using FS.DI;
 using PostSharp.Aspects;
 
+// ReSharper disable once CheckNamespace
 namespace FS.Extends;
 
 public static class PostSharpExtend

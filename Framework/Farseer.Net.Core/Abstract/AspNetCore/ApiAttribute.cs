@@ -1,6 +1,6 @@
 using System;
 
-namespace Farseer.Net.AspNetCore.Attribute;
+namespace FS.Core.Abstract.AspNetCore;
 
 [AttributeUsage(validOn: AttributeTargets.Method, AllowMultiple = true)]
 public class ApiAttribute : System.Attribute
