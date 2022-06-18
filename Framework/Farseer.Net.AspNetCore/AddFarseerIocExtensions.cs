@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Farseer.Net.AspNetCore
 {
-    public static class ServiceCollectionExtensions
+    public static class AddFarseerIocExtensions
     {
         /// <summary>
         ///     注册所有接口到.net core IOC中
