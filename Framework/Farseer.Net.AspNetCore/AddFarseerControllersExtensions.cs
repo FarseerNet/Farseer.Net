@@ -36,7 +36,7 @@ public static class AddFarseerControllersExtensions
         };
         services.Configure<KestrelServerOptions>(config: IocManager.GetService<IConfigurationRoot>().GetSection(key: "Kestrel"));
 
-        IocManager.Instance.Register<IHttpContextAccessor, HttpContextAccessor>();
+        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         IocManager.Instance.Register<IDynamicWebApiOptions, DynamicWebApiOptions>();
         services.AddFarseerLogging();
 
