@@ -15,12 +15,12 @@ public class ApiAttribute : System.Attribute
     public HttpMethod HttpMethod { get; set; }
 
     /// <summary>
-    /// 状态码
+    /// api返回的状态码
     /// </summary>
     public int StatusCode { get; set; }
 
     /// <summary>
-    /// 消息提示
+    /// api返回的消息提示
     /// </summary>
     public string Message { get; set; }
 

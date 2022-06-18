@@ -64,6 +64,7 @@ ProjectSection(SolutionItems) = preProject
 	Doc\6.ORM组件使用.md = Doc\6.ORM组件使用.md
 	Doc\7.Elasticsearch组件使用.md = Doc\7.Elasticsearch组件使用.md
 	Doc\4.EventBus事件总线组件.md = Doc\4.EventBus事件总线组件.md
+	Doc\10.动态API.md = Doc\10.动态API.md
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer.Net.LinkTrackDemo", "Demo\Farseer.Net.LinkTrackDemo\Farseer.Net.LinkTrackDemo.csproj", "{5887C6DF-9723-4BD8-9B13-97AEC3FE2383}"
