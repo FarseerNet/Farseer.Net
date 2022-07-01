@@ -14,7 +14,7 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.Build.Framework" Version="17.2.0" />
         <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.2.0" />
-        <PackageReference Include="PostSharp" Version="6.10.12" />
+        <PackageReference Include="PostSharp" Version="6.10.13" />
     </ItemGroup>
 
 <!--    <Target Name="PostBuild" AfterTargets="PostBuildEvent">-->

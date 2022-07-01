@@ -60,11 +60,8 @@ namespace Farseer.Net.Demo
         [HowToUse, ExceptionHandle]
         private static int PropertyTest
         {
-            get
-            {
-                return _propertyTest;
-            }
-            // [HowToUse]
+            get => _propertyTest;
+            [HowToUse]
             set
             {
                 if (value <= 0)

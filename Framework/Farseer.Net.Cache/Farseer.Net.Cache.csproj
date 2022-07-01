@@ -21,7 +21,7 @@
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
         <ProjectReference Include="..\Farseer.Net.Core\Farseer.Net.Core.csproj" />
         <ProjectReference Include="..\Farseer.Net\Farseer.Net.csproj" />
-        <PackageReference Include="PostSharp" Version="6.10.12" />
+        <PackageReference Include="PostSharp" Version="6.10.13" />
     </ItemGroup>
 
     <ItemGroup>
