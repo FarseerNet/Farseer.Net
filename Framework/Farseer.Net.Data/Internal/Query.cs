@@ -39,27 +39,25 @@ namespace FS.Data.Internal
         /// <summary>
         ///     当前队列的ID
         /// </summary>
-        private Guid ID { get; set; }
+        internal Guid ID { get; set; }
 
         /// <summary>
         ///     数据库上下文
         /// </summary>
         private InternalContext Context { get; set; }
 
-        internal ExpressionBuilder ExpBuilder  => _expBuilder ??= new ExpressionBuilder(map: Map);
-        internal AbsSqlBuilder     SqlBuilder  => _sqlBuilder ??= Context.DbProvider.CreateSqlBuilder(expBuilder: ExpBuilder, Map);
-        internal ProcBuilder       ProcBuilder => _procBuilder ??= new ProcBuilder(dbProvider: Context.DbProvider, setMap: Map);
+        internal ExpressionBuilder ExpBuilder => _expBuilder ??= new ExpressionBuilder(map: Map);
+
+        internal AbsSqlBuilder SqlBuilder  => _sqlBuilder ??= Context.DbProvider.CreateSqlBuilder(expBuilder: ExpBuilder, Map);
+        internal ProcBuilder   ProcBuilder => _procBuilder ??= new ProcBuilder(dbProvider: Context.DbProvider, setMap: Map);
 
         /// <summary>
         ///     复制条件
         /// </summary>
-        /// <param name="query"> 队列 </param>
-        internal void Copy(Query query)
+        internal void Copy(Guid id, ExpressionBuilder expBuilder)
         {
-            ID          = query.ID;
-            Context     = query.Context;
-            _expBuilder = query.ExpBuilder;
-            query.Dispose();
+            ID          = id;
+            _expBuilder = expBuilder;
         }
 
         #region 释放

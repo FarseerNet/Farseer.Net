@@ -55,6 +55,15 @@ public class TableSetTest : BaseTests
     }
 
     [Test]
+    public async Task ToPageList()
+    {
+        var lst   = await MysqlContext.Data.User.Where(o => o.Id > 10).Asc(o => o.Id).ToPageListAsync(10, 2);
+        var count = await MysqlContext.Data.User.Where(o => o.Id > 10).CountAsync();
+
+        Assert.AreEqual(lst.RecordCount, count);
+    }
+
+    [Test]
     public void Add_Update_Delete()
     {
         // 添加
@@ -71,7 +80,7 @@ public class TableSetTest : BaseTests
         {
             Age = 1986
         });
-        
+
         userPO = MysqlContext.Data.User.Where(o => o.Name == FarseerApplication.AppId.ToString()).ToEntity();
         Assert.AreEqual(userPO.Age.GetValueOrDefault(), 1986);
         Assert.AreEqual(userPO.Name, FarseerApplication.AppId.ToString());

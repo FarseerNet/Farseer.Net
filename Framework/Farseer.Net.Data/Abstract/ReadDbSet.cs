@@ -175,9 +175,10 @@ namespace FS.Data.Abstract
             Check.IsTure(isTrue: pageIndex < 1, parameterName: $"参数{nameof(pageIndex)}，不能小于1");
             Check.IsTure(isTrue: pageSize  < 1, parameterName: $"参数{nameof(pageSize)}，不能小于1");
 
-            var queue = Query;
+            var queueId     = Query.ID;
+            var expBuilder  = Query.ExpBuilder;
             recordCount = Count();
-            Query.Copy(query: queue);
+            Query.Copy(queueId, expBuilder);
 
             return ToTable(pageSize: pageSize, pageIndex: pageIndex, isDistinct: isDistinct);
         }
@@ -193,9 +194,10 @@ namespace FS.Data.Abstract
             Check.IsTure(isTrue: pageIndex < 1, parameterName: $"参数{nameof(pageIndex)}，不能小于1");
             Check.IsTure(isTrue: pageSize  < 1, parameterName: $"参数{nameof(pageSize)}，不能小于1");
 
-            var queue = Query;
+            var queueId     = Query.ID;
+            var expBuilder  = Query.ExpBuilder;
             recordCount = Count();
-            Query.Copy(query: queue);
+            Query.Copy(queueId, expBuilder);
 
             return ToTableAsync(pageSize: pageSize, pageIndex: pageIndex, isDistinct: isDistinct);
         }
@@ -260,9 +262,10 @@ namespace FS.Data.Abstract
             Check.IsTure(isTrue: pageIndex < 1, parameterName: $"参数{nameof(pageIndex)}，不能小于1");
             Check.IsTure(isTrue: pageSize  < 1, parameterName: $"参数{nameof(pageSize)}，不能小于1");
 
-            var queue       = Query;
+            var queueId     = Query.ID;
+            var expBuilder  = Query.ExpBuilder;
             var recordCount = Count();
-            Query.Copy(query: queue);
+            Query.Copy(queueId, expBuilder);
 
             var lst = ToList(pageSize: pageSize, pageIndex: pageIndex, isDistinct: isDistinct);
             return new PageList<TEntity>(lst, recordCount);
@@ -280,9 +283,10 @@ namespace FS.Data.Abstract
             Check.IsTure(isTrue: pageIndex < 1, parameterName: $"参数{nameof(pageIndex)}，不能小于1");
             Check.IsTure(isTrue: pageSize  < 1, parameterName: $"参数{nameof(pageSize)}，不能小于1");
 
-            var queue       = Query;
+            var queueId     = Query.ID;
+            var expBuilder  = Query.ExpBuilder;
             var recordCount = await CountAsync();
-            Query.Copy(query: queue);
+            Query.Copy(queueId, expBuilder);
 
             var lst = await ToListAsync(pageSize: pageSize, pageIndex: pageIndex, isDistinct: isDistinct);
             return new PageList<TEntity>(lst, recordCount);
