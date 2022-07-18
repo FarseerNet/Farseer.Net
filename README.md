@@ -62,19 +62,19 @@ If you use Orm, Redis, Http, Grpc, Elasticsearch, MQ (Rabbit, RedisStream, Rocke
 ---
 Note: After marking, these methods will be logged by the link trace when they are called
 ```c#
-    [Track] // 此处如果标记了，则Execute1、Execute2方法不需要再指定Track
+    [Track] // Here, if marked, the Execute1 and Execute2 methods do not need to specify Track again.
     public class TrackDemo
     {
         [Track]
         public void Execute1() { }
         
-        // 虽然我没有标记[Track]，但类中已标记，此处也会继承。
+        // Although I did not mark [Track], it is marked in the class and will be inherited here.
         public void Execute2() { }
 
         public void Execute3()
         {
-            // 如果是记录某个代码片断，可以使用此种方式
-            using (FsLinkTrack.Track($"一般这里传的是MethodName"))
+            // If you are recording a code snippet, you can use this method
+            using (FsLinkTrack.Track($"Generally, the MethodName is passed here"))
             {
                 // doSomething
             }
@@ -82,34 +82,34 @@ Note: After marking, these methods will be logged by the link trace when they ar
     }
 ```
 
-### 数据库ORM组件：Farseer.Net.Data
+### Database ORM components：Farseer.Net.Data
 
 ---
-特点：与手写SQL并填充到List集合的性能几乎一样
+Features: Almost the same performance as writing SQL by hand and populating it into a List collection
 ```c#
 /// <summary>
-/// 开启事务（指定数据库配置名称）
+/// Open transaction (specify database configuration name)
 /// </summary>
-[TransactionName("test")] // 开启事务标记
+[TransactionName("test")] // Turn on transaction tagging
 public void AopTransactionByName()
 {
-    // 获取所有数据
+    // Get all data
     MetaInfoContext.Data.Task.ToList();
-    // 写入实体对象
+    // Write to entity objects
     MetaInfoContext.Data.Task.InsertAsync(po);
-    // 获取单个对象
+    // Get a single object
     MetaInfoContext.Data.Task.Where(o => o.Id == id).ToEntity();
-    // 修改对象
+    // Modify an object
     MetaInfoContext.Data.Task.UpdateAsync(po);
 }
 ```
 
-### Redis组件：Farseer.Net.Cache.Redis：
+### Redis components：Farseer.Net.Cache.Redis：
 
 ---
-特点：额外增加事务批量读写操作。
+Features: Additional transaction bulk read and write operations.
 ```c#
-  // 取出Redis实例
+  // Get a Redis Instance
   var redisCacheManager = IocManager.GetService<IRedisCacheManager>();
   // hashSet
   await redisCacheManager.Db.HashSetAsync("test_sync", "init", "value");
@@ -117,26 +117,26 @@ public void AopTransactionByName()
   redisCacheManager.Db.KeyDelete("test_async");
 ```
 
-### 二级缓存组件：Farseer.Net.Cache
+### Secondary cache component：Farseer.Net.Cache
 
 ---
-特点：真正实现了数据库与缓存的完美解耦
+Features: truly perfect decoupling of database and cache
 ```c#
-// 定义key，并设置为redis与本地缓存双写
+// Define the key and set it to double-write for redis and local cache
 var cacheServices = IocManager.Resolve<ICacheServices>();
 cacheServices.SetProfilesInMemoryAndRedis<UserPO, int>("user", "default", o => o.Id, TimeSpan.FromSeconds(10));
 
-// 缓存与数据库操作完全解耦，缓存命中时，不会执行方法内的代码。将被拦截处理
+// The cache is completely decoupled from database operations, and no code within the method is executed when the cache hits. It will be intercepted for processing
 public class UserService
 {
-    /// <summary> 获取数据集合 </summary>
+    /// <summary> Get the data set </summary>
     [Cache("user")]
     public IEnumerable<UserPO> ToList() => new DatabaseContext().ToList();
-    /// <summary> 获取数据集合 </summary>
+    /// <summary> Get the data set </summary>
     [Cache("user")]
     public UserPO ToEntity() => new DatabaseContext().ToList().FirstOrDefault();
 
-    /// <summary> 模拟数据库添加操作（缓存必须有一个唯一标识） </summary>
+    /// <summary> Simulate database add operation (cache must have a unique identifier) </summary>
     [CacheUpdate("user")]
     public UserPO Add(UserPO user)
     {
@@ -144,7 +144,7 @@ public class UserService
         return user;
     }
 
-    /// <summary> 模拟数据库更新数据 </summary>
+    /// <summary> Simulate database update data </summary>
     [CacheUpdate("user")]
     public UserPO Update(int id, UserPO user)
     {
@@ -152,131 +152,131 @@ public class UserService
         return user;
     }
 
-    /// <summary> 模拟数据库删除 </summary>
+    /// <summary> Simulate database deletion </summary>
     [CacheRemove("user")]
     public void Delete([CacheId] int id) => new DatabaseContext().Delete(id);
 }
 ```
 
-### es组件：Farseer.Net.ElasticSearch：
+### es component：Farseer.Net.ElasticSearch：
 
 ---
-特别：提供与数据库ORM一样的操作方式
+Special: provide the same operation as database ORM
 ```c#
   var time = "30";
-  // 判断时间（并带有复杂的本地函数方法）
+  // Judgment time (with complex local function methods)
   TestContext.Data.User.Where(o => o.CreateAt >= DateTime.Now.AddMinutes(-time.ConvertType(0)).ToTimestamps()).ToList();
-  // NETS原生的条件 + 自解析的条件
+  // NETS native conditionals and self-resolving conditionals
   TestContext.Data.User
              .Where(q => q.Term(t => t.Age, 33))
              .Where(o => o.UserName.Contains("ste")).ToList();
-  // 模糊搜索 + 正序排序
-  TestContext.Data.User.Where(o => o.Desc.Contains("我今年")).Asc(o => o.Age).ToList();
-  // 前缀搜索 + 倒序排序
-  TestContext.Data.User.Where(o => o.Desc.StartsWith("大家好")).Desc(o => o.Age).ToList();
-  // 后缀搜索（只支持Keyword类型）
+  // Fuzzy Search and Positive Order Sorting
+  TestContext.Data.User.Where(o => o.Desc.Contains("hello")).Asc(o => o.Age).ToList();
+  // Prefix search and reverse sorting
+  TestContext.Data.User.Where(o => o.Desc.StartsWith("hello")).Desc(o => o.Age).ToList();
+  // Suffix search (only Keyword type is supported)
   TestContext.Data.User.Where(o => o.UserName.EndsWith("en")).ToList();
-  // 不等于某个值
+  // Not equal to a value
   TestContext.Data.User.Where(o => o.UserName != "aaa").ToList();
-  // and 运算，如果两个Where方法调用，也相当于使用and
+  // and operation, if two Where methods are called, is also equivalent to using and
   TestContext.Data.User.Where(o => o.UserName == "steden" && o.Age == 18).ToList();
-  // or 运行
+  // or operation
   TestContext.Data.User.Where(o => o.UserName == "steden" || o.Age >= 10).ToList();
 ```
 
-### Rabbit组件：Farseer.Net.MQ.Rabbit
+### Rabbit component：Farseer.Net.MQ.Rabbit
 
 ---
-#### 发送
+#### Product
 ```c#
-// 取出实例
+// get instance
 var rabbitProduct = IocManager.GetService<IRabbitManager>("test").Product;
-// 发送
-rabbitProduct.Send(message: "测试发送消息内容");
+// send
+rabbitProduct.Send(message: "test send message");
 ```
-#### 消费
+#### Consumer
 ```c#
-/// <summary> 消费客户端 </summary>
+/// <summary> Consumer Client </summary>
 [Consumer(Enable = false, Name = "default", ExchangeName = "test", QueueName = "test", ExchangeType = eumExchangeType.fanout, DlxExchangeName = "DeadLetter")]
 public class TestConsumer : IListenerMessage
 {
     public bool Consumer(string message, object sender, BasicDeliverEventArgs ea)
     {
-        System.Console.WriteLine(ea.ConsumerTag + "接收到信息为:" + message);
+        System.Console.WriteLine(ea.ConsumerTag + "this message is:" + message);
         return true;
     }
 }
 ```
 
-### 事件总线组件：Farseer.Net.EventBus
+### Event Bus component：Farseer.Net.EventBus
 
 ---
-#### 发送
+#### Product
 ```c#
-IocManager.GetService<IEventProduct>(name: "test").Send(null, message: "测试发送消息内容");
+IocManager.GetService<IEventProduct>(name: "test").Send(null, message: "hello event");
 ```
-#### 消费
+#### Consumer
 ```c#
 /// <summary>
-/// 测试事件
+/// Test events
 /// </summary>
 [Consumer(EventName = "test")]
 public class TestEvent : IListenerMessage
 {
     public async Task<bool> Consumer(string message, object sender, DomainEventArgs ea)
     {
-        Console.WriteLine($"{ea.Id} 我订阅了test的消息：消息发送时间：{ea.CreateAt} 内容：{message}");
+        Console.WriteLine($"{ea.Id} I subscribe to test's messages：time：{ea.CreateAt} message：{message}");
         return true;
     }
 }
 ```
 
-### 进程级别的消息队列组件：Farseer.Net.MQ.Queue
+### Process-level message queues component：Farseer.Net.MQ.Queue
 
 ---
-`使用场景：多次发送数据后，集中批量写入ES、或数据库。`
+`Usage scenario: After sending data multiple times, centralized batch writing to ES, or database。`
 
-`2.6 GHz 六核Intel Core i7`
+`2.6 GHz Six cores Intel Core i7`
 `16 GB 2400 MHz DDR4`
-`每秒发送：2,041,833条数据`
-#### 发送
+`Sending per second: 2,041,833 pieces of data`
+#### Product
 ```c#
-  // 取出实例
+  // instance
   var queueProduct = IocManager.GetService<IQueueProduct>(name: "test");
-  // 发送
-  queueProduct.Send("测试发送消息内容");
+  // send
+  queueProduct.Send("test send message");
 ```
-#### 消费
+#### Consumer
 ```c#
   /// <summary>
-  ///     消费客户端
+  ///     Consumer Client
   /// </summary>
   [Consumer(Enable = true, Name = "test")]
   public class TestConsumer : IListenerMessage
   {
       public Task<bool> Consumer(List<object> queueList)
       {
-          Console.WriteLine(value: $"消费到{queueList.Count}条");
+          Console.WriteLine(value: $"get {queueList.Count} count");
           return Task.FromResult(result: true);
       }
       public Task<bool> FailureHandling(List<object> messages) => throw new NotImplementedException();
   }
 ```
 
-### RedisStream组件：Farseer.Net.MQ.RedisStream
+### RedisStream component：Farseer.Net.MQ.RedisStream
 
 ---
-#### 发送
+#### Product
 ```c#
-  // 取出实例
+  // instance
   var redisStreamProduct = IocManager.GetService<IRedisStreamProduct>("test2");
-  // 发送
-  redisStreamProduct.Send(message: "测试发送消息内容");
+  // send
+  redisStreamProduct.Send(message: "test send message");
 ```
-#### 消费
+#### Consumer
 ```c#
   /// <summary>
-  ///     消费客户端
+  ///     Consumer Client
   /// </summary>
   [Consumer(Enable = true, RedisName = "default", GroupName = "", QueueName = "test2", PullCount = 2, ConsumeThreadNums = 1)]
   public class TestConsumer : IListenerMessage
@@ -285,7 +285,7 @@ public class TestEvent : IListenerMessage
       {
           foreach (var redisStreamMessage in context.RedisStreamMessages)
           {
-              Console.WriteLine(value: "接收到信息为:" + redisStreamMessage.Message);
+              Console.WriteLine(value: "this message is:" + redisStreamMessage.Message);
               redisStreamMessage.Ack();
           }
   
@@ -294,82 +294,81 @@ public class TestEvent : IListenerMessage
   }
 ```
 
-### 分布式任务调度组件：Farseer.Net.Fss
+### Distributed Task Scheduling component：Farseer.Net.Fss
 
 ---
 ```c#
-  [Fss] // 开启后，才能注册到FSS平台
+  [Fss] // Open before you can register to the FSS platform
   public class Program
   {
       public static void Main()
       {
-          // 初始化模块
+          // Initialize
           FarseerApplication.Run<StartupModule>().Initialize();
           Thread.Sleep(millisecondsTimeout: -1);
       }
   }
     
-  [FssJob(Name = "testJob")] // Name与FSS平台配置的JobName保持一致
+  [FssJob(Name = "testJob")] // Name is consistent with the JobName configured in the FSS platform
   public class HelloWorldJob : IFssJob
   {
       /// <summary>
-      ///     执行任务
+      ///     Execution of tasks
       /// </summary>
       public async Task<bool> Execute(IFssContext context)
       {
-          // 告诉FSS平台，当前进度执行了 20%
+          // Tell the FSS platform that 20% of the current progress has been executed
           await context.SetProgressAsync(rate: 20);
   
-          // 让FSS平台，记录日志
-          await context.LoggerAsync(logLevel: LogLevel.Information, log: "你好，世界！");
+          // Let the FSS platform, logging logs
+          await context.LoggerAsync(logLevel: LogLevel.Information, log: "hello world！");
   
-          // 下一次执行时间为10秒后（如果不设置，则使用任务组设置的时间）
+          // Next execution time is after 10 seconds (if not set, the time set by the task group is used)
           //context.SetNextAt(TimeSpan.FromSeconds(10));
   
-          // 任务执行成功
+          // success
           return true;
       }
   }
 ```
 
-### 本地任务调度组件：Farseer.Net.Tasks
+### Local task scheduling component：Farseer.Net.Tasks
 
 ---
 ```c#
-  [Tasks] // 开启后，才能把JOB自动注册进来
+  [Tasks] // Turn it on to automatically register JOBs in
   public class Program
   {
       public static void Main()
       {
-          // 初始化模块
+          // Initialize
           FarseerApplication.Run<StartupModule>().Initialize();
           Thread.Sleep(millisecondsTimeout: -1);
       }
   }
     
-  [Job(Interval = 200)] // 需要附加Job特性，并设置执行间隔
+  [Job(Interval = 200)] // Need to attach Job feature and set execution interval
   public class HelloWorldJob : IJob
   {
       /// <summary>
-      ///     执行任务
+      ///     Execution of tasks
       /// </summary>
       public Task Execute(ITaskContext context)
       {
-          // 让FSS平台，记录日志
-          context.Logger(logLevel: LogLevel.Information, log: "你好，世界！");
+          // Let the job platform, logging logs
+          context.Logger(logLevel: LogLevel.Information, log: "hello world！");
 
           context.SetNext(TimeSpan.FromSeconds(5));
-          // 任务执行成功
+          // success
           return Task.FromResult(0);
       }
   }
 ```
 
-### Mapper组件：Farseer.Net.Mapper
+### Mapper component：Farseer.Net.Mapper
 
 ---
 
-`转换`
 ```c#
     UserVO vo = new UserPO().Map<UserVO>();
 ```
