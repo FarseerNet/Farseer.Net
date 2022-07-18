@@ -1,6 +1,8 @@
 ## Farseer.net是什么?
 
 ---
+[English](https://github.com/FarseerNet/Farseer.Net) | [中文](https://github.com/FarseerNet/Farseer.Net/blob/main/README.zh-cn.md)
+
 针对 **.net core** 平台下的一套标准制定的框架。
 
 我们为您选型出目前最为流行的组件，并按模块化来提供使用这些组件。
@@ -9,8 +11,8 @@
 
 使用了本框架后，真正实现了只关注您的业务，不用为技术实现而烦恼。
 
-1. [文档](https://github.com/FarseerNet/Farseer.Net/tree/dev/Doc)
-2. [demo](https://github.com/FarseerNet/Farseer.Net/tree/dev/Demo)
+1. [文档](https://github.com/FarseerNet/Farseer.Net/tree/main/Doc)
+2. [演示](https://github.com/FarseerNet/Farseer.Net/tree/main/Demo)
 
 ### 有什么特点？
 
@@ -52,7 +54,7 @@
 | Farseer.Net.MQ.Queue  | 进程级别的消息队列（批量消费场景） |
 | Farseer.Net.MQ.Rabbit  | RabbitMQ 消息队列组件 |
 | Farseer.Net.MQ.RocketMQ  | RocketMQ 消息队列组件 |
-| Farseer.Net.MQ.RedisStream  | Redis5 消息队列组件 |
+| Farseer.Net.MQ.RedisStream  | RedisStream 消息队列组件 |
 | Farseer.Net.Utils  | 常用工具扩展封装 |
 
 ### 链路追踪手动埋点：
